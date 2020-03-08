@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: ./
+    image: coron
+    environment:
+      PORT: "5001"
+      ORIGIN: "0.0.0.0:5001"
+      LOG_LEVEL: "info"
+      ADDITIONAL_BOKEH_PARAMS: "--dev"
+    ports:
+      - 5001:5001
+    volumes:
+      - ./src/app:/usr/src/app
