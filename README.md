@@ -1,3 +1,5 @@
+![covid](https://github.com/epidemics/covid/workflows/covid/badge.svg)
+
 # covid-19 visualizer
 A simple POC for using `bokeh` to visualize modelled covid-19 data. 
 
