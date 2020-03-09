@@ -1,4 +1,3 @@
-import glob
 import argparse
 import os
 import shutil
@@ -12,7 +11,12 @@ args = parser.parse_args()
 shutil.copytree(args.directory, args.outdir)
 os.chdir(args.outdir)
 
-mds = glob.glob("md_*")
+mds = [
+    "md_continents.tsv",
+    "md_countries.tsv",
+    "md_hemispheres.tsv",
+    "md_regions.tsv",
+]
 
 for md in mds:
     s = ""
