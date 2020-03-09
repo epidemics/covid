@@ -120,4 +120,4 @@ distribution_select.on_change("value", update_plot)
 controls = column(city_select, distribution_select, countermeasures)
 
 curdoc().add_root(row(plot, controls))
-curdoc().title = "Weather"
+curdoc().title = "covid-1"
