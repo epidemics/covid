@@ -1,7 +1,7 @@
 ## Fixing gleamviz data
-First fix `md_*.tsv` files which sometime countain two records of a single line. The script
+First fix `md_*.tsv` files which sometime countain two records on a single line. The script
 also removes unnecessary `ID` column to unify the format with the rest of the exported files.
-The following sed command removes leading space in all TSV files:
+Then follow with a simple `sed` command removes leading space in all TSV files:
 
 ```
 $ python remove_doubles.py <gleamviz-exported-data> data_fixed
