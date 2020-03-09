@@ -7,7 +7,7 @@ license = "BSD-4-Clause"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-bokeh = "^1.4.0"
+bokeh = "2.0.0"
 pandas = "^1.0.1"
 fastapi = "^0.52.0"
 jinja2 = "^2.11.1"
