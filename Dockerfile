@@ -13,5 +13,5 @@ RUN \
   poetry install --no-dev && \
   chmod +x entrypoint.sh
 
-COPY ./src/app ./app
-ENTRYPOINT ["./entrypoint.sh"]
+COPY ./src/charts ./charts
+COPY ./src/server ./server

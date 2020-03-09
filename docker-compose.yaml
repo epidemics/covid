@@ -1,16 +1,37 @@
 version: "3"
 
 services:
-  app:
+  charts:
     build:
       context: ./
     image: coron
-    environment:
-      PORT: "5001"
-      ORIGIN: "0.0.0.0:5001"
-      LOG_LEVEL: "info"
-      ADDITIONAL_BOKEH_PARAMS: "--dev"
     ports:
       - 5001:5001
     volumes:
-      - ./src/app:/usr/src/app
+      - ./src/charts:/usr/src/charts
+    entrypoint:
+      - bokeh
+      - serve
+      - --port
+      - "5001"
+      - --address
+      - 0.0.0.0
+      - --allow-websocket-origin
+      - "*"
+      - charts/app1.py
+      - charts/app2.py
+  server:
+    build:
+      context: ./
+    image: coron
+    ports:
+      - 8000:8000
+    volumes:
+      - ./src/server:/usr/src/server
+    working_dir: /usr/src/server
+    entrypoint:
+      - uvicorn
+      - main:app
+      - --host
+      - 0.0.0.0
+      - --reload
