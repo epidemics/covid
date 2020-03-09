@@ -9,7 +9,7 @@ Using docker (the easiest):
 docker-compose up
 ```
 
-or manually using poetry:
+or manually using [poetry](https://python-poetry.org/docs/#installation):
 ```
 $ poetry install
 $ poetry shell
