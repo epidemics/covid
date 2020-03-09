@@ -12,25 +12,46 @@ shutil.copytree(args.directory, args.outdir)
 os.chdir(args.outdir)
 
 mds = [
+    "md_cities.tsv",
     "md_continents.tsv",
     "md_countries.tsv",
     "md_hemispheres.tsv",
     "md_regions.tsv",
 ]
 
-for md in mds:
+
+def fix_single_file(md):
     s = ""
     with open(md) as ifile:
-        next(ifile)
-        s += '#\t"Name"\n'
+        header = next(ifile).strip().split("\t")
+        s += "\t".join(header[1:]) + "\n"
         for line in ifile:
-            m = re.findall(r"[0-9]+", line)
-            if len(m) == 2:
-                ix = line.index(m[1])
-                first = line[:ix].rstrip("\t")
-                second = line[ix:]
-                s += first + "\n\t" + second
+            if len(line.split("\t")) > len(header):
+                print(md, line.strip())
+                m = re.findall(r"[0-9]+", line)
+                counter = int(m[0])
+                ls = [m[0]]
+                for i in m:
+                    if int(i) == counter + 1:
+                        ls.append(str(i))
+                        counter += 1
+                indexes = [line.index(ix) for ix in ls]
+                new_line = ""
+                for en, ix in enumerate(indexes):
+                    end = en + 1 if en < len(indexes) - 1 else None
+                    new_line += (
+                        line[indexes[en] : indexes[end] if end else None].rstrip()
+                        + "\n"
+                    )
+                    print(new_line)
+                s += new_line
+                print()
             else:
-                s += line
+                s += line.lstrip()
+    return s
+
+
+for md in mds:
+    s = fix_single_file(md)
     with open(md, "w") as ofile:
         ofile.write(s)

@@ -5,7 +5,8 @@ Then follow with a simple `sed` command removes leading space in all TSV files:
 
 ```
 $ python remove_doubles.py <gleamviz-exported-data> data_fixed
-$ sed -i 's/^\t/  /; s/  //' data_fixed/**.tsv
+# removes # and leading space
+$ sed -i 's/#//;s/^.//' data_fixed/*/*.tsv
 ```
 
 then you should be able to standardly load the data in pandas. Tested on linux.
