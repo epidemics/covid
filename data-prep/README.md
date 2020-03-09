@@ -11,8 +11,9 @@ $ sed -i 's/^\t/  /; s/  //' **.tsv
 then you should be able to standardly load the data in pandas. Tested on linux.
 
 ```python
+# in python shell
 import pandas as pd
-filename = "md_countries.tsv"  # or any other file
+filename = "data_fixed/md_countries.tsv"  # or any other converted file
 df = pd.read_csv(filename, sep="\t", index_col=0)
 ```
 
