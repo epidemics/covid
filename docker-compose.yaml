@@ -29,6 +29,8 @@ services:
     volumes:
       - ./src/server:/usr/src/server
     working_dir: /usr/src/server
+    environment:
+      BOKEH_PUBLIC_URI: "http://0.0.0.0:5001"
     entrypoint:
       - uvicorn
       - main:app
