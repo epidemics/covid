@@ -27,7 +27,7 @@ $ poetry install
 $ poetry shell
 ```
 
-and then trigger `bokeh`:
+then trigger `bokeh`:
 ```
 $ bokeh serve --port 5001 --address 0.0.0.0 --allow-websocket-origin="*" --show src/charts/*.py
 ```
