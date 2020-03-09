@@ -4,7 +4,7 @@ from os.path import dirname, join
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, DataRange1d, Select, RadioGroup
+from bokeh.models import ColumnDataSource, DataRange1d, RadioGroup, Select
 from bokeh.palettes import Blues4
 from bokeh.plotting import figure
 
