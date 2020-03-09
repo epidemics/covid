@@ -5,6 +5,14 @@ A simple POC for using `bokeh` to visualize modelled covid-19 data.
 
 Based on [bokeh weather example](https://github.com/bokeh/bokeh/tree/master/examples/app/weather).
 
+## Architecture
+There two main components:
+
+* `charts` - using `bokeh serve` to serve bokeh charts
+  in `src/charts` directory.
+* `webserver` - a webserver using `fastapi` to render templates and embeds
+  bokeh charts via the running `charts` bokeh server using JS scripts. 
+
 # Development
 ## Using docker (the easiest) 
 ```
