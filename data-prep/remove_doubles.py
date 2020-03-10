@@ -27,7 +27,6 @@ def fix_single_file(md):
         s += "\t".join(header[1:]) + "\n"
         for line in ifile:
             if len(line.split("\t")) > len(header):
-                print(md, line.strip())
                 m = re.findall(r"[0-9]+", line)
                 counter = int(m[0])
                 ls = [m[0]]
@@ -43,9 +42,7 @@ def fix_single_file(md):
                         line[indexes[en] : indexes[end] if end else None].rstrip()
                         + "\n"
                     )
-                    print(new_line)
                 s += new_line
-                print()
             else:
                 s += line.lstrip()
     return s
