@@ -20,8 +20,8 @@ docker-compose up
 ```
 and go to either `localhost:5001` (`bokeh`) or `localhost:8000` (main `server`) depending on what you want to access.
 
-## locally/manually
-or manually using [poetry](https://python-poetry.org/docs/#installation):
+## locally/manually (linux/mac)
+Manually using [poetry](https://python-poetry.org/docs/#installation):
 ```
 $ poetry install
 $ poetry shell
