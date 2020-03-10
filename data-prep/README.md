@@ -18,3 +18,19 @@ filename = "data_fixed/md_countries.tsv"  # or any other converted file
 df = pd.read_csv(filename, sep="\t", index_col=0)
 ```
 
+## Converting data into a single file
+On the result above, you can trigger
+```
+python convert_to_dfs.py data_fixed
+```
+which creates a Parquet file `area.pq` with all TSVs from different areas
+in a single dataframe with somewhat resonable memory usage (currently <200 MB).
+
+This can be loaded as:
+```
+import pandas as pd
+df = pd.read_parquet("area.pq")
+
+# and optionally set index to follow the directory structure via
+# df = df.set_index(["area_type", "source_main", "source_sec"])
+```
