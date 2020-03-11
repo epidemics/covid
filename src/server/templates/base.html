@@ -30,9 +30,12 @@
       </header>
 
       <main role="main" class="inner cover">
-        {% block content %}
-
-        {% endblock %}
+        <div class="row">
+          <div class="col-md">
+            {% block content %}
+            {% endblock %}
+          </div>
+        </div>
       <footer class="mastfoot mt-auto">
         <div class="inner">
           <p>Some footer</p>
