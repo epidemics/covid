@@ -11,7 +11,13 @@ There two main components:
 * `charts` - using `bokeh serve` to serve bokeh charts
   in `src/charts` directory.
 * `webserver` - a webserver using `fastapi` to render templates and embeds
-  bokeh charts via the running `charts` bokeh server using JS scripts. 
+  bokeh charts via the running `charts` bokeh server using JS scripts. That means that when you access the index site
+  of the fastapi server, it generates the tag for the relevant chart. 
+
+### Adding a new visualization
+1. add a new chart into [charts](https://github.com/epidemics/covid/tree/master/src/charts)
+2. "register" it in the `fastapi` [server](https://github.com/epidemics/covid/blob/master/src/server/main.py#L19) in the appropriate view definition.
+3. add it in the [docker-compose](https://github.com/epidemics/covid/blob/master/docker-compose.yaml#L22)
 
 # Development
 ## Using docker (the easiest) 
