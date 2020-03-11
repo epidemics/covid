@@ -3,13 +3,18 @@
 <div>
     {{ message }}
 </div>
-<form action="/selections">
-    <label for="number">Number:</label><br>
-    <input type="text" id="number" name="number"><br>
+
+<form action="/result-calculations">
+  <div class="form-group">
+    <label  for="number">Number:</label><br>
+    <input class="form-control" placeholder="Number of people" type="number" name="number"><br>
+
     <label for="datepicker">Date:</label><br>
-    <input id="datepicker" name="datepicker" data-provide="datepicker" data-date-format="mm/dd/yyyy">
-    <input type="submit">
+    <input class="form-control" id="datepicker" name="datepicker" data-provide="datepicker" data-date-format="mm/dd/yyyy">
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+
 
 {% endblock %}
 

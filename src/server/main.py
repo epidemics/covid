@@ -25,13 +25,20 @@ async def index(request: Request) -> Response:
 
 
 @app.get("/selections")
-async def selection(
-    request: Request, datepicker: str = None, number: str = None
-) -> Response:
-    if datepicker or number:
-        message = f"{datepicker} and {number}"
-    else:
-        message = "No data yet"
+async def selection(request: Request) -> Response:
     return templates.TemplateResponse(
-        "selections.html", {"request": request, "message": message},
+        "selections.html", {"request": request, "message": "Please provide data"},
+    )
+
+
+@app.get("/result-calculations")
+async def result_calculations(
+    request: Request, datepicker: str = None, number: int = None
+) -> Response:
+    if number > 10:
+        message = f"Oh no! {datepicker} and {number}?! You shouldn't do that"
+    else:
+        message = f"Ha, {datepicker} and {number}? Sure, go on!"
+    return templates.TemplateResponse(
+        "result-calculations.html", {"request": request, "message": message},
     )
