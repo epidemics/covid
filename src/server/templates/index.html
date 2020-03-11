@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Bokeh showcase</title>
-    <link rel="stylesheet" href="/static/main.css">
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
     <h1>Covid</h1>
     <div>
         <p>Below is a nice plot made by bokeh and this is a customized site.</p>
@@ -20,5 +14,5 @@
         <h2>Red</h2>
         {{ plot_2 | safe }}
     </div>
-</body>
-</html>
+      </main>
+{% endblock %}
