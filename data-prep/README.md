@@ -27,7 +27,7 @@ which creates a Parquet file `area.pq` with all TSVs from different areas
 in a single dataframe with somewhat resonable memory usage (currently <200 MB).
 
 This can be loaded as:
-```
+```python
 import pandas as pd
 df = pd.read_parquet("area.pq")
 
@@ -36,8 +36,9 @@ df = pd.read_parquet("area.pq")
 ```
 
 ## Manual fixes
+### `md_cities.tsv` issues
 In the first version `export_experiment.tar.gz` (`md5sum: 0bdf3a07e70c28cd600a489abfbb9bb7`), there was a missing value on a row 551 in `Hemisphere ID`:
-```
+```python
                                   551
 City ID                           551
 City Name                    Sao Tome
@@ -51,3 +52,23 @@ Continent name                 Africa
 Hemisphere ID                     NaN
 ```
 the fix should be probably replacing this value by `1` (for `Tropical` as per `md_hemispheres.tsv`). This is currently not checked or somehow fixed.
+
+Also, there is a `#` at the end of `Country name#` column name.
+
+#### Loading it efficiently
+```python
+import pandas as pd
+
+dtypes = {'City ID': "int32",
+ 'City Name': pd.StringDtype(),
+ 'Airport code': pd.StringDtype(),
+ 'Country ID': "int32",
+ 'Country name#': pd.StringDtype(),
+ 'Region ID': "int32",
+ 'Region name': pd.StringDtype(),
+ 'Continent ID': "int32",
+ 'Continent name': pd.StringDtype(),
+ 'Hemisphere ID': pd.Int32Dtype()}
+
+df = pd.read_csv('data_fixed/md_cities.tsv', sep='\t', dtype=dtypes)
+```
