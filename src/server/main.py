@@ -1,7 +1,7 @@
 import os
 
 from bokeh.embed import server_document
-from fastapi import FastAPI, Request, Response, Form
+from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
