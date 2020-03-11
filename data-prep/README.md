@@ -34,3 +34,20 @@ df = pd.read_parquet("area.pq")
 # and optionally set index to follow the directory structure via
 # df = df.set_index(["area_type", "source_main", "source_sec"])
 ```
+
+## Manual fixes
+In the first version `export_experiment.tar.gz` (`md5sum: 0bdf3a07e70c28cd600a489abfbb9bb7`), there was a missing value on a row 551 in `Hemisphere ID`:
+```
+                                  551
+City ID                           551
+City Name                    Sao Tome
+Airport code                      TMS
+Country ID                        192
+Country name#   São Tomé and Principe
+Region ID                           9
+Region name             Middle Africa
+Continent ID                        0
+Continent name                 Africa
+Hemisphere ID                     NaN
+```
+the fix should be probably replacing this value by `1` (for `Tropical` as per `md_hemispheres.tsv`). This is currently not checked or somehow fixed.

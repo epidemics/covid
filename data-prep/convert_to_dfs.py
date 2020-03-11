@@ -2,6 +2,7 @@ import pandas as pd
 import os.path
 import glob
 from multiprocessing.pool import Pool
+from multiprocessing import cpu_count
 import time
 import argparse
 
@@ -42,7 +43,7 @@ def load_tsv(filename: str) -> pd.DataFrame:
     return df
 
 
-with Pool(4) as p:
+with Pool(cpu_count()) as p:
     future = p.map_async(load_tsv, all_files)
     res = future.get()
     dfs = pd.concat(res, ignore_index=True).assign(
