@@ -1,3 +1,5 @@
 .idea
 **/__pycache__
 **/.mypy_cache
+*.pq
+data-prep/data_fixed
