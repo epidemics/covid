@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+    {{ message }}
+</div>
+<form action="/selections">
+    <label for="number">Number:</label><br>
+    <input type="text" id="number" name="number"><br>
+    <label for="datepicker">Date:</label><br>
+    <input id="datepicker" name="datepicker" data-provide="datepicker" data-date-format="mm/dd/yyyy">
+    <input type="submit">
+</form>
+
+{% endblock %}
+
+{% block additional_js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8=" crossorigin="anonymous"></script>
+    <script>$('#datepicker').datepicker();</script>
+{% endblock %}
