@@ -22,3 +22,16 @@ async def index(request: Request) -> Response:
         "index.html",
         {"request": request, "plot_1": plot_script_1, "plot_2": plot_script_2},
     )
+
+
+@app.get("/selections")
+async def selection(
+    request: Request, datepicker: str = None, number: str = None
+) -> Response:
+    if datepicker or number:
+        message = f"{datepicker} and {number}"
+    else:
+        message = "No data yet"
+    return templates.TemplateResponse(
+        "selections.html", {"request": request, "message": message},
+    )
