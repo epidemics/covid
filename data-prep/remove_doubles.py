@@ -1,7 +1,7 @@
 import argparse
 import os
-import shutil
 import re
+import shutil
 
 parser = argparse.ArgumentParser()
 parser.add_argument("directory", help="Directory with the gleamviz exported data")

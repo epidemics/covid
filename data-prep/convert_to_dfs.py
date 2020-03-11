@@ -1,10 +1,11 @@
-import pandas as pd
-import os.path
-import glob
-from multiprocessing.pool import Pool
-from multiprocessing import cpu_count
-import time
 import argparse
+import glob
+import os.path
+import time
+from multiprocessing import cpu_count
+from multiprocessing.pool import Pool
+
+import pandas as pd
 
 parser = argparse.ArgumentParser(
     description="Create a single parquet file from the preprocessed gleamviz data"
