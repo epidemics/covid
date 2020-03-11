@@ -1,91 +1,70 @@
 import pandas as pd
+import numpy as np
 from bokeh.models import Band, ColumnDataSource
 from bokeh.plotting import figure, output_file, save
 from bokeh.models.tools import HoverTool
+from bokeh.palettes import Category10
 
 DATA_FOLDER = "data/data_fixed"
-VISUALIZATION1_FILENAME = "view_1.html"
-FIGURE_MARGIN = 0.1
+VIEW_1_FILENAME = "view_1.html"
 
 
-def _get_figure_yrange(df, lower_col, upper_col):
-    y_min = df[lower_col].min()
-    y_max = df[upper_col].max()
-    y_range = y_max - y_min
-    y_min = y_min - FIGURE_MARGIN * y_range
-    y_max = y_max + FIGURE_MARGIN * y_range
-    return y_min, y_max
-
-
-def plot_CI(df: pd.DataFrame, title: str = None, cumulative: bool = False):
+def plot_multiple(df):
     x_col = "Timestep"
-    y_col = "Median"
-    lower_col = "Lower 95%CI"
-    upper_col = "Upper 95%CI"
-
     x_col_label = "Day"
-    y_col_label = "Median + 95%CI"
+    y_col_label = "Median"
 
-    if cumulative:
-        cum = "Cumulative "
-        y_col = cum + y_col
-        lower_col = cum + lower_col
-        upper_col = cum + upper_col
-
-    if "Timestep" not in df:
+    if x_col not in df:
         df = df.reset_index()
 
-    source = ColumnDataSource(df)
+    selected_cols = df.columns[1:]
+
+    source = ColumnDataSource(
+        data=dict(
+            xs=[
+                df[x_col] for col in selected_cols
+            ],  # the index is the same for all columns
+            ys=[df[col] for col in selected_cols],
+            col_labels=selected_cols,
+            color=Category10[len(selected_cols)],
+        )
+    )
 
     TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
+    p = figure(tools=TOOLS)
 
-    y_range = _get_figure_yrange(df, lower_col, upper_col)
+    p.multi_line(xs="xs", ys="ys", line_color="color", source=source)
 
-    p = figure(tools=TOOLS, y_range=y_range)
-
-    p.line(x=x_col, y=y_col, line_color=None, source=source)
-
-    band = Band(
-        base=x_col,
-        lower=lower_col,
-        upper=upper_col,
-        source=source,
-        level="underlay",
-        fill_color="skyblue",
-        fill_alpha=1.0,
-        line_width=1,
-        line_color="black",
-    )
-    p.add_layout(band)
-
-    hover = HoverTool(mode="vline")
-
-    ci_values = "[@{%s}, @{%s}]" % (lower_col, upper_col)
-
+    hover = HoverTool()
     hover.tooltips = [
-        (y_col, "@" + y_col),  # median
-        ("CI95%", ci_values),
-        (x_col_label, "@" + x_col),  # day
+        ("param", "@col_labels"),
+        (x_col_label, "$x"),
+        (y_col_label, "$y"),
     ]
     p.add_tools(hover)
 
-    if title is not None:
-        p.title.text = title
-
-    p.xgrid[0].grid_line_color = None
-    p.ygrid[0].grid_line_alpha = 0.5
-
-    p.xaxis.axis_label = x_col_label
-    p.yaxis.axis_label = y_col_label
-
-    output_file(VISUALIZATION1_FILENAME)
+    output_file(VIEW_1_FILENAME)
     save(p)
 
 
-if __name__ == "__main__":
+def get_dummy_data():
     # select some random file
     filepath = DATA_FOLDER + "/cities/3-0.tsv"
     df = pd.read_csv(filepath, sep="\t", index_col=0).set_index("Timestep")
 
-    plot_CI(df)
-    # plot_CI(df, cumulative=True)
+    df = df[["Median"]]
+
+    n_plots = 5  # up to 8
+    for i in range(n_plots):
+        df["Median_" + str(i)] = df["Median"] + i
+
+    df = df.drop(["Median"], axis=1)
+    return df
+
+
+if __name__ == "__main__":
+
+    # Prepare some dummy data
+    df = get_dummy_data()
+
+    plot_multiple(df)
