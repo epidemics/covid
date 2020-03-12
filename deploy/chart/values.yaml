@@ -2,11 +2,9 @@ env:
   logLevel: 'INFO'
   storagePrefix: null
 
+imageName: ""
+
 charts:
-  image:
-    repository: us.gcr.io/epidemics-270907/covid
-    name: test
-    tag: v2
   memoryLimit: "1Gi"
   cpuLimit: "2"
   memoryRequest: "500Mi"
@@ -16,10 +14,6 @@ charts:
     externalIp: 35.197.75.206
 
 web:
-  image:
-    repository: us.gcr.io/epidemics-270907/covid
-    name: test
-    tag: v2
   replicaCount: 1
   memoryLimit: "1Gi"
   cpuLimit: "2"

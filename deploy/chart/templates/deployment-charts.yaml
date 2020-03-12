@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-charts-server
-          image: {{ .Values.charts.image.repository }}/{{ .Values.charts.image.name }}:{{ .Values.charts.image.tag }}
+          image: {{ .Values.imageName }}
           imagePullPolicy: Always
           # TODO: solve via entrypoint and make the load of various visualization easier (not just app1)
           command:

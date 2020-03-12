@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-web-server
-          image: {{ .Values.web.image.repository }}/{{ .Values.web.image.name }}:{{ .Values.web.image.tag }}
+          image: {{ .Values.imageName }}
           imagePullPolicy: Always
           # TODO: solve via entrypoint
           command:

@@ -55,3 +55,4 @@ jobs:
         chart_name: ./deploy/chart
         helm_upgrade_args: |
           --values ./deploy/chart/values.yaml
+          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
