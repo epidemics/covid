@@ -3,46 +3,56 @@ name: covid
 on: [push]
 
 env:
-  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: epidemics
-  GKE_ZONE: us-west1-c
-  IMAGE: covid
+  FULL_IMAGE_REF: gcr.io/$GKE_PROJECT/covid:$GITHUB_SHA
 
 jobs:
   checks:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Black Code Formatter
-      uses: lgeiger/black-action@v1.0.1
-      with:
-        args: "src/ --check"
-
-  setup-build-publish-deploy:
-    name: Setup, Build, Publish
+    name: Deploy via helm to k8s
     runs-on: ubuntu-latest
     steps:
-
-    - name: Checkout
-      uses: actions/checkout@master
-
-    # Setup gcloud CLI
-    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+    - name: Helm deploy
+      uses: hahow/install-helm-chart-action@v1.0.0
       with:
-        version: '270.0.0'
-        service_account_email: ${{ secrets.SA_EMAIL }}
-        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-
-    # Configure docker to use the gcloud command-line tool as a credential helper
-    - run: |
-        gcloud auth configure-docker
-    # Build the Docker image
-    - name: Build
-      run: |
-        docker build -t gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA .
-    # Push the Docker image to Google Container Registry
-    - name: Publish
-      run: |
-        docker push gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
+        gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        gcloud_project_id: ${{ secrets.GKE_PROJECT }}
+        cluster_name: epidemics
+        cluster_region: us-west1-c
+        release_namespace: staging
+        release_name: covid-test
+        chart_name: ./deploy/chart/
+        helm_upgrade_args: |
+          --values ./deploy/chart/values.yaml --dry-run --debug
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Black Code Formatter
+#      uses: lgeiger/black-action@v1.0.1
+#      with:
+#        args: "src/ --check"
+#
+#  setup-build-publish-deploy:
+#    name: Setup, Build, Publish
+#    runs-on: ubuntu-latest
+#    steps:
+#
+#    - name: Checkout
+#      uses: actions/checkout@master
+#
+#    # Setup gcloud CLI
+#    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+#      with:
+#        version: '270.0.0'
+#        service_account_email: ${{ secrets.SA_EMAIL }}
+#        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+#
+#    # Configure docker to use the gcloud command-line tool as a credential helper
+#    - run: |
+#        gcloud auth configure-docker
+#    # Build the Docker image
+#    - name: Build
+#      run: |
+#        docker build -t $FULL_IMAGE_REF .
+#    # Push the Docker image to Google Container Registry
+#    - name: Publish
+#      run: |
+#        docker push $FULL_IMAGE_REF
