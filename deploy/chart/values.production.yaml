@@ -1,0 +1,7 @@
+ingress:
+  # reserved in GCP, note the differences between loadbalanceR and loadbalance-staging (no R)
+  externalIpName: loadbalancer
+
+charts:
+  service:
+    externalIp: 35.197.75.206

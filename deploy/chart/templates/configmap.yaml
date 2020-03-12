@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}
+data:
+  APP_REVISION: {{ .Chart.AppVersion | quote }}
+  LOG_LEVEL: {{ .Values.env.logLevel }}
+  BOKEH_URI: "http://{{ .Values.charts.service.externalIp }}:5001"

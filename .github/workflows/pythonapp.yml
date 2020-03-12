@@ -2,14 +2,81 @@ name: covid
 
 on: [push]
 
+env:
+  IMAGE_NAME: covid
+
 jobs:
-  build:
-
+  checks:
+    name: checks
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Black Code Formatter
       uses: lgeiger/black-action@v1.0.1
       with:
         args: "src/ --check"
+
+  setup-build-publish-deploy:
+    if: contains(github.ref, 'staging') || contains(github.ref, 'master')
+    name: Build, Publish, Deploy
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@master
+
+    # Setup gcloud CLI
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.SA_EMAIL }}
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+    # Configure docker to use the gcloud command-line tool as a credential helper
+    - run: |
+        gcloud auth configure-docker
+
+    # Build the Docker image
+    - name: Build
+      run: |
+        docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA .
+
+    # Push the Docker image to Google Container Registry
+    - name: Publish
+      run: |
+        docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+
+    - name: Helm deploy [STAGING]
+      if: contains(github.ref, 'staging')
+      uses: hahow/install-helm-chart-action@v1.0.0
+      with:
+        gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        gcloud_project_id: ${{ secrets.GKE_PROJECT }}
+        cluster_name: epidemics
+        cluster_region: us-west1-c
+        release_namespace: staging
+        release_name: covid
+        chart_name: ./deploy/chart
+        helm_upgrade_args: |
+          --values ./deploy/chart/values.yaml
+          --values ./deploy/chart/values.staging.yaml
+          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          --debug
+
+    # TODO: violates DRY, simplify with the above
+    - name: Helm deploy [PRODUCTION (master branch)]
+      if: contains(github.ref, 'master')
+      uses: hahow/install-helm-chart-action@v1.0.0
+      with:
+        gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        gcloud_project_id: ${{ secrets.GKE_PROJECT }}
+        cluster_name: epidemics
+        cluster_region: us-west1-c
+        release_namespace: production
+        release_name: covid
+        chart_name: ./deploy/chart
+        helm_upgrade_args: |
+          --values ./deploy/chart/values.yaml
+          --values ./deploy/chart/values.production.yaml
+          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          --debug
