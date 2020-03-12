@@ -17,7 +17,7 @@ jobs:
         args: "src/ --check"
 
   setup-build-publish-deploy:
-    if: github.event_name == 'tag'
+    if: contains(github.ref, 'beta') || contains(github.ref, 'testprod')
     env:
       ENVIRONMENT: ${{ contains(github.ref, 'refs/tags/v') }}
     name: Build, Publish, Deploy
