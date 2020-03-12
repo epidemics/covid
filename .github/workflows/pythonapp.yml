@@ -17,7 +17,7 @@ jobs:
         args: "src/ --check"
 
   setup-build-publish-deploy:
-    if: contains(github.ref, 'beta') || contains(github.ref, 'testprod')
+    if: contains(github.ref, 'staging') || contains(github.ref, 'master')
     name: Build, Publish, Deploy
     runs-on: ubuntu-latest
     steps:
