@@ -8,7 +8,7 @@ services:
     ports:
       - 5001:5001
     volumes:
-      - ./src/charts:/usr/src/charts
+      - ./src/charts:/usr/app/src/charts
     entrypoint:
       - bokeh
       - serve
@@ -18,8 +18,8 @@ services:
       - 0.0.0.0
       - --allow-websocket-origin
       - "*"
-      - charts/app1.py
-      - charts/app2.py
+      - src/charts/app1.py
+      - src/charts/app2.py
   server:
     build:
       context: ./
@@ -27,8 +27,8 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./src/server:/usr/src/server
-    working_dir: /usr/src/server
+      - ./src/server:/usr/app/src/server
+    working_dir: /usr/app/src/server
     environment:
       BOKEH_PUBLIC_URI: "http://0.0.0.0:5001"
     entrypoint:
