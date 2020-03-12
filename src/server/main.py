@@ -10,7 +10,9 @@ BOKEH_URI = os.getenv("BOKEH_URI", "http://0.0.0.0:5001")
 SERVER_ROOT = os.path.dirname(__file__)
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory=os.path.join(SERVER_ROOT, "static")), name="static")
+app.mount(
+    "/static", StaticFiles(directory=os.path.join(SERVER_ROOT, "static")), name="static"
+)
 
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 
