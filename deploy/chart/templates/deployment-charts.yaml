@@ -38,6 +38,7 @@ spec:
         - "https://storage.googleapis.com/model-data-covid/city_lookup.pq"
         - "-O"
         - "https://storage.googleapis.com/model-data-covid/definition.xml"
+        workingDir: /data
         volumeMounts:
         - name: model-data
           mountPath: /data
