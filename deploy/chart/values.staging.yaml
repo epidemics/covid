@@ -1,5 +1,5 @@
 ingress:
-  # reserved in GCP
+  # reserved in GCP, note that I forgot `r` at the end
   externalIpName: loadbalance-staging
 
 charts:
