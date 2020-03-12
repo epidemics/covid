@@ -11,6 +11,14 @@ DATA_FOLDER = join(dirname(__file__), "data")
 DEFINITION_FILE = DATA_FOLDER + "/definition.xml"
 VIEW_1_FILENAME = "view_1.html"
 DATE_FORMAT = "%Y-%m-%d"
+TARGET_COL = "Cumulative Median"
+
+
+def select_city(data, city):
+    if city not in data.index:
+        raise RuntimeError("Unknown city")
+
+    return data.loc[city]
 
 
 def get_datasource(df, start_date):
@@ -85,16 +93,13 @@ def get_model_start_date():
 
 def get_dummy_data():
     # select some random file
-    filepath = DATA_FOLDER + "/countries/3-0.tsv"
-    df = pd.read_csv(filepath, sep="\t", index_col=0).set_index("Timestep")
+    preprocessed_data = pd.read_parquet(DATA_FOLDER + "/city_lookup.pq")
 
-    df = df[["Median"]]
-
-    n_plots = 5  # up to 8
+    n_plots = 4  # up to 8
     for i in range(n_plots):
-        df["Median_" + str(i)] = df["Median"] + i
+        df[TARGET_COL + "_" + str(i)] = df[TARGET_COL] + i
 
-    df = df.drop(["Median"], axis=1)
+    df = df.drop([TARGET_COL], axis=1)
     start_date = get_model_start_date()
     return df, start_date
 

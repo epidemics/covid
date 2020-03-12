@@ -11,23 +11,24 @@ from utils import plot_multiple, get_datasource, get_dummy_data, get_datasource
 
 def update_plot(attrname, old, new):
     city = city_select.value
-    plot.title.text = "Weather data for " + cities[city]["title"]
+    plot.title.text = "COVID-19 data for " + city
 
     # src = get_dataset(df, cities[city]["airport"], distribution_select.value)
-    src = get_datasource(df, start_date)
+    data_city = select_city(df, city)
+    src = get_datasource(data_city, start_date)
     source.data.update(src.data)
 
 
-city = "Austin"
+# Prepare some dummy data
+df, start_date = get_dummy_data()
+
+# get city selection
+cities = df.reset_index()["City"].unique()
+
+city = "New York"
 distribution = "Discrete"
 
-cities = {
-    "Austin": {"airport": "AUS", "title": "Austin, TX",},
-    "Boston": {"airport": "BOS", "title": "Boston, MA",},
-    "Seattle": {"airport": "SEA", "title": "Seattle, WA",},
-}
-
-city_select = Select(value=city, title="Area", options=sorted(cities.keys()))
+city_select = Select(value=city, title="Area", options=cities)
 distribution_select = Select(
     value=distribution, title="Distribution", options=["Discrete", "Smoothed"]
 )
@@ -38,11 +39,9 @@ countermeasures = Select(
     title="reduction transmission due countermeasures",
 )
 
-
-# Prepare some dummy data
-df, start_date = get_dummy_data()
-source = get_datasource(df, start_date)
-plot = plot_multiple(source, title="COVID-19 data for " + cities[city]["title"])
+data_city = select_city(df, city)
+source = get_datasource(data_city, start_date)
+plot = plot_multiple(source, title="COVID-19 data for " + city)
 
 city_select.on_change("value", update_plot)
 distribution_select.on_change("value", update_plot)
