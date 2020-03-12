@@ -63,6 +63,8 @@ jobs:
           --values ./deploy/chart/values.yaml
           --values ./deploy/chart/values.staging.yaml
           --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+          --dry-run
+          --debug
 
     # TODO: violates DRY, simplify with the above
     - name: Helm deploy [PRODUCTION]
