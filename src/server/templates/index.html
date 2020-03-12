@@ -1,17 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Covid</h1>
+    <h1>covid-19 visualization</h1>
     <div>
-        <p>Below is a nice plot made by bokeh and this is a customized site.</p>
+        Welcome! Here should be probably "bubble map" chart. But it's apparently not a bubble map, is it?
     </div>
 
     <div>
-        <h2>Blue</h2>
-        {{ plot_1 | safe }}
+        {{ plot | safe }}
     </div>
 
-    <div>
-        <h2>Red</h2>
-        {{ plot_2 | safe }}
-    </div>
 {% endblock %}

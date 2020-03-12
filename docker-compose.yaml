@@ -14,8 +14,9 @@ services:
       - ./tests:/usr/app/tests
       - ./poetry.lock:/usr/app/poetry.lock
       - ./pyproject.toml:/usr/app/pyproject.toml
-        #- /home/dan/load/city_lookup.pq:/data/city_lookup.pq
-        #- /home/dan/load/definition.xml:/data/definition.xml
+      # TODO: you have to have these in your root dir, can be found on slack
+      - ./city_lookup.pq:/data/city_lookup.pq
+      - ./definition.xml:/data/definition.xml
     entrypoint:
       - bokeh
       - serve
@@ -26,6 +27,7 @@ services:
       - --allow-websocket-origin
       - "*"
       - src/charts/app1.py
+      - src/charts/app2.py
   server:
     build:
       context: ./
