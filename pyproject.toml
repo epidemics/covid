@@ -13,6 +13,7 @@ fastapi = "^0.52.0"
 jinja2 = "^2.11.1"
 aiofiles = "^0.4.0"
 uvicorn = "^0.11.3"
+charts = {path = "src/charts"}
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
