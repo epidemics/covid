@@ -14,6 +14,7 @@ fastapi = "^0.52.0"
 jinja2 = "^2.11.1"
 aiofiles = "^0.4.0"
 uvicorn = "^0.11.3"
+pyarrow = "^0.16.0"
 covid = {path = "src"}
 
 
