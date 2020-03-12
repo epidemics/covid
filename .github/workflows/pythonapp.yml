@@ -21,16 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Install deps
-      uses: abatilo/actions-poetry@master
+    - uses: actions/setup-python@v1
       with:
-        workdir: ._poetry_env
-        args: install
-    - uses: abatilo/actions-poetry@master
-      name: pytest
-      with:
-        workdir: ._poetry_env
-        args: run pytest tests
+        python-version: 3.8
+    - uses: dschep/install-poetry-action@v1.5
+    - run: poetry run pytest tests
 
   setup-build-publish-deploy:
     if: contains(github.ref, 'staging') || contains(github.ref, 'master')
