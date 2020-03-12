@@ -31,12 +31,13 @@ spec:
         emptyDir: {}
       initContainers:
       - name: get-data
-        image: busybox
+        image: byrnedo/alpine-curl
         command:
-        - wget
+        - curl
         - "-O"
-        - "data/areas.pq"
-        - "https://storage.googleapis.com/model-data-covid/areas.pq"
+        - "https://storage.googleapis.com/model-data-covid/city_lookup.pq"
+        - "-O"
+        - "https://storage.googleapis.com/model-data-covid/definition.xml"
         volumeMounts:
         - name: model-data
           mountPath: /data
