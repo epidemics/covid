@@ -44,14 +44,14 @@ $ cd src/server
 $ uvicorn main:app --reload
 ```
 
-## Getting in poetry inside the container
+## Getting inside the container
 ```
-$ docker-compose run --entrypoint poetry charts <commands> 
+$ docker-compose run --entrypoint bash charts
 ```
 
 can be used to e.g. install deps:
 ```
-$ docker-compose run --entrypoint poetry charts add pyarrow 
+$ docker-compose run --entrypoint poetry charts add pyarrow
 ```
 
 ## tests
