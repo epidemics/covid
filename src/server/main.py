@@ -19,11 +19,30 @@ templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 
 @app.get("/")
 async def index(request: Request) -> Response:
-    plot_script_1 = server_document(os.path.join(BOKEH_URI, "app1"))
-    plot_script_2 = server_document(os.path.join(BOKEH_URI, "app2"))
+    """TODO: this is the main hompage, should have a bubble map which should
+    link ot the /model"""
+    bubble_map_script = server_document(os.path.join(BOKEH_URI, "app2"))
     return templates.TemplateResponse(
         "index.html",
-        {"request": request, "plot_1": plot_script_1, "plot_2": plot_script_2},
+        {"request": request, "plot": bubble_map_script},
+    )
+
+@app.get("/request-calculation")
+async def request_calculation(request: Request) -> Response:
+    """TODO: This view should process a form"""
+    return templates.TemplateResponse(
+        "request-calculation.html",
+        {"request": request},
+    )
+
+@app.get("/model")
+async def model(request: Request) -> Response:
+    """TODO: this should serve the main model visualization,
+    ideally sent somewhere via mail."""
+    plot_script = server_document(os.path.join(BOKEH_URI, "app1"))
+    return templates.TemplateResponse(
+        "model.html",
+        {"request": request, "plot": plot_script},
     )
 
 
