@@ -10,11 +10,24 @@ jobs:
     name: checks
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@master
     - name: Black Code Formatter
       uses: lgeiger/black-action@v1.0.1
       with:
-        args: "src/ --check"
+        args: "src/ tests/ --check"
+
+  tests:
+    name: checks
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Install
+      uses: abatilo/actions-poetry@master
+      with:
+        args: install
+    - uses: abatilo/actions-poetry@master
+      with:
+        args: run pytest tests/
 
   setup-build-publish-deploy:
     if: contains(github.ref, 'staging') || contains(github.ref, 'master')
