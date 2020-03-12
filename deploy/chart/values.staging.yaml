@@ -1,6 +1,6 @@
 ingress:
   # reserved in GCP
-  externalIpName: loadbalancer-staging
+  externalIpName: loadbalance-staging
 
 charts:
   service:
