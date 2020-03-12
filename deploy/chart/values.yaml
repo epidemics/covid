@@ -1,6 +1,5 @@
 env:
   logLevel: 'INFO'
-  storagePrefix: null
 
 imageName: ""
 
@@ -11,7 +10,7 @@ charts:
   cpuRequest: "0.3"
   replicaCount: 1
   service:
-    externalIp: 35.197.75.206
+    externalIp: null
 
 web:
   replicaCount: 1
@@ -22,4 +21,4 @@ web:
 
 ingress:
   # reserved in GCP
-  externalIpName: loadbalancer
+  externalIpName: null

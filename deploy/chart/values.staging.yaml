@@ -1,1 +1,7 @@
-dummy: null
+ingress:
+  # reserved in GCP
+  externalIpName: loadbalancer-staging
+
+charts:
+  service:
+    externalIp: 35.203.189.186
