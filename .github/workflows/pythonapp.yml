@@ -10,6 +10,11 @@ jobs:
     name: Deploy via helm to k8s
     runs-on: ubuntu-latest
     steps:
+    - run: |
+        ls
+        ls ./deploy/
+        ls ./deploy/chart
+  
     - name: Helm deploy
       uses: hahow/install-helm-chart-action@v1.0.0
       with:
@@ -19,7 +24,7 @@ jobs:
         cluster_region: us-west1-c
         release_namespace: staging
         release_name: covid-test
-        chart_name: ./deploy/chart/
+        chart_name: ./deploy/chart
         helm_upgrade_args: |
           --values ./deploy/chart/values.yaml --dry-run --debug
 #
