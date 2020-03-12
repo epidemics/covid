@@ -5,17 +5,17 @@ from bokeh.models.tools import HoverTool
 from bokeh.palettes import Category10
 import re
 from datetime import datetime
+from os.path import dirname, join
 
-DATA_FOLDER = "data/data_fixed"
+# DATA_FOLDER = "data/data_fixed"
+DATA_FOLDER = join(dirname(__file__), "data")
 DEFINITION_FILE = DATA_FOLDER + "/definition.xml"
 VIEW_1_FILENAME = "view_1.html"
 DATE_FORMAT = "%Y-%m-%d"
 
 
-def plot_multiple(df, start_date):
+def get_datasource(df, start_date):
     x_col = "Timestep"
-    x_col_label = "Date"
-    y_col_label = "Median"
 
     if x_col not in df:
         df = df.reset_index()
@@ -28,7 +28,7 @@ def plot_multiple(df, start_date):
     source = ColumnDataSource(
         data=dict(
             xs=[
-                df[x_col] for col in selected_cols
+                df[x_col] for _ in selected_cols
             ],  # the index is the same for all columns
             ys=[df[col] for col in selected_cols],
             col_labels=selected_cols,
@@ -36,10 +36,17 @@ def plot_multiple(df, start_date):
         )
     )
 
-    TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
-    p = figure(tools=TOOLS, x_axis_type="datetime")
+    return source
 
-    p.multi_line(xs="xs", ys="ys", line_color="color", source=source)
+
+def plot_multiple(source, title=None):
+    x_col_label = "Date"
+    y_col_label = "Median"
+
+    TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
+    plot = figure(tools=TOOLS, x_axis_type="datetime")
+
+    plot.multi_line(xs="xs", ys="ys", line_color="color", source=source)
 
     hover = HoverTool(formatters={"$x": "datetime"})
     hover.tooltips = [
@@ -47,13 +54,19 @@ def plot_multiple(df, start_date):
         (x_col_label, "$x{%Y-%m-%d}"),
         (y_col_label, "$y"),
     ]
-    p.add_tools(hover)
+    plot.add_tools(hover)
 
-    p.xaxis.axis_label = x_col_label
-    p.yaxis.axis_label = y_col_label
+    plot.xaxis.axis_label = x_col_label
+    plot.yaxis.axis_label = y_col_label
 
+    plot.title.text = title
+
+    return plot
+
+
+def save_plot(plot):
     output_file(VIEW_1_FILENAME)
-    save(p)
+    save(plot)
 
 
 def read_definition_file():
@@ -73,7 +86,7 @@ def get_model_start_date():
 
 def get_dummy_data():
     # select some random file
-    filepath = DATA_FOLDER + "/cities/3-0.tsv"
+    filepath = DATA_FOLDER + "/countries/3-0.tsv"
     df = pd.read_csv(filepath, sep="\t", index_col=0).set_index("Timestep")
 
     df = df[["Median"]]
@@ -92,4 +105,6 @@ if __name__ == "__main__":
     # Prepare some dummy data
     df, start_date = get_dummy_data()
 
-    plot_multiple(df, start_date)
+    source = get_datasource(df, start_date)
+    plot = plot_multiple(source)
+    save_plot(plot)
