@@ -5,7 +5,7 @@ from bokeh.models import Select
 from charts.utils import (
     plot_multiple,
     get_datasource,
-    get_dummy_data,
+    load_view1_data,
     get_datasource,
     select_city,
 )
@@ -20,8 +20,8 @@ def update_plot(attrname, old, new):
     source.data.update(src.data)
 
 
-# Prepare some dummy data
-preprocessed_data, start_date = get_dummy_data()
+# Load data
+preprocessed_data, start_date = load_view1_data()
 
 # get city selection
 cities = list(preprocessed_data.reset_index()["City"].unique())

@@ -91,25 +91,15 @@ def get_model_start_date():
     return start_date
 
 
-def get_dummy_data():
-    # select some random file
+def load_view1_data():
     preprocessed_data = pd.read_parquet(DATA_FOLDER + "/city_lookup.pq")
 
-    n_plots = 4  # up to 8
-    for i in range(n_plots):
-        preprocessed_data[TARGET_COL + "_" + str(i)] = (
-            preprocessed_data[TARGET_COL] + i * 10
-        )
-
-    preprocessed_data = preprocessed_data.drop([TARGET_COL], axis=1)
     start_date = get_model_start_date()
     return preprocessed_data, start_date
 
 
 if __name__ == "__main__":
-
-    # Prepare some dummy data
-    preprocessed_data, start_date = get_dummy_data()
+    preprocessed_data, start_date = load_view1_data()
 
     source = get_datasource(preprocessed_data, start_date)
     plot = plot_multiple(source)

@@ -11,6 +11,16 @@ def read_tsv(path):
     return pd.read_csv(path, sep="\t")
 
 
+def get_dummy_data(preprocessed_data, number=4):
+    for i in range(number):
+        preprocessed_data[TARGET_COL + "_" + str(i)] = (
+            preprocessed_data[TARGET_COL] + i * 10
+        )
+
+    preprocessed_data = preprocessed_data.drop([TARGET_COL], axis=1)
+    return preprocessed_data
+
+
 def preprocess_data(all_data, all_cities, selected_cities):
     all_data = all_data[all_data["area_type"] == "cities"]
 
@@ -59,6 +69,9 @@ if __name__ == "__main__":
 
     preprocessed_data = preprocess_data(all_data, all_cities, selected_cities)
     print("preprocesessing done")
+
+    preprocessed_data = get_dummy_data(preprocessed_data, number=4)
+    print("dummy data created (real data artificially inflated)")
 
     target_filepath = TARGET_DATA_FOLDER + "/city_lookup.pq"
     preprocessed_data.to_parquet(target_filepath)
