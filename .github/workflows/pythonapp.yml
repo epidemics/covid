@@ -24,8 +24,10 @@ jobs:
     - uses: actions/setup-python@master
       with:
         python-version: 3.8
-    - uses: dschep/install-poetry-action@master
-    - run: poetry run pytest tests
+    - run: |
+        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+        poetry install
+        poetry run pytest tests
 
   setup-build-publish-deploy:
     if: contains(github.ref, 'staging') || contains(github.ref, 'master')
