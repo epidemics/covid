@@ -47,8 +47,7 @@ jobs:
         docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
 
     - name: Helm deploy [STAGING]
-      # TODO: rename to beta
-      if: contains(github.ref, 'beta')
+      if: contains(github.ref, 'staging')
       uses: hahow/install-helm-chart-action@v1.0.0
       with:
         gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
@@ -65,8 +64,8 @@ jobs:
           --debug
 
     # TODO: violates DRY, simplify with the above
-    - name: Helm deploy [PRODUCTION]
-      if: contains(github.ref, 'testprod')
+    - name: Helm deploy [PRODUCTION (master branch)]
+      if: contains(github.ref, 'master')
       uses: hahow/install-helm-chart-action@v1.0.0
       with:
         gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
@@ -79,4 +78,5 @@ jobs:
         helm_upgrade_args: |
           --values ./deploy/chart/values.yaml
           --values ./deploy/chart/values.production.yaml
-          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}
+          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          --debug
