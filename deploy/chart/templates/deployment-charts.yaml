@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-charts-server
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/component: charts-server
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+spec:
+  replicas: {{ .Values.charts.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: charts-server
+  template:
+    metadata:
+      name: {{ .Release.Name }}-charts-server
+      labels:
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: charts-server
+      annotations:  # Force deployment update on config change
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-charts-server
+          image: {{ .Values.charts.image.repository }}/{{ .Values.charts.image.name }}:{{ .Values.charts.image.tag }}
+          imagePullPolicy: Always
+          command:
+            - bokeh
+            - serve
+            - --port
+            - "5001"
+            - --address
+            - 0.0.0.0
+            - --allow-websocket-origin
+            - "*"
+            - charts/app1.py
+          ports:
+          - containerPort: 5001
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}
+          resources:
+            requests:
+              cpu: {{ .Values.charts.cpuRequest | quote }}
+              memory: {{ .Values.charts.memoryRequest | quote}}
+            limits:
+              cpu: {{ .Values.charts.cpuLimit | quote }}
+              memory: {{ .Values.charts.memoryLimit | quote }}
+          livenessProbe:
+            httpGet:
+              path: "/app1"
+              port: 5001
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: "/app1"
+              port: 5001
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3

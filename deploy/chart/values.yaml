@@ -1,0 +1,30 @@
+env:
+  logLevel: 'INFO'
+  storagePrefix: null
+
+charts:
+  image:
+    repository: us.gcr.io/epidemics-270907/covid
+    name: test
+    tag: v1
+  memoryLimit: "1Gi"
+  cpuLimit: "2"
+  memoryRequest: "500Mi"
+  cpuRequest: "0.3"
+  replicaCount: 1
+  service:
+    externalIp: 35.197.75.206
+
+web:
+  image:
+    repository: us.gcr.io/epidemics-270907/covid
+    name: test
+    tag: v1
+  replicaCount: 1
+  memoryLimit: "1Gi"
+  cpuLimit: "2"
+  memoryRequest: "500Mi"
+  cpuRequest: "0.3"
+
+ingress:
+  externalIpName: loadbalancer
