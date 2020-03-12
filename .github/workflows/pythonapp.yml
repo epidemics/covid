@@ -53,7 +53,7 @@ jobs:
     # Build the Docker image
     - name: Build
       run: |
-        docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA .
+        docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA --target production .
 
     # Push the Docker image to Google Container Registry
     - name: Publish

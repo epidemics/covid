@@ -9,6 +9,7 @@ services:
       - 5001:5001
     volumes:
       - ./src/:/usr/app/src/
+      - ./tests:/usr/app/tests
       - ./poetry.lock:/usr/app/poetry.lock
       - ./pyproject.toml:/usr/app/pyproject.toml
     entrypoint:
