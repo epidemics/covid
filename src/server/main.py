@@ -23,17 +23,15 @@ async def index(request: Request) -> Response:
     link ot the /model"""
     bubble_map_script = server_document(os.path.join(BOKEH_URI, "app2"))
     return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "plot": bubble_map_script},
+        "index.html", {"request": request, "plot": bubble_map_script},
     )
+
 
 @app.get("/request-calculation")
 async def request_calculation(request: Request) -> Response:
     """TODO: This view should process a form"""
-    return templates.TemplateResponse(
-        "request-calculation.html",
-        {"request": request},
-    )
+    return templates.TemplateResponse("request-calculation.html", {"request": request},)
+
 
 @app.get("/model")
 async def model(request: Request) -> Response:
@@ -41,8 +39,7 @@ async def model(request: Request) -> Response:
     ideally sent somewhere via mail."""
     plot_script = server_document(os.path.join(BOKEH_URI, "app1"))
     return templates.TemplateResponse(
-        "model.html",
-        {"request": request, "plot": plot_script},
+        "model.html", {"request": request, "plot": plot_script},
     )
 
 
