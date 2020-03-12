@@ -44,6 +44,22 @@ $ cd src/server
 $ uvicorn main:app --reload
 ```
 
+## Getting in poetry inside the container
+```
+$ docker-compose run --entrypoint poetry charts <commands> 
+```
+
+can be used to e.g. install deps:
+```
+$ docker-compose run --entrypoint poetry charts add pyarrow 
+```
+
+## tests
+```
+poetry run pytest tests
+```
+or inside the container
+
 # Deployment
 We use Github Actions. The pipeline is specified in `.github/workflows/pythonapp.yml`
 
