@@ -6,8 +6,9 @@ from bokeh.palettes import Category10
 import re
 from datetime import datetime
 from os.path import dirname, join
+from os import getenv
 
-DATA_FOLDER = join(dirname(__file__), "data")
+DATA_FOLDER = join(getenv("ROOT_FOLDER", dirname(__file__)), "data")
 DEFINITION_FILE = DATA_FOLDER + "/definition.xml"
 VIEW_1_FILENAME = "view_1.html"
 DATE_FORMAT = "%Y-%m-%d"
