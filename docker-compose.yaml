@@ -5,6 +5,8 @@ services:
     build:
       context: ./
     image: coron
+    environment:
+      ROOT_FOLDER: "/"
     ports:
       - 5001:5001
     volumes:
@@ -12,6 +14,8 @@ services:
       - ./tests:/usr/app/tests
       - ./poetry.lock:/usr/app/poetry.lock
       - ./pyproject.toml:/usr/app/pyproject.toml
+      - /home/dan/load/city_lookup.pq:/data/city_lookup.pq
+      - /home/dan/load/definition.xml:/data/definition.xml
     entrypoint:
       - bokeh
       - serve
@@ -22,7 +26,6 @@ services:
       - --allow-websocket-origin
       - "*"
       - src/charts/app1.py
-      - src/charts/app2.py
   server:
     build:
       context: ./
@@ -33,7 +36,7 @@ services:
       - ./src/:/usr/app/src/
     working_dir: /usr/app/src/server
     environment:
-      BOKEH_PUBLIC_URI: "http://0.0.0.0:5001"
+      BOKEH_URI: "http://0.0.0.0:5001"
     entrypoint:
       - uvicorn
       - main:app
