@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: 000000  # will be replaced during the deploy
 description: A charting tool and website
 name: covid
-version: 0.1.0
+version: 0.2.0
