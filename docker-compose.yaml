@@ -14,8 +14,8 @@ services:
       - ./tests:/usr/app/tests
       - ./poetry.lock:/usr/app/poetry.lock
       - ./pyproject.toml:/usr/app/pyproject.toml
-      - /home/dan/load/city_lookup.pq:/data/city_lookup.pq
-      - /home/dan/load/definition.xml:/data/definition.xml
+        #- /home/dan/load/city_lookup.pq:/data/city_lookup.pq
+        #- /home/dan/load/definition.xml:/data/definition.xml
     entrypoint:
       - bokeh
       - serve
