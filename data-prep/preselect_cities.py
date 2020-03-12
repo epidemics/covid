@@ -8,7 +8,6 @@ TIME_COL = "Timestep"
 
 
 def read_tsv(path):
-    # return pd.read_csv(path, sep="\t", index_col=0)
     return pd.read_csv(path, sep="\t")
 
 
@@ -25,10 +24,25 @@ def preprocess_data(all_data, all_cities, selected_cities):
     )
     # select only the files 1 and 3
     selected_cities = selected_cities[selected_cities["source_sec"].isin({1, 3})]
-    selected_cities = selected_cities.set_index(["City", "source_sec"]).sort_index()
+    index_cols = ["City", "source_sec"]
 
     # select only relevant columns
-    selected_cities = selected_cities[[TARGET_COL, TIME_COL]]
+    selected_cities = selected_cities[index_cols + [TARGET_COL, TIME_COL]]
+
+    # preprocessing step according to David Johnston
+    data_1 = (
+        selected_cities[selected_cities["source_sec"] == 1]
+        .drop(["source_sec"], axis=1)
+        .set_index(["City", TIME_COL])
+    )
+    data_3 = (
+        selected_cities[selected_cities["source_sec"] == 3]
+        .drop(["source_sec"], axis=1)
+        .set_index(["City", TIME_COL])
+    )
+    selected_cities = data_3 - data_1
+
+    selected_cities = selected_cities.sort_index()
 
     return selected_cities
 
@@ -48,4 +62,4 @@ if __name__ == "__main__":
 
     target_filepath = TARGET_DATA_FOLDER + "/city_lookup.pq"
     preprocessed_data.to_parquet(target_filepath)
-    print("data saved to:" + target_filepath)
+    print("data saved to: " + target_filepath)
