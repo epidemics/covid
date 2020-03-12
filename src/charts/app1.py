@@ -1,10 +1,6 @@
-import datetime
-
-import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, DataRange1d, RadioGroup, Select
-from bokeh.palettes import Blues4
+from bokeh.models import Select
 
 from charts.utils import (
     plot_multiple,
@@ -39,7 +35,7 @@ distribution_select = Select(
 )
 # TODO: this one doesn't do anything yet
 countermeasures = Select(
-    options=["0", "25%", "50%", "75%"],
+    options=["0%", "25%", "50%", "75%"],
     value="50%",
     title="Reduction transmission due countermeasures",
 )
