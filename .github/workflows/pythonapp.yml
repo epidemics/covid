@@ -17,6 +17,9 @@ jobs:
         args: "src/ --check"
 
   setup-build-publish-deploy:
+    if: github.event_name == 'tag'
+    env:
+      ENVIRONMENT: ${{ contains(github.ref, 'refs/tags/v') }}
     name: Build, Publish, Deploy
     runs-on: ubuntu-latest
     steps:
@@ -34,16 +37,19 @@ jobs:
     # Configure docker to use the gcloud command-line tool as a credential helper
     - run: |
         gcloud auth configure-docker
+
     # Build the Docker image
     - name: Build
       run: |
         docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA .
+
     # Push the Docker image to Google Container Registry
     - name: Publish
       run: |
         docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
 
-    - name: Helm deploy
+    - name: Helm deploy [STAGING]
+      if: contains(github.ref, 'beta')
       uses: hahow/install-helm-chart-action@v1.0.0
       with:
         gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
@@ -55,4 +61,22 @@ jobs:
         chart_name: ./deploy/chart
         helm_upgrade_args: |
           --values ./deploy/chart/values.yaml
+          --values ./deploy/chart/values.staging.yaml
+          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+
+    # TODO: violates DRY, simplify with the above
+    - name: Helm deploy [PRODUCTION]
+      if: contains(github.ref, 'testprod')
+      uses: hahow/install-helm-chart-action@v1.0.0
+      with:
+        gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        gcloud_project_id: ${{ secrets.GKE_PROJECT }}
+        cluster_name: epidemics
+        cluster_region: us-west1-c
+        release_namespace: production
+        release_name: covid
+        chart_name: ./deploy/chart
+        helm_upgrade_args: |
+          --values ./deploy/chart/values.yaml
+          --values ./deploy/chart/values.production.yaml
           --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
