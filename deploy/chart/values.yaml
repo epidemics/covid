@@ -6,7 +6,7 @@ charts:
   image:
     repository: us.gcr.io/epidemics-270907/covid
     name: test
-    tag: v1
+    tag: v2
   memoryLimit: "1Gi"
   cpuLimit: "2"
   memoryRequest: "500Mi"
@@ -19,7 +19,7 @@ web:
   image:
     repository: us.gcr.io/epidemics-270907/covid
     name: test
-    tag: v1
+    tag: v2
   replicaCount: 1
   memoryLimit: "1Gi"
   cpuLimit: "2"
@@ -27,4 +27,5 @@ web:
   cpuRequest: "0.3"
 
 ingress:
+  # reserved in GCP
   externalIpName: loadbalancer
