@@ -36,7 +36,7 @@ async def selection(request: Request) -> Response:
 
 @app.get("/result-calculations")
 async def result_calculations(
-    request: Request, datepicker: str = None, number: int = None
+    request: Request, datepicker: str, number: int
 ) -> Response:
     if number > 10:
         message = f"Oh no! {datepicker} and {number}?! You shouldn't do that"
