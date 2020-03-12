@@ -6,7 +6,7 @@ env:
   FULL_IMAGE_REF: gcr.io/$GKE_PROJECT/covid:$GITHUB_SHA
 
 jobs:
- checks:
+  checks:
     name: checks
     runs-on: ubuntu-latest
     steps:
