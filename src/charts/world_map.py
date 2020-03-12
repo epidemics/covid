@@ -4,6 +4,7 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
+from bokeh.io import curdoc
 from bokeh.models import HoverTool
 from bokeh.plotting import figure, Figure, output_file, show
 from bokeh.tile_providers import Vendors, get_provider
@@ -80,7 +81,5 @@ EXAMPLE_DATA = pd.DataFrame(
     columns=["name", "lat", "long", "cases"],
 )
 
-if __name__ == "__main__":
-    output_file("world_bubble_map.html", mode="inline")
-    p = plot(EXAMPLE_DATA)
-    show(p)
+p = plot(EXAMPLE_DATA)
+curdoc().add_root(p)
