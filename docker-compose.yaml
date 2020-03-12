@@ -9,6 +9,9 @@ services:
       - 5001:5001
     volumes:
       - ./src/charts:/usr/app/src/charts
+      - ./poetry.lock:/usr/app/poetry.lock
+      - ./pyproject.toml:/usr/app/pyproject.toml
+      - ./src/server:/usr/app/src/server
     entrypoint:
       - bokeh
       - serve
