@@ -8,10 +8,9 @@ services:
     ports:
       - 5001:5001
     volumes:
-      - ./src/charts:/usr/app/src/charts
+      - ./src/:/usr/app/src/
       - ./poetry.lock:/usr/app/poetry.lock
       - ./pyproject.toml:/usr/app/pyproject.toml
-      - ./src/server:/usr/app/src/server
     entrypoint:
       - bokeh
       - serve
@@ -30,7 +29,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./src/server:/usr/app/src/server
+      - ./src/:/usr/app/src/
     working_dir: /usr/app/src/server
     environment:
       BOKEH_PUBLIC_URI: "http://0.0.0.0:5001"

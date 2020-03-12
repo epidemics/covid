@@ -10,8 +10,7 @@ RUN \
   pip install --no-cache-dir --upgrade pip
 
 # TODO: split into multiple Dockerfiles and add proper entrypoints
-COPY ./src/charts ./src/charts
-COPY ./src/server ./src/server
+COPY ./src ./src/
 
 RUN . "$HOME/.poetry/env" && \
     poetry config virtualenvs.create false && \
