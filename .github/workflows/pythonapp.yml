@@ -25,7 +25,7 @@ jobs:
         release_name: covid
         chart_name: ./deploy/chart
         helm_upgrade_args: |
-          --values ./deploy/chart/values.yaml --dry-run --debug
+          --values ./deploy/chart/values.yaml
 #
 #    steps:
 #    - uses: actions/checkout@v2
