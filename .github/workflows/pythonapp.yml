@@ -17,17 +17,20 @@ jobs:
         args: "src/ tests/ --check"
 
   tests:
-    name: checks
+    name: tests
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Install
+    - name: Install deps
       uses: abatilo/actions-poetry@master
       with:
+        workdir: ._poetry_env
         args: install
     - uses: abatilo/actions-poetry@master
+      name: pytest
       with:
-        args: run pytest tests/
+        workdir: ._poetry_env
+        args: run pytest tests
 
   setup-build-publish-deploy:
     if: contains(github.ref, 'staging') || contains(github.ref, 'master')
