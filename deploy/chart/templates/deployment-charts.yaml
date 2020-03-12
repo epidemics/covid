@@ -60,6 +60,7 @@ spec:
             - --allow-websocket-origin
             - "*"
             - src/charts/app1.py
+            - src/charts/app2.py
           ports:
           - containerPort: 5001
           envFrom:
