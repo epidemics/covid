@@ -97,18 +97,20 @@ def get_dummy_data():
 
     n_plots = 4  # up to 8
     for i in range(n_plots):
-        df[TARGET_COL + "_" + str(i)] = df[TARGET_COL] + i
+        preprocessed_data[TARGET_COL + "_" + str(i)] = (
+            preprocessed_data[TARGET_COL] + i * 10
+        )
 
-    df = df.drop([TARGET_COL], axis=1)
+    preprocessed_data = preprocessed_data.drop([TARGET_COL], axis=1)
     start_date = get_model_start_date()
-    return df, start_date
+    return preprocessed_data, start_date
 
 
 if __name__ == "__main__":
 
     # Prepare some dummy data
-    df, start_date = get_dummy_data()
+    preprocessed_data, start_date = get_dummy_data()
 
-    source = get_datasource(df, start_date)
+    source = get_datasource(preprocessed_data, start_date)
     plot = plot_multiple(source)
     save_plot(plot)

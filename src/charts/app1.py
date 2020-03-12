@@ -6,24 +6,29 @@ from bokeh.layouts import column, row
 from bokeh.models import ColumnDataSource, DataRange1d, RadioGroup, Select
 from bokeh.palettes import Blues4
 
-from charts.utils import plot_multiple, get_datasource, get_dummy_data, get_datasource
+from charts.utils import (
+    plot_multiple,
+    get_datasource,
+    get_dummy_data,
+    get_datasource,
+    select_city,
+)
 
 
 def update_plot(attrname, old, new):
     city = city_select.value
     plot.title.text = "COVID-19 data for " + city
 
-    # src = get_dataset(df, cities[city]["airport"], distribution_select.value)
-    data_city = select_city(df, city)
+    data_city = select_city(preprocessed_data, city)
     src = get_datasource(data_city, start_date)
     source.data.update(src.data)
 
 
 # Prepare some dummy data
-df, start_date = get_dummy_data()
+preprocessed_data, start_date = get_dummy_data()
 
 # get city selection
-cities = df.reset_index()["City"].unique()
+cities = list(preprocessed_data.reset_index()["City"].unique())
 
 city = "New York"
 distribution = "Discrete"
@@ -36,10 +41,10 @@ distribution_select = Select(
 countermeasures = Select(
     options=["0", "25%", "50%", "75%"],
     value="50%",
-    title="reduction transmission due countermeasures",
+    title="Reduction transmission due countermeasures",
 )
 
-data_city = select_city(df, city)
+data_city = select_city(preprocessed_data, city)
 source = get_datasource(data_city, start_date)
 plot = plot_multiple(source, title="COVID-19 data for " + city)
 
