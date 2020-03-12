@@ -49,6 +49,7 @@ jobs:
         docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
 
     - name: Helm deploy [STAGING]
+      # TODO: rename to beta
       if: contains(github.ref, 'beta')
       uses: hahow/install-helm-chart-action@v1.0.0
       with:
@@ -62,7 +63,7 @@ jobs:
         helm_upgrade_args: |
           --values ./deploy/chart/values.yaml
           --values ./deploy/chart/values.staging.yaml
-          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}
           --dry-run
           --debug
 
@@ -81,4 +82,4 @@ jobs:
         helm_upgrade_args: |
           --values ./deploy/chart/values.yaml
           --values ./deploy/chart/values.production.yaml
-          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}
