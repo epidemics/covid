@@ -6,7 +6,7 @@ from bokeh.layouts import column, row
 from bokeh.models import ColumnDataSource, DataRange1d, RadioGroup, Select
 from bokeh.palettes import Blues4
 
-from utils import plot_multiple, get_datasource, get_dummy_data, get_datasource
+from charts.utils import plot_multiple, get_datasource, get_dummy_data, get_datasource
 
 
 def update_plot(attrname, old, new):

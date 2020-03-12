@@ -22,7 +22,7 @@ There two main components:
 # Development
 ## Using docker (the easiest) 
 ```
-docker-compose up
+docker-compose up  # possibly with --build
 ```
 and go to either `localhost:5001` (`bokeh`) or `localhost:8000` (main `server`) depending on what you want to access.
 
@@ -43,3 +43,25 @@ then start up the `fastapi` server:
 $ cd src/server
 $ uvicorn main:app --reload
 ```
+
+## Getting inside the container
+```
+$ docker-compose run --entrypoint bash charts
+```
+
+can be used to e.g. install deps:
+```
+$ docker-compose run --entrypoint poetry charts add pyarrow
+```
+
+## tests
+```
+poetry run pytest tests
+```
+or inside the container
+
+# Deployment
+We use Github Actions. The pipeline is specified in `.github/workflows/pythonapp.yml`
+
+* On a merge to `staging` branch, the code is deployed to the staging environment.
+* On a merge to `master` branch, the code is deployed to the production environment.
