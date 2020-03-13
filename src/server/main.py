@@ -36,7 +36,7 @@ async def request_calculation(request: Request) -> Response:
 @app.get("/model")
 async def model(request: Request, city: str = "New York") -> Response:
     """TODO: this should serve the main model visualization,
-    ideally sent somewhere via mail."""
+"""
     arguments = {"city": city} if city else {}
     plot_script = server_document(f"{BOKEH_URI}/app1", arguments=arguments)
     return templates.TemplateResponse(
