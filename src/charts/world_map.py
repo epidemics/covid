@@ -6,7 +6,7 @@ from typing import Union
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
-from bokeh.models import HoverTool, OpenURL, TapTool
+from bokeh.models import Circle, HoverTool, OpenURL, TapTool
 from bokeh.plotting import figure, Figure, show
 from bokeh.tile_providers import Vendors, get_provider
 
@@ -63,21 +63,33 @@ def plot(data: pd.DataFrame, height=512, width=1024) -> Figure:
         tools=tools,
     )
     p.add_tile(tile_provider)
-    p.circle(
-        x="web_mercator_x", y="web_mercator_y", radius=200000, alpha=0.5, source=data, color="red"
+
+    circle_options = dict(fill_alpha=.5, fill_color="firebrick", line_color="black")
+    circle_renderer = p.circle(
+        x="web_mercator_x", y="web_mercator_y", radius=200000, source=data, **circle_options
     )
 
+    selected_circle = Circle(**circle_options)
+    nonselected_circle = Circle(**circle_options)
+
+    circle_renderer.selection_glyph = selected_circle
+    circle_renderer.nonselection_glyph = nonselected_circle
+
+    tooltips = """
+    <div>
+        <div style="font-weight: bold">@City, @Country</div>
+        <div>Click to show plots</div>
+    </div>
+    """
+
     hover = p.select(dict(type=HoverTool))
-    hover.tooltips = [
-        ("City", "@City"),
-        ("Country", "@Country"),
-    ]
+    hover.tooltips = tooltips
     hover.mode = "mouse"
 
     # Based on https://stackoverflow.com/questions/41511274/turn-bokeh-glyph-into-a-link
     url = "https://en.wikipedia.org/wiki/@City"
     taptool = p.select(type=TapTool)
-    taptool.callback = OpenURL(url=url)
+    taptool.callback = OpenURL(url=url, same_tab=True)
 
     return p
 
