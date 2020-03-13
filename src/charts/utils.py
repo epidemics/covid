@@ -3,7 +3,6 @@ from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure, output_file, save
 from bokeh.models.tools import HoverTool
 from bokeh.palettes import Category10
-import re
 from datetime import datetime
 from os.path import dirname, join
 from os import getenv
