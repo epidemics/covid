@@ -11,13 +11,6 @@ from charts.utils import (
 )
 
 
-query_args = curdoc().session_context.request.arguments
-
-try:
-    SELECTED_CITY = int(query_args.get('city')[0])
-except:
-    SELECTED_CITY = "New York"
-
 def update_plot(attrname, old, new):
     city = city_select.value
     plot.title.text = "COVID-19 data for " + city
@@ -36,7 +29,7 @@ cities = list(preprocessed_data.reset_index()["City"].unique())
 city = "New York"
 distribution = "Discrete"
 
-city_select = Select(value=SELECTED_CITY, title="Area", options=cities)
+city_select = Select(value=city, title="Area", options=cities)
 distribution_select = Select(
     value=distribution, title="Distribution", options=["Discrete", "Smoothed"]
 )
