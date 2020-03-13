@@ -11,9 +11,6 @@ from charts.utils import (
 )
 
 
-
-
-
 def update_plot(attrname, old, new):
     city = city_select.value
     plot.title.text = "COVID-19 data for " + city
@@ -31,7 +28,7 @@ cities = list(preprocessed_data.reset_index()["City"].unique())
 
 query_args = curdoc().session_context.request.arguments
 try:
-    city = query_args.get('city')[0].decode()
+    city = query_args.get("city")[0].decode()
 except:
     city = "New York"
 if not city in cities:
