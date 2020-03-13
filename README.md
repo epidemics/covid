@@ -44,6 +44,16 @@ $ cd src/server
 $ uvicorn main:app --reload
 ```
 
+### Using conda environments
+1. [Install miniconda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html#) ([e.g. Windows](https://conda.io/projects/conda/en/latest/user-guide/install/windows.html)
+2. open terminal in the clonned repository and run:
+```
+$ conda create -n covid python=3.8  # creates a new conda environment with python 3.8
+$ conda activate covid  # activates the conda environment
+$ pip install poetry  # installs poetry inside this environment
+$ poetry install  # installs the project dependencies (you must be in the root of the clonned repository)
+```
+
 ## Getting inside the container
 ```
 $ docker-compose run --entrypoint bash charts
