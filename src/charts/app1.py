@@ -26,7 +26,15 @@ preprocessed_data, start_date = load_view1_data()
 # get city selection
 cities = list(preprocessed_data.reset_index()["City"].unique())
 
-city = "New York"
+query_args = curdoc().session_context.request.arguments
+try:
+    city = query_args.get("city")[0].decode()
+except:
+    city = "New York"
+if not city in cities:
+    # TODO: Some exception handling
+    pass
+
 distribution = "Discrete"
 
 city_select = Select(value=city, title="Area", options=cities)

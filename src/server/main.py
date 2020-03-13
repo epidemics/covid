@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 # the URI must be accessible from the client's browser, it's not "proxied" via the server
-BOKEH_URI = os.getenv("BOKEH_URI", "http://0.0.0.0:5001")
+BOKEH_URI = os.getenv("BOKEH_URI", "http://0.0.0.0:5001").rstrip("/")
 SERVER_ROOT = os.path.dirname(__file__)
 
 app = FastAPI()
@@ -34,9 +34,11 @@ async def request_calculation(request: Request) -> Response:
 
 
 @app.get("/model")
-async def model(request: Request) -> Response:
-    """TODO: this should serve the main model visualization"""
-    plot_script = server_document(os.path.join(BOKEH_URI, "app1"))
+async def model(request: Request, city: str = "New York") -> Response:
+    """TODO: this should serve the main model visualization,
+"""
+    arguments = {"city": city} if city else {}
+    plot_script = server_document(f"{BOKEH_URI}/app1", arguments=arguments)
     return templates.TemplateResponse(
         "model.html", {"request": request, "plot": plot_script},
     )
