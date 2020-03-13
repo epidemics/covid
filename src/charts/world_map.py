@@ -6,7 +6,7 @@ from typing import Union
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
-from bokeh.models import HoverTool
+from bokeh.models import HoverTool, OpenURL, TapTool
 from bokeh.plotting import figure, Figure, show
 from bokeh.tile_providers import Vendors, get_provider
 
@@ -51,7 +51,7 @@ def plot(data: pd.DataFrame, height=512, width=1024) -> Figure:
 
     tile_provider = get_provider(Vendors.CARTODBPOSITRON)
 
-    tools = "hover,box_zoom,pan,save,reset,wheel_zoom"
+    tools = "hover,box_zoom,pan,save,reset,wheel_zoom,tap"
 
     p = figure(
         height=height,
@@ -64,7 +64,7 @@ def plot(data: pd.DataFrame, height=512, width=1024) -> Figure:
     )
     p.add_tile(tile_provider)
     p.circle(
-        x="web_mercator_x", y="web_mercator_y", radius=200000, alpha=0.5, source=data
+        x="web_mercator_x", y="web_mercator_y", radius=200000, alpha=0.5, source=data, color="red"
     )
 
     hover = p.select(dict(type=HoverTool))
@@ -73,6 +73,11 @@ def plot(data: pd.DataFrame, height=512, width=1024) -> Figure:
         ("Country", "@Country"),
     ]
     hover.mode = "mouse"
+
+    # Based on https://stackoverflow.com/questions/41511274/turn-bokeh-glyph-into-a-link
+    url = "https://en.wikipedia.org/wiki/@City"
+    taptool = p.select(type=TapTool)
+    taptool.callback = OpenURL(url=url)
 
     return p
 
