@@ -15,16 +15,16 @@ def update_plot(attrname, old, new):
     city = city_select.value
     plot.title.text = "COVID-19 data for " + city
 
-    data_city = select_city(preprocessed_data, city)
+    data_city = select_city(city_lookup, city)
     src = get_datasource(data_city, start_date)
     source.data.update(src.data)
 
 
 # Load data
-preprocessed_data, start_date = load_view1_data()
+city_lookup, start_date = load_view1_data()
 
 # get city selection
-cities = list(preprocessed_data.reset_index()["City"].unique())
+cities = list(city_lookup.reset_index()["City"].unique())
 
 query_args = curdoc().session_context.request.arguments
 try:
@@ -48,7 +48,7 @@ countermeasures = Select(
     title="Reduction transmission due countermeasures",
 )
 
-data_city = select_city(preprocessed_data, city)
+data_city = select_city(city_lookup, city)
 source = get_datasource(data_city, start_date)
 plot = plot_multiple(source, title="COVID-19 data for " + city)
 

@@ -16,6 +16,7 @@ aiofiles = "^0.4.0"
 uvicorn = "^0.11.3"
 pyarrow = "^0.16.0"
 covid = {path = "src"}
+tables = "^3.6.1"
 
 
 [tool.poetry.dev-dependencies]

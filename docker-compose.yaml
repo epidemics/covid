@@ -15,8 +15,7 @@ services:
       - ./poetry.lock:/usr/app/poetry.lock
       - ./pyproject.toml:/usr/app/pyproject.toml
       # TODO: you have to have these in your root dir, can be found on slack
-      - ./city_lookup.pq:/data/city_lookup.pq
-      - ./definition.xml:/data/definition.xml
+      - ./covid_data.hdf:/data/covid_data.hdf
     entrypoint:
       - bokeh
       - serve

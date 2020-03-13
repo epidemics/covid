@@ -9,10 +9,7 @@ from os.path import dirname, join
 from os import getenv
 
 DATA_FOLDER = join(getenv("ROOT_FOLDER", dirname(__file__)), "data")
-DEFINITION_FILE = DATA_FOLDER + "/definition.xml"
 VIEW_1_FILENAME = "view_1.html"
-DATE_FORMAT = "%Y-%m-%d"
-TARGET_COL = "Cumulative Median"
 
 
 def select_city(data, city):
@@ -77,31 +74,19 @@ def save_plot(plot):
     save(plot)
 
 
-def read_definition_file():
-    with open(DEFINITION_FILE, "r") as f:
-        definition = f.read()
-
-    return definition
-
-
-def get_model_start_date():
-    definition = read_definition_file()
-    m = re.search('startDate="(.*?)"', definition)
-    start_date = m.group(1)
-    start_date = datetime.strptime(start_date, DATE_FORMAT)
-    return start_date
-
-
 def load_view1_data():
-    preprocessed_data = pd.read_parquet(DATA_FOLDER + "/city_lookup.pq")
-
-    start_date = get_model_start_date()
-    return preprocessed_data, start_date
+    city_lookup = pd.read_hdf(DATA_FOLDER + "/covid_data.hdf", "data/city_lookup")
+    start_date = pd.read_hdf(
+        DATA_FOLDER + "/covid_data.hdf", "metadata/model_info"
+    ).loc["start_date"]
+    return city_lookup, start_date
 
 
 if __name__ == "__main__":
-    preprocessed_data, start_date = load_view1_data()
+    city_lookup, start_date = load_view1_data()
 
-    source = get_datasource(preprocessed_data, start_date)
+    city = "New York"
+
+    source = get_datasource(city_lookup.loc[city], start_date)
     plot = plot_multiple(source)
     save_plot(plot)

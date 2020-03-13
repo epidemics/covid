@@ -57,22 +57,34 @@ def preprocess_data(all_data, all_cities, selected_cities):
     return selected_cities
 
 
-if __name__ == "__main__":
+def load_cities():
     all_cities = read_tsv(SRC_DATA_FOLDER + "/md_cities.tsv")
     print("all cities loaded")
 
     selected_cities = read_tsv(SRC_DATA_FOLDER + "/city_selections.csv")
     print("city selection loaded")
 
+    return all_cities, selected_cities
+
+
+def process_data(all_cities, selected_cities, all_data):
+    processed_data = preprocess_data(all_data, all_cities, selected_cities)
+    print("preprocesessing done")
+
+    processed_data = get_dummy_data(processed_data, number=4)
+    print("dummy data created (real data artificially inflated)")
+
+    return processed_data
+
+
+if __name__ == "__main__":
+    all_cities, selected_cities = load_cities()
+
     all_data = pd.read_parquet(SRC_DATA_FOLDER + "/areas.pq")
     print("gleamviz data loaded")
 
-    preprocessed_data = preprocess_data(all_data, all_cities, selected_cities)
-    print("preprocesessing done")
-
-    preprocessed_data = get_dummy_data(preprocessed_data, number=4)
-    print("dummy data created (real data artificially inflated)")
+    processed_data = process_data(all_cities, selected_cities, all_data)
 
     target_filepath = TARGET_DATA_FOLDER + "/city_lookup.pq"
-    preprocessed_data.to_parquet(target_filepath)
+    processed_data.to_parquet(target_filepath)
     print("data saved to: " + target_filepath)
