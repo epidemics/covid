@@ -35,8 +35,7 @@ async def request_calculation(request: Request) -> Response:
 
 @app.get("/model")
 async def model(request: Request) -> Response:
-    """TODO: this should serve the main model visualization,
-    ideally sent somewhere via mail."""
+    """TODO: this should serve the main model visualization"""
     plot_script = server_document(os.path.join(BOKEH_URI, "app1"))
     return templates.TemplateResponse(
         "model.html", {"request": request, "plot": plot_script},
