@@ -64,9 +64,13 @@ def plot(data: pd.DataFrame, height=512, width=1024) -> Figure:
     )
     p.add_tile(tile_provider)
 
-    circle_options = dict(fill_alpha=.5, fill_color="firebrick", line_color="black")
+    circle_options = dict(fill_alpha=0.5, fill_color="firebrick", line_color="black")
     circle_renderer = p.circle(
-        x="web_mercator_x", y="web_mercator_y", radius=200000, source=data, **circle_options
+        x="web_mercator_x",
+        y="web_mercator_y",
+        radius=200000,
+        source=data,
+        **circle_options
     )
 
     selected_circle = Circle(**circle_options)
