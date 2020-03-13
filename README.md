@@ -51,7 +51,7 @@ $ uvicorn main:app --reload
 $ conda create -n covid python=3.8  # creates a new conda environment with python 3.8
 $ conda activate covid  # activates the conda environment
 $ pip install poetry  # installs poetry inside this environment
-$ poetry install  # installs the project dependencies (you must be in the root of the clonned repository)
+$ poetry install  # installs the project dependencies (you must be in the root of the cloned repository)
 ```
 
 ## Getting inside the container
