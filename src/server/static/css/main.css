@@ -28,6 +28,7 @@ body {
 	font-family: 'DM Sans', sans-serif;
   background-color: #222129;
   color: #69696C;
+  height: 100%;
 }
 
 body {
@@ -42,8 +43,18 @@ h1 {
 	align-items: center;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, .title {
 	text-transform: uppercase;
+}
+
+.title {
+	color: white;
+	font-weight: normal;
+	padding-bottom: 1.5em;
+}
+
+.fill {
+	height: 100%;
 }
 
 /*
@@ -61,7 +72,7 @@ header h1:before {
 	display: block;
 	content: '';
 	width: 4rem;
-	padding: 1px;
+	padding: 2px;
 	border-top: 2px solid #FFF;
 }
 
@@ -87,6 +98,10 @@ header h1:before {
   border-bottom-color: #FFF;
 }
 
+main {
+	padding: 1.5rem 0;
+}
+
 /*@media (min-width: 48em) {
   .masthead-brand {
     float: left;
@@ -97,6 +112,26 @@ header h1:before {
 }*/
 
 
+.side {
+	background: #0E0E12;
+}
+
+.side .line {
+	margin: 1.5rem 0;
+	border-bottom: 1px solid #32303A;
+}
+
+.num {
+	color: #DF925C;
+}
+
+.area {
+	color: white;
+}
+
+footer {
+	font-size: .9em;
+}
 /*
  * Cover
  */
