@@ -1,6 +1,115 @@
-{% extends "base.html" %}
-{% block content %}
-    <div>
-        <p>Here should be a form where a user could submit some parameters we compute for them!</p>
+{% extends "base.html" %} {% block content %}
+<form action="/result-calculations">
+  <div class="form-group">
+    <label for="location">Where is your event?</label>
+
+    <select class="form-control" id="exampleFormControlSelect1">
+      <option selected>Choose...</option>
+      <option value="Africa">Africa</option>
+      <option value="Australia">Australia</option>
+      <option value="Belgium">Belgium</option>
+      <option value="California">California</option>
+      <option value="China">China</option>
+      <option value="Dubai">Dubai</option>
+      <option value="Egypt">Egypt</option>
+      <option value="European Union">European Union</option>
+      <option value="France">France</option>
+      <option value="Germany">Germany</option>
+      <option value="Hong Kong">Hong Kong</option>
+      <option value="Hubei">Hubei</option>
+      <option value="India">India</option>
+      <option value="Indonesia">Indonesia</option>
+      <option value="Iran">Iran</option>
+      <option value="Italy">Italy</option>
+      <option value="Japan">Japan</option>
+      <option value="London">London</option>
+      <option value="Netherlands">Netherlands</option>
+      <option value="New York">New York</option>
+      <option value="Oxford">Oxford</option>
+      <option value="Russia">Russia</option>
+      <option value="San Francisco">San Francisco</option>
+      <option value="Singapore">Singapore</option>
+      <option value="South Korea">South Korea</option>
+      <option value="Spain">Spain</option>
+      <option value="Switzerland">Switzerland</option>
+      <option value="The Middle East">The Middle East</option>
+      <option value="United Kingdon">United Kingdon</option>
+      <option value="United States of America">United States of America</option>
+      <option value="Washington">Washington</option>
+      <option value="Wuhan">Wuhan</option>
+    </select>
+
+    <label for="datepicker">When is your event?</label><br />
+    <input
+      class="form-control"
+      id="datepicker"
+      name="datepicker"
+      data-provide="datepicker"
+      data-date-format="mm/dd/yyyy"
+    />
+
+    <label for="number">How many people will attend?</label><br />
+    <!--slider-->
+    <input
+      class="form-control"
+      placeholder="Number of people"
+      type="number"
+      name="number"
+    />
+    <br />
+
+    <label for="length">How long is your event?</label>
+    <div class="btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="radio" name="hours" id="hours" autocomplete="off" />
+        A few hours
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" name="day" id="day" autocomplete="off" /> A day
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" name="days" id="days" autocomplete="off" /> A few
+        days or more
+      </label>
     </div>
+
+    <label for="size">How much contact will people have?</label>
+    <div class="btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="radio" name="little" id="little" autocomplete="off" />
+        A little
+      </label>
+      <label class="btn btn-secondary">
+        <input
+          type="radio"
+          name="inbetween"
+          id="inbetween"
+          autocomplete="off"
+        />
+        In-between
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" name="lot" id="lot" autocomplete="off" /> A lot
+      </label>
+    </div>
+    <div>
+      <p>Examples:</p>
+      <p>A little: a lecture, working in an office</p>
+      <p>In-between: a networking conference</p>
+      <p>A lot: a dancing workshop, a party</p>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">See results</button>
+</form>
+
+{% endblock %} {% block additional_js %}
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"
+  integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8="
+  crossorigin="anonymous"
+></script>
+<script>
+  $("#datepicker").datepicker();
+</script>
 {% endblock %}
