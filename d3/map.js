@@ -3,9 +3,6 @@ var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
-// var initX;
-// var mouseClicked = false;
-
 
 
 // Map and projection
@@ -14,24 +11,7 @@ var projection = d3.geoMercator()
     .scale(150)                       // This is like the zoom
     .translate([ width/2, height/2 ])
 
-// var zoom = d3.zoom()
-//   .scaleExtent([1, 10])
-//   .on("zoom", zoomed)
-//   .on("end", zoomended);
 
-
-// svg.on("wheel", function() {
-//   //zoomend needs mouse coords
-//   initX = d3.mouse(this)[0];
-// })
-// .on("mousedown", function() {
-//   //only if scale === 1
-//   if(s !== 1) return;
-//   initX = d3.mouse(this)[0];
-//   mouseClicked = true;
-// })
-// .call(zoom);
-// zoom and pan
 
 function transformBubbleData(data) {
   return data.map(bubble => ({lat: bubble.Latitude, long: bubble.Longitude}))
