@@ -15,43 +15,71 @@
     <!-- Custom styles for this template -->
     <link href="../static/css/main.css" rel="stylesheet">
 
-    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.0.0.min.js"></script>
-    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.0.0.min.js"></script>
-    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.0.0.min.js"></script>
-    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-2.0.0.min.js"></script>
-    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-api-2.0.0.min.js"></script>
+	{% block additional_js_pre %}
+	  {% endblock %}
 
   </head>
 
-  <body class="text-center">
+  <body>
 
-    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
-      <header class="masthead mb-auto">
-        <div class="inner">
-          <h3 class="masthead-brand">Cover</h3>
-          <nav class="nav nav-masthead justify-content-center">
-            <a class="nav-link" href="/">Home</a>
-            <a class="nav-link" href="/model">Model</a>
-            <a class="nav-link" href="/request-calculation">Request model</a>
-            <a class="nav-link" href="/selections">Organizers</a>
-          </nav>
-        </div>
-      </header>
+    <header>
+      <div class="container">
+      	<div class="row d-flex align-items-center">
+	        <h1 class="col-3 flex-grow-1">Epidemic Forecasting</h1>
+	        <nav class="col nav nav-masthead justify-content-end">
+	          <a class="nav-link active" href="/">Home</a>
+	          <a class="nav-link" href="/model">Model</a>
+	          <a class="nav-link" href="/request-calculation">Request model</a>
+	          <a class="nav-link" href="/selections">Organizers</a>
+	        </nav>
+	      </div>
+	    </div>
+    </header>
 
-      <main role="main" class="inner cover">
-        <div class="row">
-          <div class="col-md">
-            {% block content %}
-            {% endblock %}
-          </div>
-        </div>
-      <footer class="mastfoot mt-auto">
-        <div class="inner">
-          <p>Some footer</p>
-        </div>
-      </footer>
-      </main>
-    </div>
+    <div class="container fill">
+    	<div class="row">
+    		<div class="col">
+		      <main role="main" class="">
+		            {% block content %}
+		            {% endblock %}
+		      </main>
+	      </div>
+		    <div class="col-4">
+		    	<div class="side p-4">
+		     		<div class="title">Most affected countries</div>
+		     		<table>
+		     			<tr><td class='num'>80,949</td><td class='area'>China</td></tr>
+		     			<tr><td class='num'>17,660</td><td class='area'>Italy</td></tr>
+		     			<tr><td class='num'>11,364</td><td class='area'>Iran</td></tr>
+		     			<tr><td class='num'>8,086</td><td class='area'>South Korea</td></tr>
+		     			<tr><td class='num'>5,232</td><td class='area'>Spain</td></tr>
+		     		</table>
+
+		     		<div class='line'></div>
+
+		     		<div class="title">Most affected cities</div>
+		     		<table>
+		     			<tr><td class='num'>80,949</td><td class='area'>China</td></tr>
+		     			<tr><td class='num'>17,660</td><td class='area'>Italy</td></tr>
+		     			<tr><td class='num'>11,364</td><td class='area'>Iran</td></tr>
+		     			<tr><td class='num'>8,086</td><td class='area'>South Korea</td></tr>
+		     			<tr><td class='num'>5,232</td><td class='area'>Spain</td></tr>
+		     		</table>
+
+     				<div class='line'></div>
+
+			      <footer class="">
+		          <p>Last Updated: 3/14/2020, 2:53:03 AM</p>
+
+		     			<div class='line'></div>
+
+		          <p>Disclaimer: All data used to produce this map are exclusively collected from publicly available sources, including government reports and news media.</p>
+			      </footer>
+		    	</div>
+
+    		</div>
+    	</div>
+  	</div>
 
 
     <!-- Bootstrap core JavaScript
@@ -60,7 +88,7 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-
+    <link href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap" rel="stylesheet">
     {% block additional_js %}
     {% endblock %}
   </body>

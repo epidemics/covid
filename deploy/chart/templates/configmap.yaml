@@ -5,5 +5,3 @@ metadata:
 data:
   APP_REVISION: {{ .Chart.AppVersion | quote }}
   LOG_LEVEL: {{ .Values.env.logLevel }}
-  BOKEH_URI: "http://{{ .Values.charts.service.externalIp }}:5001"
-  ROOT_FOLDER: "/"
