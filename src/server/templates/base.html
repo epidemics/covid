@@ -25,34 +25,38 @@
 
   <body>
 
-    <header class="masthead">
-      <div class="d-flex align-items-center p-3">
-        <h1 class="masthead-brand flex-grow-1">Epidemic Forecasting</h1>
-        <nav class="nav nav-masthead justify-content-center">
-          <a class="nav-link active" href="/">Home</a>
-          <a class="nav-link" href="/model">Model</a>
-          <a class="nav-link" href="/request-calculation">Request model</a>
-          <a class="nav-link" href="/selections">Organizers</a>
-        </nav>
-      </div>
+    <header>
+      <div class="container">
+      	<div class="row d-flex align-items-center">
+	        <h1 class="col-3 flex-grow-1">Epidemic Forecasting</h1>
+	        <nav class="col nav nav-masthead justify-content-end">
+	          <a class="nav-link active" href="/">Home</a>
+	          <a class="nav-link" href="/model">Model</a>
+	          <a class="nav-link" href="/request-calculation">Request model</a>
+	          <a class="nav-link" href="/selections">Organizers</a>
+	        </nav>
+	      </div>
+	    </div>
     </header>
 
-    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+    <div class="container">
+    	<div class="row">
+    		<div class="col">
+		      <main role="main" class="">
+		            {% block content %}
+		            {% endblock %}
+		      </main>
+	      </div>
+		    <div class="col-4">
+		     	Column
 
-      <main role="main" class="inner cover">
-        <div class="row">
-          <div class="col-md">
-            {% block content %}
-            {% endblock %}
-          </div>
-        </div>
-      <footer class="mastfoot mt-auto">
-        <div class="inner">
-          <p>Some footer</p>
-        </div>
-      </footer>
-      </main>
-    </div>
+		      <footer class="mastfoot mt-auto">
+		          <p>Some footer</p>
+		      </footer>
+		    </div>
+
+    	</div>
+  	</div>
 
 
     <!-- Bootstrap core JavaScript
