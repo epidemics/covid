@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 spec:
-  replicas: {{ .Values.charts.replicas }}
+  replicas: {{ .Values.charts.replicasCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}
@@ -60,7 +60,7 @@ spec:
             - --allow-websocket-origin
             - "*"
             - src/charts/app1.py
-            - src/charts/app2.py
+            - src/charts/world_map.py
           ports:
           - containerPort: 5001
           envFrom:
