@@ -4,6 +4,7 @@ from bokeh.embed import server_document
 from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 
 # the URI must be accessible from the client's browser, it's not "proxied" via the server
 BOKEH_URI = os.getenv("BOKEH_URI", "http://0.0.0.0:5001")
@@ -30,6 +31,7 @@ async def index(request: Request) -> Response:
 @app.get("/request-calculation")
 async def request_calculation(request: Request) -> Response:
     """TODO: This view should process a form"""
+    """MATI: Actually, I don't think we'll have anything to process here as the first page just has a START button"""
     return templates.TemplateResponse("request-calculation.html", {"request": request},)
 
 
@@ -46,7 +48,8 @@ async def model(request: Request) -> Response:
 @app.get("/selections")
 async def selection(request: Request) -> Response:
     return templates.TemplateResponse(
-        "selections.html", {"request": request, "message": "Please provide data"},
+        "selections.html", {"request": request,
+                            "message": "Please provide data"},
     )
 
 
