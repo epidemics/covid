@@ -10,8 +10,6 @@ from bokeh.models import Circle, HoverTool, OpenURL, TapTool
 from bokeh.plotting import figure, Figure, show
 from bokeh.tile_providers import Vendors, get_provider
 
-from charts.utils import SERVER_ROOT
-
 
 # For typing hints
 NumberLike = Union[Real, pd.Series, np.ndarray]
@@ -94,7 +92,7 @@ def plot(data: pd.DataFrame, height=512, width=1024) -> Figure:
     hover.mode = "mouse"
 
     # Based on https://stackoverflow.com/questions/41511274/turn-bokeh-glyph-into-a-link
-    url = f"{SERVER_ROOT}/model?city=@City"
+    url = "/model?city=@City"
     taptool = p.select(type=TapTool)
     taptool.callback = OpenURL(url=url, same_tab=True)
 

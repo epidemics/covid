@@ -9,7 +9,6 @@ from os.path import dirname, join
 from os import getenv
 
 DATA_FOLDER = join(getenv("ROOT_FOLDER", dirname(__file__)), "data")
-SERVER_ROOT = getenv("SERVER_ROOT", "http://127.0.0.1:8000").rstrip("/")
 DEFINITION_FILE = DATA_FOLDER + "/definition.xml"
 VIEW_1_FILENAME = "view_1.html"
 DATE_FORMAT = "%Y-%m-%d"
