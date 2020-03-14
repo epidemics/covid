@@ -1,7 +1,3 @@
 ingress:
   # reserved in GCP, note that I forgot `r` at the end
   externalIpName: loadbalance-staging
-
-charts:
-  service:
-    externalIp: 35.203.189.186
