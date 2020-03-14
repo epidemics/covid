@@ -6,7 +6,7 @@
 a,
 a:focus,
 a:hover {
-  color: #83908E;
+  color: #83908e;
 }
 
 /* Custom default button */
@@ -19,49 +19,61 @@ a:hover {
   border: .05rem solid #fff;
 }*/
 
-
 /*
  * Base structure
  */
 html,
 body {
-	font-family: 'DM Sans', sans-serif;
-  background-color: #222129;
-  color: #69696C;
+  font-family: "DM Sans", sans-serif;
+  background-color: #0e0d0d;
+  color: #a9a9ac;
   height: 100%;
 }
 
 body {
-	font-size: .9rem;
+  font-size: 0.9rem;
 }
 
 h1 {
-	font-size: 1em;
-	color: #FFF;
-	font-weight: bolder;
-	justify-content: center;
-	align-items: center;
+  font-size: 1em;
+  color: #fff;
+  font-weight: bolder;
+  justify-content: center;
+  align-items: center;
 }
 
-h1, h2, h3, h4, .title {
-	text-transform: uppercase;
+h1,
+h2,
+h3,
+h4,
+.title {
+  text-transform: uppercase;
 }
 
 .title {
-	color: white;
-	font-weight: normal;
-	padding-bottom: 1.5em;
+  color: white;
+  font-weight: normal;
+  padding-bottom: 1.5em;
+}
+
+.title-form {
+  color: white;
+  font-weight: normal;
+  font-size: 35px;
+  line-height: 50px;
+  text-transform: none;
+  padding-bottom: 10px;
 }
 
 .fill {
-	height: 100%;
+  height: 100%;
 }
 
 /*
  * Header
  */
 header {
-  border-bottom: 1px solid #32303A;
+  border-bottom: 1px solid #32303a;
 }
 
 header h1 {
@@ -69,37 +81,37 @@ header h1 {
 }
 
 header h1:before {
-	display: block;
-	content: '';
-	width: 4rem;
-	padding: 2px;
-	border-top: 2px solid #FFF;
+  display: block;
+  content: "";
+  width: 4rem;
+  padding: 2px;
+  border-top: 2px solid #fff;
 }
 
 .nav-masthead .nav-link {
   padding: 1.5em 1.5em 1em;
   font-weight: 700;
-  border-bottom: .25rem solid transparent;
+  border-bottom: 0.25rem solid transparent;
 }
 
 .nav-masthead .nav-link:hover,
 .nav-masthead .nav-link:focus {
-	color: #AAA;
-  border-bottom-color: #AAA;
+  color: #aaa;
+  border-bottom-color: #aaa;
 }
 
 .nav-masthead .nav-link.active:hover,
 .nav-masthead .nav-link.active:focus {
-  color: #AAA;
+  color: #aaa;
 }
 
 .nav-masthead .active {
-  color: #FFF;
-  border-bottom-color: #FFF;
+  color: #fff;
+  border-bottom-color: #fff;
 }
 
 main {
-	padding: 1.5rem 0;
+  padding: 1.5rem 0;
 }
 
 /*@media (min-width: 48em) {
@@ -111,26 +123,25 @@ main {
   }
 }*/
 
-
 .side {
-	background: #0E0E12;
+  background: #0e0e12;
 }
 
 .side .line {
-	margin: 1.5rem 0;
-	border-bottom: 1px solid #32303A;
+  margin: 1.5rem 0;
+  border-bottom: 1px solid #32303a;
 }
 
 .num {
-	color: #DF925C;
+  color: #df925c;
 }
 
 .area {
-	color: white;
+  color: white;
 }
 
 footer {
-	font-size: .9em;
+  font-size: 0.9em;
 }
 /*
  * Cover
@@ -150,3 +161,50 @@ footer {
 /*.mastfoot {
   color: rgba(255, 255, 255, .5);
 }*/
+
+hr {
+  border-color: #323232;
+}
+
+/*
+* Form
+*/
+label {
+  text-transform: uppercase;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 11px 20px;
+  border-radius: 0px;
+}
+
+label.btn-secondary > input {
+  display: none;
+}
+
+.btn-primary {
+  background-color: white !important;
+  color: black !important;
+  text-transform: uppercase;
+}
+
+.vertical-buttons > div > div > label {
+  min-width: 140px;
+}
+
+@media only screen and (max-width: 575px) {
+  .vertical-buttons > div > .description {
+    margin-bottom: 15px;
+  }
+}
+
+@media only screen and (min-width: 576px) {
+  .vertical-buttons > div > .description {
+    padding-top: 15px;
+  }
+}
+
+.full-width {
+  width: 100%;
+}

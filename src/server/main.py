@@ -22,7 +22,8 @@ templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 async def index(request: Request) -> Response:
     """TODO: this is the main hompage, should have a bubble map which should
     link ot the /model"""
-    bubble_map_script = server_document(f"{BOKEH_URI}/world_map", resources=None)
+    bubble_map_script = server_document(
+        f"{BOKEH_URI}/world_map", resources=None)
     return templates.TemplateResponse(
         "index.html", {"request": request, "plot": bubble_map_script},
     )
@@ -31,7 +32,6 @@ async def index(request: Request) -> Response:
 @app.get("/request-calculation")
 async def request_calculation(request: Request) -> Response:
     """TODO: This view should process a form"""
-    """MATI: Actually, I don't think we'll have anything to process here as the first page just has a START button"""
     return templates.TemplateResponse("request-calculation.html", {"request": request},)
 
 
@@ -48,11 +48,19 @@ async def model(request: Request, city: str = "New York") -> Response:
     )
 
 
-@app.get("/selections")
+@app.get("/request-event-evaluation")
 async def selection(request: Request) -> Response:
     return templates.TemplateResponse(
-        "selections.html", {"request": request,
-                            "message": "Please provide data"},
+        "request-event-evaluation.html", {"request": request,
+                                          "message": "Please provide data"},
+    )
+
+
+@app.get("/result-event-evaluation")
+async def selection(request: Request) -> Response:
+    return templates.TemplateResponse(
+        "result-event-evaluation.html", {"request": request,
+                                         "message": "Please provide data"},
     )
 
 
