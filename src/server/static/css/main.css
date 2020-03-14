@@ -42,6 +42,10 @@ h1 {
 	align-items: center;
 }
 
+h1, h2, h3, h4 {
+	text-transform: uppercase;
+}
+
 /*
  * Header
  */
@@ -50,8 +54,15 @@ header {
 }
 
 header h1 {
-	text-transform: uppercase;
   margin: 0;
+}
+
+header h1:before {
+	display: block;
+	content: '';
+	width: 4rem;
+	padding: 1px;
+	border-top: 2px solid #FFF;
 }
 
 .nav-masthead .nav-link {
