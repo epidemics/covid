@@ -49,9 +49,9 @@ def plot(data: pd.DataFrame, height=512, width=1024) -> Figure:
         # radius=np.log(data["cases"]) * 100000,
     )
 
-    tile_provider = get_provider(Vendors.CARTODBPOSITRON)
+    tile_provider = get_provider(Vendors.STAMEN_TONER_BACKGROUND)
 
-    tools = "hover,box_zoom,pan,save,reset,wheel_zoom,tap"
+    tools = "hover,pan,reset,wheel_zoom,tap"
 
     p = figure(
         height=height,
@@ -64,7 +64,7 @@ def plot(data: pd.DataFrame, height=512, width=1024) -> Figure:
     )
     p.add_tile(tile_provider)
 
-    circle_options = dict(fill_alpha=0.5, fill_color="firebrick", line_color="black")
+    circle_options = dict(fill_alpha=0.6, fill_color="red", line_color="black")
     circle_renderer = p.circle(
         x="web_mercator_x",
         y="web_mercator_y",
@@ -107,7 +107,7 @@ POC_SOURCE = """City Code,City,Country Code,Country,Latitude,Longitude
 1890,Moscow,178,Russia,55.76,37.62
 1426,Abuja,154,Nigeria,9.07,7.48
 742,Berlin,56,Germany,52.52,13.41
-791,London,75,UK,51.51,-0.12
+791,London (UK),75,UK,51.51,-0.12
 1024,Mexico City,133,Mexico,19.43,-99.13
 1535,Paris,71,France,48.86,2.35
 1314,Jakarta,96,Indonesia,6.2,106.82
@@ -130,13 +130,13 @@ POC_SOURCE = """City Code,City,Country Code,Country,Latitude,Longitude
 1738,Nairobi,110,Kenya,-1.29,36.82
 182,Kuala Lumpur,148,Malaysia,3.15,101.69
 256,Riyadh,180,Saudi Arabia,24.63,46.72
-1612,Sydney,11,Australia,-33.87,151.21
+1612,Sydney (AU),11,Australia,-33.87,151.21
 820,Rabat,128,Morocco,34.02,-6.84
 2796,Kyiv,216,Ukraine,50.45,30.52
 1714,Caracas,221,Venezuela,10.48,-66.90
 837,Amsterdam,157,Netherlands,52.37,4.9
 2841,Tashkent,219,Uzbekistan,41.3,69.27
-296,Santiago,38,Chile,-33.45,-70.67
+296,Santiago (CL),38,Chile,-33.45,-70.67
 1216,Lima,165,Peru,-12.05,-77.03
 146,Bucharest,177,Romania,44.43,26.10"""
 
