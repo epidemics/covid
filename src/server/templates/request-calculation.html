@@ -5,5 +5,25 @@
 {% block content %}
     <div>
         <p>Here should be a form where a user could submit some parameters we compute for them!</p>
+        <form id="request-calc-form" action="https://formspree.io/mrglewyq" method="POST">
+
+                    <label for="location-select">Pick a location:</label>
+        <select id="location-select" name="location" form="request-calc-form">
+        <option value="location1">Location1</option>
+        <option value="location2">Location2</option>
+        </select>
+
+
+        <label for="usecase-select">Choose use case:</label>
+        <select id="usecase-select" name="usecase" form="request-calc-form">
+        <option value="usecase1">usecase1</option>
+        <option value="usecase2">usecase2</option>
+        </select>
+
+            <button type="submit">Send</button>
+        </form>
+
+
+
     </div>
 {% endblock %}
