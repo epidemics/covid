@@ -6,18 +6,18 @@ imageName: ""
 charts:
   memoryLimit: "1Gi"
   cpuLimit: "2"
-  memoryRequest: "500Mi"
-  cpuRequest: "0.3"
-  replicaCount: 1
+  memoryRequest: "200Mi"
+  cpuRequest: "0.2"
+  replicasCount: 1
   service:
     externalIp: null
 
 web:
-  replicaCount: 1
+  replicasCount: 1
   memoryLimit: "1Gi"
   cpuLimit: "2"
-  memoryRequest: "500Mi"
-  cpuRequest: "0.3"
+  memoryRequest: "200Mi"
+  cpuRequest: "0.2"
 
 ingress:
   # reserved in GCP

@@ -3,5 +3,9 @@ ingress:
   externalIpName: loadbalancer
 
 charts:
+  replicasCount: 2
   service:
     externalIp: 35.197.75.206
+
+web:
+  replicasCount: 2
