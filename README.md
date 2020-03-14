@@ -76,3 +76,4 @@ We use Github Actions. The pipeline is specified in `.github/workflows/pythonapp
 
 * On a merge to `staging` branch, the code is deployed to the staging environment.
 * On a merge to `master` branch, the code is deployed to the production environment.
+
