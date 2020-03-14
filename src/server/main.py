@@ -47,19 +47,48 @@ async def request_event_evaluation(request: Request) -> Response:
 
 @app.get("/selections")
 async def selection(request: Request) -> Response:
+    # TODO: Use real data model here
+    class Place:
+        def __init__(self, name):
+            self.name = name
+    places = [Place(place) for place in ("New York", "China", "Africa")]
+    
+    # The following is not a mock
     return templates.TemplateResponse(
-        "selections.html", {"request": request, "message": "Please provide data"},
+        "selections.html", {"request": request, "message": "Please provide data", "places": places},
     )
 
 
 @app.get("/result-calculations")
 async def result_calculations(
-    request: Request, datepicker: str, number: int
+    request: Request, datepicker: str, number: int, place: str
 ) -> Response:
-    if number > 10:
-        message = f"Oh no! {datepicker} and {number}?! You shouldn't do that"
-    else:
-        message = f"Ha, {datepicker} and {number}? Sure, go on!"
+    # TODO: Use real data model here
+    class Place:
+        def __init__(self, name):
+            from datetime import date
+            import numpy as np
+            import pandas as pd
+            self.name = name
+            self.population = 4000000
+            self.gleamviz_predictions = pd.Series(  # From gleamviz
+                np.logspace(2, 6, num=31),
+                index=pd.date_range(start=date.today(), periods=31)
+            )
+    class Data:
+        def __getitem__(self, name):
+            return Place(name)
+    data = Data()
+
+    # The following is not a mock
+    place_data = data[place]
+    try:
+        median = place_data.gleamviz_predictions.loc[datepicker]
+        fraction = median / place_data.population
+        probability = (1 - (1 - fraction) ** number) * 100  # in %
+    except KeyError:
+        probability = "unknown"
+
     return templates.TemplateResponse(
-        "result-calculations.html", {"request": request, "message": message},
+        "result-calculations.html", {"request": request, "probability": probability},
     )

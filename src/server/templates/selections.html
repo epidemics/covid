@@ -18,19 +18,22 @@
       name="number"
     /><br />
 
-    <label for="datepicker">Date:</label><br />
-    <input
-      class="form-control"
-      id="datepicker"
-      name="datepicker"
-      data-provide="datepicker"
-      data-date-format="mm/dd/yyyy"
-    />
+    <label for="datepicker">Date:</label>
+    <input class="form-control" id="datepicker" name="datepicker" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+
+    <label for="place">Place:</label><br/>
+    <select name="place" id="place">
+    {% for place in places %}
+      <option value="{{ place.name }}">{{ place.name }}</option>
+    {% endfor %}
+    </select>
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
-{% endblock %} {% block additional_js %}
+
+{% endblock %}
+{% block additional_js %}
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"
   integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8="
@@ -39,4 +42,5 @@
 <script>
   $("#datepicker").datepicker();
 </script>
+
 {% endblock %}
