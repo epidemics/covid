@@ -50,8 +50,6 @@ Promise.all([
     data = files[0]
     bubbles = transformBubbleData(files[1])
     console.log('mdata', data, bubbles)
-    // Filter data
-    // data.features = data.features.filter(function(d){console.log(d.properties.name) ; return d.properties.name=="France"})
 
     // Draw the map
     g
@@ -67,14 +65,11 @@ Promise.all([
       var zoom = d3.zoom()
             .scaleExtent([1, 8])
             .on('zoom', function() {
+
                 g.selectAll('path')
                  .attr('transform', d3.event.transform);
                 console.log('zoom')
-                svg.selectAll('myCircles')
-                  .transition()
-                  .duration(750)
-                  .attr("cx", function(d){ return projection([d.long, d.lat])[0] })
-                  .attr("cy", function(d){ return projection([d.long, d.lat])[1] })    
+                     // svg.attr("transform", d3.event.transform)
       });
 
 
