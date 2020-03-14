@@ -53,48 +53,56 @@ def create_app(test_config=None):
 
 
     @app.route("/")
-    async def index(api_request: Request) -> Response:
+    def index():
         """TODO: this is the main hompage, should have a bubble map which should
         link ot the /model"""
         bubble_map_script = None #server_document(os.path.join(BOKEH_URI, "app2"))
         return render_template(
-            "index.html", {"request": api_request, "plot": bubble_map_script},
+            "index.html", **{"request": request, "plot": bubble_map_script},
         )
 
 
-    @app.get("/request-calculation")
-    async def request_calculation(rapi_request: Request) -> Response:
+    @app.route("/request-calculation")
+    def request_calculation():
         """TODO: This view should process a form"""
-        return render_template("request-calculation.html", {"request": api_request},)
+        return render_template("request-calculation.html", request=request)
 
 
-    @app.get("/model")
-    async def model() -> Response:
+    @app.route("/model")
+    def model(city: str = "New York"):
         """TODO: this should serve the main model visualization,
     """
-        arguments = {"city": request.args.get("city")}
-        #arguments = {"city": city} if city else {}
+        #arguments = {"city": request.args.get("city")}
+        arguments = {"city": city} if city else {}
         plot_script = None #server_document(f"{BOKEH_URI}/app1", arguments=arguments)
         return render_template(
-            "model.html", {"request": api_request, "plot": plot_script},
+            "model.html", **{"request": request, "plot": plot_script},
         )
 
 
-    @app.get("/selections")
-    async def selection(api_request: Request) -> Response:
+    @app.route("/selections")
+    def selection():
         return render_template(
-            "selections.html", {"request": api_request, "message": "Please provide data"},
+            "selections.html", **{"request": request, "message": "Please provide data"},
         )
 
 
-    @app.get("/result-calculations")
-    async def result_calculations(
-        api_request: Request, datepicker: str, number: int
-    ) -> Response:
+    @app.route("/result-calculations")
+    def result_calculations(
+       datepicker: str, number: int
+    ):
         if number > 10:
             message = f"Oh no! {datepicker} and {number}?! You shouldn't do that"
         else:
             message = f"Ha, {datepicker} and {number}? Sure, go on!"
         return render_template(
-            "result-calculations.html", {"request": api_request, "message": message},
+            "result-calculations.html", message=message
         )
+
+    return app
+
+
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True)
