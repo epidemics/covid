@@ -1,7 +1,23 @@
 {% extends "base.html" %}
+
+{% block additional_js_pre %}
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+{% endblock %}
+
 {% block content %}
-    <div>
-        <p>Here we have the chart with the modeled data.</p>
-        {{ plot | safe }}
+  <div>
+      <p>Here we have the chart with the modeled data.</p>
+      <div>
+        <!-- Initialize a select button -->
+        <select id="selectButton"></select>
+
+        <!-- Create a div where the graph will take place -->
+        <div id="my_dataviz"></div>
+      </div>
     </div>
+{% endblock %}
+
+{% block additional_js %}
+<script src="/static/js/line_plot.js"></script>
 {% endblock %}

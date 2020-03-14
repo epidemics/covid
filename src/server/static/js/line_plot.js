@@ -24,9 +24,9 @@ function transformData(data) {
       result[row.City] = []
     }
     result[row.City].push([
-          row.Timestep, 
-          row['Cumulative Median_0'], 
-          row['Cumulative Median_1'], 
+          row.Timestep,
+          row['Cumulative Median_0'],
+          row['Cumulative Median_1'],
           row['Cumulative Median_2'],
           row['Cumulative Median_3']
         ])
