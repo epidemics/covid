@@ -38,7 +38,9 @@ async def model(request: Request, city: str = "New York") -> Response:
     """TODO: this should serve the main model visualization,
 """
     arguments = {"city": city} if city else {}
-    plot_script = server_document(f"{BOKEH_URI}/app1", arguments=arguments, resources=None)
+    plot_script = server_document(
+        f"{BOKEH_URI}/app1", arguments=arguments, resources=None
+    )
     return templates.TemplateResponse(
         "model.html", {"request": request, "plot": plot_script},
     )
