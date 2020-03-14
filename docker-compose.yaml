@@ -28,6 +28,7 @@ services:
       - "*"
       - src/charts/app1.py
       - src/charts/app2.py
+      - src/charts/world_map.py
   server:
     build:
       context: ./

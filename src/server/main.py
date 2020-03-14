@@ -21,7 +21,7 @@ templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 async def index(request: Request) -> Response:
     """TODO: this is the main hompage, should have a bubble map which should
     link ot the /model"""
-    bubble_map_script = server_document(f"{BOKEH_URI}/app2")
+    bubble_map_script = server_document(f"{BOKEH_URI}/world_map")
     return templates.TemplateResponse(
         "index.html", {"request": request, "plot": bubble_map_script},
     )
