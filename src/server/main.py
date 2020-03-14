@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 # the URI must be accessible from the client's browser, it's not "proxied" via the server
-BOKEH_URI = os.getenv("BOKEH_URI", "http://0.0.0.0:5001").rstrip("/")
+BOKEH_URI = os.getenv("BOKEH_URI", "http://127.0.0.1:5001").rstrip("/")
 SERVER_ROOT = os.path.dirname(__file__)
 
 app = FastAPI()
