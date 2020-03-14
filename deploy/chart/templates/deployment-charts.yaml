@@ -56,7 +56,7 @@ spec:
             - --port
             - "5001"
             - --address
-            - 0.0.0.0
+            - 127.0.0.1
             - --allow-websocket-origin
             - "*"
             - src/charts/app1.py

@@ -35,7 +35,7 @@ spec:
           - uvicorn
           - main:app
           - --host
-          - 0.0.0.0
+          - 127.0.0.1
           ports:
           - containerPort: 8000
           workingDir: "/usr/app/src/server"
