@@ -3,15 +3,6 @@ env:
 
 imageName: ""
 
-charts:
-  memoryLimit: "1Gi"
-  cpuLimit: "2"
-  memoryRequest: "200Mi"
-  cpuRequest: "0.2"
-  replicasCount: 1
-  service:
-    externalIp: null
-
 web:
   replicasCount: 1
   memoryLimit: "1Gi"
