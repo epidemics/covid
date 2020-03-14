@@ -73,7 +73,7 @@ def plot(data: pd.DataFrame, height=512, width=1024) -> Figure:
         y="web_mercator_y",
         radius=200000,
         source=data,
-        **circle_options
+        **circle_options,
     )
 
     selected_circle = Circle(**circle_options)
