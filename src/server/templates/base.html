@@ -2,29 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title>{% block title %}{% endblock title %}</title>
+    <title>Our landing page!</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" />
-
     <!-- Custom styles for this template -->
-    <link href="{{ url_for('static', path='/css/foundation.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', path='/css/main.css') }}" rel="stylesheet">
+    <link href="../static/css/main.css" rel="stylesheet">
 
 	{% block additional_js_pre %}
 	  {% endblock %}
-    {% macro row_entry(value='', name='') -%}
-	  <div class="cell grid-x">
-      	<div class="cell small-4 large-5 num">{{ value }}</div>
-	  	<div class="cell small-8 large-7 area">{{ name }}</div>
-	  </div>
-    {%- endmacro %}
 
   </head>
 
@@ -44,50 +36,45 @@
 	    </div>
     </header>
 
-    <div class="grid-container fluid">
-    	<div class="grid-x grid-padding-x">
-    		<div class="cell small-12 medium-7 large-9">
+    <div class="container fill">
+    	<div class="row">
+    		<div class="col">
 		      <main role="main" class="">
-				  {{ truc }}
 		            {% block content %}
 		            {% endblock %}
 		      </main>
-	        </div>
-		    <div class="cell small-12 medium-5 large-3">
-
-		    	<div class="side">
+	      </div>
+		    <div class="col-4">
+		    	<div class="side p-4">
 		     		<div class="title">Most affected countries</div>
-					<!--need to know how this would be update to automate it-->
-					<div class="grid-x">
-						{{ row_entry(value='80,949', name='China') }}
-						{{ row_entry(value='17,660', name='Italy') }}
-						{{ row_entry(value='11,364', name='Iran') }}
-						{{ row_entry(value='8,086', name='South Korea') }}
-						{{ row_entry(value='5,232', name='Spain') }}
-					</div>
-
+		     		<table>
+		     			<tr><td class='num'>80,949</td><td class='area'>China</td></tr>
+		     			<tr><td class='num'>17,660</td><td class='area'>Italy</td></tr>
+		     			<tr><td class='num'>11,364</td><td class='area'>Iran</td></tr>
+		     			<tr><td class='num'>8,086</td><td class='area'>South Korea</td></tr>
+		     			<tr><td class='num'>5,232</td><td class='area'>Spain</td></tr>
+		     		</table>
 
 		     		<div class='line'></div>
 
 		     		<div class="title">Most affected cities</div>
-					<div class="grid-x">
-						{{ row_entry(value='80,949', name='China') }}
-						{{ row_entry(value='17,660', name='Italy') }}
-						{{ row_entry(value='11,364', name='Iran') }}
-						{{ row_entry(value='8,086', name='South Korea') }}
-						{{ row_entry(value='5,232', name='Spain') }}
-		  			</div>
+		     		<table>
+		     			<tr><td class='num'>80,949</td><td class='area'>China</td></tr>
+		     			<tr><td class='num'>17,660</td><td class='area'>Italy</td></tr>
+		     			<tr><td class='num'>11,364</td><td class='area'>Iran</td></tr>
+		     			<tr><td class='num'>8,086</td><td class='area'>South Korea</td></tr>
+		     			<tr><td class='num'>5,232</td><td class='area'>Spain</td></tr>
+		     		</table>
 
      				<div class='line'></div>
 
-			      <div class="footer">
+			      <footer class="">
 		          <p>Last Updated: 3/14/2020, 2:53:03 AM</p>
 
 		     			<div class='line'></div>
 
 		          <p>Disclaimer: All data used to produce this map are exclusively collected from publicly available sources, including government reports and news media.</p>
-			      </div>
-
+			      </footer>
 		    	</div>
 
     		</div>
@@ -101,7 +88,6 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', path='/js/foundation.min.js') }}"></script>
     <link href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap" rel="stylesheet">
     {% block additional_js %}
     {% endblock %}

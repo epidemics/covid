@@ -114,26 +114,22 @@ main {
 
 .side {
 	background: #0E0E12;
-	padding: 1.5rem;
 }
 
-.line {
+.side .line {
 	margin: 1.5rem 0;
 	border-bottom: 1px solid #32303A;
 }
 
 .num {
 	color: #DF925C;
-	padding-bottom: 0.75rem;
-
 }
 
 .area {
 	color: white;
-	padding-bottom: 0.75rem;
 }
 
-.footer {
+footer {
 	font-size: .9em;
 }
 /*
@@ -154,12 +150,3 @@ main {
 /*.mastfoot {
   color: rgba(255, 255, 255, .5);
 }*/
-
-
-#mapid {
-    height: 100vh;
-}
-
-#my_dataviz_map{
-    display: none;
-}
