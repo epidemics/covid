@@ -41,7 +41,7 @@ PLACES = [
     "United Kingdon",
     "United States of America",
     "Washington",
-    "Wuhan"
+    "Wuhan",
 ]
 
 SERVER_ROOT = os.path.dirname(__file__)
@@ -75,7 +75,11 @@ async def request_calculation(request: Request) -> Response:
 
     places = [Place(place) for place in PLACES]
 
-    return templates.TemplateResponse("request-calculation.html", {"request": request, "message": "Please provide data", "places": places},)
+    return templates.TemplateResponse(
+        "request-calculation.html",
+        {"request": request, "message": "Please provide data", "places": places},
+    )
+
 
 @app.get("/model")
 async def model(request: Request, city: str = "New York") -> Response:
@@ -95,6 +99,7 @@ async def request_event_evaluation(request: Request) -> Response:
         {"request": request, "message": "Please provide data", "places": places},
     )
 
+
 @app.get("/result-calculations")
 async def result_calculations(
     request: Request, datepicker: str, number: int, place: str
@@ -106,11 +111,13 @@ async def result_calculations(
             self.population = 4000000
             self.gleamviz_predictions = pd.Series(  # From gleamviz
                 np.logspace(2, 6, num=31),
-                index=pd.date_range(start=date.today(), periods=31)
+                index=pd.date_range(start=date.today(), periods=31),
             )
+
     class Data:
         def __getitem__(self, name):
             return Place(name)
+
     data = Data()
 
     # The following is not a mock
@@ -123,5 +130,12 @@ async def result_calculations(
         probability = "unknown"
 
     return templates.TemplateResponse(
-        "result-calculations.html", {"request": request, "probability": probability},
+        "result-calculations.html",
+        {
+            "request": request,
+            "datepicker": datepicker,
+            "number": number,
+            "place": place,
+            "probability": probability,
+        },
     )
