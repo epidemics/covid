@@ -26,6 +26,13 @@ Here is a template for new release sections
 - Added GA (#70)
 - Page titles (#72)
 - Added active page links (#74)
+- [line graph] x-ticks dates (#75)
+- [line graph] hover (cross-hair) (#75)
+- [line graph] stroke width 2 (#75)
+- [line graph] contrast colors (#75)
+- map bubble links to line plots (#75)
+
+
 ### Changed
 - Template for `model` (label "Request model") (#62)
 
