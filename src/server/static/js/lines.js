@@ -1,9 +1,15 @@
+
 Date.prototype.addDays=function(d){return new Date(this.valueOf()+864E5*d);};
 let today = new Date();
 // set the dimensions and margins of the graph
-var margin = { top: 10, right: 100, bottom: 30, left: 30 },
-  width = 460 - margin.left - margin.right,
-  height = 400 - margin.top - margin.bottom;
+
+
+var chartDiv = document.getElementById("my_dataviz");
+
+// set the dimensions and margins of the graph
+var margin = {top: 10, right: 100, bottom: 30, left: 50},
+    width = chartDiv.clientWidth - margin.left - margin.right,
+    height = chartDiv.clientWidth - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
 var svg = d3
@@ -13,6 +19,43 @@ var svg = d3
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// from https://bl.ocks.org/curran/3a68b0c81991e2e94b19
+function redraw(){
+
+        // Extract the width and height that was computed by CSS.
+        width = chartDiv.clientWidth - margin.left - margin.right;
+        height = chartDiv.clientWidth - margin.top - margin.bottom;
+
+        // Use the extracted size to set the size of an SVG element.
+        svg
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom);
+
+        // Draw an X to show that the size is correct.
+        var lines = svg.selectAll("line").data([
+          {x1: 0, y1: 0, x2: width, y2: height},
+          {x1: 0, y1: height, x2: width, y2: 0}
+        ]);
+        lines
+          .enter().append("line")
+            .style("stroke-width", 50)
+            .style("stroke-opacity", 0.4)
+            .style("stroke", "black")
+          .merge(lines)
+            .attr("x1", function (d) { return d.x1; })
+            .attr("y1", function (d) { return d.y1; })
+            .attr("x2", function (d) { return d.x2; })
+            .attr("y2", function (d) { return d.y2; })
+         ;
+      }
+
+// Draw for the first time to initialize.
+redraw();
+
+// Redraw based on the new size whenever the browser window is resized.
+window.addEventListener("resize", redraw);
+
 
 function getCountries(data) {
   return [...new Set(data.map(d => d.City))];
@@ -82,14 +125,32 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
       .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%Y-%m-%d")));
 
     var yDomain = [0, 1000]
+
+    // text label for the x axis
+    svg.append("text")
+      .attr("transform",
+            "translate(" + (width/2) + " ," +
+                           (height + margin.top + 20) + ")")
+      .style("text-anchor", "middle")
+      .text("Date");
+
     // Add Y axis
     var y = d3.scaleLinear()
       .domain(yDomain)
       //.domain([0, d3.max(countryData, function(d) { return Math.max(+d[1], +d[2], +d[3], +d[4]); })])
       .range([ height, 0 ]);
     svg.append("g")
+<<<<<<< HEAD
       .call(d3.axisLeft(y))
 
+    // text label for the y axis
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Value");
 
     function drawLine(i, color) {
       return svg
@@ -129,8 +190,6 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
     var tooltip = d3.select("body").append("div") 
       .attr("class", "tooltip")       
       .style("opacity", 0);
-
-
 
       svg.append('rect')
         .attr('class', 'overlay')
