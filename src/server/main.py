@@ -44,21 +44,6 @@ async def request_event_evaluation(request: Request) -> Response:
         {"request": request, "message": "Please provide data"},
     )
 
-
-@app.get("/selections")
-async def selection(request: Request) -> Response:
-    # TODO: Use real data model here
-    class Place:
-        def __init__(self, name):
-            self.name = name
-    places = [Place(place) for place in ("New York", "China", "Africa")]
-    
-    # The following is not a mock
-    return templates.TemplateResponse(
-        "selections.html", {"request": request, "message": "Please provide data", "places": places},
-    )
-
-
 @app.get("/result-calculations")
 async def result_calculations(
     request: Request, datepicker: str, number: int, place: str
