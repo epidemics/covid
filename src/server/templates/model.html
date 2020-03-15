@@ -1,23 +1,137 @@
-{% extends "base.html" %}
-
-{% block additional_js_pre %}
+{% extends "base.html" %} {% block additional_js_pre %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-{% endblock %}
-
-{% block content %}
-  <div>
-      <p>Here we have the chart with the modeled data.</p>
-      <div>
-        <!-- Initialize a select button -->
-        <select id="selectButton"></select>
-
-        <!-- Create a div where the graph will take place -->
-        <div id="my_dataviz"></div>
+{% endblock %} {% block content %}
+<div>
+  <br />
+  <div class="row">
+    <div class="col-lg-5 col-sm-12">
+      <select
+        id="selectButton"
+        class="form-control large"
+        id="exampleFormControlSelect1"
+      >
+        <option selected>Choose...</option>
+        <option value="Africa">Africa</option>
+        <option value="Australia">Australia</option>
+        <option value="Belgium">Belgium</option>
+        <option value="California">California</option>
+        <option value="China">China</option>
+        <option value="Dubai">Dubai</option>
+        <option value="Egypt">Egypt</option>
+        <option value="European Union">European Union</option>
+        <option value="France">France</option>
+        <option value="Germany">Germany</option>
+        <option value="Hong Kong">Hong Kong</option>
+        <option value="Hubei">Hubei</option>
+        <option value="India">India</option>
+        <option value="Indonesia">Indonesia</option>
+        <option value="Iran">Iran</option>
+        <option value="Italy">Italy</option>
+        <option value="Japan">Japan</option>
+        <option value="London">London</option>
+        <option value="Netherlands">Netherlands</option>
+        <option value="New York">New York</option>
+        <option value="Oxford">Oxford</option>
+        <option value="Russia">Russia</option>
+        <option value="San Francisco">San Francisco</option>
+        <option value="Singapore">Singapore</option>
+        <option value="South Korea">South Korea</option>
+        <option value="Spain">Spain</option>
+        <option value="Switzerland">Switzerland</option>
+        <option value="The Middle East">The Middle East</option>
+        <option value="United Kingdon">United Kingdon</option>
+        <option value="United States of America"
+          >United States of America</option
+        >
+        <option value="Washington">Washington</option>
+        <option value="Wuhan">Wuhan</option>
+      </select>
+    </div>
+    <div class="col-lg-6 col-sm-0"></div>
+    <div class="col-lg-1 col-sm-12 population">
+      <label class="row"></label>Population</label>
+      <div class="row medium">
+        {{population | default("10,649,800")}}
       </div>
     </div>
-{% endblock %}
+  </div>
+  <br />
+  <hr />
+  <br />
 
-{% block additional_js %}
-    <script src="/static/js/lines.js"></script>
+  <div class="row">
+    <div
+      style="
+    margin-top: 8px;
+    margin-right: 21px;
+    font-size: 21px;"
+    >
+      Select — Mitigation Strenght:
+    </div>
+
+    <div class="btn-group-toggle" data-toggle="buttons">
+      <div class="row mitigation-strenght">
+        <div class="col-sm-auto col-xm-12">
+          <label class="btn btn-secondary active">
+            <input type="radio" name="hours" id="hours" autocomplete="off" />
+            0%
+          </label>
+        </div>
+        <div class="col-sm-auto col-xm-12">
+          <label class="btn btn-secondary">
+            <input type="radio" name="day" id="day" autocomplete="off" /> 25%
+          </label>
+        </div>
+        <div class="col-sm-auto col-xm-12">
+          <label class="btn btn-secondary">
+            <input type="radio" name="days" id="days" autocomplete="off" /> 50%
+          </label>
+        </div>
+        <div class="col-sm-auto col-xm-12">
+          <label class="btn btn-secondary">
+            <input type="radio" name="days" id="days" autocomplete="off" /> 70%
+          </label>
+        </div>
+        <div class="col-sm-auto col-xm-12">
+          <label class="btn btn-secondary">
+            <input type="radio" name="days" id="days" autocomplete="off" /> 90%
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br/>
+  <div class="row">
+    {{message | default("This mitigation option involves encouraging handwashing
+    and good hygenic practices in the broader population.")}}
+  </div>
+  <br />
+  <br />
+
+  <!-- Create a div where the graph will take place -->
+  <div id="my_dataviz"></div>
+
+  <br />
+  <br />
+  <br />
+  <div class="row">
+    <div class="col-lg-9 col-md-12">
+      <h5 class="row">How the model works</h5>
+      <div class="row">
+        A simple POC for using bokeh to visualize modelled covid-19 data. Based on
+        bokeh weather example.
+      </div>
+      <div class="row">
+        There two main components: charts — using bokeh serve to serve bokeh charts
+        in src/charts directory. webserver — a webserver using fastapi to render
+        templates and embeds bokeh charts via the running charts bokeh server using
+        JS scripts. That means that when you access the index site of the fastapi
+        server, it generates the tag for the relevant chart.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block additional_js %}
+<script src="/static/js/lines.js"></script>
 {% endblock %}

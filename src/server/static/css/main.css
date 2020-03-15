@@ -46,8 +46,10 @@ h1,
 h2,
 h3,
 h4,
+h5,
 .title {
   text-transform: uppercase;
+  color: white;
 }
 
 .title {
@@ -231,4 +233,60 @@ label.btn-secondary > input {
 
 .full-width {
   width: 100%;
+}
+
+.medium {
+  font-size: 25px;
+}
+
+/*
+* Model
+*/
+
+.population > label {
+  padding-left: 0px !important;
+}
+.population > div {
+  margin-top: -6px;
+  margin-left: 0px;
+}
+
+.mitigation-strenght > div > .btn-secondary {
+  min-width: 76px;
+}
+
+@media only screen and (max-width: 991px) {
+  .population > label {
+    margin-top: 20px;
+    margin-right: 0px;
+  }
+  .mitigation-strenght {
+    margin-top: 8px;
+  }
+}
+
+@media only screen and (min-width: 992px) {
+  .population {
+    margin-left: -52px;
+  }
+  .population > label {
+    margin-top: 2px;
+    margin-right: 20px;
+  }
+}
+
+@media only screen and (min-width: 576px) {
+  .large {
+    font-size: 35px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .large {
+    font-size: 25px;
+  }
+  .container {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
 }
