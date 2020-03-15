@@ -20,8 +20,10 @@
 	{% block additional_js_pre %}
 	  {% endblock %}
     {% macro row_entry(value='', name='') -%}
-      <div class="cell large-6 num">{{ value }}</div>
-	  <div class="cell large-6 area">{{ name }}</div>
+	  <div class="cell grid-x">
+      	<div class="cell small-4 large-5 num">{{ value }}</div>
+	  	<div class="cell small-8 large-7 area">{{ name }}</div>
+	  </div>
     {%- endmacro %}
 
   </head>
@@ -44,14 +46,14 @@
 
     <div class="grid-container fluid">
     	<div class="grid-x grid-padding-x">
-    		<div class="cell small-12 medium-9">
+    		<div class="cell small-12 medium-7 large-9">
 		      <main role="main" class="">
 				  {{ truc }}
 		            {% block content %}
 		            {% endblock %}
 		      </main>
 	        </div>
-		    <div class="cell auto">
+		    <div class="cell small-12 medium-5 large-3">
 
 		    	<div class="side">
 		     		<div class="title">Most affected countries</div>
