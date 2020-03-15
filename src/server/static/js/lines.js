@@ -45,7 +45,7 @@ function transformData(data) {
 
 function cityData(data) {
   result = [];
-  let cities = _.uniqBy(data, 'City').map(r => ({city: r.City, items: []}))
+  let cities = _.uniqBy(data, 'City').map(r => ({city: r.City, beta: 0.0, items: []}))
   data.forEach(row => {
     if (!result[row.City]) {
       result[row.City] = [];
@@ -73,14 +73,13 @@ let foo = "https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc
 //Read the data
 d3.csv("/static/data/line-data.csv")
   .then(function(data){
-    console.log('raw data', data)
+    var selectedBeta = 0.0;
     // List of groups (here I have one group per column)
     var allGroup = getCountries(data)
     cities = cityData(data);
     selectedCountry = getSelectedCountry(data)
-    city = cities.find(r => r.city === selectedCountry);
-    countryData=city.items;
-    var beta = 0.0;
+    selectedCountryBeta = cities.find(r => r.city === selectedCountry && r.beta === selectedBeta);
+    countryBetaData=selectedCountryBeta.items;
 
     // add the options to the button
     d3.select("#selectButton")
@@ -95,7 +94,7 @@ d3.csv("/static/data/line-data.csv")
         return d;
       }); // corresponding value returned by the button
 
-      var xDomain = d3.extent(countryData, function(d) { 
+      var xDomain = d3.extent(selectedCountryBeta.items, function(d) { 
           return d[0]; 
         })
     // Add X axis --> it is a date format
@@ -112,7 +111,7 @@ d3.csv("/static/data/line-data.csv")
     // Add Y axis
     var y = d3.scaleLinear()
       .domain(yDomain)
-      //.domain([0, d3.max(countryData, function(d) { return Math.max(+d[1], +d[2], +d[3], +d[4]); })])
+      //.domain([0, d3.max(selectedCountryBeta.items, function(d) { return Math.max(+d[1], +d[2], +d[3], +d[4]); })])
       .range([ height, 0 ]);
     svg.append("g")
       .call(d3.axisLeft(y))
@@ -122,7 +121,7 @@ d3.csv("/static/data/line-data.csv")
       return svg
         .append('g')
         .append("path")
-          .datum(countryData)
+          .datum(selectedCountryBeta.items)
           .attr("d", d3.line()
             .x(function(d) { window.myX = x; return x(d[0]) })
             .y(function(d) { return y(+d[i]) })
@@ -191,7 +190,7 @@ d3.csv("/static/data/line-data.csv")
 
             const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
             const diffDays = Math.round(Math.abs((mouseDate - today) / oneDay)); // number of days in the future
-            const hoveredValues = countryData[diffDays]
+            const hoveredValues = selectedCountryBeta.items[diffDays]
 
             tooltip.style('opacity', 1)
               .html('v1: '+hoveredValues[1]+'<br>'+'v2: '+hoveredValues[2]+'<br>'+'v3: '+hoveredValues[3]+'<br>'+'v4: '+hoveredValues[4]+'<br>')
@@ -203,16 +202,15 @@ d3.csv("/static/data/line-data.csv")
 
 
   
-    update(selectedCountry)
+    update({city: selectedCountry})
     d3.select('#selectButton').property('value', selectedCountry);
 
     // A function that update the chart
-    function update(selectedGroup) {
-      city = cities.find(r => r.city === selectedGroup);
-      countryData=city.items;
+    function update({city=selectedCountryBeta.city, beta=selectedCountryBeta.beta}) {
+      selectedCountryBeta = cities.find(r => (r.city === city && r.beta === beta));
       function updateLine(myLine, i){
           myLine
-            .datum(countryData)
+            .datum(selectedCountryBeta.items)
             .transition()
             .duration(1000)
             .attr("d", d3.line()
@@ -232,13 +230,21 @@ d3.csv("/static/data/line-data.csv")
       // recover the option that has been chosen
       var selectedOption = d3.select(this).property("value");
       // run the updateChart function with this selected option
-      update(selectedOption);
+      update({city: selectedOption});
     });
 
-    d3.select(".beta-0").on("click", function(){beta=0})
-    d3.select(".beta-03").on("click", function(){beta=0.3})
-    d3.select(".beta-04").on("click", function(){beta=0.4})
-    d3.select(".beta-05").on("click", function(){beta=0.5})
+    d3.select(".beta-0").on("click", function(){
+      update({beta: 0.0});
+    })
+    d3.select(".beta-03").on("click", function(){
+      update({beta: 0.3});
+    })
+    d3.select(".beta-04").on("click", function(){
+      update({beta: 0.4});
+    })
+    d3.select(".beta-05").on("click", function(){
+      update({beta: 0.5});
+    })
 
     console.log("RUNNING D3");
   }
