@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "prettier --no-semi --check 'src/server/static/**'"
+    "test": "prettier --check 'src/server/static/**'"
   },
   "repository": {
     "type": "git",

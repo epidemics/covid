@@ -69,7 +69,7 @@ npm test
 To automatically lint your files run
 
 ```
-prettier --no-semi --write "src/server/static/**"
+prettier --write "src/server/static/**"
 ```
 
 # Deployment
