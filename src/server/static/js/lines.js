@@ -8,18 +8,12 @@ var margin = {top: 10, right: 100, bottom: 30, left: 30},
 // append the svg object to the body of the page
 var svg = d3.select("#my_dataviz")
    .append("svg")
-
     .attr("width", '100%')
     .attr("height", '100%')
-    // .attr('viewBox','0 0 '+Math.min(width,height)+' '+Math.min(width,height))
-    // .attr('preserveAspectRatio','xMinYMin')
     .append("g") 
-  // .append("svg")
-  //   .attr("width", width + margin.left + margin.right)
-  //   .attr("height", height + margin.top + margin.bottom)
-  // .append("g")
     .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+          "translate(" + margin.left + "," + margin.top + ")")
+
 
 function getCountries(data) {
   return [...new Set(data.map(d => d.City))]
@@ -62,27 +56,28 @@ d3.csv("https://csvlint.io/validation/5e6cf73ea8838f0004000004.csv")
       .attr("value", function (d) { return d; }) // corresponding value returned by the button
 
 
+      var xDomain = d3.extent(countryData, function(d) { 
+          return d[0]; 
+        })
     // Add X axis --> it is a date format
     var x = d3.scaleTime()
       .range([ 0, width ])
             // .domain( [0,1000])
-      .domain(d3.extent(countryData, function(d) { 
-        console.log('x called', d);
-        return d[0]; 
-      }))
+      .domain(xDomain)
       // .ticks(d3.time.months, 1).tickFormat(d3.time.format("%b"));;
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%Y-%m-%d")));
 
-
+    var yDomain = [0, 1000]
     // Add Y axis
     var y = d3.scaleLinear()
-      .domain([0,1000])
+      .domain(yDomain)
       //.domain([0, d3.max(countryData, function(d) { return Math.max(+d[1], +d[2], +d[3], +d[4]); })])
       .range([ height, 0 ]);
     svg.append("g")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y))
+
 
     function drawLine(i, color) {
       return svg
@@ -96,6 +91,7 @@ d3.csv("https://csvlint.io/validation/5e6cf73ea8838f0004000004.csv")
           .attr("stroke", color)
           .style("stroke-width", 1)
           .style("fill", "none")
+
     }
 
     var line1 = drawLine(1, 'blue')
@@ -103,7 +99,69 @@ d3.csv("https://csvlint.io/validation/5e6cf73ea8838f0004000004.csv")
     var line3 = drawLine(3, 'orange')
     var line4 = drawLine(4, 'green')
 
-    console.log('draw line was called')
+
+    // create crosshairs
+    var crosshair = svg.append("g")
+      .attr("class", "line");
+
+    // create horizontal line
+    crosshair.append("line")
+      .attr("id", "crosshairX")
+      .attr("class", "crosshair");
+
+    // create vertical line
+    crosshair.append("line")
+      .attr("id", "crosshairY")
+      .attr("class", "crosshair");
+
+var div = d3.select("body").append("div") 
+    .attr("class", "tooltip")       
+    .style("opacity", 0);
+
+
+
+      svg.append('rect')
+        .attr('class', 'overlay')
+        .attr('width', width)
+        .attr('height', height)
+          .on('mouseover', function() {
+            console.log('over')
+            crosshair.style("display", null);
+          })
+          .on('mouseout', function() {
+            console.log('out')
+            crosshair.style("display", "none");
+          })
+          .on('mousemove', function() {
+               var mouse = d3.mouse(this);
+               var mouseDate = x.invert(mouse[0]);
+               var mouseVal = y.invert(mouse[1])
+
+              crosshair.select("#crosshairX")
+                .attr("x1", mouse[0])
+                .attr("y1", y(yDomain[0]))
+                .attr("x2", mouse[0])
+                .attr("y2", y(yDomain[1]));
+
+              crosshair.select("#crosshairY")
+                .attr("x1", x(xDomain[0]))
+                .attr("y1", mouse[1])
+                .attr("x2", x(xDomain[1]))
+                .attr("y2", mouse[1]);
+
+            const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+            const diffDays = Math.round(Math.abs((mouseDate - today) / oneDay)); // number of days in the future
+            const hoveredValues = countryData[diffDays]
+
+            div.style('opacity', 1)
+              .html('asdasdasdsad')
+              .style("left", (d3.event.pageX) + "px")   
+              .style("top", (d3.event.pageY - 28) + "px");  
+
+            console.log('move', diffDays)
+          });
+
+
   
     update('Abuja')
 
@@ -112,7 +170,6 @@ d3.csv("https://csvlint.io/validation/5e6cf73ea8838f0004000004.csv")
       countryData = data[selectedGroup]
       console.log('countryData',countryData)
       function updateLine(myLine, i){
-
           myLine
             .datum(countryData)
             .transition()
@@ -121,8 +178,6 @@ d3.csv("https://csvlint.io/validation/5e6cf73ea8838f0004000004.csv")
               .x(function(d) { return x(d[0]) })
               .y(function(d) { return y(+d[i]) })
             )
-
-
       }
 
       updateLine(line1, 1)
