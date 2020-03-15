@@ -19,9 +19,7 @@ templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 async def index(request: Request) -> Response:
     """TODO: this is the main hompage, should have a bubble map which should
     link ot the /model"""
-    return templates.TemplateResponse(
-        "index.html", {"request": request},
-    )
+    return templates.TemplateResponse("index.html", {"request": request},)
 
 
 @app.get("/request-calculation")
@@ -42,16 +40,16 @@ async def model(request: Request, city: str = "New York") -> Response:
 @app.get("/request-event-evaluation")
 async def selection(request: Request) -> Response:
     return templates.TemplateResponse(
-        "request-event-evaluation.html", {"request": request,
-                                          "message": "Please provide data"},
+        "request-event-evaluation.html",
+        {"request": request, "message": "Please provide data"},
     )
 
 
 @app.get("/result-event-evaluation")
 async def selection(request: Request) -> Response:
     return templates.TemplateResponse(
-        "result-event-evaluation.html", {"request": request,
-                                         "message": "Please provide data"},
+        "result-event-evaluation.html",
+        {"request": request, "message": "Please provide data"},
     )
 
 
