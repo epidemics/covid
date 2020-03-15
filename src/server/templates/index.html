@@ -1,8 +1,7 @@
 {% extends "base.html" %}
-
 {% block title %} Epidemic Forcasting {% endblock title%}
-
-{% block additional_js_pre %}
+{% set active_page = 'index' -%} {% block
+additional_js_pre %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>

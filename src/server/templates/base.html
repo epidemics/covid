@@ -50,12 +50,23 @@
     <header>
       <div class="container">
         <div class="row d-flex align-items-center">
-          <h1 class="col-3 flex-grow-1">Epidemic Forecasting</h1>
+          <a href="/"
+            ><h1 class="col-3 flex-grow-1">Epidemic Forecasting</h1></a
+          >
           <nav class="col nav nav-masthead justify-content-end">
-            <a class="nav-link active" href="/">Home</a>
-            <a class="nav-link" href="/model">Model</a>
-            <a class="nav-link" href="/request-calculation">Request model</a>
-            <a class="nav-link" href="/request-event-evaluation">Events Prediction</a>
+            {% set navigation_bar = [ ('/', 'index', 'Public information'),
+            ('/model/', 'models', 'Models'), ('/request-calculation/',
+            'request-model', 'Request model'), ('/request-event-evaluation/',
+            'events', 'Event prediction') ] -%} {% set active_page =
+            active_page|default('index') -%} {% for href, id, caption in
+            navigation_bar %}
+            <a
+              class="nav-link {% if id == active_page %}active{% endif %}"
+              href="{{ href|e }}"
+              id="{{id|e }}"
+              >{{ caption|e }}
+            </a>
+            {% endfor %}
           </nav>
         </div>
       </div>
