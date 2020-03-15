@@ -12,9 +12,10 @@
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" />
+
     <!-- Custom styles for this template -->
-    <link href="{{ url_for('static', path='/css/foundation.min.css }}" rel="stylesheet">
-    <link href="{{ url_for('static', path='/css/main.css }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/css/foundation.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/css/main.css') }}" rel="stylesheet">
 
 	{% block additional_js_pre %}
 	  {% endblock %}
