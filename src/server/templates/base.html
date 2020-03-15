@@ -28,26 +28,20 @@
     <!-- Custom styles for this template -->
     <link href="../static/css/main.css" rel="stylesheet" />
 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
     <script
-      type="text/javascript"
-      src="https://cdn.bokeh.org/bokeh/release/bokeh-2.0.0.min.js"
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-160643838-1"
     ></script>
-    <script
-      type="text/javascript"
-      src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.0.0.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.0.0.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-2.0.0.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://cdn.bokeh.org/bokeh/release/bokeh-api-2.0.0.min.js"
-    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "UA-160643838-1");
+    </script>
 
     {% block additional_js_pre %} {% endblock %}
 
@@ -167,6 +161,7 @@
       href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap"
       rel="stylesheet"
     />
+
     {% block additional_js %} {% endblock %}
   </body>
 </html>
