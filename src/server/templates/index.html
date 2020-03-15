@@ -1,12 +1,22 @@
 {% extends "base.html" %}
+
+{% block additional_js_pre %}
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
+
+<style>
+#mapid { height: 800px; }
+</style>
+{% endblock %}
+
 {% block content %}
-    <h1>covid-19 visualization</h1>
-    <div>
-        Welcome! Here should be probably "bubble map" chart. But it's apparently not a bubble map, is it?
-    </div>
+    <div id="mapid"></div>
+    <svg id="my_dataviz_map" width="800" height="600"></svg>
+{% endblock %}
 
-    <div>
-        {{ plot | safe }}
-    </div>
-
+{% block additional_js %}
+    <script src="/static/js/bubbles.js"></script>
 {% endblock %}

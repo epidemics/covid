@@ -1,33 +1,6 @@
 version: "3"
 
 services:
-  charts:
-    build:
-      context: ./
-    image: coron
-    environment:
-      ROOT_FOLDER: "/"
-    ports:
-      - 5001:5001
-    volumes:
-      - ./src/:/usr/app/src/
-      - ./tests:/usr/app/tests
-      - ./poetry.lock:/usr/app/poetry.lock
-      - ./pyproject.toml:/usr/app/pyproject.toml
-      # TODO: you have to have these in your root dir, can be found on slack
-      - ./city_lookup.pq:/data/city_lookup.pq
-      - ./definition.xml:/data/definition.xml
-    entrypoint:
-      - bokeh
-      - serve
-      - --port
-      - "5001"
-      - --address
-      - 0.0.0.0
-      - --allow-websocket-origin
-      - "*"
-      - src/charts/app1.py
-      - src/charts/app2.py
   server:
     build:
       context: ./
@@ -37,8 +10,6 @@ services:
     volumes:
       - ./src/:/usr/app/src/
     working_dir: /usr/app/src/server
-    environment:
-      BOKEH_URI: "http://0.0.0.0:5001"
     entrypoint:
       - uvicorn
       - main:app

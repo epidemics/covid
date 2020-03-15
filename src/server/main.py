@@ -1,13 +1,10 @@
 import os
 
-from bokeh.embed import server_document
 from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 
-# the URI must be accessible from the client's browser, it's not "proxied" via the server
-BOKEH_URI = os.getenv("BOKEH_URI", "http://0.0.0.0:5001")
 SERVER_ROOT = os.path.dirname(__file__)
 
 app = FastAPI()
@@ -22,10 +19,7 @@ templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 async def index(request: Request) -> Response:
     """TODO: this is the main hompage, should have a bubble map which should
     link ot the /model"""
-    bubble_map_script = server_document(os.path.join(BOKEH_URI, "app2"))
-    return templates.TemplateResponse(
-        "index.html", {"request": request, "plot": bubble_map_script},
-    )
+    return templates.TemplateResponse("index.html", {"request": request},)
 
 
 @app.get("/request-calculation")
@@ -36,13 +30,11 @@ async def request_calculation(request: Request) -> Response:
 
 
 @app.get("/model")
-async def model(request: Request) -> Response:
-    """TODO: this should serve the main model visualization,
-    ideally sent somewhere via mail."""
-    plot_script = server_document(os.path.join(BOKEH_URI, "app1"))
-    return templates.TemplateResponse(
-        "model.html", {"request": request, "plot": plot_script},
-    )
+async def model(request: Request, city: str = "New York") -> Response:
+    """TODO: this should serve the main model visualization"""
+    # TODO: argument
+    arguments = {"city": city} if city else {}
+    return templates.TemplateResponse("model.html", {"request": request},)
 
 
 @app.get("/selections")
