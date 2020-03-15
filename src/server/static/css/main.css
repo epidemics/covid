@@ -240,9 +240,8 @@ label.btn-secondary > input {
 }
 
 .form-group .row {
-    padding-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
 }
-
 
 /*
 * Model
@@ -294,4 +293,12 @@ label.btn-secondary > input {
     padding-left: 40px;
     padding-right: 40px;
   }
+}
+
+.fill-available-width {
+  width: -webkit-fill-available;
+}
+
+textarea {
+  height: 200px;
 }
