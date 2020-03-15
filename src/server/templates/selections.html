@@ -7,17 +7,18 @@
     we compute if it's safe to organize an event or how likely it is someone gets sick.</p>
     {{ message }}
 </div>
+<div class="grid-x">
+    <form class="cell large-7" action="/result-calculations">
+      <div class="form-group">
+        <label  for="number">Number:</label>
+        <input class="form-control" placeholder="Number of people" type="number" name="number">
 
-<form action="/result-calculations">
-  <div class="form-group">
-    <label  for="number">Number:</label><br>
-    <input class="form-control" placeholder="Number of people" type="number" name="number"><br>
-
-    <label for="datepicker">Date:</label><br>
-    <input class="form-control" id="datepicker" name="datepicker" data-provide="datepicker" data-date-format="mm/dd/yyyy">
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+        <label for="datepicker">Date:</label>
+        <input class="form-control" id="datepicker" name="datepicker" data-provide="datepicker" data-date-format="mm/dd/yyyy">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
 
 
 {% endblock %}

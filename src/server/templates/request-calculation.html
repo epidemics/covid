@@ -3,7 +3,25 @@
 {% block title %}Request model{% endblock title %}
 
 {% block content %}
-    <div>
-        <p>Here should be a form where a user could submit some parameters we compute for them!</p>
+    <div class="grid-x">
+        <p class="cell">Here should be a form where a user could submit some parameters we compute for them!</p>
+
+        <form class="cell large-8" id="request-calc-form" action="https://formspree.io/mrglewyq" method="POST">
+            <div class="form-group">
+                <label for="location-select">Pick a location:</label>
+                <select class="form-item" id="location-select" name="location" form="request-calc-form">
+                <option value="location1">Location1</option>
+                <option value="location2">Location2</option>
+                </select>
+
+                <label for="usecase-select">Choose use case:</label>
+                <select class="form-item" id="usecase-select" name="usecase" form="request-calc-form">
+                <option value="usecase1">usecase1</option>
+                <option value="usecase2">usecase2</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+
     </div>
 {% endblock %}
