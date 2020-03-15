@@ -18,6 +18,10 @@
 
 	{% block additional_js_pre %}
 	  {% endblock %}
+    {% macro row_entry(value='', name='') -%}
+      <div class="cell large-6 num">{{ value }}</div>
+	  <div class="cell large-6 area">{{ name }}</div>
+    {%- endmacro %}
 
   </head>
 
@@ -50,24 +54,26 @@
 
 		    	<div class="side">
 		     		<div class="title">Most affected countries</div>
-		     		<table>
-		     			<tr><td class='num'>80,949</td><td class='area'>China</td></tr>
-		     			<tr><td class='num'>17,660</td><td class='area'>Italy</td></tr>
-		     			<tr><td class='num'>11,364</td><td class='area'>Iran</td></tr>
-		     			<tr><td class='num'>8,086</td><td class='area'>South Korea</td></tr>
-		     			<tr><td class='num'>5,232</td><td class='area'>Spain</td></tr>
-		     		</table>
+					<!--need to know how this would be update to automate it-->
+					<div class="grid-x">
+						{{ row_entry(value='80,949', name='China') }}
+						{{ row_entry(value='17,660', name='Italy') }}
+						{{ row_entry(value='11,364', name='Iran') }}
+						{{ row_entry(value='8,086', name='South Korea') }}
+						{{ row_entry(value='5,232', name='Spain') }}
+					</div>
+
 
 		     		<div class='line'></div>
 
 		     		<div class="title">Most affected cities</div>
-		     		<table>
-		     			<tr><td class='num'>80,949</td><td class='area'>China</td></tr>
-		     			<tr><td class='num'>17,660</td><td class='area'>Italy</td></tr>
-		     			<tr><td class='num'>11,364</td><td class='area'>Iran</td></tr>
-		     			<tr><td class='num'>8,086</td><td class='area'>South Korea</td></tr>
-		     			<tr><td class='num'>5,232</td><td class='area'>Spain</td></tr>
-		     		</table>
+					<div class="grid-x">
+						{{ row_entry(value='80,949', name='China') }}
+						{{ row_entry(value='17,660', name='Italy') }}
+						{{ row_entry(value='11,364', name='Iran') }}
+						{{ row_entry(value='8,086', name='South Korea') }}
+						{{ row_entry(value='5,232', name='Spain') }}
+		  			</div>
 
      				<div class='line'></div>
 

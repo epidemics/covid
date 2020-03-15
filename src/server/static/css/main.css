@@ -123,10 +123,13 @@ main {
 
 .num {
 	color: #DF925C;
+	padding-bottom: 0.75rem;
+
 }
 
 .area {
 	color: white;
+	padding-bottom: 0.75rem;
 }
 
 footer {
