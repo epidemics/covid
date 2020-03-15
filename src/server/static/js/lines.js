@@ -140,7 +140,6 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
       //.domain([0, d3.max(countryData, function(d) { return Math.max(+d[1], +d[2], +d[3], +d[4]); })])
       .range([ height, 0 ]);
     svg.append("g")
-<<<<<<< HEAD
       .call(d3.axisLeft(y))
 
     // text label for the y axis
