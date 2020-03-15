@@ -2,35 +2,37 @@
 active_page = 'models' -%} {% block additional_js_pre %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"> </script>
 <style type="text/css">
   .overlay {
     fill: none;
     stroke: none;
     pointer-events: all;
   }
+
   .line .crosshair {
     fill: none;
     stroke-width: 1px;
   }
+
   .line .crosshair {
     stroke: white;
     opacity: 0.2
   }
 
-  div.tooltip { 
-    position: absolute;     
-    text-align: center;     
-    width:100px;          
-    height: auto;         
-    padding: 2px;       
-    font: 12px sans-serif;   
-    color: #fff; 
-    background: #6c757d; 
-    border: 0px;    
-    border-radius: 8px;     
-    pointer-events: none;     
-}
-
+  div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 100px;
+    height: auto;
+    padding: 2px;
+    font: 12px sans-serif;
+    color: #fff;
+    background: #6c757d;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+  }
 </style>
 {% endblock %}
 {% block content %}
@@ -53,41 +55,37 @@ active_page = 'models' -%} {% block additional_js_pre %}
   <br />
 
   <div class="row">
-    <div
-      style="
+    <div style="
     margin-top: 8px;
     margin-right: 21px;
-    font-size: 21px;"
-    >
-      Select — Mitigation Strenght:
+    font-size: 21px;">
+      Select — Beta:
     </div>
 
     <div class="btn-group-toggle" data-toggle="buttons">
       <div class="row mitigation-strenght">
         <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary active">
+          <label class="btn btn-secondary active beta-0">
             <input type="radio" name="hours" id="hours" autocomplete="off" />
-            0%
+            0
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary">
-            <input type="radio" name="day" id="day" autocomplete="off" /> 25%
+          <label class="btn btn-secondary active beta-03">
+            <input type="radio" name="hours" id="hours" autocomplete="off" />
+            0.3
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary">
-            <input type="radio" name="days" id="days" autocomplete="off" /> 50%
+          <label class="btn btn-secondary active beta-04">
+            <input type="radio" name="hours" id="hours" autocomplete="off" />
+            0.4
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary">
-            <input type="radio" name="days" id="days" autocomplete="off" /> 70%
-          </label>
-        </div>
-        <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary">
-            <input type="radio" name="days" id="days" autocomplete="off" /> 90%
+          <label class="btn btn-secondary active beta-05">
+            <input type="radio" name="hours" id="hours" autocomplete="off" />
+            0.5
           </label>
         </div>
       </div>

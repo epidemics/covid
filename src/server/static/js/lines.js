@@ -20,6 +20,7 @@ function getCountries(data) {
 
 function transformData(data) {
   result = [];
+  let cities = _.uniqBy(data, 'City').map(r => ({city: r.City, data: []}))
   data.forEach(row => {
     if (!result[row.City]) {
       result[row.City] = [];
@@ -31,6 +32,12 @@ function transformData(data) {
           row['Cumulative Median_2'],
           row['Cumulative Median_3']
         ])
+    _.find(cities, ['city', row.City]).data.push([          today.addDays(row.Timestep), 
+      row['Cumulative Median_0'], 
+      row['Cumulative Median_1'], 
+      row['Cumulative Median_2'],
+      row['Cumulative Median_3']
+    ])
   })
   return result
 }
@@ -43,8 +50,9 @@ function getSelectedCountry(data) {
   return (c && data[c]) ? c : 'Abuja'
 }
 
+let foo = "https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563eb055961644d913aca/src/server/static/data/line-data.csv";
 //Read the data
-d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563eb055961644d913aca/src/server/static/data/line-data.csv")
+d3.csv("/static/data/line-data.csv")
   .then(function(data){
     console.log('raw data', data)
     // List of groups (here I have one group per column)
@@ -52,7 +60,7 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
     data = transformData(data)
     selectedCountry = getSelectedCountry(data)
     countryData = data[selectedCountry]
-    console.log('transformed data', data, selectedCountry)
+    var beta = 0.0;
 
     // add the options to the button
     d3.select("#selectButton")
@@ -66,7 +74,6 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
       .attr("value", function(d) {
         return d;
       }); // corresponding value returned by the button
-
 
       var xDomain = d3.extent(countryData, function(d) { 
           return d[0]; 
@@ -208,5 +215,12 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
       // run the updateChart function with this selected option
       update(selectedOption);
     });
+
+    d3.select(".beta-0").on("click", function(){beta=0})
+    d3.select(".beta-03").on("click", function(){beta=0.3})
+    d3.select(".beta-04").on("click", function(){beta=0.4})
+    d3.select(".beta-05").on("click", function(){beta=0.5})
+
+    console.log("RUNNING D3");
   }
 );
