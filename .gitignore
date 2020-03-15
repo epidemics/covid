@@ -4,3 +4,4 @@
 *.pq
 data-prep/data_fixed
 **/*.egg-info
+node_modules
