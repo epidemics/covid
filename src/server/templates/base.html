@@ -1,95 +1,150 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="favicon.ico">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <link rel="icon" href="favicon.ico" />
 
     <title>Our landing page!</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
+      integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg="
+      crossorigin="anonymous"
+    />
     <!-- Custom styles for this template -->
-    <link href="../static/css/main.css" rel="stylesheet">
+    <link href="../static/css/main.css" rel="stylesheet" />
 
-	{% block additional_js_pre %}
-	  {% endblock %}
-
+    {% block additional_js_pre %} {% endblock %}
   </head>
 
   <body>
-
     <header>
       <div class="container">
-      	<div class="row d-flex align-items-center">
-	        <h1 class="col-3 flex-grow-1">Epidemic Forecasting</h1>
-	        <nav class="col nav nav-masthead justify-content-end">
-	          <a class="nav-link active" href="/">Home</a>
-	          <a class="nav-link" href="/model">Model</a>
-	          <a class="nav-link" href="/request-calculation">Request model</a>
-	          <a class="nav-link" href="/selections">Organizers</a>
-	        </nav>
-	      </div>
-	    </div>
+        <div class="row d-flex align-items-center">
+          <h1 class="col-3 flex-grow-1">Epidemic Forecasting</h1>
+          <nav class="col nav nav-masthead justify-content-end">
+            <a class="nav-link active" href="/">Home</a>
+            <a class="nav-link" href="/model">Model</a>
+            <a class="nav-link" href="/request-calculation">Request model</a>
+            <a class="nav-link" href="/selections">Organizers</a>
+          </nav>
+        </div>
+      </div>
     </header>
 
     <div class="container fill">
-    	<div class="row">
-    		<div class="col">
-		      <main role="main" class="">
-		            {% block content %}
-		            {% endblock %}
-		      </main>
-	      </div>
-		    <div class="col-4">
-		    	<div class="side p-4">
-		     		<div class="title">Most affected countries</div>
-		     		<table>
-		     			<tr><td class='num'>80,949</td><td class='area'>China</td></tr>
-		     			<tr><td class='num'>17,660</td><td class='area'>Italy</td></tr>
-		     			<tr><td class='num'>11,364</td><td class='area'>Iran</td></tr>
-		     			<tr><td class='num'>8,086</td><td class='area'>South Korea</td></tr>
-		     			<tr><td class='num'>5,232</td><td class='area'>Spain</td></tr>
-		     		</table>
+      <div class="row">
+        <div class="col">
+          <main role="main" class="">
+            {% block content %} {% endblock %}
+          </main>
+        </div>
+        <div class="col-4">
+          <div class="side p-4">
+            <div class="title">Most affected countries</div>
+            <table>
+              <tr>
+                <td class="num">80,949</td>
+                <td class="area">China</td>
+              </tr>
+              <tr>
+                <td class="num">17,660</td>
+                <td class="area">Italy</td>
+              </tr>
+              <tr>
+                <td class="num">11,364</td>
+                <td class="area">Iran</td>
+              </tr>
+              <tr>
+                <td class="num">8,086</td>
+                <td class="area">South Korea</td>
+              </tr>
+              <tr>
+                <td class="num">5,232</td>
+                <td class="area">Spain</td>
+              </tr>
+            </table>
 
-		     		<div class='line'></div>
+            <div class="line"></div>
 
-		     		<div class="title">Most affected cities</div>
-		     		<table>
-		     			<tr><td class='num'>80,949</td><td class='area'>China</td></tr>
-		     			<tr><td class='num'>17,660</td><td class='area'>Italy</td></tr>
-		     			<tr><td class='num'>11,364</td><td class='area'>Iran</td></tr>
-		     			<tr><td class='num'>8,086</td><td class='area'>South Korea</td></tr>
-		     			<tr><td class='num'>5,232</td><td class='area'>Spain</td></tr>
-		     		</table>
+            <div class="title">Most affected cities</div>
+            <table>
+              <tr>
+                <td class="num">80,949</td>
+                <td class="area">China</td>
+              </tr>
+              <tr>
+                <td class="num">17,660</td>
+                <td class="area">Italy</td>
+              </tr>
+              <tr>
+                <td class="num">11,364</td>
+                <td class="area">Iran</td>
+              </tr>
+              <tr>
+                <td class="num">8,086</td>
+                <td class="area">South Korea</td>
+              </tr>
+              <tr>
+                <td class="num">5,232</td>
+                <td class="area">Spain</td>
+              </tr>
+            </table>
 
-     				<div class='line'></div>
+            <div class="line"></div>
 
-			      <footer class="">
-		          <p>Last Updated: 3/14/2020, 2:53:03 AM</p>
+            <footer class="">
+              <p>Last Updated: 3/14/2020, 2:53:03 AM</p>
 
-		     			<div class='line'></div>
+              <div class="line"></div>
 
-		          <p>Disclaimer: All data used to produce this map are exclusively collected from publicly available sources, including government reports and news media.</p>
-			      </footer>
-		    	</div>
-
-    		</div>
-    	</div>
-  	</div>
-
+              <p>
+                Disclaimer: All data used to produce this map are exclusively
+                collected from publicly available sources, including government
+                reports and news media.
+              </p>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap" rel="stylesheet">
-    {% block additional_js %}
-    {% endblock %}
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap"
+      rel="stylesheet"
+    />
+    {% block additional_js %} {% endblock %}
   </body>
 </html>
