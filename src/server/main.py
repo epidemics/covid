@@ -38,18 +38,17 @@ async def model(request: Request, city: str = "New York") -> Response:
 
 
 @app.get("/request-event-evaluation")
-async def selection(request: Request) -> Response:
+async def request_event_evaluation(request: Request) -> Response:
     return templates.TemplateResponse(
         "request-event-evaluation.html",
         {"request": request, "message": "Please provide data"},
     )
 
 
-@app.get("/result-event-evaluation")
+@app.get("/selections")
 async def selection(request: Request) -> Response:
     return templates.TemplateResponse(
-        "result-event-evaluation.html",
-        {"request": request, "message": "Please provide data"},
+        "selections.html", {"request": request, "message": "Please provide data"},
     )
 
 
