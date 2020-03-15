@@ -21,6 +21,9 @@ Here is a template for new release sections
 
 ### Added
 - Linting with prettier JS (#67, #68, #69)
+- Template for `request-event-evaluation` (label "Event Prediction") (#62)
+- Template for sidebar (#62)
 ### Changed
+- Template for `model` (label "Request model") (#62)
 
 ### Removed
