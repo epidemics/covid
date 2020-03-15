@@ -22,5 +22,6 @@ Here is a template for new release sections
 ### Added
 
 ### Changed
+- structure of the layout, using foundation grid-x (#59)
 
 ### Removed
