@@ -1,29 +1,28 @@
 Date.prototype.addDays=function(d){return new Date(this.valueOf()+864E5*d);};
 let today = new Date();
 // set the dimensions and margins of the graph
-var margin = {top: 10, right: 100, bottom: 30, left: 30},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+var margin = { top: 10, right: 100, bottom: 30, left: 30 },
+  width = 460 - margin.left - margin.right,
+  height = 400 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
-   .append("svg")
-    .attr("width", '100%')
-    .attr("height", '100%')
-    .append("g") 
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")")
-
+var svg = d3
+  .select("#my_dataviz")
+  .append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 function getCountries(data) {
-  return [...new Set(data.map(d => d.City))]
+  return [...new Set(data.map(d => d.City))];
 }
 
 function transformData(data) {
-  result = []
+  result = [];
   data.forEach(row => {
     if (!result[row.City]) {
-      result[row.City] = []
+      result[row.City] = [];
     }
     result[row.City].push([
           today.addDays(row.Timestep), 
@@ -48,12 +47,16 @@ d3.csv("https://csvlint.io/validation/5e6cf73ea8838f0004000004.csv")
 
     // add the options to the button
     d3.select("#selectButton")
-      .selectAll('myOptions')
+      .selectAll("myOptions")
       .data(allGroup)
       .enter()
-      .append('option')
-      .text(function (d) { return d; }) // text showed in the menu
-      .attr("value", function (d) { return d; }) // corresponding value returned by the button
+      .append("option")
+      .text(function(d) {
+        return d;
+      }) // text showed in the menu
+      .attr("value", function(d) {
+        return d;
+      }); // corresponding value returned by the button
 
 
       var xDomain = d3.extent(countryData, function(d) { 
@@ -189,10 +192,10 @@ var div = d3.select("body").append("div")
 
     // When the button is changed, run the updateChart function
     d3.select("#selectButton").on("change", function(d) {
-        // recover the option that has been chosen
-        var selectedOption = d3.select(this).property("value")
-        // run the updateChart function with this selected option
-        update(selectedOption)
-    })
-
-})
+      // recover the option that has been chosen
+      var selectedOption = d3.select(this).property("value");
+      // run the updateChart function with this selected option
+      update(selectedOption);
+    });
+  }
+);

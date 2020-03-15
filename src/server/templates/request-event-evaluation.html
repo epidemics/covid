@@ -1,0 +1,195 @@
+{% extends "base.html" %} {% block content %}
+
+<div>
+  <br />
+  <div class="row">
+    <div class="col-md-4 col-sm-12 order-md-2">
+      <img
+        src="../img/Oxford-logo-2.png"
+        alt="Logo of the Future of Humanity Institute"
+        height="150"
+      />
+      <img
+        src="../img/Oxford-logo.png"
+        alt="Logo of the University of Oxford"
+        height="150"
+      />
+    </div>
+    <div class="col-md-8 col-sm-12 order-md-1">
+      <h1 class="title-form">Should you cancel your event?</h1>
+      <p>This 5-min tool will help you figure out the risks involved.</p>
+      <p>
+        It relies on advanced pandemic simulation software and expert
+        forecasters, and was created by acadmics at the University of Oxford.
+      </p>
+    </div>
+  </div>
+  <hr />
+  <br />
+  <form action="/result-event-evaluation">
+    <div class="form-group">
+      <div class="row">
+        <div class="col-lg-5 col-sm-12">
+          <label for="location">Where is your event?</label>
+
+          <select class="form-control" id="exampleFormControlSelect1">
+            <option selected>Choose...</option>
+            <option value="Africa">Africa</option>
+            <option value="Australia">Australia</option>
+            <option value="Belgium">Belgium</option>
+            <option value="California">California</option>
+            <option value="China">China</option>
+            <option value="Dubai">Dubai</option>
+            <option value="Egypt">Egypt</option>
+            <option value="European Union">European Union</option>
+            <option value="France">France</option>
+            <option value="Germany">Germany</option>
+            <option value="Hong Kong">Hong Kong</option>
+            <option value="Hubei">Hubei</option>
+            <option value="India">India</option>
+            <option value="Indonesia">Indonesia</option>
+            <option value="Iran">Iran</option>
+            <option value="Italy">Italy</option>
+            <option value="Japan">Japan</option>
+            <option value="London">London</option>
+            <option value="Netherlands">Netherlands</option>
+            <option value="New York">New York</option>
+            <option value="Oxford">Oxford</option>
+            <option value="Russia">Russia</option>
+            <option value="San Francisco">San Francisco</option>
+            <option value="Singapore">Singapore</option>
+            <option value="South Korea">South Korea</option>
+            <option value="Spain">Spain</option>
+            <option value="Switzerland">Switzerland</option>
+            <option value="The Middle East">The Middle East</option>
+            <option value="United Kingdon">United Kingdon</option>
+            <option value="United States of America"
+              >United States of America</option
+            >
+            <option value="Washington">Washington</option>
+            <option value="Wuhan">Wuhan</option>
+          </select>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-lg-5 col-sm-12">
+          <label for="datepicker">When is your event?</label><br />
+          <input
+            class="form-control"
+            id="datepicker"
+            name="datepicker"
+            data-provide="datepicker"
+            data-date-format="mm/dd/yyyy"
+          />
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-lg-5 col-sm-12">
+          <label for="number">How many people will attend?</label><br />
+          <select class="form-control" id="exampleFormControlSelect1">
+            <option selected>Choose...</option>
+            <option value="1-10">1-10</option>
+            <option value="10-100">10-100</option>
+            <option value="100-1000">100-1000</option>
+            <option value="1000+">1000+</option>
+          </select>
+        </div>
+      </div>
+      <br />
+
+      <label for="length">How long is your event?</label>
+      <div class="btn-group-toggle" data-toggle="buttons">
+        <div class="row">
+          <div class="col-md-auto col-sm-12">
+            <label class="btn btn-secondary active">
+              <input type="radio" name="hours" id="hours" autocomplete="off" />
+              A few hours
+            </label>
+          </div>
+          <div class="col-md-auto col-sm-12">
+            <label class="btn btn-secondary">
+              <input type="radio" name="day" id="day" autocomplete="off" /> A
+              day
+            </label>
+          </div>
+          <div class="col-md-auto col-sm-12">
+            <label class="btn btn-secondary">
+              <input type="radio" name="days" id="days" autocomplete="off" /> A
+              few days or more
+            </label>
+          </div>
+        </div>
+      </div>
+      <br />
+      <label for="size">How much contact will people have?</label>
+      <div class="btn-group-toggle vertical-buttons" data-toggle="buttons">
+        <div class="row">
+          <div class="col-lg-2 col-md-3 col-sm-12">
+            <label class="btn btn-secondary active" for="little">
+              <input
+                type="radio"
+                name="little"
+                id="little"
+                autocomplete="off"
+              />
+              A little
+            </label>
+          </div>
+          <div class="col-10 col-md-9 col-sm-12 description">
+            Examples: A lecture, working in an office
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-2 col-md-3 col-sm-12">
+            <label class="btn btn-secondary" class="radio-button">
+              <input
+                type="radio"
+                name="inbetween"
+                id="inbetween"
+                autocomplete="off"
+              />
+              In-between
+            </label>
+          </div>
+          <div class="col-10 col-10 col-md-9 col-sm-12 description">
+            Examples: A networking conference
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-2 col-md-3 col-sm-12">
+            <label class="btn btn-secondary" class="radio-button">
+              <input type="radio" name="lot" id="lot" autocomplete="off" />
+              A lot
+            </label>
+          </div>
+          <div class="col-10 col-md-9 col-sm-12 description">
+            Examples: A dancing workshop, a party
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <br />
+    <div class="row">
+      <div class="col-lg-5 col-sm-12">
+        <button type="submit" class="btn btn-primary full-width active">
+          See results
+        </button>
+      </div>
+    </div>
+    <br />
+  </form>
+</div>
+
+{% endblock %} {% block additional_js %}
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"
+  integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8="
+  crossorigin="anonymous"
+></script>
+<script>
+  $("#datepicker").datepicker();
+</script>
+{% endblock %}

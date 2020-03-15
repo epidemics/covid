@@ -3,6 +3,7 @@ import os
 from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 
 SERVER_ROOT = os.path.dirname(__file__)
 
@@ -24,6 +25,7 @@ async def index(request: Request) -> Response:
 @app.get("/request-calculation")
 async def request_calculation(request: Request) -> Response:
     """TODO: This view should process a form"""
+    """MATI: Actually, I don't think we'll have anything to process here as the first page just has a START button"""
     return templates.TemplateResponse("request-calculation.html", {"request": request},)
 
 
@@ -33,6 +35,14 @@ async def model(request: Request, city: str = "New York") -> Response:
     # TODO: argument
     arguments = {"city": city} if city else {}
     return templates.TemplateResponse("model.html", {"request": request},)
+
+
+@app.get("/request-event-evaluation")
+async def request_event_evaluation(request: Request) -> Response:
+    return templates.TemplateResponse(
+        "request-event-evaluation.html",
+        {"request": request, "message": "Please provide data"},
+    )
 
 
 @app.get("/selections")
