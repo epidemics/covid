@@ -179,6 +179,20 @@ label {
   border-radius: 0px;
 }
 
+.btn-secondary.active {
+  background-color: white !important;
+  color: black !important;
+}
+
+select,
+input {
+  border-radius: 0px !important;
+}
+
+.btn-secondary {
+  margin-right: -10px;
+}
+
 label.btn-secondary > input {
   display: none;
 }
@@ -189,19 +203,29 @@ label.btn-secondary > input {
   text-transform: uppercase;
 }
 
-.vertical-buttons > div > div > label {
-  min-width: 140px;
+.vertical-buttons {
+  margin-bottom: 30px;
 }
 
-@media only screen and (max-width: 575px) {
+@media only screen and (max-width: 767px) {
   .vertical-buttons > div > .description {
     margin-bottom: 15px;
   }
 }
 
-@media only screen and (min-width: 576px) {
+@media only screen and (min-width: 768px) {
   .vertical-buttons > div > .description {
     padding-top: 15px;
+  }
+}
+
+.vertical-buttons > div > div > label {
+  min-width: 140px;
+}
+
+@media only screen and (max-width: 450px) {
+  label {
+    width: inherit;
   }
 }
 
