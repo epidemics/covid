@@ -2,7 +2,38 @@
 active_page = 'models' -%} {% block additional_js_pre %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-{% endblock %} {% block content %}
+<style type="text/css">
+  .overlay {
+    fill: none;
+    stroke: none;
+    pointer-events: all;
+  }
+  .line .crosshair {
+    fill: none;
+    stroke-width: 1px;
+  }
+  .line .crosshair {
+    stroke: white;
+    opacity: 0.2
+  }
+
+  div.tooltip { 
+    position: absolute;     
+    text-align: center;     
+    width:100px;          
+    height: auto;         
+    padding: 2px;       
+    font: 12px sans-serif;   
+    color: #fff; 
+    background: #6c757d; 
+    border: 0px;    
+    border-radius: 8px;     
+    pointer-events: none;     
+}
+
+</style>
+{% endblock %}
+{% block content %}
 <div>
   <br />
   <div class="row">

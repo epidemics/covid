@@ -1,5 +1,5 @@
 function transformBubbleData(data) {
-  return data.map(bubble => ({ lat: bubble.Latitude, long: bubble.Longitude }));
+  return data.map(bubble => ({ lat: bubble.Latitude, long: bubble.Longitude, country: bubble.Country, city: bubble.City  }));
 }
 
 // mapid is the id of the div where the map will appear
@@ -16,12 +16,13 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
 // Add a svg layer to the map
 L.svg().addTo(map);
 
-d3.csv("https://csvlint.io/validation/5e6d1368a8838f000400000d.csv").then(
+d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563eb055961644d913aca/src/server/static/data/bubble-data.csv").then(
   function(data) {
     markers = transformBubbleData(data);
     // Select the svg area and add circles:
     d3.select("#mapid")
       .select("svg")
+      .attr('pointer-events', 'visible')
       .selectAll("myCircles")
       .data(markers)
       .enter()
@@ -36,7 +37,16 @@ d3.csv("https://csvlint.io/validation/5e6d1368a8838f000400000d.csv").then(
       .style("fill", "red")
       .attr("stroke", "red")
       .attr("stroke-width", 3)
-      .attr("fill-opacity", 0.4);
+      .attr("fill-opacity", 0.4)
+      .attr("class", "bubble")
+      .on('click', function() {
+        console.log('clicked')
+      });
+
+      d3.selectAll(".bubble").on('click', function(bubble) {
+        console.log(bubble);
+        window.location += 'model?selection=' + bubble.city
+    });
 
     // Function that update circle position if something change
     function update() {
