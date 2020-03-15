@@ -46,18 +46,20 @@
     {% block additional_js_pre %} {% endblock %}
   </head>
 
+  {% set navigation_bar = [ ('/', 'index', 'Public information'), ('/model/',
+  'models', 'Models'), ('/request-calculation/', 'request-model', 'Request
+  model'), ('/request-event-evaluation/', 'events', 'Event prediction') ] -%} {%
+  set active_page = active_page|default('index') -%}
+
   <body>
     <header>
       <div class="container">
         <div class="row d-flex align-items-center">
-          <h1 class="col-3 flex-grow-1"><a href="/">Epidemic Forecasting</a></h1>
+          <h1 class="col-3 flex-grow-1">
+            <a href="/">Epidemic Forecasting</a>
+          </h1>
           <nav class="col nav nav-masthead justify-content-end">
-            {% set navigation_bar = [ ('/', 'index', 'Public information'),
-            ('/model/', 'models', 'Models'), ('/request-calculation/',
-            'request-model', 'Request model'), ('/request-event-evaluation/',
-            'events', 'Event prediction') ] -%} {% set active_page =
-            active_page|default('index') -%} {% for href, id, caption in
-            navigation_bar %}
+            {% for href, id, caption in navigation_bar %}
             <a
               class="nav-link {% if id == active_page %}active{% endif %}"
               href="{{ href|e }}"
