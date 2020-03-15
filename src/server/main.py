@@ -99,8 +99,14 @@ async def request_event_evaluation(request: Request) -> Response:
         {"request": request, "message": "Please provide data", "places": places},
     )
 
+
 @app.get("/result-event-evaluation")
-async def result_event_evaluation(request: Request, place:str="USA", number:int=10, datepicker: str="02/02/2017") -> Response:
+async def result_event_evaluation(
+    request: Request,
+    place: str = "USA",
+    number: int = 10,
+    datepicker: str = "02/02/2017",
+) -> Response:
     # TODO - implement the calculations based on parameters from the request-event-evaluation
     # TODO: Use real data model here, also use the real values from the forms, parameters are ignored
     class Place:
@@ -134,18 +140,11 @@ async def result_event_evaluation(request: Request, place:str="USA", number:int=
             "number": number,
             "place": place,
             "probability": probability,
-        }
+        },
     )
 
 
 @app.get("/thanks")
-async def result_calculations(
-    request: Request
-) -> Response:
+async def result_calculations(request: Request) -> Response:
 
-    return templates.TemplateResponse(
-        "thanks.html",
-        {
-            "request": request,
-        },
-    )
+    return templates.TemplateResponse("thanks.html", {"request": request,},)

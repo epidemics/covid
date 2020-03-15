@@ -9,42 +9,47 @@ set active_page = "request-model" %} {% block content %}
 
 <form action="/thanks">
   <div class="form-group">
-      <div>
-          <p>Doesn't do anything yet!</p>
-      </div>
+    <div>
+      <p>Doesn't do anything yet!</p>
+    </div>
     <label for="number">Mitigation strength:</label>
     <div class="row">
-        <div class="col-lg-5 col-sm-12">
-          <input
-            class="form-control"
-            placeholder="Mitigation strength"
-            type="number"
-            id="number"
-            name="number"
-          />
-        </div>
+      <div class="col-lg-5 col-sm-12">
+        <input
+          class="form-control"
+          placeholder="Mitigation strength"
+          type="number"
+          id="number"
+          name="number"
+        />
+      </div>
     </div>
     <label for="datepicker">Date:</label>
     <div class="row">
-        <div class="col-lg-5 col-sm-12">
-          <input class="form-control" id="datepicker" name="datepicker" data-provide="datepicker" data-date-format="yyyy-mm-dd">
-        </div>
+      <div class="col-lg-5 col-sm-12">
+        <input
+          class="form-control"
+          id="datepicker"
+          name="datepicker"
+          data-provide="datepicker"
+          data-date-format="yyyy-mm-dd"
+        />
+      </div>
     </div>
     <label for="place">Place:</label>
     <div class="row">
-        <div class="col-lg-5 col-sm-12">
-          <select class="form-control" name="place" id="place">
+      <div class="col-lg-5 col-sm-12">
+        <select class="form-control" name="place" id="place">
           {% for place in places %}
-            <option value="{{ place.name }}">{{ place.name }}</option>
+          <option value="{{ place.name }}">{{ place.name }}</option>
           {% endfor %}
-          </select>
-        </div>
+        </select>
+      </div>
     </div>
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-{% endblock %}
-{% block additional_js %}
+{% endblock %} {% block additional_js %}
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"
   integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8="
