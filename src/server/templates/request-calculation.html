@@ -3,19 +3,21 @@ set active_page = "request-model" %} {% block content %}
 <div>
   <p>
     A user should be able to put in some parameters and after clicking the
-    button, we compute if it's safe to organize an event or how likely it is
-    someone gets sick.
+    button, we compute a new model for them when we can!
   </p>
 </div>
 
-<form action="/result-calculations">
+<form action="/thanks">
   <div class="form-group">
-    <label for="number">Number:</label>
+      <div>
+          <p>Doesn't do anything yet!</p>
+      </div>
+    <label for="number">Mitigation strength:</label>
     <div class="row">
         <div class="col-lg-5 col-sm-12">
           <input
             class="form-control"
-            placeholder="Number of people"
+            placeholder="Mitigation strength"
             type="number"
             id="number"
             name="number"
