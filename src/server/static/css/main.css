@@ -111,6 +111,7 @@ main {
   }
 }*/
 
+
 .side {
 	background: #0E0E12;
 	padding: 1.5rem;
@@ -161,18 +162,4 @@ main {
 
 #my_dataviz_map{
     display: none;
-}
-
-/*
- * Forms
- */
-.form-group label {
-    color: white;
-    font-weight: 700;
-    padding-bottom: 0.75rem;
-}
-
-.form-item {
-    color: #495057;
-    border-radius: 0.25rem;
 }
