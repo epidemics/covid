@@ -82,11 +82,11 @@ async def request_calculation(request: Request) -> Response:
 
 
 @app.get("/model")
-async def model(request: Request, city: str = "New York") -> Response:
+async def model(request: Request, country: str = "USA") -> Response:
     """TODO: this should serve the main model visualization"""
-    # TODO: argument
-    arguments = {"city": city} if city else {}
-    return templates.TemplateResponse("model.html", {"request": request},)
+    arguments = {"country": country} if country else {}
+    # TODO: parse the argument for the plot
+    return templates.TemplateResponse("model.html", {"request": request})
 
 
 @app.get("/request-event-evaluation")
@@ -100,11 +100,15 @@ async def request_event_evaluation(request: Request) -> Response:
     )
 
 
-@app.get("/result-calculations")
-async def result_calculations(
-    request: Request, datepicker: str, number: int, place: str
+@app.get("/result-event-evaluation")
+async def result_event_evaluation(
+    request: Request,
+    place: str = "USA",
+    number: int = 10,
+    datepicker: str = "02/02/2017",
 ) -> Response:
-    # TODO: Use real data model here
+    # TODO - implement the calculations based on parameters from the request-event-evaluation
+    # TODO: Use real data model here, also use the real values from the forms, parameters are ignored
     class Place:
         def __init__(self, name):
             self.name = name
@@ -120,7 +124,7 @@ async def result_calculations(
 
     data = Data()
 
-    # The following is not a mock
+    # The following is not a mock, but until data are fixed, it is irrelevant
     place_data = data[place]
     try:
         median = place_data.gleamviz_predictions.loc[datepicker]
@@ -128,9 +132,8 @@ async def result_calculations(
         probability = (1 - (1 - fraction) ** number) * 100  # in %
     except KeyError:
         probability = "unknown"
-
     return templates.TemplateResponse(
-        "result-calculations.html",
+        "result-event-evaluation.html",
         {
             "request": request,
             "datepicker": datepicker,
@@ -139,3 +142,9 @@ async def result_calculations(
             "probability": probability,
         },
     )
+
+
+@app.get("/thanks")
+async def result_calculations(request: Request) -> Response:
+
+    return templates.TemplateResponse("thanks.html", {"request": request,},)
