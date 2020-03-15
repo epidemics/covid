@@ -17,6 +17,7 @@ def test_request_event_evaluation():
 
 def test_result_calculations():
     response = client.get(
-        "/result-calculations", params={"number": 10, "datepicker": "2019/12/22"}
+        "/result-calculations",
+        params={"number": 10, "datepicker": "2019/12/22", "place": "Here"},
     )
     assert response.status_code == 200
