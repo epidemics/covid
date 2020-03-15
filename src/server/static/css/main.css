@@ -114,9 +114,10 @@ main {
 
 .side {
 	background: #0E0E12;
+	padding: 1.5rem;
 }
 
-.side .line {
+.line {
 	margin: 1.5rem 0;
 	border-bottom: 1px solid #32303A;
 }
@@ -132,7 +133,7 @@ main {
 	padding-bottom: 0.75rem;
 }
 
-footer {
+.footer {
 	font-size: .9em;
 }
 /*
