@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block additional_js_pre %}
+{% extends "base.html" %} {% block title %} Model {% endblock title%} {% set
+active_page = 'models' -%} {% block additional_js_pre %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <style type="text/css">
@@ -37,11 +38,7 @@
   <br />
   <div class="row">
     <div class="col-lg-5 col-sm-12">
-      <select
-        id="selectButton"
-        class="form-control large"
-      >
-      </select>
+      <select id="selectButton" class="form-control large"> </select>
     </div>
     <div class="col-lg-6 col-sm-0"></div>
     <div class="col-lg-1 col-sm-12 population">
@@ -96,7 +93,7 @@
       </div>
     </div>
   </div>
-  <br/>
+  <br />
   <div class="row">
     {{message | default("This mitigation option involves encouraging handwashing
     and good hygenic practices in the broader population.")}}
@@ -114,15 +111,15 @@
     <div class="col-lg-9 col-md-12">
       <h5 class="row">How the model works</h5>
       <div class="row">
-        A simple POC for using bokeh to visualize modelled covid-19 data. Based on
-        bokeh weather example.
+        A simple POC for using bokeh to visualize modelled covid-19 data. Based
+        on bokeh weather example.
       </div>
       <div class="row">
-        There two main components: charts — using bokeh serve to serve bokeh charts
-        in src/charts directory. webserver — a webserver using fastapi to render
-        templates and embeds bokeh charts via the running charts bokeh server using
-        JS scripts. That means that when you access the index site of the fastapi
-        server, it generates the tag for the relevant chart.
+        There two main components: charts — using bokeh serve to serve bokeh
+        charts in src/charts directory. webserver — a webserver using fastapi to
+        render templates and embeds bokeh charts via the running charts bokeh
+        server using JS scripts. That means that when you access the index site
+        of the fastapi server, it generates the tag for the relevant chart.
       </div>
     </div>
   </div>
