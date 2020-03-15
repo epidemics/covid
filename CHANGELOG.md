@@ -20,6 +20,7 @@ Here is a template for new release sections
 ## [Unreleased]
 
 ### Added
+- Added GA (#70)
 - Linting with prettier JS (#67, #68, #69)
 - Template for `request-event-evaluation` (label "Event Prediction") (#62)
 - Template for sidebar (#62)
