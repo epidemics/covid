@@ -53,6 +53,25 @@ poetry run pytest tests
 ```
 or inside the container
 
+## linting
+
+install the needed packages locally with
+```
+npm i
+```
+
+Then run the linting tests with
+
+```
+npm test
+```
+
+To automatically lint your files run
+
+```
+prettier --no-semi --write "src/server/static/**"
+```
+
 # Deployment
 We use Github Actions. The pipeline is specified in `.github/workflows/pythonapp.yml`
 
