@@ -151,6 +151,5 @@ async def result_calculations(request: Request) -> Response:
 @app.get("/contact")
 async def request_calculation(request: Request) -> Response:
     return templates.TemplateResponse(
-        "contact-form.html",
-        {"request": request, "message": ""},
+        "contact-form.html", {"request": request, "message": ""},
     )
