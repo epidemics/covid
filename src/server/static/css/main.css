@@ -153,3 +153,12 @@ footer {
 /*.mastfoot {
   color: rgba(255, 255, 255, .5);
 }*/
+
+
+#mapid {
+    height: 100vh;
+}
+
+#my_dataviz_map{
+    display: none;
+}
