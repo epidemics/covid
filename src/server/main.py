@@ -1,13 +1,10 @@
 import os
 
-from bokeh.embed import server_document
 from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 
-# the URI must be accessible from the client's browser, it's not "proxied" via the server
-BOKEH_URI = os.getenv("BOKEH_URI", "http://127.0.0.1:5001").rstrip("/")
 SERVER_ROOT = os.path.dirname(__file__)
 
 app = FastAPI()
@@ -37,15 +34,10 @@ async def request_calculation(request: Request) -> Response:
 
 @app.get("/model")
 async def model(request: Request, city: str = "New York") -> Response:
-    """TODO: this should serve the main model visualization,
-"""
+    """TODO: this should serve the main model visualization"""
+    # TODO: argument
     arguments = {"city": city} if city else {}
-    plot_script = server_document(
-        f"{BOKEH_URI}/app1", arguments=arguments, resources=None
-    )
-    return templates.TemplateResponse(
-        "model.html", {"request": request, "plot": plot_script},
-    )
+    return templates.TemplateResponse("model.html", {"request": request},)
 
 
 @app.get("/request-event-evaluation")
