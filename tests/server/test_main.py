@@ -10,11 +10,6 @@ def test_index():
     assert response.status_code == 200
 
 
-def test_selections():
-    response = client.get("/selections")
-    assert response.status_code == 200
-
-
 def test_request_event_evaluation():
     response = client.get("/request-event-evaluation")
     assert response.status_code == 200
