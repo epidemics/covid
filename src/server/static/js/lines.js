@@ -32,21 +32,40 @@ function transformData(data) {
           row['Cumulative Median_2'],
           row['Cumulative Median_3']
         ])
-    _.find(cities, ['city', row.City]).data.push([          today.addDays(row.Timestep), 
+    _.find(cities, ['city', row.City]).data.push([
+      today.addDays(row.Timestep), 
       row['Cumulative Median_0'], 
       row['Cumulative Median_1'], 
       row['Cumulative Median_2'],
       row['Cumulative Median_3']
     ])
   })
-  return result
+  return result;
+}
+
+function cityData(data) {
+  result = [];
+  let cities = _.uniqBy(data, 'City').map(r => ({city: r.City, items: []}))
+  data.forEach(row => {
+    if (!result[row.City]) {
+      result[row.City] = [];
+    }
+    _.find(cities, ['city', row.City]).items.push([
+      today.addDays(row.Timestep), 
+      row['Cumulative Median_0'], 
+      row['Cumulative Median_1'], 
+      row['Cumulative Median_2'],
+      row['Cumulative Median_3']
+    ])
+  })
+  return cities;
 }
 
 function getSelectedCountry(data) {
   var url_string = window.location.href
   var url = new URL(url_string);
   var c = url.searchParams.get("selection");
-  console.log(c, data[c], data)
+  console.log('search query', c, data[c], data)
   return (c && data[c]) ? c : 'Abuja'
 }
 
@@ -57,9 +76,10 @@ d3.csv("/static/data/line-data.csv")
     console.log('raw data', data)
     // List of groups (here I have one group per column)
     var allGroup = getCountries(data)
-    data = transformData(data)
+    cities = cityData(data);
     selectedCountry = getSelectedCountry(data)
-    countryData = data[selectedCountry]
+    city = cities.find(r => r.city === selectedCountry);
+    countryData=city.items;
     var beta = 0.0;
 
     // add the options to the button
@@ -104,7 +124,7 @@ d3.csv("/static/data/line-data.csv")
         .append("path")
           .datum(countryData)
           .attr("d", d3.line()
-            .x(function(d) { console.log('asdsa'); window.myX = x; return x(d[0]) })
+            .x(function(d) { window.myX = x; return x(d[0]) })
             .y(function(d) { return y(+d[i]) })
           )
           .attr("stroke", color)
@@ -188,8 +208,8 @@ d3.csv("/static/data/line-data.csv")
 
     // A function that update the chart
     function update(selectedGroup) {
-      countryData = data[selectedGroup]
-      console.log('countryData',countryData)
+      city = cities.find(r => r.city === selectedGroup);
+      countryData=city.items;
       function updateLine(myLine, i){
           myLine
             .datum(countryData)
@@ -205,7 +225,6 @@ d3.csv("/static/data/line-data.csv")
       updateLine(line2, 2)
       updateLine(line3, 3)
       updateLine(line4, 4)
-
     }
 
     // When the button is changed, run the updateChart function
