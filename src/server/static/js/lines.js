@@ -35,15 +35,24 @@ function transformData(data) {
   return result
 }
 
+function getSelectedCountry(data) {
+  var url_string = window.location.href
+  var url = new URL(url_string);
+  var c = url.searchParams.get("selection");
+  console.log(c, data[c], data)
+  return (c && data[c]) ? c : 'Abuja'
+}
+
 //Read the data
-d3.csv("https://csvlint.io/validation/5e6cf73ea8838f0004000004.csv")
+d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563eb055961644d913aca/src/server/static/data/line-data.csv")
   .then(function(data){
     console.log('raw data', data)
     // List of groups (here I have one group per column)
     var allGroup = getCountries(data)
     data = transformData(data)
-    countryData = data['Abuja']
-    console.log('transformed data', data)
+    selectedCountry = getSelectedCountry(data)
+    countryData = data[selectedCountry]
+    console.log('transformed data', data, selectedCountry)
 
     // add the options to the button
     d3.select("#selectButton")
@@ -167,7 +176,8 @@ d3.csv("https://csvlint.io/validation/5e6cf73ea8838f0004000004.csv")
 
 
   
-    update('Abuja')
+    update(selectedCountry)
+    d3.select('#selectButton').property('value', selectedCountry);
 
     // A function that update the chart
     function update(selectedGroup) {
