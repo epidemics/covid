@@ -31,23 +31,6 @@ function redraw(){
         svg
           .attr("width", width + margin.left + margin.right)
           .attr("height", height + margin.top + margin.bottom);
-
-        // Draw an X to show that the size is correct.
-        var lines = svg.selectAll("line").data([
-          {x1: 0, y1: 0, x2: width, y2: height},
-          {x1: 0, y1: height, x2: width, y2: 0}
-        ]);
-        lines
-          .enter().append("line")
-            .style("stroke-width", 50)
-            .style("stroke-opacity", 0.4)
-            .style("stroke", "black")
-          .merge(lines)
-            .attr("x1", function (d) { return d.x1; })
-            .attr("y1", function (d) { return d.y1; })
-            .attr("x2", function (d) { return d.x2; })
-            .attr("y2", function (d) { return d.y2; })
-         ;
       }
 
 // Draw for the first time to initialize.
