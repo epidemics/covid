@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block content %}
+<div>
+  <p>
+    A user should be able to put in some parameters and after clicking the
+    button, we compute if it's safe to organize an event or how likely it is
+    someone gets sick.
+  </p>
+  {{ message }}
+</div>
+
+<form action="/result-calculations">
+  <div class="form-group">
+    <label for="number">Number:</label><br />
+    <input
+      class="form-control"
+      placeholder="Number of people"
+      type="number"
+      name="number"
+    /><br />
+
+    <label for="datepicker">Date:</label><br />
+    <input
+      class="form-control"
+      id="datepicker"
+      name="datepicker"
+      data-provide="datepicker"
+      data-date-format="mm/dd/yyyy"
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %} {% block additional_js %}
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"
+  integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8="
+  crossorigin="anonymous"
+></script>
+<script>
+  $("#datepicker").datepicker();
+</script>
+{% endblock %}

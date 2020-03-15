@@ -1,0 +1,25 @@
+{
+  "name": "covid",
+  "version": "1.0.0",
+  "description": "Covid project",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "lint": "prettier --check \"{src/server/static/**, src/server/templates/**}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epidemics/covid.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/epidemics/covid/issues"
+  },
+  "homepage": "https://github.com/epidemics/covid#readme",
+  "devDependencies": {
+    "prettier": "1.19.1"
+  }
+}
