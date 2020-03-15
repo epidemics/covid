@@ -26,7 +26,7 @@ jobs:
     - name: Prettify the JS Code
       uses: creyD/prettier_action@v2.0
       with:
-        prettier_options: 'prettier --check "src/server/static/**"'
+        prettier_options: 'prettier --check "{src/server/static/**, src/server/templates/**}"'
         branch: ${{ github.head_ref }}
 
   tests:

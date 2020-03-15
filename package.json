@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "prettier --check 'src/server/static/**'"
+    "lint": "prettier --check \"{src/server/static/**, src/server/templates/**}\""
   },
   "repository": {
     "type": "git",
