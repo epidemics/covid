@@ -25,7 +25,6 @@
     </div>
   </div>
   <hr />
-  <br />
   <form action="/result-event-evaluation">
     <div class="form-group">
       <div class="row">
@@ -34,47 +33,16 @@
 
           <select class="form-control" id="exampleFormControlSelect1">
             <option selected>Choose...</option>
-            <option value="Africa">Africa</option>
-            <option value="Australia">Australia</option>
-            <option value="Belgium">Belgium</option>
-            <option value="California">California</option>
-            <option value="China">China</option>
-            <option value="Dubai">Dubai</option>
-            <option value="Egypt">Egypt</option>
-            <option value="European Union">European Union</option>
-            <option value="France">France</option>
-            <option value="Germany">Germany</option>
-            <option value="Hong Kong">Hong Kong</option>
-            <option value="Hubei">Hubei</option>
-            <option value="India">India</option>
-            <option value="Indonesia">Indonesia</option>
-            <option value="Iran">Iran</option>
-            <option value="Italy">Italy</option>
-            <option value="Japan">Japan</option>
-            <option value="London">London</option>
-            <option value="Netherlands">Netherlands</option>
-            <option value="New York">New York</option>
-            <option value="Oxford">Oxford</option>
-            <option value="Russia">Russia</option>
-            <option value="San Francisco">San Francisco</option>
-            <option value="Singapore">Singapore</option>
-            <option value="South Korea">South Korea</option>
-            <option value="Spain">Spain</option>
-            <option value="Switzerland">Switzerland</option>
-            <option value="The Middle East">The Middle East</option>
-            <option value="United Kingdon">United Kingdon</option>
-            <option value="United States of America"
-              >United States of America</option
-            >
-            <option value="Washington">Washington</option>
-            <option value="Wuhan">Wuhan</option>
+            {% for place in places %}
+              <option value="{{ place.name }}">{{ place.name }}</option>
+            {% endfor %}
           </select>
         </div>
       </div>
-      <br />
+
       <div class="row">
         <div class="col-lg-5 col-sm-12">
-          <label for="datepicker">When is your event?</label><br />
+          <label for="datepicker">When is your event?</label>
           <input
             class="form-control"
             id="datepicker"
@@ -84,10 +52,10 @@
           />
         </div>
       </div>
-      <br />
+
       <div class="row">
         <div class="col-lg-5 col-sm-12">
-          <label for="number">How many people will attend?</label><br />
+          <label for="number">How many people will attend?</label>
           <select class="form-control" id="exampleFormControlSelect1">
             <option selected>Choose...</option>
             <option value="1-10">1-10</option>
@@ -97,7 +65,6 @@
           </select>
         </div>
       </div>
-      <br />
 
       <label for="length">How long is your event?</label>
       <div class="btn-group-toggle" data-toggle="buttons">
@@ -122,7 +89,6 @@
           </div>
         </div>
       </div>
-      <br />
       <label for="size">How much contact will people have?</label>
       <div class="btn-group-toggle vertical-buttons" data-toggle="buttons">
         <div class="row">

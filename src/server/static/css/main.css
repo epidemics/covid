@@ -239,6 +239,11 @@ label.btn-secondary > input {
   font-size: 25px;
 }
 
+.form-group .row {
+    padding-bottom: 0.75rem;
+}
+
+
 /*
 * Model
 */
