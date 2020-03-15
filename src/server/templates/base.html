@@ -37,16 +37,18 @@
 	    </div>
     </header>
 
-    <div class="container fill">
-    	<div class="row">
-    		<div class="col">
+    <div class="grid-container fluid">
+    	<div class="grid-x grid-padding-x">
+    		<div class="cell small-12 medium-9">
 		      <main role="main" class="">
+				  {{ truc }}
 		            {% block content %}
 		            {% endblock %}
 		      </main>
-	      </div>
-		    <div class="col-4">
-		    	<div class="side p-4">
+	        </div>
+		    <div class="cell auto">
+
+		    	<div class="side">
 		     		<div class="title">Most affected countries</div>
 		     		<table>
 		     			<tr><td class='num'>80,949</td><td class='area'>China</td></tr>
@@ -69,13 +71,14 @@
 
      				<div class='line'></div>
 
-			      <footer class="">
+			      <div class="footer">
 		          <p>Last Updated: 3/14/2020, 2:53:03 AM</p>
 
 		     			<div class='line'></div>
 
 		          <p>Disclaimer: All data used to produce this map are exclusively collected from publicly available sources, including government reports and news media.</p>
-			      </footer>
+			      </div>
+
 		    	</div>
 
     		</div>
