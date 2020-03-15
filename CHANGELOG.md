@@ -20,7 +20,7 @@ Here is a template for new release sections
 ## [Unreleased]
 
 ### Added
-- Linting with prettier JS (#67, #68)
+- Linting with prettier JS (#67, #68, #69)
 ### Changed
 
 ### Removed
