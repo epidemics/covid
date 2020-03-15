@@ -25,6 +25,7 @@ Here is a template for new release sections
 - Template for sidebar (#62)
 - Added GA (#70)
 - Page titles (#72)
+- Added active page links (#74)
 ### Changed
 - Template for `model` (label "Request model") (#62)
 
