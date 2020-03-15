@@ -20,8 +20,7 @@ Here is a template for new release sections
 ## [Unreleased]
 
 ### Added
-
+- Linting with prettier JS (#67, #68)
 ### Changed
-- structure of the layout, using foundation grid-x (#59)
 
 ### Removed
