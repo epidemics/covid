@@ -92,15 +92,15 @@ d3.csv("https://csvlint.io/validation/5e6cf73ea8838f0004000004.csv")
             .y(function(d) { return y(+d[i]) })
           )
           .attr("stroke", color)
-          .style("stroke-width", 1)
+          .style("stroke-width", 2)
           .style("fill", "none")
 
     }
 
-    var line1 = drawLine(1, 'blue')
-    var line2 = drawLine(2, 'red')
-    var line3 = drawLine(3, 'orange')
-    var line4 = drawLine(4, 'green')
+    var line1 = drawLine(1, '#753def')
+    var line2 = drawLine(2, '#ef3d3d')
+    var line3 = drawLine(3, '#ef993d')
+    var line4 = drawLine(4, '#e2ca4a')
 
 
     // create crosshairs
@@ -117,9 +117,9 @@ d3.csv("https://csvlint.io/validation/5e6cf73ea8838f0004000004.csv")
       .attr("id", "crosshairY")
       .attr("class", "crosshair");
 
-var div = d3.select("body").append("div") 
-    .attr("class", "tooltip")       
-    .style("opacity", 0);
+    var tooltip = d3.select("body").append("div") 
+      .attr("class", "tooltip")       
+      .style("opacity", 0);
 
 
 
@@ -133,6 +133,7 @@ var div = d3.select("body").append("div")
           })
           .on('mouseout', function() {
             console.log('out')
+            tooltip.style('opacity', 0)
             crosshair.style("display", "none");
           })
           .on('mousemove', function() {
@@ -156,8 +157,8 @@ var div = d3.select("body").append("div")
             const diffDays = Math.round(Math.abs((mouseDate - today) / oneDay)); // number of days in the future
             const hoveredValues = countryData[diffDays]
 
-            div.style('opacity', 1)
-              .html('asdasdasdsad')
+            tooltip.style('opacity', 1)
+              .html('v1: '+hoveredValues[1]+'<br>'+'v2: '+hoveredValues[2]+'<br>'+'v3: '+hoveredValues[3]+'<br>'+'v4: '+hoveredValues[4]+'<br>')
               .style("left", (d3.event.pageX) + "px")   
               .style("top", (d3.event.pageY - 28) + "px");  
 
