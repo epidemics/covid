@@ -4,4 +4,6 @@
 *.pq
 data-prep/data_fixed
 **/*.egg-info
+
+# FE code
 node_modules
