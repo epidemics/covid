@@ -39,3 +39,4 @@ Here is a template for new release sections
 - Template for `model` (label "Request model") (#62, #52)
 
 ### Removed
+- Template for `selections` as well as view (duplicate of `request-event-calculation`) (#52)
