@@ -222,10 +222,11 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
             //console.log('move', diffDays)
           });
 
-
-  
+    //initialization
     update({country: selectedCountry})
     d3.select('#selectButton').property('value', selectedCountry);
+    // update the containment measures with the new selected country
+    update_containment_measures(selectedCountry)
 
     // A function that update the chart
     function update({country=selectedCountryBeta.country, beta=selectedCountryBeta.beta}) {
@@ -256,11 +257,9 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
       // change url param
       setGetParam('selection', selectedOption)
       // run the updateChart function with this selected option
-      // jQuery.get({
-      //   url: "/model",
-      //   data: {"country": selectedOption},
-      // });
       update({country: selectedOption});
+      // update the containment measures with the new selected country
+      update_containment_measures(selectedOption)
 
     });
 
@@ -300,4 +299,29 @@ function containment_entry(date='', text='', source_link=''){
     entryDiv.appendChild(title);
     entryDiv.appendChild(textDiv);
     return entryDiv
+};
+
+function update_containment_measures(selectedOption){
+    jQuery.get({
+         url: "/get_containment_measures",
+         data: {"country": selectedOption},
+         dataType: "json",
+         success: function(data){
+            // find the div dedicated to the side bar on the model.html template
+            var containmentMeasuresDiv = document.getElementById("containment_measures");
+            var divTitle = document.createElement("H2");
+            divTitle.innerHTML = "Containment measures";
+            containmentMeasuresDiv.append(divTitle)
+            // format each entry and append it to the containmentMeasuresDiv
+            for (let i in data["Description of measure implemented"]){
+                containmentMeasuresDiv.appendChild(
+                    containment_entry(
+                        date=data["date"][i],
+                        text=data["Description of measure implemented"][i],
+                        source_link=data["Source"][i]
+                    )
+                )
+            }
+         }
+      });
 };
