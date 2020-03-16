@@ -53,6 +53,23 @@ app.mount(
 
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 
+df = pd.read_csv("src/server/static/data/covid-containment-measures.csv")
+df = df.loc[
+    df.Country.notna(),
+    [
+        "Country",
+        "Description of measure implemented",
+        "Keywords",
+        "Source",
+        "Date Start",
+    ],
+]
+df["date"] = pd.to_datetime(
+    df["Date Start"].str.upper(), format="%b %d, %Y", yearfirst=False
+)
+del df["Date Start"]
+CONTAINMENT_MEAS = df
+
 
 class Place:
     def __init__(self, name):
