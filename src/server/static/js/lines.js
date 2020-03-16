@@ -1,3 +1,4 @@
+
 Date.prototype.addDays=function(d){return new Date(this.valueOf()+864E5*d);};
 function setGetParam(key,value) {
   if (history.pushState) {
@@ -9,16 +10,22 @@ function setGetParam(key,value) {
 }
 let today = new Date();
 // set the dimensions and margins of the graph
-var margin = { top: 10, right: 100, bottom: 30, left: 30 },
-  width = 460 - margin.left - margin.right,
-  height = 400 - margin.top - margin.bottom;
 
+
+var chartDiv = document.getElementById("my_dataviz");
+
+// set the dimensions and margins of the graph
+var margin = {top: 10, right: 100, bottom: 30, left: 50},
+    width = 600,
+    height = 700;
 // append the svg object to the body of the page
 var svg = d3
   .select("#my_dataviz")
   .append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
+  .attr("preserveAspectRatio", "xMinYMin meet")
+  .attr("viewBox", "0 0 750 750")
+  .classed("svg-content", true)
+
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -98,6 +105,17 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-with-beta.c
       .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%Y-%m-%d")));
 
     var yDomain = [0, 1000]
+
+    // text label for the x axis
+    svg.append("text")
+      .classed('xlabel', true)
+      .style('fill', '#a9a9ac')
+      .attr("transform",
+            "translate(" + (width/2) + " ," +
+                           (height + margin.top + 20) + ")")
+      .style("text-anchor", "middle")
+      .text("Date");
+
     // Add Y axis
     var y = d3.scaleLinear()
       .domain(yDomain)
@@ -106,6 +124,16 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-with-beta.c
     svg.append("g")
       .call(d3.axisLeft(y))
 
+    // text label for the y axis
+    svg.append("text")
+      .classed('ylabel', true)
+      .style('fill', '#a9a9ac')
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Value");
 
     function drawLine(i, color) {
       return svg
@@ -144,8 +172,6 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-with-beta.c
     var tooltip = d3.select("body").append("div") 
       .attr("class", "tooltip")       
       .style("opacity", 0);
-
-
 
       svg.append('rect')
         .attr('class', 'overlay')

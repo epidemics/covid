@@ -44,6 +44,22 @@
     border-radius: 8px;
     pointer-events: none;
   }
+
+  .svg-container {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    vertical-align: top;
+    overflow: hidden;
+  }
+  .svg-content {
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      left: 0;
+  }
+
 </style>
 {% endblock %} {% block content %}
 <div>
@@ -109,7 +125,7 @@
   <br />
 
   <!-- Create a div where the graph will take place -->
-  <div id="my_dataviz"></div>
+  <div id="my_dataviz" class="svg-container"></div>
 
   <br />
   <br />

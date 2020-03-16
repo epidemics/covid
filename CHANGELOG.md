@@ -31,6 +31,9 @@ Here is a template for new release sections
 - [line graph] stroke width 2 (#75)
 - [line graph] contrast colors (#75)
 - map bubble links to line plots (#75)
+- [line graph] x and y labels (#79)
+- [line graph] axis reactive with window size (#79)
+
 - when clicking on submit in "Request Model" it shows a result and possibility to send data to formspree (#52)
 - Creation of a contact form page with Formspree (#84)
 - Favicon (#86)
