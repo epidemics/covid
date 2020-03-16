@@ -39,5 +39,5 @@
 </div>
 
 {% endblock %} {% block additional_js %}
-<script src="/static/js/bubbles.js"></script>
+<script src="{{ url_for('static', path='/js/bubbles.js') }}"></script>
 {% endblock %}
