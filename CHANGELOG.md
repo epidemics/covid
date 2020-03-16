@@ -34,8 +34,13 @@ Here is a template for new release sections
 - when clicking on submit in "Request Model" it shows a result and possibility to send data to formspree (#52)
 - Creation of a contact form page with Formspree (#84)
 - Favicon (#86)
+- Update of `selectButton` dropdown via jQuery (#88)
+- Containment measures for a given country on the `model` template (#88)
+
 ### Changed
 - Template for `model` (label "Request model") (#62, #52)
+- Version of jQuery (also add it as static file) (#88)
 
 ### Removed
 - Template for `selections` as well as view (duplicate of `request-event-calculation`) (#52)
+- Update of `selectButton` dropdown via d3 (#88)

@@ -44,6 +44,10 @@ PLACES = [
     "Wuhan",
 ]
 
+CAPITALS = pd.read_csv(
+    "https://raw.githubusercontent.com/icyrockcom/country-capitals/master/data/country-list.csv"
+)
+
 SERVER_ROOT = os.path.dirname(__file__)
 
 app = FastAPI()
@@ -52,6 +56,25 @@ app.mount(
 )
 
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
+
+df = pd.read_csv(
+    os.path.join(SERVER_ROOT, "static", "data", "covid-containment-measures.csv")
+)
+df = df.loc[
+    df.Country.notna(),
+    [
+        "Country",
+        "Description of measure implemented",
+        "Keywords",
+        "Source",
+        "Date Start",
+    ],
+]
+df["date"] = pd.to_datetime(
+    df["Date Start"].str.upper(), format="%b %d, %Y", yearfirst=False
+)
+del df["Date Start"]
+CONTAINMENT_MEAS = df
 
 
 class Place:
@@ -81,10 +104,28 @@ async def request_calculation(request: Request) -> Response:
 
 @app.get("/model")
 async def model(request: Request, country: str = "USA") -> Response:
-    """TODO: this should serve the main model visualization"""
+    """serve the main model visualization"""
+    # TODO: fill the selectButton with valid countries and not dummy variables
     arguments = {"country": country} if country else {}
+    if country not in CONTAINMENT_MEAS.Country.unique():
+        country = CAPITALS.loc[CAPITALS.capital == country, ["country"]]
+
+        if country.empty is True:
+            country = "China"
+        else:
+            country = country.values[0][0]
+    if country is not None:
+        sel = CONTAINMENT_MEAS.loc[
+            CONTAINMENT_MEAS.Country == country,
+            ["date", "Description of measure implemented", "Source"],
+        ].sort_values(by="date", ascending=False)
+        sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
+        args = {"request": request, "containment_meas": sel.to_dict()}
+    else:
+        args = {"request": request}
+    print(args)
     # TODO: parse the argument for the plot
-    return templates.TemplateResponse("model.html", {"request": request})
+    return templates.TemplateResponse("model.html", args)
 
 
 @app.get("/request-event-evaluation")
