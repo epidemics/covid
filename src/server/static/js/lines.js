@@ -15,7 +15,7 @@ var svg = d3
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 function getCountries(data) {
-  return [...new Set(data.map(d => d.City))];
+  return [...new Set(data.map(d => d.Country))];
 }
 
 function transformData(data) {
@@ -45,20 +45,16 @@ function transformData(data) {
 
 function cityData(data) {
   result = [];
-  let cities = _.uniqBy(data, 'City').map(r => ({city: r.City, beta: 0.0, items: []}))
+  let combinations = _.uniqBy(data, r => [r.Country, r.beta].join()).map(r => ({city: r.Country, beta: r.beta, items:[]}));
   data.forEach(row => {
-    if (!result[row.City]) {
-      result[row.City] = [];
-    }
-    _.find(cities, ['city', row.City]).items.push([
+    _.find(combinations, {'city':row.Country, 'beta': row.beta}).items.push([
       today.addDays(row.Timestep), 
       row['Cumulative Median_0'], 
       row['Cumulative Median_1'], 
       row['Cumulative Median_2'],
-      row['Cumulative Median_3']
     ])
   })
-  return cities;
+  return combinations;
 }
 
 function getSelectedCountry(data) {
@@ -69,11 +65,10 @@ function getSelectedCountry(data) {
   return (c && data[c]) ? c : 'Abuja'
 }
 
-let foo = "https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563eb055961644d913aca/src/server/static/data/line-data.csv";
 //Read the data
-d3.csv("/static/data/line-data.csv")
+d3.csv("/static/data/line-data-with-beta.csv")
   .then(function(data){
-    var selectedBeta = 0.0;
+    var selectedBeta = "0.0";
     // List of groups (here I have one group per column)
     var allGroup = getCountries(data)
     cities = cityData(data);
@@ -135,7 +130,6 @@ d3.csv("/static/data/line-data.csv")
     var line1 = drawLine(1, '#753def')
     var line2 = drawLine(2, '#ef3d3d')
     var line3 = drawLine(3, '#ef993d')
-    var line4 = drawLine(4, '#e2ca4a')
 
 
     // create crosshairs
@@ -222,7 +216,6 @@ d3.csv("/static/data/line-data.csv")
       updateLine(line1, 1)
       updateLine(line2, 2)
       updateLine(line3, 3)
-      updateLine(line4, 4)
     }
 
     // When the button is changed, run the updateChart function
@@ -234,16 +227,16 @@ d3.csv("/static/data/line-data.csv")
     });
 
     d3.select(".beta-0").on("click", function(){
-      update({beta: 0.0});
+      update({beta: "0.0"});
     })
     d3.select(".beta-03").on("click", function(){
-      update({beta: 0.3});
+      update({beta: "0.3"});
     })
     d3.select(".beta-04").on("click", function(){
-      update({beta: 0.4});
+      update({beta: "0.4"});
     })
     d3.select(".beta-05").on("click", function(){
-      update({beta: 0.5});
+      update({beta: "0.5"});
     })
 
     console.log("RUNNING D3");
