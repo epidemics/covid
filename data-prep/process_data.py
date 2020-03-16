@@ -185,7 +185,7 @@ def preprocess_data(all_data, all_locations, selected_locations):
         .drop(["source_sec"], axis=1)
         .set_index(["Country", MITIGATION_COL, TIME_COL])
     )
-    selected_locations = data_3 - data_1
+    selected_locations = data_1 - data_3
 
     selected_locations = selected_locations.sort_index()
 
