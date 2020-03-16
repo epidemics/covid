@@ -32,10 +32,20 @@ function getCountryBetaData(data) {
   return combinations;
 }
 
+// triggers a get method with the selected country
+function onchange_model_country() {
+    var country = document.getElementById("selectButton").value;
+    jQuery.get({
+    url: "/model",
+    data: {"country": country},
+})
+}
+
 function getSelectedCountry(data) {
   var url_string = window.location.href
   var url = new URL(url_string);
   var c = url.searchParams.get("selection");
+  console.log(c);
   console.log('search query', c, data[c], data)
   return (c && data[c]) ? c : 'Abuja'
 }
