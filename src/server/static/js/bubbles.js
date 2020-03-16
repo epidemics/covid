@@ -3,7 +3,7 @@
 // }
 
 // mapid is the id of the div where the map will appear
-var map = L.map("mapid").setView([47, 2], 2); // center position + zoom
+var map = L.map("mapid").setView([35, 2], 2); // center position + zoom
 
 // Add a tile to the map = a background. Comes from OpenStreetmap
 L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
