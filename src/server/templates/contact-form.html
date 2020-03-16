@@ -1,0 +1,54 @@
+{% extends "base.html" %} {% block title %} Model {% endblock title%} {% set
+active_page = 'models' -%} {% block additional_js_pre %}
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<style type="text/css">
+  label {
+    margin-bottom: 15spx;
+  }
+
+  @media only screen and (max-width: 991px) {
+    .btn-primary {
+      width: -webkit-fill-available;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div>
+  <br />
+  <h1 class="title-form">Contact form</h1>
+  <!-- modify this form HTML and place wherever you want your form -->
+
+  <form action="https://formspree.io/mrglewyq" method="POST">
+    <div class="row">
+      <div class="col-lg-6">
+        <label class="fill-available-width">
+          Your email address:
+        </label>
+        <input class="fill-available-width" type="text" name="_replyto" />
+      </div>
+    </div>
+    <br />
+    <br />
+    <div class="row">
+      <div class="col-lg-12">
+        <label class="fill-available-width">
+          Your message:
+        </label>
+        <textarea class="fill-available-width" name="message"></textarea>
+      </div>
+    </div>
+
+    <!-- your other form fields go here -->
+    <br />
+    <br />
+
+    <button type="submit" class="btn btn-primary">
+      Send
+    </button>
+  </form>
+  <br />
+</div>
+{% endblock %} {% block additional_js %}
+<script src="/static/js/lines.js"></script>
+{% endblock %}
