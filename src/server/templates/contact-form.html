@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block title %} Model {% endblock title%} {% set
-active_page = 'models' -%} {% block additional_js_pre %}
+  active_page = 'models' -%} {% block additional_js_pre %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <style type="text/css">
@@ -14,16 +14,43 @@ active_page = 'models' -%} {% block additional_js_pre %}
   }
 </style>
 {% endblock %} {% block content %}
+<div class="row">
+  <div class="col-lg-9 col-md-12">
+    <h5 class="row">TEAM</h5>
+
+    <div class="row">
+      <p>This project was created by a team of research scholars from the Future of Humanity Institute Oxford, together
+        with a large number of volunteer collaborators,
+        after an original idea by Jan Kulveit. To contact us please use the form on the right.</p>
+      <p>Jacob Lagerros (Research scholar, Future of Humanity Institute, University of Oxford)</p>
+      <p>Ozzie Gooen (Research scholar, Future of Humanity Institute, University of Oxford)</p>
+      <p>Nora Ammann (Project manager, Future of Humanity Institute, University of Oxford)</p>
+      <p>David Johnston (PhD, Australian National University)</p>
+      <p>Daniel Hnyk (Engineering manager, GlobalWebIndex)</p>
+      <p>Peter Hrosso (Founder &amp; tech lead, Aird Works)</p>
+      <p>Pierre Francois Duc (Researcher, Reiner Lemoine Institute)</p>
+      <p>Ondřej Švec (Software engineer, Google)</p>
+      <p>Jan Pipek (Data scientists, DT One)</p>
+      <p>Jan Losert (Product designer, Webflow)</p>
+      <p>Tomáš Gavenčiak (Independent researcher)</p>
+      <p>Mati Roy (Analyst, Ought)</p>
+      <p>Matej Vrzala</p>
+
+    </div>
+  </div>
+</div>
+</div>
+
 <div>
   <br />
-  <h1 class="title-form">Contact form</h1>
+  <h1 class="title-form">CONTACT</h1>
   <!-- modify this form HTML and place wherever you want your form -->
 
   <form action="https://formspree.io/mrglewyq" method="POST">
     <div class="row">
       <div class="col-lg-6">
         <label class="fill-available-width">
-          Your email address:
+          Email:
         </label>
         <input class="fill-available-width" type="text" name="_replyto" />
       </div>
@@ -33,7 +60,7 @@ active_page = 'models' -%} {% block additional_js_pre %}
     <div class="row">
       <div class="col-lg-12">
         <label class="fill-available-width">
-          Your message:
+          Message:
         </label>
         <textarea class="fill-available-width" name="message"></textarea>
       </div>
