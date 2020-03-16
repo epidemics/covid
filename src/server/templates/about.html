@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block title %} Model {% endblock title%} {% set
-active_page = 'contact-form' -%} {% block additional_js_pre %}
+active_page = 'about' -%} {% block additional_js_pre %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <style type="text/css">
@@ -20,11 +20,14 @@ active_page = 'contact-form' -%} {% block additional_js_pre %}
 
     <p>
       This project was created by a team of research scholars from the Future of
-      Humanity Institute Oxford, together with a large number of volunteer
+      Humanity Institute, University of Oxford, together with a large number of volunteer
       collaborators, after an original idea by Jan Kulveit. To contact us please
-      use the form on the right.
+      use the form below.
     </p>
     <ul>
+      <li>
+        Jan Kulveit (Senior Research scholar, Future of Humanity Institute, University of Oxford).
+      </li>
       <li>
         Jacob Lagerros (Research scholar, Future of Humanity Institute,
         University of Oxford)
@@ -46,7 +49,19 @@ active_page = 'contact-form' -%} {% block additional_js_pre %}
       <li>Jan Losert (Product designer, Webflow)</li>
       <li>Tomáš Gavenčiak (Independent researcher)</li>
       <li>Mati Roy (Analyst, Ought)</li>
-      <li>Matej Vrzala</li>
+      <li>Matej Vrzala (Web developer, Metaculus)</li>
+    </ul>
+    We also thank a lot to the whole GleamViz team!
+  </div>
+</div>
+
+<div class="row">
+    <div class="col mt-4">
+    <h5>Active datasets</h5>
+    <ul>
+      <li><a href="https://storage.googleapis.com/static-covid/static/line-data-v2.csv">Country models</a></li>
+      <li><a href="https://storage.googleapis.com/static-covid/static/countries-spread.csv">Country spreads</a></li>
+      <li><a href="https://github.com/epidemics/covid/blob/master/src/server/static/data/covid-containment-measures.csv">Country containment measures</a></li>
     </ul>
   </div>
 </div>
