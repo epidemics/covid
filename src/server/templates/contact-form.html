@@ -20,21 +20,17 @@ active_page = 'models' -%} {% block additional_js_pre %}
   <!-- modify this form HTML and place wherever you want your form -->
 
   <form action="https://formspree.io/mrglewyq" method="POST">
+    <label class="fill-available-width">Your email address:</label>
     <div class="row">
       <div class="col-lg-6">
-        <label class="fill-available-width">
-          Your email address:
-        </label>
         <input class="fill-available-width" type="text" name="_replyto" />
       </div>
     </div>
     <br />
     <br />
+    <label class="fill-available-width">Your message:</label>
     <div class="row">
-      <div class="col-lg-12">
-        <label class="fill-available-width">
-          Your message:
-        </label>
+      <div class="col-lg-6">
         <textarea class="fill-available-width" name="message"></textarea>
       </div>
     </div>
