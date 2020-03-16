@@ -25,6 +25,12 @@
       integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg="
       crossorigin="anonymous"
     />
+    <!-- Font Awesome -->
+    <link
+      href="../../../../../node_modules/@fortawesome/fontawesome-free/css/all.css"
+      rel="stylesheet"
+    />
+
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', path='/css/main.css') }}" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -43,6 +49,19 @@
 
       gtag("config", "UA-160643838-1");
     </script>
+
+    <style>
+      footer {
+        position: fixed;
+        bottom: 0px;
+        width: 100%;
+        background-color: #000;
+        user-select: auto;
+        opacity: 100%;
+        font-size: 0.9em;
+        border-top: 1px solid #36343e;
+      }
+    </style>
 
     {% block additional_js_pre %} {% endblock %}
   </head>
@@ -76,15 +95,51 @@
 
     <div class="container fill">
       <div class="row">
-        <div class="col">
+        <div class="col-12">
           <main role="main" class="">
             {% block content %} {% endblock %}
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
           </main>
         </div>
         {% block sidebar %}
         {% endblock sidebar%}
       </div>
     </div>
+
+    <!-- Footer -->
+    <footer
+      class="footer font-small blue pt-4"
+      style="
+    padding-top: 0px !important;"
+    >
+      <!-- Footer Links -->
+      <div class="container text-center text-md-left">
+        <div class="row">
+          <div class="col-3 my-auto">
+            <img
+              class="logo"
+              src="/static/img/Oxford-logo.png"
+              alt="Logo of the University of Oxford"
+            />
+          </div>
+          <div
+            class="col-9 float-right my-auto less-visible7"
+            style="
+          padding-top: 5px;
+          padding-bottom: 5px;"
+          >
+            Disclaimer: All data used to produce this map are exclusively
+            collected from publicly available sources including government
+            reports and news media
+          </div>
+        </div>
+      </div>
+    </footer>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -107,6 +162,9 @@
       type="text/javascript"
       src="https://cdn.jsdelivr.net/npm/cookie-bar/cookiebar-latest.min.js?tracking=1&top=1"
     ></script>
+
+    <!-- Font Awesome -->
+    <script type="text/javascript" src="../static/js/fa.js"></script>
 
     {% block additional_js %} {% endblock %}
   </body>
