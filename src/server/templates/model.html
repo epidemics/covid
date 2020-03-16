@@ -3,13 +3,6 @@
 
 {% set active_page = 'models' -%}
 
-{% macro containment_entry(date='', text='', source_link='') -%}
-  <div class="containment_measure">
-    <h3 class="num">{{ date }}</h3>
-    <div class="area">{{ text }} <a href="{{ source_link }}" target="_blank">Source</a></div>
-  </div>
-{%- endmacro %}
-
 {% block additional_js_pre %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
@@ -161,14 +154,7 @@
 
 {% block sidebar %}
  <div id="containment_measures" class="col-lg-4 p-4">
-   <h2>Containment measures</h2>
-    {% if containment_meas is defined %}
-       {% for key,value in containment_meas["Description of measure implemented"].items() %}
-          {{ containment_entry(date=containment_meas["date"][key], text=value, source_link=containment_meas["Source"][key]) }}
-       {% endfor %}
-   {% else %}
-   There are no containment measures for this place in our database
-   {% endif %}
+  <!-- filled with a js script from static/js/lines.js -->
 </div>
 {% endblock sidebar%}
 
