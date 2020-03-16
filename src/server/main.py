@@ -100,17 +100,19 @@ async def request_calculation(request: Request) -> Response:
 
 @app.get("/model")
 async def model(request: Request, country: str = "USA") -> Response:
-    """TODO: this should serve the main model visualization"""
+    """serve the main model visualization"""
+    # TODO: fill the selectButton with valid countries and not dummy variables
     arguments = {"country": country} if country else {}
+    if country not in CONTAINMENT_MEAS.Country.unique():
+        country = "China"
     sel = CONTAINMENT_MEAS.loc[
         CONTAINMENT_MEAS.Country == country,
-        ["date", "Description of " "measure implemented", "Source"],
+        ["date", "Description of measure implemented", "Source"],
     ].sort_values(by="date", ascending=False)
     sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
-
     # TODO: parse the argument for the plot
     return templates.TemplateResponse(
-        "model.html", {"request": request, "containment": sel.to_dict()}
+        "model.html", {"request": request, "containment_meas": sel.to_dict()}
     )
 
 
