@@ -189,8 +189,6 @@ async def result_calculations(request: Request) -> Response:
     return templates.TemplateResponse("thanks.html", {"request": request,},)
 
 
-@app.get("/contact")
-async def request_calculation(request: Request) -> Response:
-    return templates.TemplateResponse(
-        "contact-form.html", {"request": request, "message": ""},
-    )
+@app.get("/about")
+async def about(request: Request) -> Response:
+    return templates.TemplateResponse("about.html", {"request": request},)
