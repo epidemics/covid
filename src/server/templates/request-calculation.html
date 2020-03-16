@@ -20,7 +20,7 @@
   </div>
 </div>
 
-<form action="/thanks">
+<form action="https://formspree.io/mrglewyq" id="request-calc-form", method="POST">
   <div class="form-group">
 
     <label for="number">Mitigation strength:</label>
@@ -29,21 +29,17 @@
         <input class="form-control" placeholder="Mitigation strength" type="number" id="number" name="number" />
       </div>
     </div>
-    <label for="datepicker">Date:</label>
+    <label for="datepicker">Date :</label>
     <div class="row">
       <div class="col-lg-5 col-sm-12">
         <input class="form-control" id="datepicker" name="datepicker" data-provide="datepicker"
           data-date-format="yyyy-mm-dd" />
       </div>
     </div>
-    <label for="place">Place:</label>
+    <label class="fill-available-width">Your message:</label>
     <div class="row">
-      <div class="col-lg-5 col-sm-12">
-        <select class="form-control" name="place" id="place">
-          {% for place in places %}
-          <option value="{{ place.name }}">{{ place.name }}</option>
-          {% endfor %}
-        </select>
+      <div class="col-lg-6">
+        <textarea class="fill-available-width" name="message"></textarea>
       </div>
     </div>
   </div>
