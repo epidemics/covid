@@ -83,5 +83,5 @@ active_page = 'contact-form' -%} {% block additional_js_pre %}
   <br />
 </div>
 {% endblock %} {% block additional_js %}
-<script src="/static/js/lines.js"></script>
+<script src="{{ url_for('static', path='/js/lines.js') }}"></script>
 {% endblock %}

@@ -16,8 +16,9 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
 // Add a svg layer to the map
 L.svg().addTo(map);
 
+
 d3.csv(
-  "https://raw.githubusercontent.com/epidemics/covid/a1ea6f9986b080569dbab8881b5484e25f2cf9c9/src/server/static/data/countries-spread.csv"
+  "https://storage.googleapis.com/static-covid/static/countries-spread.csv"
 ).then(function(data) {
   // Select the svg area and add circles:
   d3.select("#mapid")
