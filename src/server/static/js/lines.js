@@ -209,7 +209,12 @@ d3.csv("/static/data/line-data-with-beta.csv")
     d3.select("#selectButton").on("change", function(d) {
       // recover the option that has been chosen
       var selectedOption = d3.select(this).property("value");
-     console.log(selectedOption)
+      // run the updateChart function with this selected option
+      jQuery.get({
+        url: "/model",
+        data: {"country": selectedOption},
+      });
+      update({country: selectedOption});
 
     });
 
