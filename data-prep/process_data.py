@@ -19,8 +19,9 @@ TARGET_COL = "Cumulative Median"
 
 MOCKING_CONSTANT = 10
 
-MITIGATION_COL = "Beta"
+MITIGATION_COL = "Mitigation"
 BETA_PATTERN = 'continents="(.*?)"'
+SIM_PARAM_PATTERN = "=(.*?),.*=(.*?),.*=(.*?)$"
 
 MDS = [
     "md_cities.tsv",
@@ -191,6 +192,12 @@ def preprocess_data(all_data, all_locations, selected_locations):
     return selected_locations
 
 
+def parse_simulation_params(directory):
+    m = re.search(SIM_PARAM_PATTERN, directory)
+    seasonality, air_traffic, mitigation = [float(x) for x in m.groups()]
+    return seasonality, air_traffic, mitigation
+
+
 def process_model_data(directory, locations, selection, mitigation):
     data_files = glob.glob(os.path.join(directory, "*/*.tsv"))
 
@@ -228,23 +235,28 @@ def get_mitigation_beta(filepath):
 
 
 def process_all_models_data(directories, locations, selection):
-    # process first dir
-    definition_filepath = os.path.join(directories[0], "definition.xml")
-    mitigation = get_mitigation_beta(definition_filepath)
-    all_data_df = process_model_data(directories[0], locations, selection, mitigation)
-    all_data_df[TARGET_COL + "_0"] = all_data_df[TARGET_COL]
-    all_data_df = all_data_df.drop(TARGET_COL, axis=1)
+    res = []
 
-    # process all other dirs
-    for i, model_dir in enumerate(directories[1:]):
-        definition_filepath = os.path.join(model_dir, "definition.xml")
-        mitigation = get_mitigation_beta(definition_filepath)
+    for i, model_dir in enumerate(directories):
+        seasonality, air_traffic, mitigation = parse_simulation_params(model_dir)
+        print("parsed sim params:", seasonality, air_traffic, mitigation)
 
-        all_data_df[TARGET_COL + "_" + str(i + 1)] = process_model_data(
-            model_dir, locations, selection, mitigation
-        )[TARGET_COL]
+        df = process_model_data(model_dir, locations, selection, mitigation)
 
-    return all_data_df
+        # rename column to include simulation params
+        new_col_name = TARGET_COL + f"_s={seasonality}_at={air_traffic}"
+        df[new_col_name] = df[TARGET_COL]
+
+        df = df[[new_col_name]]
+
+        res.append(df)
+
+    res = pd.concat(res).reset_index()
+
+    # this removes nans and creates a unique index
+    res = res.groupby(["Country", MITIGATION_COL, TIME_COL]).max()
+
+    return res
 
 
 if __name__ == "__main__":
