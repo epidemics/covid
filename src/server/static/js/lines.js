@@ -108,6 +108,8 @@ d3.csv("/static/data/line-data-with-beta.csv")
 
     // text label for the x axis
     svg.append("text")
+      .classed('xlabel', true)
+      .style('fill', '#a9a9ac')
       .attr("transform",
             "translate(" + (width/2) + " ," +
                            (height + margin.top + 20) + ")")
@@ -124,6 +126,8 @@ d3.csv("/static/data/line-data-with-beta.csv")
 
     // text label for the y axis
     svg.append("text")
+      .classed('ylabel', true)
+      .style('fill', '#a9a9ac')
       .attr("transform", "rotate(-90)")
       .attr("y", 0 - margin.left)
       .attr("x",0 - (height / 2))
