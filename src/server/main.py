@@ -185,7 +185,7 @@ async def containment_measures(request: Request, country: str = "China") -> Resp
         country = CAPITALS.loc[CAPITALS.capital == country, ["country"]]
 
         if country.empty is True:
-            country = "China"
+            country = None
         else:
             country = country.values[0][0]
 
@@ -197,6 +197,6 @@ async def containment_measures(request: Request, country: str = "China") -> Resp
         sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
         args = sel.to_dict()
     else:
-        args = {}
+        args = None
 
     return args

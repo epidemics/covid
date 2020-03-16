@@ -313,15 +313,22 @@ function update_containment_measures(selectedOption){
             var divTitle = document.createElement("H2");
             divTitle.innerHTML = "Containment measures";
             containmentMeasuresDiv.append(divTitle)
-            // format each entry and append it to the containmentMeasuresDiv
-            for (let i in data["Description of measure implemented"]){
-                containmentMeasuresDiv.appendChild(
-                    containment_entry(
-                        date=data["date"][i],
-                        text=data["Description of measure implemented"][i],
-                        source_link=data["Source"][i]
+            if(data != undefined){
+                // format each entry and append it to the containmentMeasuresDiv
+                for (let i in data["Description of measure implemented"]){
+                    containmentMeasuresDiv.appendChild(
+                        containment_entry(
+                            date=data["date"][i],
+                            text=data["Description of measure implemented"][i],
+                            source_link=data["Source"][i]
+                        )
                     )
-                )
+                }
+            }
+            else{
+                var emptyDatasetMsg = document.createElement("P");
+                emptyDatasetMsg.innerHTML = "There is no containment measure in our database at the moment";
+                containmentMeasuresDiv.appendChild(emptyDatasetMsg)
             }
          }
       });
