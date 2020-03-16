@@ -67,7 +67,7 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
     var allGroup = getCountries(data)
     countryBetas = getCountryBetaData(data);
     selectedCountry = getSelectedCountry(allGroup)
-    console.log(allGroup)
+    //console.log(allGroup)
     selectedCountryBeta = countryBetas.find(r => r.country === selectedCountry && r.beta === selectedBeta);
     countryBetaData=selectedCountryBeta.items;
 
@@ -174,11 +174,11 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
         .attr('width', width)
         .attr('height', height)
           .on('mouseover', function() {
-            console.log('over')
+            //console.log('over')
             crosshair.style("display", null);
           })
           .on('mouseout', function() {
-            console.log('out')
+            //console.log('out')
             tooltip.style('opacity', 0)
             crosshair.style("display", "none");
           })
@@ -202,7 +202,7 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
             const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
             const diffDays = Math.round(Math.abs((mouseDate - today) / oneDay)); // number of days in the future
             const hoveredValues = selectedCountryBeta.items[diffDays]
-            console.log('hv', hoveredValues)
+            //console.log('hv', hoveredValues)
             var hVars = [
               Math.round(hoveredValues[1]),
               Math.round(hoveredValues[2]),
@@ -219,13 +219,14 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
               .style("left", (d3.event.pageX) + "px")   
               .style("top", (d3.event.pageY - 28) + "px");  
 
-            console.log('move', diffDays)
+            //console.log('move', diffDays)
           });
 
-
-  
+    //initialization
     update({country: selectedCountry})
     d3.select('#selectButton').property('value', selectedCountry);
+    // update the containment measures with the new selected country
+    update_containment_measures(selectedCountry)
 
     // A function that update the chart
     function update({country=selectedCountryBeta.country, beta=selectedCountryBeta.beta}) {
@@ -256,11 +257,9 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
       // change url param
       setGetParam('selection', selectedOption)
       // run the updateChart function with this selected option
-      // jQuery.get({
-      //   url: "/model",
-      //   data: {"country": selectedOption},
-      // });
       update({country: selectedOption});
+      // update the containment measures with the new selected country
+      update_containment_measures(selectedOption)
 
     });
 
@@ -277,6 +276,52 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
       update({beta: "0.5"});
     })
 
-    console.log("RUNNING D3");
+    //console.log("RUNNING D3");
   }
 );
+
+
+function containment_entry(date='', text='', source_link=''){
+    /* write that jinja code with js for model.html template sidebar with containment measures entry
+     * <div class="containment_measure">
+     *   <h3 class="num">{{ date }}</h3>
+     *   <div class="area">{{ text }} <a href="{{ source_link }}" target="_blank">Source</a></div>
+     *</div>
+    */
+    var entryDiv = document.createElement("DIV");
+    entryDiv.setAttribute('class', 'containment_measure');
+    var title = document.createElement("H3");
+    title.setAttribute('class', 'num');
+    title.innerHTML = date;
+    var textDiv = document.createElement("DIV");
+    textDiv.setAttribute('class', 'area');
+    textDiv.innerHTML = text + " <a href='" + source_link +"'target='_blank'>Source</a>";
+    entryDiv.appendChild(title);
+    entryDiv.appendChild(textDiv);
+    return entryDiv
+};
+
+function update_containment_measures(selectedOption){
+    jQuery.get({
+         url: "/get_containment_measures",
+         data: {"country": selectedOption},
+         dataType: "json",
+         success: function(data){
+            // find the div dedicated to the side bar on the model.html template
+            var containmentMeasuresDiv = document.getElementById("containment_measures");
+            var divTitle = document.createElement("H2");
+            divTitle.innerHTML = "Containment measures";
+            containmentMeasuresDiv.append(divTitle)
+            // format each entry and append it to the containmentMeasuresDiv
+            for (let i in data["Description of measure implemented"]){
+                containmentMeasuresDiv.appendChild(
+                    containment_entry(
+                        date=data["date"][i],
+                        text=data["Description of measure implemented"][i],
+                        source_link=data["Source"][i]
+                    )
+                )
+            }
+         }
+      });
+};
