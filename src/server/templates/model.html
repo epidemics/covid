@@ -160,7 +160,7 @@
 {% endblock %}
 
 {% block sidebar %}
- <div class="col-lg-4 p-4">
+ <div id="containment_measures" class="col-lg-4 p-4">
    <h2>Containment measures</h2>
     {% if containment_meas is defined %}
        {% for key,value in containment_meas["Description of measure implemented"].items() %}
