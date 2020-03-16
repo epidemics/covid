@@ -67,7 +67,7 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
     var allGroup = getCountries(data)
     countryBetas = getCountryBetaData(data);
     selectedCountry = getSelectedCountry(allGroup)
-    console.log(allGroup)
+    //console.log(allGroup)
     selectedCountryBeta = countryBetas.find(r => r.country === selectedCountry && r.beta === selectedBeta);
     countryBetaData=selectedCountryBeta.items;
 
@@ -174,11 +174,11 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
         .attr('width', width)
         .attr('height', height)
           .on('mouseover', function() {
-            console.log('over')
+            //console.log('over')
             crosshair.style("display", null);
           })
           .on('mouseout', function() {
-            console.log('out')
+            //console.log('out')
             tooltip.style('opacity', 0)
             crosshair.style("display", "none");
           })
@@ -202,7 +202,7 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
             const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
             const diffDays = Math.round(Math.abs((mouseDate - today) / oneDay)); // number of days in the future
             const hoveredValues = selectedCountryBeta.items[diffDays]
-            console.log('hv', hoveredValues)
+            //console.log('hv', hoveredValues)
             var hVars = [
               Math.round(hoveredValues[1]),
               Math.round(hoveredValues[2]),
@@ -219,7 +219,7 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
               .style("left", (d3.event.pageX) + "px")   
               .style("top", (d3.event.pageY - 28) + "px");  
 
-            console.log('move', diffDays)
+            //console.log('move', diffDays)
           });
 
 
@@ -277,6 +277,6 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
       update({beta: "0.5"});
     })
 
-    console.log("RUNNING D3");
+    //console.log("RUNNING D3");
   }
 );
