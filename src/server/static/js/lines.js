@@ -18,36 +18,11 @@ function getCountries(data) {
   return [...new Set(data.map(d => d.Country))];
 }
 
-function transformData(data) {
+function getCountryBetaData(data) {
   result = [];
-  let cities = _.uniqBy(data, 'City').map(r => ({city: r.City, data: []}))
+  let combinations = _.uniqBy(data, r => [r.Country, r.beta].join()).map(r => ({country: r.Country, beta: r.beta, items:[]}));
   data.forEach(row => {
-    if (!result[row.City]) {
-      result[row.City] = [];
-    }
-    result[row.City].push([
-          today.addDays(row.Timestep), 
-          row['Cumulative Median_0'], 
-          row['Cumulative Median_1'], 
-          row['Cumulative Median_2'],
-          row['Cumulative Median_3']
-        ])
-    _.find(cities, ['city', row.City]).data.push([
-      today.addDays(row.Timestep), 
-      row['Cumulative Median_0'], 
-      row['Cumulative Median_1'], 
-      row['Cumulative Median_2'],
-      row['Cumulative Median_3']
-    ])
-  })
-  return result;
-}
-
-function cityData(data) {
-  result = [];
-  let combinations = _.uniqBy(data, r => [r.Country, r.beta].join()).map(r => ({city: r.Country, beta: r.beta, items:[]}));
-  data.forEach(row => {
-    _.find(combinations, {'city':row.Country, 'beta': row.beta}).items.push([
+    _.find(combinations, {'country':row.Country, 'beta': row.beta}).items.push([
       today.addDays(row.Timestep), 
       row['Cumulative Median_0'], 
       row['Cumulative Median_1'], 
@@ -71,9 +46,9 @@ d3.csv("/static/data/line-data-with-beta.csv")
     var selectedBeta = "0.0";
     // List of groups (here I have one group per column)
     var allGroup = getCountries(data)
-    cities = cityData(data);
+    countryBetas = getCountryBetaData(data);
     selectedCountry = getSelectedCountry(data)
-    selectedCountryBeta = cities.find(r => r.city === selectedCountry && r.beta === selectedBeta);
+    selectedCountryBeta = countryBetas.find(r => r.country === selectedCountry && r.beta === selectedBeta);
     countryBetaData=selectedCountryBeta.items;
 
     // add the options to the button
@@ -196,12 +171,12 @@ d3.csv("/static/data/line-data-with-beta.csv")
 
 
   
-    update({city: selectedCountry})
+    update({country: selectedCountry})
     d3.select('#selectButton').property('value', selectedCountry);
 
     // A function that update the chart
-    function update({city=selectedCountryBeta.city, beta=selectedCountryBeta.beta}) {
-      selectedCountryBeta = cities.find(r => (r.city === city && r.beta === beta));
+    function update({country=selectedCountryBeta.country, beta=selectedCountryBeta.beta}) {
+      selectedCountryBeta = countryBetas.find(r => (r.country === country && r.beta === beta));
       function updateLine(myLine, i){
           myLine
             .datum(selectedCountryBeta.items)
@@ -223,7 +198,7 @@ d3.csv("/static/data/line-data-with-beta.csv")
       // recover the option that has been chosen
       var selectedOption = d3.select(this).property("value");
       // run the updateChart function with this selected option
-      update({city: selectedOption});
+      update({country: selectedOption});
     });
 
     d3.select(".beta-0").on("click", function(){
