@@ -238,6 +238,7 @@ def process_all_models_data(directories, locations, selection):
     res = []
 
     for i, model_dir in enumerate(directories):
+        print("\trun id:", i)
         seasonality, air_traffic, mitigation = parse_simulation_params(model_dir)
         print("parsed sim params:", seasonality, air_traffic, mitigation)
 
