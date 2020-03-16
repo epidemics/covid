@@ -53,7 +53,9 @@ app.mount(
 
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 
-df = pd.read_csv("src/server/static/data/covid-containment-measures.csv")
+df = pd.read_csv(
+    os.path.join(SERVER_ROOT, "static", "data", "covid-containment-measures.csv")
+)
 df = df.loc[
     df.Country.notna(),
     [
@@ -100,8 +102,16 @@ async def request_calculation(request: Request) -> Response:
 async def model(request: Request, country: str = "USA") -> Response:
     """TODO: this should serve the main model visualization"""
     arguments = {"country": country} if country else {}
+    sel = CONTAINMENT_MEAS.loc[
+        CONTAINMENT_MEAS.Country == country,
+        ["date", "Description of " "measure implemented", "Source"],
+    ].sort_values(by="date", ascending=False)
+    sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
+
     # TODO: parse the argument for the plot
-    return templates.TemplateResponse("model.html", {"request": request})
+    return templates.TemplateResponse(
+        "model.html", {"request": request, "containment": sel.to_dict()}
+    )
 
 
 @app.get("/request-event-evaluation")
