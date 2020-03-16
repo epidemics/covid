@@ -280,3 +280,24 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
     //console.log("RUNNING D3");
   }
 );
+
+
+function containment_entry(date='', text='', source_link=''){
+    /* write that jinja code with js for model.html template sidebar with containment measures entry
+     * <div class="containment_measure">
+     *   <h3 class="num">{{ date }}</h3>
+     *   <div class="area">{{ text }} <a href="{{ source_link }}" target="_blank">Source</a></div>
+     *</div>
+    */
+    var entryDiv = document.createElement("DIV");
+    entryDiv.setAttribute('class', 'containment_measure');
+    var title = document.createElement("H3");
+    title.setAttribute('class', 'num');
+    title.innerHTML = date;
+    var textDiv = document.createElement("DIV");
+    textDiv.setAttribute('class', 'area');
+    textDiv.innerHTML = text + " <a href='" + source_link +"'target='_blank'>Source</a>";
+    entryDiv.appendChild(title);
+    entryDiv.appendChild(textDiv);
+    return entryDiv
+};
