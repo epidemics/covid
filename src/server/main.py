@@ -111,7 +111,7 @@ async def model(request: Request, country: str = "USA") -> Response:
         country = CAPITALS.loc[CAPITALS.capital == country, ["country"]]
 
         if country.empty is True:
-            country = None
+            country = "China"
         else:
             country = country.values[0][0]
     if country is not None:
