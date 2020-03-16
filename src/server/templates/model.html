@@ -138,5 +138,10 @@
 
         {% block sidebar %}
          <div class="col-lg-4 p-4">
+           <h2>Containment measures</h2>
+
+           {% for key,value in containment_meas["Description of measure implemented"].items() %}
+              {{ containment_entry(date=containment_meas["date"][key], text=value, source_link=containment_meas["Source"][key]) }}
+           {% endfor %}
         </div>
         {% endblock sidebar%}
