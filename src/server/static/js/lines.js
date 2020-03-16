@@ -16,37 +16,18 @@ var chartDiv = document.getElementById("my_dataviz");
 
 // set the dimensions and margins of the graph
 var margin = {top: 10, right: 100, bottom: 30, left: 50},
-    width = chartDiv.clientWidth - margin.left - margin.right,
-    height = chartDiv.clientWidth - margin.top - margin.bottom;
-
+    width = 600,
+    height = 700;
 // append the svg object to the body of the page
 var svg = d3
   .select("#my_dataviz")
   .append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
+  .attr("preserveAspectRatio", "xMinYMin meet")
+  .attr("viewBox", "0 0 750 750")
+  .classed("svg-content", true)
+
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-// from https://bl.ocks.org/curran/3a68b0c81991e2e94b19
-function redraw(){
-
-        // Extract the width and height that was computed by CSS.
-        width = chartDiv.clientWidth - margin.left - margin.right;
-        height = chartDiv.clientWidth - margin.top - margin.bottom;
-
-        // Use the extracted size to set the size of an SVG element.
-        svg
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom);
-      }
-
-// Draw for the first time to initialize.
-redraw();
-
-// Redraw based on the new size whenever the browser window is resized.
-window.addEventListener("resize", redraw);
-
 
 function getCountries(data) {
   return [...new Set(data.map(d => d.Country))];
