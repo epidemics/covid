@@ -1,4 +1,12 @@
 Date.prototype.addDays=function(d){return new Date(this.valueOf()+864E5*d);};
+function setGetParam(key,value) {
+  if (history.pushState) {
+    var params = new URLSearchParams(window.location.search);
+    params.set(key, value);
+    var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params.toString();
+    window.history.pushState({path:newUrl},'',newUrl);
+  }
+}
 let today = new Date();
 // set the dimensions and margins of the graph
 var margin = { top: 10, right: 100, bottom: 30, left: 30 },
@@ -31,25 +39,25 @@ function getCountryBetaData(data) {
   })
   return combinations;
 }
-
-// triggers a get method with the selected country
-function onchange_model_country() {
-    var country = document.getElementById("selectButton").value;
-    // run the updateChart function with this selected option
-    update({country: country});
-    jQuery.get({
-    url: "/model",
-    data: {"country": country},
-})
-}
+// doesn't to anything
+// // triggers a get method with the selected country
+// function onchange_model_country() {
+//     var country = document.getElementById("selectButton").value;
+//     // run the updateChart function with this selected option
+//     update({country: country});
+//     jQuery.get({
+//     url: "/model",
+//     data: {"country": country},
+// })
+// }
 
 function getSelectedCountry(data) {
   var url_string = window.location.href
   var url = new URL(url_string);
   var c = url.searchParams.get("selection");
   console.log(c);
-  console.log('search query', c, data[c], data)
-  return (c && data[c]) ? c : 'Abuja'
+  console.log('search query', c, data.includes(c), data)
+  return (c && data.includes(c)) ? c : 'Abuja'
 }
 
 //Read the data
@@ -59,7 +67,7 @@ d3.csv("/static/data/line-data-with-beta.csv")
     // List of groups (here I have one group per column)
     var allGroup = getCountries(data)
     countryBetas = getCountryBetaData(data);
-    selectedCountry = getSelectedCountry(data)
+    selectedCountry = getSelectedCountry(allGroup)
     selectedCountryBeta = countryBetas.find(r => r.country === selectedCountry && r.beta === selectedBeta);
     countryBetaData=selectedCountryBeta.items;
 
@@ -209,11 +217,13 @@ d3.csv("/static/data/line-data-with-beta.csv")
     d3.select("#selectButton").on("change", function(d) {
       // recover the option that has been chosen
       var selectedOption = d3.select(this).property("value");
+      // change url param
+      setGetParam('selection', selectedOption)
       // run the updateChart function with this selected option
-      jQuery.get({
-        url: "/model",
-        data: {"country": selectedOption},
-      });
+      // jQuery.get({
+      //   url: "/model",
+      //   data: {"country": selectedOption},
+      // });
       update({country: selectedOption});
 
     });
