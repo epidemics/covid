@@ -105,27 +105,10 @@ async def request_calculation(request: Request) -> Response:
 @app.get("/model")
 async def model(request: Request, country: str = "USA") -> Response:
     """serve the main model visualization"""
-    # TODO: fill the selectButton with valid countries and not dummy variables
     arguments = {"country": country} if country else {}
-    if country not in CONTAINMENT_MEAS.Country.unique():
-        country = CAPITALS.loc[CAPITALS.capital == country, ["country"]]
-
-        if country.empty is True:
-            country = "China"
-        else:
-            country = country.values[0][0]
-    if country is not None:
-        sel = CONTAINMENT_MEAS.loc[
-            CONTAINMENT_MEAS.Country == country,
-            ["date", "Description of measure implemented", "Source"],
-        ].sort_values(by="date", ascending=False)
-        sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
-        args = {"request": request, "containment_meas": sel.to_dict()}
-    else:
-        args = {"request": request}
 
     # TODO: parse the argument for the plot
-    return templates.TemplateResponse("model.html", args)
+    return templates.TemplateResponse("model.html", {"request": request})
 
 
 @app.get("/request-event-evaluation")
@@ -192,3 +175,29 @@ async def result_calculations(request: Request) -> Response:
 @app.get("/about")
 async def about(request: Request) -> Response:
     return templates.TemplateResponse("about.html", {"request": request},)
+
+
+@app.get("/model")
+async def containment_measures(request: Request, country: str = "USA") -> Response:
+    """serve the main model visualization"""
+    # TODO: fill the selectButton with valid countries and not dummy variables
+    arguments = {"country": country} if country else {}
+    if country not in CONTAINMENT_MEAS.Country.unique():
+        country = CAPITALS.loc[CAPITALS.capital == country, ["country"]]
+
+        if country.empty is True:
+            country = "China"
+        else:
+            country = country.values[0][0]
+    if country is not None:
+        sel = CONTAINMENT_MEAS.loc[
+            CONTAINMENT_MEAS.Country == country,
+            ["date", "Description of measure implemented", "Source"],
+        ].sort_values(by="date", ascending=False)
+        sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
+        args = {"request": request, "containment_meas": sel.to_dict()}
+    else:
+        args = {"request": request}
+
+    # TODO: jsonify the arguments
+    return args
