@@ -177,7 +177,7 @@ async def about(request: Request) -> Response:
     return templates.TemplateResponse("about.html", {"request": request},)
 
 
-@app.get("/model")
+@app.get("/get_containment_measures")
 async def containment_measures(request: Request, country: str = "USA") -> Response:
     """serve the main model visualization"""
     # TODO: fill the selectButton with valid countries and not dummy variables
@@ -200,4 +200,4 @@ async def containment_measures(request: Request, country: str = "USA") -> Respon
         args = {"request": request}
 
     # TODO: jsonify the arguments
-    return args
+    return sel.to_dict()
