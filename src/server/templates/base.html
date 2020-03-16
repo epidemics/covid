@@ -48,8 +48,9 @@
 
   {% set navigation_bar = [ ('/', 'index', 'Public information'), ('/model/',
   'models', 'Models'), ('/request-calculation/', 'request-model', 'Request
-  model'), ('/request-event-evaluation/', 'events', 'Event prediction') ] -%} {%
-  set active_page = active_page|default('index') -%}
+  model'), ('/request-event-evaluation/', 'events', 'Event prediction'),
+  ('/contact/', 'contact-form', 'Contact') ] -%} {% set active_page =
+  active_page|default('index') -%}
 
   <body>
     <header>
@@ -74,77 +75,10 @@
 
     <div class="container fill">
       <div class="row">
-        <div class="col-8">
+        <div class="col-lg-8">
           <main role="main" class="">
             {% block content %} {% endblock %}
           </main>
-        </div>
-        <div class="col-4">
-          <div class="side p-4">
-            <div class="title">Most affected countries</div>
-            <table>
-              <tr>
-                <td class="num">80,949</td>
-                <td class="area">China</td>
-              </tr>
-              <tr>
-                <td class="num">17,660</td>
-                <td class="area">Italy</td>
-              </tr>
-              <tr>
-                <td class="num">11,364</td>
-                <td class="area">Iran</td>
-              </tr>
-              <tr>
-                <td class="num">8,086</td>
-                <td class="area">South Korea</td>
-              </tr>
-              <tr>
-                <td class="num">5,232</td>
-                <td class="area">Spain</td>
-              </tr>
-            </table>
-
-            <div class="line"></div>
-
-            <div class="title">Most affected cities</div>
-            <table>
-              <tr>
-                <td class="num">80,949</td>
-                <td class="area">China</td>
-              </tr>
-              <tr>
-                <td class="num">17,660</td>
-                <td class="area">Italy</td>
-              </tr>
-              <tr>
-                <td class="num">11,364</td>
-                <td class="area">Iran</td>
-              </tr>
-              <tr>
-                <td class="num">8,086</td>
-                <td class="area">South Korea</td>
-              </tr>
-              <tr>
-                <td class="num">5,232</td>
-                <td class="area">Spain</td>
-              </tr>
-            </table>
-
-            <div class="line"></div>
-
-            <footer class="">
-              <p>Last Updated: 3/14/2020, 2:53:03 AM</p>
-
-              <div class="line"></div>
-
-              <p>
-                Disclaimer: All data used to produce this map are exclusively
-                collected from publicly available sources, including government
-                reports and news media.
-              </p>
-            </footer>
-          </div>
         </div>
       </div>
     </div>
