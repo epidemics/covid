@@ -309,6 +309,7 @@ function update_containment_measures(selectedOption){
          success: function(data){
             // find the div dedicated to the side bar on the model.html template
             var containmentMeasuresDiv = document.getElementById("containment_measures");
+            containmentMeasuresDiv.textContent = "";
             var divTitle = document.createElement("H2");
             divTitle.innerHTML = "Containment measures";
             containmentMeasuresDiv.append(divTitle)
