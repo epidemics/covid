@@ -131,6 +131,7 @@ async def result_event_evaluation(
 ) -> Response:
     # TODO - implement the calculations based on parameters from the request-event-evaluation
     # TODO: Use real data model here, also use the real values from the forms, parameters are ignored
+    # TODO: add control strength parameter
     class Place:
         def __init__(self, name):
             self.name = name
