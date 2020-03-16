@@ -296,7 +296,7 @@ label.btn-secondary > input {
 }
 
 .fill-available-width {
-  width: -webkit-fill-available;
+  width: 100%
 }
 
 textarea {
