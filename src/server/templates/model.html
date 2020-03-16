@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block title %} Model {% endblock title%} {% set
-active_page = 'models' -%} {% block additional_js_pre %}
+  active_page = 'models' -%} {% block additional_js_pre %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"> </script>
@@ -55,10 +55,10 @@ active_page = 'models' -%} {% block additional_js_pre %}
 
   <div class="row">
     <div style="
-    margin-top: 8px;
-    margin-right: 21px;
-    font-size: 21px;">
-      Select — Beta:
+      margin-top: 8px;
+      margin-right: 21px;
+      font-size: 21px;">
+      Rate of spread (β)
     </div>
 
     <div class="btn-group-toggle" data-toggle="buttons">
@@ -92,8 +92,7 @@ active_page = 'models' -%} {% block additional_js_pre %}
   </div>
   <br />
   <div class="row">
-    {{message | default("This mitigation option involves encouraging handwashing
-    and good hygenic practices in the broader population.")}}
+    {{message | default("Different global mitigation practices will change the rate of spread of COVID-19. Our model captures these via the β parameter.")}}
   </div>
   <br />
   <br />
@@ -107,16 +106,34 @@ active_page = 'models' -%} {% block additional_js_pre %}
   <div class="row">
     <div class="col-lg-9 col-md-12">
       <h5 class="row">How the model works</h5>
+
       <div class="row">
-        A simple POC for using bokeh to visualize modelled covid-19 data. Based
-        on bokeh weather example.
-      </div>
-      <div class="row">
-        There two main components: charts — using bokeh serve to serve bokeh
-        charts in src/charts directory. webserver — a webserver using fastapi to
-        render templates and embeds bokeh charts via the running charts bokeh
-        server using JS scripts. That means that when you access the index site
-        of the fastapi server, it generates the tag for the relevant chart.
+        <p><strong> Human forecasting</strong></p>
+        <p>We are trying to augment data on confirmed cases by estimating the true number of infections in selected
+          countries. This gets around issues of testing capacity and under-reporting in official statistics. This is
+          done using a combination of statistical modelling and human forecasting, and the process is publicly available
+          <a
+            href="[https://www.foretold.io/c/1dd5b83a-075c-4c9f-b896-3172ec899f26/n/0c79887f-99c6-4e9c-81a2-8e7fd156456d](https://www.foretold.io/c/1dd5b83a-075c-4c9f-b896-3172ec899f26/n/0c79887f-99c6-4e9c-81a2-8e7fd156456d">here</a>.
+        </p>
+        <p><strong>Computational modelling</strong></p>
+        <p>The results are used as an input to advanced epidemic modelling software, called <a
+            href="[http://www.gleamviz.org/](http://www.gleamviz.org/">GLEaM</a>, running on high-performance
+          computers. </p>
+        <p>The global development of COVID-19 is simulated using: </p>
+        <ul>
+          <li>an airline booking dataset covering 3,800 commercial airports in about 230 countries</li>
+          <li>a commuting database covering over five million commuting connections within 40 countries</li>
+          <li>multiple levels of global mitigation measures</li>
+          <li>multiple models of SARS-CoV-2, capturing uncertainty about seasonality and transmissibility</li>
+        </ul>
+        <p>The results are displayed as a pack of trajectories, representing the uncertainty inherent in our model — and
+          the difference in trajectory caused by the response of us as a society. </p>
+        <p><strong> Database of containment measures</strong></p>
+        <p>We are tracking the effectiveness of containments measures in a <a
+            href="[https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e](https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e">public
+            database</a> with hundreds of entries. As more data becomes available on their effectiveness we will
+          integrate them into the simulation.</p>
+
       </div>
     </div>
   </div>

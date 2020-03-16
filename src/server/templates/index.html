@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block title %} Epidemic Forcasting {% endblock
-title%} {% set active_page = 'index' -%} {% block additional_js_pre %}
+  title%} {% set active_page = 'index' -%} {% block additional_js_pre %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
@@ -17,8 +17,30 @@ title%} {% set active_page = 'index' -%} {% block additional_js_pre %}
   }
 </style>
 {% endblock %} {% block content %}
-<div id="mapid"></div>
-<svg id="my_dataviz_map"></svg>
+<div>
+  <div class="row">
+    <div class="col-9">
+      <div id="mapid"></div>
+      <svg id="my_dataviz_map"></svg>
+    </div>
+        <div class="col">
+      <p> This map is displaying our median estimate of the true number of COVID-19 infections on Sun 15th in selected
+        countries (which is larger than the confirmed number of cases). The actual estimates are probability
+        distributions, available <a
+          href="[https://www.foretold.io/c/1dd5b83a-075c-4c9f-b896-3172ec899f26/n/0c79887f-99c6-4e9c-81a2-8e7fd156456d](https://www.foretold.io/c/1dd5b83a-075c-4c9f-b896-3172ec899f26/n/0c79887f-99c6-4e9c-81a2-8e7fd156456d">here</a>.
+        When estimating the numbers, we are using multiple
+        data sources, including government reports, air travel data, and forecaster judgement. </p>
+    </div>
+  </div>
+</div>
+
+<!-- Don't know why this isn't actually displayed? -->
+<div>
+  <div class="row">
+
+  </div>
+</div>
+
 {% endblock %} {% block additional_js %}
 <script src="/static/js/bubbles.js"></script>
 {% endblock %}
