@@ -206,9 +206,14 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-with-beta.c
             const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
             const diffDays = Math.round(Math.abs((mouseDate - today) / oneDay)); // number of days in the future
             const hoveredValues = selectedCountryBeta.items[diffDays]
-
+            console.log('hv', hoveredValues)
+            var hVars = [
+              Math.round(hoveredValues[1]),
+              Math.round(hoveredValues[2]),
+              Math.round(hoveredValues[3]),
+            ]
             tooltip.style('opacity', 1)
-              .html('v1: '+hoveredValues[1]+'<br>'+'v2: '+hoveredValues[2]+'<br>'+'v3: '+hoveredValues[3]+'<br>'+'v4: '+hoveredValues[4]+'<br>')
+              .html('v1: '+hVars[0]+'<br>'+'v2: '+hVars[1]+'<br>'+'v3: '+hVars[2]+'<br>')
               .style("left", (d3.event.pageX) + "px")   
               .style("top", (d3.event.pageY - 28) + "px");  
 
