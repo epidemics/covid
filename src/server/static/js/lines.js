@@ -35,36 +35,28 @@ function getCountries(data) {
 
 function getCountryBetaData(data) {
   result = [];
-  let combinations = _.uniqBy(data, r => [r.Country, r.beta].join()).map(r => ({country: r.Country, beta: r.beta, items:[]}));
+  let combinations = _.uniqBy(data, r => [r.Country, r.Mitigation].join())
+    .map(r => ({country: r.Country, beta: r.Mitigation, items:[]}));
   data.forEach(row => {
-    _.find(combinations, {'country':row.Country, 'beta': row.beta}).items.push([
+    _.find(combinations, {'country':row.Country, 'beta': row.Mitigation}).items.push([
       today.addDays(row.Timestep), 
-      row['Cumulative Median_0'], 
-      row['Cumulative Median_1'], 
-      row['Cumulative Median_2'],
+      row['Cumulative Median_s=0.85_at=0.2'], 
+      row['Cumulative Median_s=0.7_at=0.7'], 
+      row['Cumulative Median_s=0.1_at=0.2'],
+      row['Cumulative Median_s=0.85_at=0.7'],
+      row['Cumulative Median_s=0.1_at=0.7'],
+      row['Cumulative Median_s=0.7_at=0.2'],
     ])
   })
   return combinations;
 }
-// doesn't to anything
-// // triggers a get method with the selected country
-// function onchange_model_country() {
-//     var country = document.getElementById("selectButton").value;
-//     // run the updateChart function with this selected option
-//     update({country: country});
-//     jQuery.get({
-//     url: "/model",
-//     data: {"country": country},
-// })
-// }
+
 
 function getSelectedCountry(data) {
   var url_string = window.location.href
   var url = new URL(url_string);
   var c = url.searchParams.get("selection");
-  console.log(c);
-  console.log('search query', c, data.includes(c), data)
-  return (c && data.includes(c)) ? c : 'Abuja'
+  return (c && data.includes(c)) ? c : 'China'
 }
 
 //Read the data
@@ -75,6 +67,7 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
     var allGroup = getCountries(data)
     countryBetas = getCountryBetaData(data);
     selectedCountry = getSelectedCountry(allGroup)
+    console.log(allGroup)
     selectedCountryBeta = countryBetas.find(r => r.country === selectedCountry && r.beta === selectedBeta);
     countryBetaData=selectedCountryBeta.items;
 
@@ -104,7 +97,7 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%Y-%m-%d")));
 
-    var yDomain = [0, 1000]
+    var yDomain = [0, 200]
 
     // text label for the x axis
     svg.append("text")
@@ -153,6 +146,9 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
     var line1 = drawLine(1, '#753def')
     var line2 = drawLine(2, '#ef3d3d')
     var line3 = drawLine(3, '#ef993d')
+    var line4 = drawLine(4, '#9edf5c')
+    var line5 = drawLine(5, '#5cdfd3')
+    var line6 = drawLine(6, '#cf5cdf')
 
 
     // create crosshairs
@@ -211,9 +207,15 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
               Math.round(hoveredValues[1]),
               Math.round(hoveredValues[2]),
               Math.round(hoveredValues[3]),
+              Math.round(hoveredValues[4]),
+              Math.round(hoveredValues[5]),
+              Math.round(hoveredValues[6]),
             ]
             tooltip.style('opacity', 1)
-              .html('v1: '+hVars[0]+'<br>'+'v2: '+hVars[1]+'<br>'+'v3: '+hVars[2]+'<br>')
+              .html(
+                'v1: '+hVars[0]+'<br>'+'v2: '+hVars[1]+'<br>'+'v3: '+hVars[2]+'<br>' +
+                'v4: '+hVars[3]+'<br>'+'v5: '+hVars[4]+'<br>'+'v6: '+hVars[5]+'<br>'
+                )
               .style("left", (d3.event.pageX) + "px")   
               .style("top", (d3.event.pageY - 28) + "px");  
 
@@ -242,6 +244,9 @@ d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv')
       updateLine(line1, 1)
       updateLine(line2, 2)
       updateLine(line3, 3)
+      updateLine(line4, 4)
+      updateLine(line5, 5)
+      updateLine(line6, 6)
     }
 
     // When the button is changed, run the updateChart function
