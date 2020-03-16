@@ -20,30 +20,48 @@
   </div>
 </div>
 
-<form action="/thanks">
+<form action="https://formspree.io/mrglewyq" id="request-calc-form", method="POST">
   <div class="form-group">
 
-    <label for="number">Mitigation strength:</label>
     <div class="row">
-      <div class="col-lg-5 col-sm-12">
-        <input class="form-control" placeholder="Mitigation strength" type="number" id="number" name="number" />
+      <div class="col-lg-6">
+        <input class="fill-available-width" type="text" placeholder="Your name" name="name" />
       </div>
     </div>
-    <label for="datepicker">Date:</label>
+
     <div class="row">
-      <div class="col-lg-5 col-sm-12">
-        <input class="form-control" id="datepicker" name="datepicker" data-provide="datepicker"
-          data-date-format="yyyy-mm-dd" />
+      <div class="col-lg-6">
+        <input class="fill-available-width" type="text" name="affiliation" placeholder="Affiliation"/>
       </div>
     </div>
-    <label for="place">Place:</label>
+
     <div class="row">
-      <div class="col-lg-5 col-sm-12">
-        <select class="form-control" name="place" id="place">
-          {% for place in places %}
-          <option value="{{ place.name }}">{{ place.name }}</option>
-          {% endfor %}
-        </select>
+      <div class="col-lg-6">
+        <input type="email" class="fill-available-width" name="email" placeholder="Your email address" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <input type="text" class="fill-available-width" name="messaging" placeholder="Online messaging platform" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <input type="text" class="fill-available-width" name="verify" placeholder="Link or some other way how we can verify your affiliation"/>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <textarea class="fill-available-width" name="problem" placeholder="What decision problem are you facing"></textarea>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <textarea class="fill-available-width" name="modeling" placeholder="Are you are already using epidemic modelling to support your decisions? How?"></textarea>
       </div>
     </div>
   </div>
