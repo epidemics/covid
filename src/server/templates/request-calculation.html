@@ -1,9 +1,58 @@
 {% extends "base.html" %} {% block title %} Request model {% endblock title%} {%
-set active_page = "request-model" %} {% block content %}
+  set active_page = "request-model" %} {% block content %}
 <div>
-  <p>
-    Here should be a form where a user could submit some parameters we compute
-    for them!
-  </p>
+  <div class="row">
+    <div class="col-lg-9 col-md-12">
+      <h5>On demand modelling</h5>
+      <p>We are happy to provide custom forecasting and modelling support for decision makers in governments and
+        international organisations, health care planners, and others. </p>
+      <p>By using <a href="[http://epidemicforecasting.org/model](http://epidemicforecasting.org/model)">a global
+          epidemic model</a>, we can analyse
+        scenarios like demand for ICUs and hospital
+        beds as
+        well how can different mitigation strategies implemented in various locations interact. </p>
+      <p>In future we also hope to provide estimates on effectiveness of various containment and mitigation measures, as
+        tracked in our <a
+          href="[https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e](https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e">public
+          database</a>.</p>
+      <p>To request a consultation, please fill in the form below.</p>
+    </div>
+  </div>
 </div>
+
+<form action="/thanks">
+  <div class="form-group">
+
+    <label for="number">Mitigation strength:</label>
+    <div class="row">
+      <div class="col-lg-5 col-sm-12">
+        <input class="form-control" placeholder="Mitigation strength" type="number" id="number" name="number" />
+      </div>
+    </div>
+    <label for="datepicker">Date:</label>
+    <div class="row">
+      <div class="col-lg-5 col-sm-12">
+        <input class="form-control" id="datepicker" name="datepicker" data-provide="datepicker"
+          data-date-format="yyyy-mm-dd" />
+      </div>
+    </div>
+    <label for="place">Place:</label>
+    <div class="row">
+      <div class="col-lg-5 col-sm-12">
+        <select class="form-control" name="place" id="place">
+          {% for place in places %}
+          <option value="{{ place.name }}">{{ place.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %} {% block additional_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"
+  integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8=" crossorigin="anonymous"></script>
+<script>
+  $("#datepicker").datepicker();
+</script>
 {% endblock %}

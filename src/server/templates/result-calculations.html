@@ -1,7 +1,44 @@
 {% extends "base.html" %} {% block title %} Result {% endblock title%} {% set
 active_page = "events" %} {% block content %}
-<div>
-  {{ message }}
-</div>
 
-{% endblock %}
+<div>
+  <form
+    id="request-calc-form"
+    action="https://formspree.io/mrglewyq"
+    method="POST"
+  >
+    <div class="form-group">
+      <label for="number">Number:</label>
+      <div class="row">
+        <div class="col-lg-5 col-sm-12">
+          <input type="number" name="number" value="{{ place }}" />
+        </div>
+      </div>
+      <label for="datepicker">Date:</label>
+      <div class="row">
+        <div class="col-lg-5 col-sm-12">
+          <input type="date" value="{{ datepicker }}" name="datepicker" />
+        </div>
+      </div>
+      <label for="place">Place:</label>
+      <div class="row">
+        <div class="col-lg-5 col-sm-12">
+          <input type="text" value="{{ place }}" name="place" />
+        </div>
+      </div>
+    </div>
+    {% if probability == "unknown" %}
+    <button id="formspree-btn" type="submit">Send request</button>
+    {% endif %}
+  </form>
+  {% if probability != "unknown" %} The probability of an infected attendee is
+  {{ probability }} %. {% else %} The simulation for your request did not work,
+  please share the parameter with us and we will look what went wrong {% endif
+  %}
+</div>
+{% if probability == "unknown" %}
+<script type="text/javascript">
+  //option to send the form automatically
+  //document.getElementById('formspree-btn').click();
+</script>
+{% endif %} {% endblock %}

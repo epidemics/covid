@@ -1,5 +1,13 @@
 
 Date.prototype.addDays=function(d){return new Date(this.valueOf()+864E5*d);};
+function setGetParam(key,value) {
+  if (history.pushState) {
+    var params = new URLSearchParams(window.location.search);
+    params.set(key, value);
+    var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params.toString();
+    window.history.pushState({path:newUrl},'',newUrl);
+  }
+}
 let today = new Date();
 // set the dimensions and margins of the graph
 
@@ -41,44 +49,53 @@ window.addEventListener("resize", redraw);
 
 
 function getCountries(data) {
-  return [...new Set(data.map(d => d.City))];
+  return [...new Set(data.map(d => d.Country))];
 }
 
-function transformData(data) {
+function getCountryBetaData(data) {
   result = [];
+  let combinations = _.uniqBy(data, r => [r.Country, r.beta].join()).map(r => ({country: r.Country, beta: r.beta, items:[]}));
   data.forEach(row => {
-    if (!result[row.City]) {
-      result[row.City] = [];
-    }
-    result[row.City].push([
-          today.addDays(row.Timestep), 
-          row['Cumulative Median_0'], 
-          row['Cumulative Median_1'], 
-          row['Cumulative Median_2'],
-          row['Cumulative Median_3']
-        ])
+    _.find(combinations, {'country':row.Country, 'beta': row.beta}).items.push([
+      today.addDays(row.Timestep), 
+      row['Cumulative Median_0'], 
+      row['Cumulative Median_1'], 
+      row['Cumulative Median_2'],
+    ])
   })
-  return result
+  return combinations;
 }
+// doesn't to anything
+// // triggers a get method with the selected country
+// function onchange_model_country() {
+//     var country = document.getElementById("selectButton").value;
+//     // run the updateChart function with this selected option
+//     update({country: country});
+//     jQuery.get({
+//     url: "/model",
+//     data: {"country": country},
+// })
+// }
 
 function getSelectedCountry(data) {
   var url_string = window.location.href
   var url = new URL(url_string);
   var c = url.searchParams.get("selection");
-  console.log(c, data[c], data)
-  return (c && data[c]) ? c : 'Abuja'
+  console.log(c);
+  console.log('search query', c, data.includes(c), data)
+  return (c && data.includes(c)) ? c : 'Abuja'
 }
 
 //Read the data
-d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563eb055961644d913aca/src/server/static/data/line-data.csv")
+d3.csv("/static/data/line-data-with-beta.csv")
   .then(function(data){
-    console.log('raw data', data)
+    var selectedBeta = "0.0";
     // List of groups (here I have one group per column)
     var allGroup = getCountries(data)
-    data = transformData(data)
-    selectedCountry = getSelectedCountry(data)
-    countryData = data[selectedCountry]
-    console.log('transformed data', data, selectedCountry)
+    countryBetas = getCountryBetaData(data);
+    selectedCountry = getSelectedCountry(allGroup)
+    selectedCountryBeta = countryBetas.find(r => r.country === selectedCountry && r.beta === selectedBeta);
+    countryBetaData=selectedCountryBeta.items;
 
     // add the options to the button
     d3.select("#selectButton")
@@ -93,8 +110,7 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
         return d;
       }); // corresponding value returned by the button
 
-
-      var xDomain = d3.extent(countryData, function(d) { 
+      var xDomain = d3.extent(selectedCountryBeta.items, function(d) { 
           return d[0]; 
         })
     // Add X axis --> it is a date format
@@ -120,7 +136,7 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
     // Add Y axis
     var y = d3.scaleLinear()
       .domain(yDomain)
-      //.domain([0, d3.max(countryData, function(d) { return Math.max(+d[1], +d[2], +d[3], +d[4]); })])
+      //.domain([0, d3.max(selectedCountryBeta.items, function(d) { return Math.max(+d[1], +d[2], +d[3], +d[4]); })])
       .range([ height, 0 ]);
     svg.append("g")
       .call(d3.axisLeft(y))
@@ -138,9 +154,9 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
       return svg
         .append('g')
         .append("path")
-          .datum(countryData)
+          .datum(selectedCountryBeta.items)
           .attr("d", d3.line()
-            .x(function(d) { console.log('asdsa'); window.myX = x; return x(d[0]) })
+            .x(function(d) { window.myX = x; return x(d[0]) })
             .y(function(d) { return y(+d[i]) })
           )
           .attr("stroke", color)
@@ -152,7 +168,6 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
     var line1 = drawLine(1, '#753def')
     var line2 = drawLine(2, '#ef3d3d')
     var line3 = drawLine(3, '#ef993d')
-    var line4 = drawLine(4, '#e2ca4a')
 
 
     // create crosshairs
@@ -205,7 +220,7 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
 
             const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
             const diffDays = Math.round(Math.abs((mouseDate - today) / oneDay)); // number of days in the future
-            const hoveredValues = countryData[diffDays]
+            const hoveredValues = selectedCountryBeta.items[diffDays]
 
             tooltip.style('opacity', 1)
               .html('v1: '+hoveredValues[1]+'<br>'+'v2: '+hoveredValues[2]+'<br>'+'v3: '+hoveredValues[3]+'<br>'+'v4: '+hoveredValues[4]+'<br>')
@@ -217,16 +232,15 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
 
 
   
-    update(selectedCountry)
+    update({country: selectedCountry})
     d3.select('#selectButton').property('value', selectedCountry);
 
     // A function that update the chart
-    function update(selectedGroup) {
-      countryData = data[selectedGroup]
-      console.log('countryData',countryData)
+    function update({country=selectedCountryBeta.country, beta=selectedCountryBeta.beta}) {
+      selectedCountryBeta = countryBetas.find(r => (r.country === country && r.beta === beta));
       function updateLine(myLine, i){
           myLine
-            .datum(countryData)
+            .datum(selectedCountryBeta.items)
             .transition()
             .duration(1000)
             .attr("d", d3.line()
@@ -238,16 +252,36 @@ d3.csv("https://raw.githubusercontent.com/epidemics/covid/a3f1363b07d803dbedc563
       updateLine(line1, 1)
       updateLine(line2, 2)
       updateLine(line3, 3)
-      updateLine(line4, 4)
-
     }
 
     // When the button is changed, run the updateChart function
     d3.select("#selectButton").on("change", function(d) {
       // recover the option that has been chosen
       var selectedOption = d3.select(this).property("value");
+      // change url param
+      setGetParam('selection', selectedOption)
       // run the updateChart function with this selected option
-      update(selectedOption);
+      // jQuery.get({
+      //   url: "/model",
+      //   data: {"country": selectedOption},
+      // });
+      update({country: selectedOption});
+
     });
+
+    d3.select(".beta-0").on("click", function(){
+      update({beta: "0.0"});
+    })
+    d3.select(".beta-03").on("click", function(){
+      update({beta: "0.3"});
+    })
+    d3.select(".beta-04").on("click", function(){
+      update({beta: "0.4"});
+    })
+    d3.select(".beta-05").on("click", function(){
+      update({beta: "0.5"});
+    })
+
+    console.log("RUNNING D3");
   }
 );

@@ -6,7 +6,7 @@
 a,
 a:focus,
 a:hover {
-  color: #83908e;
+  color: #caddda;
 }
 
 /* Custom default button */
@@ -239,6 +239,12 @@ label.btn-secondary > input {
   font-size: 25px;
 }
 
+
+.form-group .row {
+  padding-bottom: 0.75rem;
+  border-radius: 0px;
+}
+
 /*
 * Model
 */
@@ -249,6 +255,11 @@ label.btn-secondary > input {
 .population > div {
   margin-top: -6px;
   margin-left: 0px;
+}
+
+strong {
+  color: white
+
 }
 
 .mitigation-strenght > div > .btn-secondary {
@@ -289,4 +300,12 @@ label.btn-secondary > input {
     padding-left: 40px;
     padding-right: 40px;
   }
+}
+
+.fill-available-width {
+  width: 100%
+}
+
+textarea {
+  height: 200px;
 }

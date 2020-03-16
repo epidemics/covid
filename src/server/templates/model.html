@@ -1,39 +1,51 @@
-{% extends "base.html" %} {% block title %} Model {% endblock title%} {% set
-active_page = 'models' -%} {% block additional_js_pre %}
+{% extends "base.html" %}
+{% block title %} Model {% endblock title%}
+
+{% set active_page = 'models' -%}
+
+{% macro containment_entry(date='', text='', source_link='') -%}
+  <div class="containment_measure">
+    <h3 class="num">{{ date }}</h3>
+    <div class="area">{{ text }} <a href="{{ source_link }}" target="_blank">Source</a></div>
+  </div>
+{%- endmacro %}
+
+{% block additional_js_pre %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"> </script>
 <style type="text/css">
   .overlay {
     fill: none;
     stroke: none;
     pointer-events: all;
   }
+
   .line .crosshair {
     fill: none;
     stroke-width: 1px;
   }
+
   .line .crosshair {
     stroke: white;
-    opacity: 0.2
+    opacity: 0.2;
   }
 
-  div.tooltip { 
-    position: absolute;     
-    text-align: center;     
-    width:100px;          
-    height: auto;         
-    padding: 2px;       
-    font: 12px sans-serif;   
-    color: #fff; 
-    background: #6c757d; 
-    border: 0px;    
-    border-radius: 8px;     
-    pointer-events: none;     
-}
-
+  div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 100px;
+    height: auto;
+    padding: 2px;
+    font: 12px sans-serif;
+    color: #fff;
+    background: #6c757d;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+  }
 </style>
-{% endblock %}
-{% block content %}
+{% endblock %} {% block content %}
 <div>
   <br />
   <div class="row">
@@ -53,41 +65,37 @@ active_page = 'models' -%} {% block additional_js_pre %}
   <br />
 
   <div class="row">
-    <div
-      style="
-    margin-top: 8px;
-    margin-right: 21px;
-    font-size: 21px;"
-    >
-      Select — Mitigation Strenght:
+    <div style="
+      margin-top: 8px;
+      margin-right: 21px;
+      font-size: 21px;">
+      Rate of spread (β)
     </div>
 
     <div class="btn-group-toggle" data-toggle="buttons">
       <div class="row mitigation-strenght">
         <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary active">
+          <label class="btn btn-secondary active beta-0">
             <input type="radio" name="hours" id="hours" autocomplete="off" />
-            0%
+            0
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary">
-            <input type="radio" name="day" id="day" autocomplete="off" /> 25%
+          <label class="btn btn-secondary active beta-03">
+            <input type="radio" name="hours" id="hours" autocomplete="off" />
+            0.3
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary">
-            <input type="radio" name="days" id="days" autocomplete="off" /> 50%
+          <label class="btn btn-secondary active beta-04">
+            <input type="radio" name="hours" id="hours" autocomplete="off" />
+            0.4
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary">
-            <input type="radio" name="days" id="days" autocomplete="off" /> 70%
-          </label>
-        </div>
-        <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary">
-            <input type="radio" name="days" id="days" autocomplete="off" /> 90%
+          <label class="btn btn-secondary active beta-05">
+            <input type="radio" name="hours" id="hours" autocomplete="off" />
+            0.5
           </label>
         </div>
       </div>
@@ -95,8 +103,7 @@ active_page = 'models' -%} {% block additional_js_pre %}
   </div>
   <br />
   <div class="row">
-    {{message | default("This mitigation option involves encouraging handwashing
-    and good hygenic practices in the broader population.")}}
+    {{message | default("Different global mitigation practices will change the rate of spread of COVID-19. Our model captures these via the β parameter.")}}
   </div>
   <br />
   <br />
@@ -110,16 +117,33 @@ active_page = 'models' -%} {% block additional_js_pre %}
   <div class="row">
     <div class="col-lg-9 col-md-12">
       <h5 class="row">How the model works</h5>
+
       <div class="row">
-        A simple POC for using bokeh to visualize modelled covid-19 data. Based
-        on bokeh weather example.
-      </div>
-      <div class="row">
-        There two main components: charts — using bokeh serve to serve bokeh
-        charts in src/charts directory. webserver — a webserver using fastapi to
-        render templates and embeds bokeh charts via the running charts bokeh
-        server using JS scripts. That means that when you access the index site
-        of the fastapi server, it generates the tag for the relevant chart.
+        <p><strong> Human forecasting</strong></p>
+        <p>We are trying to augment data on confirmed cases by estimating the true number of infections in selected
+          countries. This gets around issues of testing capacity and under-reporting in official statistics. This is
+          done using a combination of statistical modelling and human forecasting.
+         
+        </p>
+        <p><strong>Computational modelling</strong></p>
+        <p>The results are used as an input to advanced epidemic modelling software, called <a
+            href="[http://www.gleamviz.org/](http://www.gleamviz.org/">GLEaM</a>, running on high-performance
+          computers. </p>
+        <p>The global development of COVID-19 is simulated using: </p>
+        <ul>
+          <li>an airline booking dataset covering 3,800 commercial airports in about 230 countries</li>
+          <li>a commuting database covering over five million commuting connections within 40 countries</li>
+          <li>multiple levels of global mitigation measures</li>
+          <li>multiple models of SARS-CoV-2, capturing uncertainty about seasonality and transmissibility</li>
+        </ul>
+        <p>The results are displayed as a pack of trajectories, representing the uncertainty inherent in our model — and
+          the difference in trajectory caused by the response of us as a society. </p>
+        <p><strong> Database of containment measures</strong></p>
+        <p>We are tracking the effectiveness of containments measures in a <a
+            href="[https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e](https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e">public
+            database</a> with hundreds of entries. As more data becomes available on their effectiveness we will
+          integrate them into the simulation.</p>
+
       </div>
     </div>
   </div>
@@ -127,3 +151,16 @@ active_page = 'models' -%} {% block additional_js_pre %}
 {% endblock %} {% block additional_js %}
 <script src="/static/js/lines.js"></script>
 {% endblock %}
+
+        {% block sidebar %}
+         <div class="col-lg-4 p-4">
+           <h2>Containment measures</h2>
+            {% if containment_meas is defined %}
+               {% for key,value in containment_meas["Description of measure implemented"].items() %}
+                  {{ containment_entry(date=containment_meas["date"][key], text=value, source_link=containment_meas["Source"][key]) }}
+               {% endfor %}
+           {% else %}
+           There are no containment measures for this place in our database
+           {% endif %}
+        </div>
+        {% endblock sidebar%}
