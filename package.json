@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/epidemics/covid#readme",
   "devDependencies": {
-    "prettier": "1.19.1"
+    "prettier": "^1.19.1"
   }
 }

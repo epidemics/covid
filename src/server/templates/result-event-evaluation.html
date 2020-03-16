@@ -1,104 +1,344 @@
-{% extends "base.html" %} {% block title %} Results {% endblock title%} {% block
-content %}
-<div class="content container">
+{% extends "base.html" %} {% block title %} Results {% endblock title%} {% set
+active_page = "events" %} {% block content %}
+
+<!-- options: goahead, uncertain, cancel -->
+<div class="content uncertain">
+  <br />
   <div class="row">
-    <label class="col-sm-12 col-lg-8">
-      Around the time of your event in Germany, there will probably be
-      <span class="min-cases"></span>
-      to
-      <span class="max-cases"></span>
-      cases
-    </label>
+    <div class="col-md-12 col-sm-12">
+      <h1 class="title">
+        Overall, we'd recommend
+        <span class="recommendation"
+          >{{recommendation | default("Uncertain")}}</span
+        >
+      </h1>
+      <p>
+        {{message | default("Your event poses a high risk, and by cancelling you
+        can meaningfully contribute to prevent further spread of covid-19")}}
+      </p>
+    </div>
   </div>
   <div class="row">
-    <button>See calculation v</button>
-  </div>
-  <!-- TODO: insert graph -->
-
-  <label>
-    This means your event will probably infect
-    <span class="min-infect"></span>
-    to
-    <span class="max-infect"></span>
-  </label>
-  <button>See calculation v</button>
-
-  <label>
-    They will probably go on to infect
-    <span class="min-infect-2nd-order"></span>
-    to
-    <span class="max-infect-2nd-order"></span>
-    people
-  </label>
-  <button>See calculation v</button>
-
-  <!-- TODO: insert image of network -->
-
-  <label>But a big uncertainty is how people will respond</label>
-  <!-- TODO: add something that visualises the agency people have under different preparation measures -->
-
-  <label>
-    If 100 event organisers like yourself canceled events, we'd avoid
-    <span class="min-avoided"></span>
-    to
-    <span class="max-avoided"></span>
-    new infections.
-  </label>
-
-  <label>
-    This would smoothen the peak pandemic by x%, which means
-    <span class="min-medical-care"></span>
-    to
-    <span class="max-medical-care"></span>
-    more people would be able to get adequate medical care.
-  </label>
-  <button>See calculation v</button>
-
-  <label>Overall, we'd recommend</label>
-  <button class="green">Go ahead</button>
-  <button class="orange">Uncertain</button>
-  <button class="red highlighted">Cancel</button>
-  <p>
-    Your event poses a high risk, and by cnacelling you can meaningfully
-    contribute to prevent further spread of covid-19
-  </p>
-
-  <label>
-    According to our models, it would be fine to host the event in
-    <span class="proposed-month"></span>
-    instead.
-  </label>
-  <button>See calculation v</button>
-
-  <!-- graph -->
-
-  <label>Did this change your mind at all?</label>
-  <!--form-->
-  <form action="/decision">
-    <div class="form-group">
-      <div class="btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-secondary">
-          <input type="radio" name="more" id="more" autocomplete="off" />
-          Yes, more likely to host
-        </label>
-        <label class="btn btn-secondary">
-          <input type="radio" name="less" id="less" autocomplete="off" />Yes,
-          less likely to host
-        </label>
-        <label class="btn btn-secondary">
-          <input type="radio" name="equal" id="equal" autocomplete="off" />No
-        </label>
+    <div class="col-12">
+      <div
+        style="
+        transform: translatey(14px);
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        "
+      >
+        Here is why:
       </div>
     </div>
-  </form>
-  <p class="form-submition-message"></p>
+  </div>
 
-  <div id="credits">
-    <h2>Credits</h2>
-    <p>
-      This site does not represent offical advice from the University of Oxford.
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 title-form">
+      Around the time of your event in {{location | default("your location")}},
+      there will probably be
+      <span class="number">{{minCases | default("minCases")}}</span>
+      to
+      <span class="number">{{maxCases | default("maxCases")}}</span>
+      cases
+    </div>
+    <div class="col-lg-2">
+      <button
+        id="showCases"
+        onclick="showCalculation('showCases','hideCases','calculationCases')"
+        class="detail-button less-visible7"
+      >
+        See Calculation <i class="fas fa-caret-down"></i>
+      </button>
+      <button
+        id="hideCases"
+        onclick="hideCalculation('showCases','hideCases','calculationCases')"
+        class="detail-button less-visible7"
+        style="display: none;"
+      >
+        Close Calculation <i class="fas fa-caret-up"></i>
+      </button>
+    </div>
+  </div>
+  <!-- Mati: you can also use {% for calculation in calculations %} <div class="row"> [calculation] </div>{% endfor %} if it has many rows-->
+  <div id="calculationCases" class="row less-visible8" style="display: none;">
+    <div class="col-12">
+      <p>
+        {{caseCalculation1 | default("A simple POC for using bokeh to visualize
+        modelled covid-19 data. Based on botek weather example.")}}
+      </p>
+      <p>
+        {{caseCalculation2 | default("There two main components: charts — using
+        bokeh serve to serve bokeh charts in src/charts directory. webserver — a
+        webserver using fastapi to render templates and embeds bokeh charts via
+        the running charts bokeh server using JS scripts. That means that when
+        you access the index site of the fastapi server, it generates the tag
+        for the relevant chart.")}}
+      </p>
+    </div>
+  </div>
+
+  <br />
+  <div class="row">
+    <div class="col-12">
+      {{caseGraph | default("[caseGraph]")}}
+    </div>
+  </div>
+  <br />
+
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 title-form">
+      That means your event will probably infect
+      <span class="number">{{minInfect | default("minInfect")}}</span>
+      to
+      <span class="number">{{maxInfect | default("maxInfect")}}</span>
+    </div>
+    <div class="col-lg-2">
+      <button
+        id="showInfections"
+        onclick="showCalculation('showInfections','hideInfections','calculationInfections')"
+        class="detail-button less-visible7"
+      >
+        See Calculation <i class="fas fa-caret-down"></i>
+      </button>
+      <button
+        id="hideInfections"
+        onclick="hideCalculation('showInfections','hideInfections','calculationInfections')"
+        class="detail-button less-visible7"
+        style="display: none;"
+      >
+        Close Calculation <i class="fas fa-caret-up"></i>
+      </button>
+    </div>
+  </div>
+  <div
+    id="calculationInfections"
+    class="row less-visible8"
+    style="display: none;"
+  >
+    <div class="col-12">
+      {{infectCalculation | default("A simple POC for using bokeh to visualize
+      modelled covid-19 data. Based on botek weather example.")}}
+    </div>
+  </div>
+  <br />
+  <hr />
+  <br />
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 title-form">
+      They will probably go on to infect
+      <span class="number"
+        >{{minInfect2ndOrder | default("minInfect2ndOrder")}}</span
+      >
+      to
+      <span class="number"
+        >{{maxInfect2ndOrder | default("maxInfect2ndOrder")}}</span
+      >
+      people
+    </div>
+    <div class="col-lg-2">
+      <button
+        id="showInfections2"
+        onclick="showCalculation('showInfections2','hideInfections2','calculationInfections2')"
+        class="detail-button less-visible7"
+      >
+        See Calculation <i class="fas fa-caret-down"></i>
+      </button>
+      <button
+        id="hideInfections2"
+        onclick="hideCalculation('showInfections2','hideInfections2','calculationInfections2')"
+        class="detail-button less-visible7"
+        style="display: none;"
+      >
+        Close Calculation <i class="fas fa-caret-up"></i>
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="calculationInfections2"
+    class="row less-visible8"
+    style="display: none;"
+  >
+    <div class="col-12">
+      {{infect2ndOrderCalculation | default("[infect2ndOrderCalculation]")}}
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-12">
+      {{infect2ndOrderGraph | default("[infect2ndOrderGraph]")}}
+    </div>
+  </div>
+  <br />
+
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 title-form">
+      If 100 event organisers like yourself canceled events, we'd avoid
+      <span class="number">{{minAvoided | default("minAvoided")}}</span>
+      to
+      <span class="number">{{maxAvoided | default("maxAvoided")}}</span>
+      new infections.
+    </div>
+    <div class="col-lg-2">
+      <button
+        id="showAvoided"
+        onclick="showCalculation('showAvoided','hideAvoided','calculationAvoided')"
+        class="detail-button less-visible7"
+      >
+        See Calculation <i class="fas fa-caret-down"></i>
+      </button>
+      <button
+        id="hideAvoided"
+        onclick="hideCalculation('showAvoided','hideAvoided','calculationAvoided')"
+        class="detail-button less-visible7"
+        style="display: none;"
+      >
+        Close Calculation <i class="fas fa-caret-up"></i>
+      </button>
+    </div>
+    <div class="col-sm-12 col-lg-10 title-form">
+      <br />
+      This would smoothen the peak pandemic by
+      <span class="green underlined"
+        >{{percentSmoothen | default("percentSmoothen")}}%</span
+      >, which means
+      <span class="green">{{minMedicalCare | default("minMedicalCare")}}</span>
+      to
+      <span class="green">{{maxMedicalCare | default("maxMedicalCare")}}</span>
+      more people would be able to get adequate medical care.
+    </div>
+    <div class="col-lg-2"></div>
+  </div>
+  <div id="calculationAvoided" class="row less-visible8" style="display: none;">
+    <div class="col-12">
+      {{avoidedCalculation | default("[avoidedCalculation]")}}
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-12">
+      {{caseAvoidedGraph | default("[caseAvoidedGraph]")}}
+    </div>
+  </div>
+  <br />
+
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 title-form">
+      According to our models, it would be fine to host the event in
+      <span class="green underlined"
+        >{{proposedMonth | default("proposedMonth")}}</span
+      >
+      instead.
+    </div>
+    <div class="col-lg-2">
+      <button
+        id="showProposedMonth"
+        onclick="showCalculation('showProposedMonth','hideProposedMonth','calculationProposedMonth')"
+        class="detail-button less-visible7"
+      >
+        See Calculation <i class="fas fa-caret-down"></i>
+      </button>
+      <button
+        id="hideProposedMonth"
+        onclick="hideCalculation('showProposedMonth','hideProposedMonth','calculationProposedMonth')"
+        class="detail-button less-visible7"
+        style="display: none;"
+      >
+        Close Calculation <i class="fas fa-caret-up"></i>
+      </button>
+    </div>
+  </div>
+  <div
+    id="calculationProposedMonth"
+    class="row less-visible8"
+    style="display: none;"
+  >
+    <div class="col-12">
+      {{proposedMonthCalculation | default("[proposedMonthCalculation]")}}
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-12">
+      {{roposedMonthGraph | default("[roposedMonthGraph]")}}
+    </div>
+  </div>
+  <br />
+
+  <div class="row">
+    <div class="col-12">
+      <h1 class="title-form">Did this change your mind at all?</h1>
+    </div>
+  </div>
+
+  <!--form-->
+  <div class="row">
+    <div class="col-12">
+      <form action="/decision">
+        <div class="form-group">
+          <div class="row btn-group-toggle" data-toggle="buttons">
+            <div class="col-md-auto col-sm-12">
+              <label class="btn btn-secondary submit">
+                <input type="radio" name="more" id="more" autocomplete="off" />
+                Yes, more likely to host
+              </label>
+            </div>
+            <div class="col-md-auto col-sm-12">
+              <label class="btn btn-secondary submit">
+                <input
+                  type="radio"
+                  name="less"
+                  id="less"
+                  autocomplete="off"
+                />Yes, less likely to host
+              </label>
+            </div>
+            <div class="col-md-auto col-sm-12">
+              <label class="btn btn-secondary submit">
+                <input
+                  type="radio"
+                  name="equal"
+                  id="equal"
+                  autocomplete="off"
+                />No
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row" style="margin-top: -16px;">
+    <div class="col-12">
+      <!-- Message confirming the answer has been submitted -->
+      {{formSubmitionMessage}}
+    </div>
+  </div>
+
+  <br />
+  <br />
+  <br />
+  <div class="less-visible7">
+    <p>Credits:</p>
+    <p class="credits">
+      This site was created by the Future of Humanity Institute. It does not
+      represent offical advice from the University of Oxford.
     </p>
     <!-- TODO: add various other credits, legal aspecs, and details about the project -->
   </div>
 </div>
+
+{% endblock %} {% block additional_js %}
+<script>
+  function showCalculation(showID, hideID, calculationID) {
+    document.getElementById(showID).style.display = "none";
+    document.getElementById(hideID).style.display = "block";
+    document.getElementById(calculationID).style.display = "block";
+  }
+  function hideCalculation(showID, hideID, calculationID) {
+    document.getElementById(showID).style.display = "block";
+    document.getElementById(hideID).style.display = "none";
+    document.getElementById(calculationID).style.display = "none";
+  }
+</script>
 {% endblock %}

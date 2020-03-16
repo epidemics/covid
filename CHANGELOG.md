@@ -39,6 +39,8 @@ Here is a template for new release sections
 - Favicon (#86)
 - Update of `selectButton` dropdown via jQuery (#88)
 - Containment measures for a given country on the `model` template (#88)
+- footer (#95)
+- Event request result view (#95)
 
 ### Changed
 - Template for `model` (label "Request model") (#62, #52)
