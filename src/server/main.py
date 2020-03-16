@@ -123,7 +123,7 @@ async def model(request: Request, country: str = "USA") -> Response:
         args = {"request": request, "containment_meas": sel.to_dict()}
     else:
         args = {"request": request}
-    print(args)
+
     # TODO: parse the argument for the plot
     return templates.TemplateResponse("model.html", args)
 

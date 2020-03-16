@@ -69,12 +69,6 @@
       <select id="selectButton" class="form-control large"> </select>
     </div>
     <div class="col-lg-6 col-sm-0"></div>
-    <div class="col-lg-1 col-sm-12 population">
-      <label class="row">Population</label>
-      <div class="row medium">
-        {{population | default("10,649,800")}}
-      </div>
-    </div>
   </div>
   <br />
   <hr />
@@ -92,26 +86,26 @@
       <div class="row mitigation-strenght">
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-0">
-            <input type="radio" name="hours" id="hours" autocomplete="off" />
-            0
+            <input type="radio" name="mitigation-none" id="mitigation-none" autocomplete="off" />
+            None
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-03">
-            <input type="radio" name="hours" id="hours" autocomplete="off" />
-            0.3
+            <input type="radio" name="mitigation-strong" id="mitigation-strong" autocomplete="off" />
+            Strong
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-04">
-            <input type="radio" name="hours" id="hours" autocomplete="off" />
-            0.4
+            <input type="radio" name="mitigation-moderate" id="mitigation-moderate" autocomplete="off" />
+            Moderate
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-05">
-            <input type="radio" name="hours" id="hours" autocomplete="off" />
-            0.5
+            <input type="radio" name="mitigation-weak" id="mitigation-weak" autocomplete="off" />
+            Weak
           </label>
         </div>
       </div>
