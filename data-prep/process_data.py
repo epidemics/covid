@@ -12,14 +12,15 @@ from datetime import datetime
 
 DATE_FORMAT = "%Y-%m-%d"
 
-OUTPUT_FILENAME = "covid_data.hdf"
-CITY_LOOKUP_KEY = "data/city_lookup"
-MODEL_START_DATE_KEY = "metadata/model_info"
+OUTPUT_FILENAME = "line-data.csv"
 
 TIME_COL = "Timestep"
 TARGET_COL = "Cumulative Median"
 
 MOCKING_CONSTANT = 10
+
+MITIGATION_COL = "Beta"
+BETA_PATTERN = 'continents="(.*?)"'
 
 MDS = [
     "md_cities.tsv",
@@ -59,7 +60,7 @@ def tsv_to_df(filetuple: tuple) -> pd.DataFrame:
     return df
 
 
-def map_to_dfs(all_files: dict) -> pd.DataFrame:
+def map_to_dfs(all_files: dict, mitigation) -> pd.DataFrame:
     print(f"Going to process {len(all_files)} files...")
 
     start = time.time()
@@ -70,6 +71,8 @@ def map_to_dfs(all_files: dict) -> pd.DataFrame:
         df = pd.concat(res, ignore_index=True).assign(
             area_type=lambda x: x["area_type"].astype("category")
         )
+        df[MITIGATION_COL] = mitigation
+        print("mitigation", mitigation)
 
     print(f"Processing took {round(time.time() - start)}s.")
 
@@ -142,43 +145,53 @@ def read_metadata(directory):
     return md_dfs, start_date
 
 
-def preprocess_data(all_data, all_cities, selected_cities):
-    all_data = all_data[all_data["area_type"] == "cities"]
+def preprocess_data(all_data, all_locations, selected_locations):
+    all_data = all_data[all_data["area_type"] == "countries"]
 
     # find intersection based on names
-    selected_cities = all_cities.merge(
-        selected_cities, left_on=["City Name"], right_on=["City"], how="inner"
+    selected_locations = all_locations.merge(
+        # selected_locations, left_on=["City Name"], right_on=["City"], how="inner"
+        selected_locations,
+        left_on=["Name"],
+        right_on=["Country"],
+        how="inner",
     )
     # find intersection based on City IDs
-    selected_cities = all_data.merge(
-        selected_cities, left_on="source_main", right_on="City ID", how="inner"
+    selected_locations = all_data.merge(
+        # selected_locations, left_on="source_main", right_on="City ID", how="inner"
+        selected_locations,
+        left_on="source_main",
+        right_on="ID",
+        how="inner",
     )
     # select only the files 1 and 3
-    selected_cities = selected_cities[selected_cities["source_sec"].isin({1, 3})]
-    index_cols = ["City", "source_sec"]
+    selected_locations = selected_locations[
+        selected_locations["source_sec"].isin({1, 3})
+    ]
+    index_cols = ["Country", MITIGATION_COL, "source_sec"]
 
     # select only relevant columns
-    selected_cities = selected_cities[index_cols + [TARGET_COL, TIME_COL]]
+    selected_locations = selected_locations[index_cols + [TARGET_COL, TIME_COL]]
 
     # preprocessing step according to David Johnston
     data_1 = (
-        selected_cities[selected_cities["source_sec"] == 1]
+        selected_locations[selected_locations["source_sec"] == 1]
         .drop(["source_sec"], axis=1)
-        .set_index(["City", TIME_COL])
+        .set_index(["Country", MITIGATION_COL, TIME_COL])
     )
     data_3 = (
-        selected_cities[selected_cities["source_sec"] == 3]
+        selected_locations[selected_locations["source_sec"] == 3]
         .drop(["source_sec"], axis=1)
-        .set_index(["City", TIME_COL])
+        .set_index(["Country", MITIGATION_COL, TIME_COL])
     )
-    selected_cities = data_3 - data_1
+    selected_locations = data_3 - data_1
 
-    selected_cities = selected_cities.sort_index()
+    selected_locations = selected_locations.sort_index()
 
-    return selected_cities
+    return selected_locations
 
 
-def process_model_data(directory, city_metadata, city_selection):
+def process_model_data(directory, locations, selection, mitigation):
     data_files = glob.glob(os.path.join(directory, "*/*.tsv"))
 
     print("Processing dir:", directory)
@@ -186,37 +199,52 @@ def process_model_data(directory, city_metadata, city_selection):
     data_files = {filename: fix_tsv_file(filename) for filename in data_files}
     print("TSVs processed")
 
-    data_df = map_to_dfs(data_files)
+    data_df = map_to_dfs(data_files, mitigation)
     # data_df.info()
     print("DFs mapped")
 
-    processed_data = preprocess_data(data_df, city_metadata, city_selection)
+    processed_data = preprocess_data(data_df, locations, selection)
 
     return processed_data
 
 
-def process_all_models_data(directories, city_metadata, city_selection):
+# super ugly & hacky parsing
+def get_mitigation_beta(filepath):
+    stop = False
+    beta = 0
+    with open(filepath, "r") as ff:
+        for line in ff.readlines():
+            if stop:
+                m = re.search('<variable value="(.*?)" name="beta"/>', line)
+                beta = float(m.group(1))
+                break
+
+            # if pattern found, parse the next line
+            patt = re.search(BETA_PATTERN, line)
+            if patt is not None and patt.group(1) != "":
+                stop = True
+
+    return beta
+
+
+def process_all_models_data(directories, locations, selection):
     # process first dir
-    all_data_df = process_model_data(directories[0], city_metadata, city_selection)
+    definition_filepath = os.path.join(directories[0], "definition.xml")
+    mitigation = get_mitigation_beta(definition_filepath)
+    all_data_df = process_model_data(directories[0], locations, selection, mitigation)
     all_data_df[TARGET_COL + "_0"] = all_data_df[TARGET_COL]
     all_data_df = all_data_df.drop(TARGET_COL, axis=1)
 
     # process all other dirs
     for i, model_dir in enumerate(directories[1:]):
+        definition_filepath = os.path.join(model_dir, "definition.xml")
+        mitigation = get_mitigation_beta(definition_filepath)
+
         all_data_df[TARGET_COL + "_" + str(i + 1)] = process_model_data(
-            model_dir, city_metadata, city_selection
+            model_dir, locations, selection, mitigation
         )[TARGET_COL]
 
     return all_data_df
-
-
-def mock_data(processed_data, mocking_constant):
-    print(f"\n\t!!! MOCKING DATA !!! - mocking constant {mocking_constant} added\n")
-
-    for i, col in enumerate(processed_data.columns):
-        processed_data[col] = processed_data[col] + i * mocking_constant
-
-    return processed_data
 
 
 if __name__ == "__main__":
@@ -224,7 +252,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "directory", help="Directory with multiple gleamviz exported data"
     )
-    parser.add_argument("city_selection", help="tsv file with selected cities")
+    parser.add_argument("selection", help="tsv file with selected cities")
     parser.add_argument(
         "output_file", default=OUTPUT_FILENAME, nargs="?", help="Output file"
     )
@@ -240,22 +268,19 @@ if __name__ == "__main__":
     md_dfs, start_date = read_metadata(directories[0])
 
     # read the file with preselected cities
-    city_selection = read_tsv(args.city_selection)
-    print("City selection loaded")
+    selection = read_tsv(args.selection)
+    print("Location selection loaded")
 
     all_data_df = process_all_models_data(
-        directories, md_dfs["md_cities"], city_selection
+        directories, md_dfs["md_countries"], selection
     )
 
-    # mock data (currently the data is just copied, so the timeseries will get ocluded in the view)
-    all_data_df = mock_data(all_data_df, MOCKING_CONSTANT)
-
-    # save city lookup table
-    all_data_df.to_hdf(args.output_file, key=CITY_LOOKUP_KEY)
+    # save location lookup table
+    all_data_df.to_csv(args.output_file)
 
     # save metadata
-    pd.Series({"start_date": start_date}).to_hdf(
-        args.output_file, key=MODEL_START_DATE_KEY
-    )
+    metadata_name = args.output_file.split(".")
+    metadata_name = f"md_{metadata_name[0]}.{metadata_name[1]}"
+    pd.Series({"start_date": start_date}).to_csv(metadata_name)
 
     print("Data saved to: " + args.output_file)
