@@ -35,6 +35,8 @@ function getCountryBetaData(data) {
 // triggers a get method with the selected country
 function onchange_model_country() {
     var country = document.getElementById("selectButton").value;
+    // run the updateChart function with this selected option
+    update({country: country});
     jQuery.get({
     url: "/model",
     data: {"country": country},
@@ -207,8 +209,8 @@ d3.csv("/static/data/line-data-with-beta.csv")
     d3.select("#selectButton").on("change", function(d) {
       // recover the option that has been chosen
       var selectedOption = d3.select(this).property("value");
-      // run the updateChart function with this selected option
-      update({country: selectedOption});
+     console.log(selectedOption)
+
     });
 
     d3.select(".beta-0").on("click", function(){
