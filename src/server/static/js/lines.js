@@ -68,7 +68,7 @@ function getSelectedCountry(data) {
 }
 
 //Read the data
-d3.csv("/static/data/line-data-with-beta.csv")
+d3.csv('https://storage.googleapis.com/static-covid/static/line-data-with-beta.csv')
   .then(function(data){
     var selectedBeta = "0.0";
     // List of groups (here I have one group per column)
