@@ -33,6 +33,7 @@ Here is a template for new release sections
 - map bubble links to line plots (#75)
 - when clicking on submit in "Request Model" it shows a result and possibility to send data to formspree (#52)
 - Creation of a contact form page with Formspree (#84)
+- Favicon (#86)
 ### Changed
 - Template for `model` (label "Request model") (#62, #52)
 
