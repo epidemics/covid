@@ -125,9 +125,7 @@ async def model(request: Request, country: str = "USA") -> Response:
         args = {"request": request}
     print(args)
     # TODO: parse the argument for the plot
-    return templates.TemplateResponse(
-        "model.html", args
-    )
+    return templates.TemplateResponse("model.html", args)
 
 
 @app.get("/request-event-evaluation")
