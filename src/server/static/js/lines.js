@@ -389,16 +389,17 @@ function update_containment_measures(selectedOption) {
       containmentMeasuresDiv.append(containmentMeasuresSource);
 
       if (data != undefined) {
-        // format each entry and append it to the containmentMeasuresDiv
-        for (let i in data["Description of measure implemented"]) {
-          containmentMeasuresDiv.appendChild(
-            containment_entry(
-              (date = data["date"][i]),
-              (text = data["Description of measure implemented"][i]),
-              (source_link = data["Source"][i])
-            )
-          );
-        }
+          data.forEach(function (item, index) {
+                console.log(item, index);
+                console.log(item["date"]);
+                containmentMeasuresDiv.appendChild(
+                containment_entry(
+                  (date = item["date"]),
+                  (text = item["Description of measure implemented"]),
+                  (source_link = item["Source"])
+                )
+              );
+          });
       } else {
         var emptyDatasetMsg = document.createElement("P");
         emptyDatasetMsg.innerHTML =

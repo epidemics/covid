@@ -195,8 +195,7 @@ async def containment_measures(request: Request, country: str = "China") -> Resp
             ["date", "Description of measure implemented", "Source"],
         ].sort_values(by="date", ascending=False)
         sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
-        args = sel.to_dict()
+        measures = [val for _, val in sel.to_dict(orient="index").items()]
     else:
-        args = None
-
-    return args
+        measures = None
+    return measures
