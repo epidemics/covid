@@ -116,6 +116,18 @@ header h1:before {
   border-bottom-color: #fff;
 }
 
+.navbar ul li {
+   display: inline-block;
+}
+
+.navbar ul {
+   margin: 0;
+}
+
+.navbar {
+   padding: 0;
+}
+
 main {
   padding: 1.5rem 0;
 }
@@ -380,6 +392,25 @@ strong {
   .container {
     padding-left: 40px;
     padding-right: 40px;
+  }
+  .navbar ul li {
+     display: block;
+  }
+  .navbar ul {
+     padding: 0;
+  }
+  .navbar {
+     padding: 10px 0;
+  }
+  .nav-masthead .nav-link {
+    border-bottom: 0.1rem solid transparent;
+  }
+  .nav-masthead .active {
+    color: #fff;
+    border-bottom-color: #fff;
+  }
+  .nav-masthead .nav-link {
+    padding-left: 0px;
   }
 }
 
