@@ -70,14 +70,8 @@
 
   <body>
     {% include "nav.html" %}
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <main role="main" class="">
-            {% block content %} {% endblock %}
-          </main>
-        </div>
-      </div>
+    <div class="container main">
+      {% block content %} {% endblock %}
     </div>
 
     {% include "footer.html" %}
