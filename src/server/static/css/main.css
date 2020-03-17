@@ -177,6 +177,10 @@ main {
   color: rgba(255, 255, 255, .5);
 }*/
 
+.custom-footer {
+  border-top: 1px solid #323232;
+}
+
 hr {
   border-color: #323232;
 }
