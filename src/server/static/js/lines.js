@@ -25,7 +25,7 @@ var margin = { top: 10, right: 100, bottom: 30, left: 50 },
   width = 600,
   height = 700;
 // append the svg object to the body of the page
-var graphSize = "60%";
+var graphSize = "75%";
 var svg = d3
   .select("#my_dataviz")
   .style("width", graphSize)
