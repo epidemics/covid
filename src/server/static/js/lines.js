@@ -1,4 +1,4 @@
-Date.prototype.addDays = function(d) {
+Date.prototype.addDays = function (d) {
   return new Date(this.valueOf() + 864e5 * d);
 };
 function setGetParam(key, value) {
@@ -21,9 +21,9 @@ let today = new Date();
 var chartDiv = document.getElementById("my_dataviz"); //Mati: this doesn't seem to be doing anythnig
 
 // set the dimensions and margins of the graph
-var margin = { top: 10, right: 100, bottom: 30, left: 50 },
+var margin = { top: 10, right: 100, bottom: 30, left: 100 },
   width = 600,
-  height = 700;
+  height = 675;
 // append the svg object to the body of the page
 var graphSize = "75%";
 var svg = d3
@@ -88,7 +88,7 @@ function getMaxYValueForCountry(countryBetas, selectedCountry) {
 //Read the data
 d3.csv(
   "https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2"
-).then(function(data) {
+).then(function (data) {
   var selectedBeta = "0.0";
   // List of groups (here I have one group per column)
   var allGroup = getCountries(data);
@@ -106,15 +106,15 @@ d3.csv(
     .data(allGroup)
     .enter()
     .append("option")
-    .text(function(d) {
+    .text(function (d) {
       return d;
     }) // text showed in the menu
-    .attr("value", function(d) {
+    .attr("value", function (d) {
       return d;
     })
     .sort(); // corresponding value returned by the button
 
-  var xDomain = d3.extent(selectedCountryBeta.items, function(d) {
+  var xDomain = d3.extent(selectedCountryBeta.items, function (d) {
     return d[0];
   });
   // Add X axis --> it is a date format
@@ -124,12 +124,13 @@ d3.csv(
     .domain(xDomain);
   svg
     .append("g")
+    .style("font-size", "20px")
     .attr("transform", "translate(0," + height + ")")
     .call(
       d3
         .axisBottom(x)
         .ticks(6)
-        .tickFormat(d3.timeFormat("%Y-%m-%d"))
+        .tickFormat(d3.timeFormat("%b %Y"))
     );
 
 
@@ -140,7 +141,7 @@ d3.csv(
     .style("fill", "#a9a9ac")
     .attr(
       "transform",
-      "translate(" + width / 2 + " ," + (height + margin.top + 20) + ")"
+      "translate(" + width / 2 + " ," + (height + margin.top + 40) + ")"
     )
     .style("text-anchor", "middle")
     .text("Date");
@@ -153,7 +154,12 @@ d3.csv(
     .domain(yDomain)
     //.domain([0, d3.max(selectedCountryBeta.items, function(d) { return Math.max(+d[1], +d[2], +d[3], +d[4]); })])
     .range([height, 0]);
-  var yAxis = svg.append("g").attr("class", "y axis").call(d3.axisLeft(y));
+  var yAxis = svg
+    .append("g")
+    .style("font-size", "20px")
+    .call(
+      d3.axisLeft(y).ticks(10).tickFormat(d3.format(".0%"))
+    );
 
   // text label for the y axis
   svg
@@ -167,6 +173,9 @@ d3.csv(
     .style("text-anchor", "middle")
     .text("Active infections");
 
+  // Set font size for axis labels
+  svg.style("font-size", "22px")
+
   function drawLine(i, color) {
     return svg
       .append("g")
@@ -176,11 +185,11 @@ d3.csv(
         "d",
         d3
           .line()
-          .x(function(d) {
+          .x(function (d) {
             window.myX = x;
             return x(d[0]);
           })
-          .y(function(d) {
+          .y(function (d) {
             return y(+d[i]);
           })
       )
@@ -222,16 +231,16 @@ d3.csv(
     .attr("class", "overlay")
     .attr("width", width)
     .attr("height", height)
-    .on("mouseover", function() {
+    .on("mouseover", function () {
       //console.log('over')
       crosshair.style("display", null);
     })
-    .on("mouseout", function() {
+    .on("mouseout", function () {
       //console.log('out')
       tooltip.style("opacity", 0);
       crosshair.style("display", "none");
     })
-    .on("mousemove", function() {
+    .on("mousemove", function () {
       var mouse = d3.mouse(this);
       var mouseDate = x.invert(mouse[0]);
       var mouseVal = y.invert(mouse[1]);
@@ -266,23 +275,23 @@ d3.csv(
         .style("opacity", 1)
         .html(
           "v1: " +
-            hVars[0] +
-            "<br>" +
-            "v2: " +
-            hVars[1] +
-            "<br>" +
-            "v3: " +
-            hVars[2] +
-            "<br>" +
-            "v4: " +
-            hVars[3] +
-            "<br>" +
-            "v5: " +
-            hVars[4] +
-            "<br>" +
-            "v6: " +
-            hVars[5] +
-            "<br>"
+          hVars[0] +
+          "<br>" +
+          "v2: " +
+          hVars[1] +
+          "<br>" +
+          "v3: " +
+          hVars[2] +
+          "<br>" +
+          "v4: " +
+          hVars[3] +
+          "<br>" +
+          "v5: " +
+          hVars[4] +
+          "<br>" +
+          "v6: " +
+          hVars[5] +
+          "<br>"
         )
         .style("left", d3.event.pageX + "px")
         .style("top", d3.event.pageY - 28 + "px");
@@ -315,10 +324,10 @@ d3.csv(
           "d",
           d3
             .line()
-            .x(function(d) {
+            .x(function (d) {
               return x(d[0]);
             })
-            .y(function(d) {
+            .y(function (d) {
               return y(+d[i]);
             })
         )
@@ -340,7 +349,7 @@ d3.csv(
   }
 
   // When the button is changed, run the updateChart function
-  d3.select("#selectButton").on("change", function(d) {
+  d3.select("#selectButton").on("change", function (d) {
     // recover the option that has been chosen
     selectedCountry= d3.select(this).property("value");
 
@@ -352,16 +361,16 @@ d3.csv(
     update_containment_measures(selectedCountry);
   });
 
-  d3.select(".beta-0").on("click", function() {
+  d3.select(".beta-0").on("click", function () {
     update({ beta: "0.0" });
   });
-  d3.select(".beta-03").on("click", function() {
+  d3.select(".beta-03").on("click", function () {
     update({ beta: "0.3" });
   });
-  d3.select(".beta-04").on("click", function() {
+  d3.select(".beta-04").on("click", function () {
     update({ beta: "0.4" });
   });
-  d3.select(".beta-05").on("click", function() {
+  d3.select(".beta-05").on("click", function () {
     update({ beta: "0.5" });
   });
 
@@ -394,7 +403,7 @@ function update_containment_measures(selectedOption) {
     url: "/get_containment_measures",
     data: { country: selectedOption },
     dataType: "json",
-    success: function(data) {
+    success: function (data) {
       // find the div dedicated to the side bar on the model.html template
       var containmentMeasuresDiv = document.getElementById(
         "containment_measures"
