@@ -131,7 +131,7 @@ async def result_event_evaluation(
     datepicker: str = "02/02/2017",
     control_strength: float = 0.5,
     length: str = "hours",
-    size: str = "inbetween"
+    size: str = "inbetween",
 ) -> Response:
     # TODO - implement the calculations based on parameters from the request-event-evaluation
     # TODO: Use real data model here, also use the real values from the forms, parameters are ignored
@@ -151,65 +151,60 @@ async def result_event_evaluation(
 
     data = Data()
 
-    num = {"1-10":5,
-           "10-100":50,
-           "100-1000":500,
-           "1000+":5000}[number]
+    num = {"1-10": 5, "10-100": 50, "100-1000": 500, "1000+": 5000}[number]
 
     # Wild stab at transmission probabilities
-    transmission = {'hours':0.02,'day':0.05,'days':0.08}
-    effective_contacts = {'little':3/2, 'inbetween':5/3, 'lot':2}
+    transmission = {"hours": 0.02, "day": 0.05, "days": 0.08}
+    effective_contacts = {"little": 3 / 2, "inbetween": 5 / 3, "lot": 2}
 
-    stress_fun = {1e-6:1.5,
-                  1e-5:1.5,
-                  1e-4:1.5,
-                  1e-3:2,
-                  1e-2:17}
+    stress_fun = {1e-6: 1.5, 1e-5: 1.5, 1e-4: 1.5, 1e-3: 2, 1e-2: 17}
 
-    ai_fun = {(1e-6,0.7):0.4,
-              (1e-6,0.5):34.5,
-              (1e-6,0.3):1.2,
-              (1e-5,0.7):0.4,
-              (1e-5,0.5):9.5,
-              (1e-5,0.3):1.2,
-              (1e-4,0.7):0.4,
-              (1e-4,0.5):2.6,
-              (1e-4,0.3):1.2,
-              (1e-3,0.7):0.6,
-              (1e-3,0.5):3.2,
-              (1e-3,0.3):3.9,
-              (1e-2,0.7):0.6,
-              (1e-2,0.5):2.5,
-              (1e-2,0.3):3.4}
-
+    ai_fun = {
+        (1e-6, 0.7): 0.4,
+        (1e-6, 0.5): 34.5,
+        (1e-6, 0.3): 1.2,
+        (1e-5, 0.7): 0.4,
+        (1e-5, 0.5): 9.5,
+        (1e-5, 0.3): 1.2,
+        (1e-4, 0.7): 0.4,
+        (1e-4, 0.5): 2.6,
+        (1e-4, 0.3): 1.2,
+        (1e-3, 0.7): 0.6,
+        (1e-3, 0.5): 3.2,
+        (1e-3, 0.3): 3.9,
+        (1e-2, 0.7): 0.6,
+        (1e-2, 0.5): 2.5,
+        (1e-2, 0.3): 3.4,
+    }
 
     # The following is not a mock, but until data are fixed, it is irrelevant
     place_data = data[place]
-        
 
     try:
         median = place_data.gleamviz_predictions.loc[datepicker]
         fraction = median / place_data.population
         probability = (1 - (1 - fraction) ** num) * 100  # in %
-        fraction_oom = 10**math.floor(math.log(fraction,10))
-        expected_infections = transmission[length]*fraction*num**effective_contacts[size]
-        sorder_infections = expected_infections*2.5
+        fraction_oom = 10 ** math.floor(math.log(fraction, 10))
+        expected_infections = (
+            transmission[length] * fraction * num ** effective_contacts[size]
+        )
+        sorder_infections = expected_infections * 2.5
     except KeyError:
         probability = "unknown"
         fraction_oom = 0
         expected_infections = "unknown"
         sorder_infections = "unknown"
 
-    if place_data.gleamviz_predictions.max()*0.15 < place_data.population*0.002:
-        excess_hospital_load = 'Not applicable'
+    if place_data.gleamviz_predictions.max() * 0.15 < place_data.population * 0.002:
+        excess_hospital_load = "Not applicable"
     else:
         try:
             excess_hospital_load = stress_fun[fraction_oom]
         except KeyError:
-            excess_hospital_load = 'unknown'
+            excess_hospital_load = "unknown"
 
     try:
-        excess_infections = ai_fun[(fraction_oom,control_strength)]
+        excess_infections = ai_fun[(fraction_oom, control_strength)]
     except KeyError:
         excess_infections = "unknown"
 
@@ -221,12 +216,12 @@ async def result_event_evaluation(
             "number": number,
             "place": place,
             "probability": probability,
-            "expected_infections":expected_infections,
-            "excess_infections":excess_infections,
-            "excess_hospital_load":excess_hospital_load,
-            "sorder_infections":sorder_infections,
-            "hund_events_infections":100*excess_infections*expected_infections,
-            "hund_events_load":100*excess_hospital_load
+            "expected_infections": expected_infections,
+            "excess_infections": excess_infections,
+            "excess_hospital_load": excess_hospital_load,
+            "sorder_infections": sorder_infections,
+            "hund_events_infections": 100 * excess_infections * expected_infections,
+            "hund_events_load": 100 * excess_hospital_load,
         },
     )
 
