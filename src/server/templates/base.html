@@ -25,8 +25,17 @@
       integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg="
       crossorigin="anonymous"
     />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/fontawesome.min.css"
+      integrity="sha256-mM6GZq066j2vkC2ojeFbLCcjVzpsrzyMVUnRnEQ5lGw="
+      crossorigin="anonymous"
+    />
+
     <!-- Custom styles for this template -->
-    <link href="../static/css/main.css" rel="stylesheet" />
+    <link href="{{ url_for('static', path='/css/main.css') }}" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script
@@ -43,13 +52,26 @@
       gtag("config", "UA-160643838-1");
     </script>
 
+    <style>
+      footer {
+        position: fixed;
+        bottom: 0px;
+        width: 100%;
+        background-color: #000;
+        user-select: auto;
+        opacity: 100%;
+        font-size: 0.9em;
+        border-top: 1px solid #36343e;
+      }
+    </style>
+
     {% block additional_js_pre %} {% endblock %}
   </head>
 
   {% set navigation_bar = [ ('/', 'index', 'Public information'), ('/model/',
   'models', 'Models'), ('/request-calculation/', 'request-model', 'Request
   model'), ('/request-event-evaluation/', 'events', 'Event prediction'),
-  ('/contact/', 'contact-form', 'Contact') ] -%} {% set active_page =
+  ('/about/', 'about', 'About') ] -%} {% set active_page =
   active_page|default('index') -%}
 
   <body>
@@ -75,22 +97,53 @@
 
     <div class="container fill">
       <div class="row">
-        <div class="col-lg-8">
+        <div class="col-12">
           <main role="main" class="">
             {% block content %} {% endblock %}
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
           </main>
         </div>
       </div>
     </div>
 
+    <!-- Footer -->
+    <footer
+      class="footer font-small blue pt-4"
+      style="
+    padding-top: 0px !important;"
+    >
+      <!-- Footer Links -->
+      <div class="container text-center text-md-left">
+        <div class="row">
+          <div class="col-3 my-auto">
+            <img
+              class="logo"
+              src="/static/img/Oxford-logo.png"
+              alt="Logo of the University of Oxford"
+            />
+          </div>
+          <div
+            class="col-9 float-right my-auto less-visible7"
+            style="
+          padding-top: 5px;
+          padding-bottom: 5px;"
+          >
+            Disclaimer: All data used to produce this map are exclusively
+            collected from publicly available sources including government
+            reports and news media
+          </div>
+        </div>
+      </div>
+    </footer>
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script
-      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-      crossorigin="anonymous"
-    ></script>
     <script
       src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
       integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
@@ -109,6 +162,15 @@
       type="text/javascript"
       src="https://cdn.jsdelivr.net/npm/cookie-bar/cookiebar-latest.min.js?tracking=1&top=1"
     ></script>
+
+    <!-- Font Awesome -->
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/fontawesome.min.css"
+      integrity="sha256-7zqZLiBDNbfN3W/5aEI1OX/5uvck9V0yhwKOA9Oe49M="
+      crossorigin="anonymous"
+    ></script>
+
 
     {% block additional_js %} {% endblock %}
   </body>

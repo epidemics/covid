@@ -45,6 +45,10 @@ PLACES = [
     "Wuhan",
 ]
 
+CAPITALS = pd.read_csv(
+    "https://raw.githubusercontent.com/icyrockcom/country-capitals/master/data/country-list.csv"
+)
+
 SERVER_ROOT = os.path.dirname(__file__)
 
 app = FastAPI()
@@ -54,6 +58,32 @@ app.mount(
 
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 
+df = pd.read_csv(
+    os.path.join(SERVER_ROOT, "static", "data", "covid-containment-measures.csv")
+)
+df = df.loc[
+    df.Country.notna(),
+    [
+        "Country",
+        "Description of measure implemented",
+        "Keywords",
+        "Source",
+        "Date Start",
+    ],
+]
+df["date"] = pd.to_datetime(
+    df["Date Start"].str.upper(), format="%b %d, %Y", yearfirst=False
+)
+del df["Date Start"]
+CONTAINMENT_MEAS = df
+
+LINES = pd.read_csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2')
+
+STARTDATE = pd.to_datetime('03/14/2020',format='%m/%d/%Y')
+
+# In case I break anything by replacing the previous places
+
+PLACES_GV = LINES['Country'].unique()
 
 class Place:
     def __init__(self, name):
@@ -82,8 +112,9 @@ async def request_calculation(request: Request) -> Response:
 
 @app.get("/model")
 async def model(request: Request, country: str = "USA") -> Response:
-    """TODO: this should serve the main model visualization"""
+    """serve the main model visualization"""
     arguments = {"country": country} if country else {}
+
     # TODO: parse the argument for the plot
     return templates.TemplateResponse("model.html", {"request": request})
 
@@ -91,7 +122,7 @@ async def model(request: Request, country: str = "USA") -> Response:
 @app.get("/request-event-evaluation")
 async def request_event_evaluation(request: Request) -> Response:
 
-    places = [Place(place) for place in PLACES]
+    places = [Place(place) for place in PLACES_GV]
 
     return templates.TemplateResponse(
         "request-event-evaluation.html",
@@ -102,24 +133,30 @@ async def request_event_evaluation(request: Request) -> Response:
 @app.get("/result-event-evaluation")
 async def result_event_evaluation(
     request: Request,
-    place: str = "USA",
+    place: str = "US",
     number: str = "1-10",
     datepicker: str = "02/02/2017",
-    control_strength: float = 0.5,
+    control_strength: str = 'moderate',
     length: str = "hours",
     size: str = "inbetween"
 ) -> Response:
-    # TODO - implement the calculations based on parameters from the request-event-evaluation
-    # TODO: Use real data model here, also use the real values from the forms, parameters are ignored
-    # TODO: add control strength parameter
+
+    strength = {'none':0,
+                'weak':0.3,
+                'moderate':0.4,
+                'strong':0.5}[control_strength]
+    num = {"1-10":5,
+           "10-100":50,
+           "100-1000":500,
+           "1000+":5000}[number]
+
     class Place:
         def __init__(self, name):
             self.name = name
-            self.population = 4000000
-            self.gleamviz_predictions = pd.Series(  # From gleamviz
-                np.logspace(2, 6, num=31),
-                index=pd.date_range(start=date.today(), periods=31),
-            )
+            self.population = 33e7
+            cols = [i for i in LINES.columns if i.startswith('Cumulative')]
+            print(name,strength)
+            self.gleamviz_predictions = self.population*LINES[(LINES['Country']==name) & (LINES['Mitigation']==strength)].set_index('Timestep')[cols].mean(axis=1)/1000
 
     class Data:
         def __getitem__(self, name):
@@ -127,50 +164,76 @@ async def result_event_evaluation(
 
     data = Data()
 
-    num = {"1-10":5,
-           "10-100":50,
-           "100-1000":500,
-           "1000+":5000}[number]
+    event_index = (pd.to_datetime(datepicker,format='%m/%d/%Y') - STARTDATE).days
+
+
 
     # Wild stab at transmission probabilities
-    transmission = {'hours':0.02,'day':0.05,'days':0.08}
+    transmission = {'hours':0.02,'day':0.05,'days':0.1}
     effective_contacts = {'little':3/2, 'inbetween':5/3, 'lot':2}
 
-    stress_fun = {1e-6:1.5,
-                  1e-5:1.5,
-                  1e-4:1.5,
-                  1e-3:2,
-                  1e-2:17}
+    stress_fun = {(1e-6,0.3):1.5,
+                  (1e-6,0.4):2.4,
+                  (1e-6,0):0.8,
+                  (1e-5,0.4):2.4,
+                  (1e-5,0.3):1.5,
+                  (1e-5,0):.9,
+                  (1e-4,0.4):2.3,
+                  (1e-4,0.3):1.5,
+                  (1e-4,0):0.8,
+                  (1e-3,0.4):3.9,
+                  (1e-3,0.3):2.2,
+                  (1e-3,0):0.9,
+                  (1e-2,0.4):3.8,
+                  (1e-2,0.3):2.2,
+                  (1e-2,0):0.8,
+                  (1e-1,0.4):1,
+                  (1e-1,0.3):0.7,
+                  (1e-1,0):0.2}
 
-    ai_fun = {(1e-6,0.7):0.4,
+    ai_fun = {(1e-6,0):0.2,
+              (1e-6,0.3):0.4,
+              (1e-6,0.4):0.7,
               (1e-6,0.5):34.5,
-              (1e-6,0.3):1.2,
-              (1e-5,0.7):0.4,
+              (1e-5,0):0.2,
+              (1e-5,0.3):0.4,
+              (1e-5,0.4):0.7,
               (1e-5,0.5):9.5,
-              (1e-5,0.3):1.2,
-              (1e-4,0.7):0.4,
+              (1e-4,0):0.2,
+              (1e-4,0.3):0.4,
+              (1e-4,0.4):0.7,
               (1e-4,0.5):2.6,
-              (1e-4,0.3):1.2,
-              (1e-3,0.7):0.6,
+              (1e-3,0):0.2,
+              (1e-3,0.3):0.6,
+              (1e-3,0.4):1.1,
               (1e-3,0.5):3.2,
-              (1e-3,0.3):3.9,
-              (1e-2,0.7):0.6,
+              (1e-2,0):0.6,
+              (1e-2,0.3):0.6,
+              (1e-2,0.4):1.1,
               (1e-2,0.5):2.5,
-              (1e-2,0.3):3.4}
+              (1e-1,0):0.2,
+              (1e-1,0.3):0.5,
+              (1e-1,0.4):0.9,
+              (1e-1,0.5):1.3}
 
+    message = "By default we suggest cancelling unless the event is critical. \
+                    Our model currently is not reliable for predicting the long run effects \
+                    of your decisions if your country implements strong containment measures, \
+                    and these could be significant. We expect many countries will implement strong \
+                    containment measures and many have already."
 
-    # The following is not a mock, but until data are fixed, it is irrelevant
     place_data = data[place]
-        
 
     try:
-        median = place_data.gleamviz_predictions.loc[datepicker]
+        median = place_data.gleamviz_predictions.loc[event_index]
         fraction = median / place_data.population
         probability = (1 - (1 - fraction) ** num) * 100  # in %
         fraction_oom = 10**math.floor(math.log(fraction,10))
         expected_infections = transmission[length]*fraction*num**effective_contacts[size]
         sorder_infections = expected_infections*2.5
     except KeyError:
+        median = -1
+        fraction = "unknown"
         probability = "unknown"
         fraction_oom = 0
         expected_infections = "unknown"
@@ -180,12 +243,12 @@ async def result_event_evaluation(
         excess_hospital_load = 'Not applicable'
     else:
         try:
-            excess_hospital_load = stress_fun[fraction_oom]
+            excess_hospital_load = stress_fun[(fraction_oom,strength)]
         except KeyError:
             excess_hospital_load = 'unknown'
 
     try:
-        excess_infections = ai_fun[(fraction_oom,control_strength)]
+        excess_infections = ai_fun[(fraction_oom,strength)]
     except KeyError:
         excess_infections = "unknown"
 
@@ -201,8 +264,10 @@ async def result_event_evaluation(
             "excess_infections":excess_infections,
             "excess_hospital_load":excess_hospital_load,
             "sorder_infections":sorder_infections,
-            "hund_events_infections":100*excess_infections*expected_infections,
-            "hund_events_load":100*excess_hospital_load
+            "medianCases": median,
+            "numberPeople": num,
+            "prevalence": fraction*100,
+            "message":message
         },
     )
 
@@ -213,8 +278,31 @@ async def result_calculations(request: Request) -> Response:
     return templates.TemplateResponse("thanks.html", {"request": request,},)
 
 
-@app.get("/contact")
-async def request_calculation(request: Request) -> Response:
-    return templates.TemplateResponse(
-        "contact-form.html", {"request": request, "message": ""},
-    )
+@app.get("/about")
+async def about(request: Request) -> Response:
+    return templates.TemplateResponse("about.html", {"request": request},)
+
+
+@app.get("/get_containment_measures")
+async def containment_measures(request: Request, country: str = "China") -> Response:
+    """serve the main model visualization"""
+
+    if country not in CONTAINMENT_MEAS.Country.unique():
+        country = CAPITALS.loc[CAPITALS.capital == country, ["country"]]
+
+        if country.empty is True:
+            country = None
+        else:
+            country = country.values[0][0]
+
+    if country is not None:
+        sel = CONTAINMENT_MEAS.loc[
+            CONTAINMENT_MEAS.Country == country,
+            ["date", "Description of measure implemented", "Source"],
+        ].sort_values(by="date", ascending=False)
+        sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
+        args = sel.to_dict()
+    else:
+        args = None
+
+    return args

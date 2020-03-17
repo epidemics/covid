@@ -1,98 +1,273 @@
-{% extends "base.html" %} {% block title %} Results {% endblock title%} {% block
-content %}
-<div class="content container">
-  <div class="row">
-    <label class="col-sm-12 col-lg-8">
-      At the time of your event in {{ place }}, the chance of one person being infected at the event is
-      <span class="probability">{{ '%0.2f'|format(probability|float) }}%</span>
-    </label>
+{% extends "base.html" %} {% block title %} Results {% endblock title%} {% set
+active_page = "events" %} {% block content %}
+
+
+  <!-- options: goahead, uncertain, cancel -->
+
+  <div class="col-md-12 col-sm-12">
+    <h1 class="title">
+      At this stage we recommend
+      <span class="recommendation"
+        >{{recommendation | default("caution")}}</span
+      >
+    </h1>
+    <p>
+      {{message | default("Your event poses a high risk, and by cancelling you
+      can meaningfully contribute to prevent further spread of covid-19")}}
+    </p>
   </div>
-  <!-- TODO: explain calculations -->
 
-
-  <!-- TODO: this outputs 0.0 when there is an error -->
-  <label>
-    In {{ place }}, saving one person from being infected at your event means
-    <span class="longrun-infections">{{ '%0.1f'|format(excess_infections|float) }}</span>
-    people will go free of COVID in the long run. This number can be smaller than 1 if the infection is very widespread - this is because all of the people you save by cancelling might be infected later on.
-  </label>
-
-  {% if excess_hospital_load != 'Not applicable' %}
-  <label>
-    In {{ place }}, saving one person from being infected at your event means
-    <span class="medical-care">{{ '%0.1f'|format(excess_hospital_load|float) }}</span>
-    more people would be able to get adequate medical care at peak load. 
-  </label>
-  {% endif %}
-  <!-- TODO: insert graph -->
-
-  <!-- TODO: insert image of network -->
-<!-- 
-  <label>But a big uncertainty is how people will respond</label> -->
-  <!-- TODO: add something that visualises the agency people have under different preparation measures -->
-
-<!--   <label>
-    If 100 event organisers like yourself canceled events at the same time, we'd avoid
-    <span class="100-avoided-today">{{ '%0.1f'|format(expected_infections*100|float) }}</span>
-    infections today and 
-    <span class="100-avoided-eventually">{{ '%0.1f'|format(hund_events_infections|float) }}</span>
-    in the long run.
-  </label>
-
-  {% if excess_hospital_load != 'Not applicable' %}
-  <label>
-    They would also free up
-    <span class="medical-care">{{'%0.1f'|format(hund_events_load|float) }}</span>
-    more treatment facilities for people who need care at the peak load. 
-  </label>
-  {% endif %} -->
-
-
-<!--   <label>Overall, we'd recommend</label>
-  <button class="green">Go ahead</button>
-  <button class="orange">Uncertain</button>
-  <button class="red highlighted">Cancel</button>
-  <p>
-    Your event poses a high risk, and by cancelling you can meaningfully
-    contribute to prevent further spread of covid-19
-  </p>
-
-  <label>
-    According to our models, it would be fine to host the event in
-    <span class="proposed-month"></span>
-    instead.
-  </label> -->
-
-  <!-- graph -->
-
-  <label>Did this change your mind at all?</label>
-  <!--form-->
-  <form action="/decision">
-    <div class="form-group">
-      <div class="btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-secondary">
-          <input type="radio" name="more" id="more" autocomplete="off" />
-          Yes, more likely to host
-        </label>
-        <label class="btn btn-secondary">
-          <input type="radio" name="less" id="less" autocomplete="off" />Yes,
-          less likely to host
-        </label>
-        <label class="btn btn-secondary">
-          <input type="radio" name="equal" id="equal" autocomplete="off" />No
-        </label>
+  <div class="row">
+    <div class="col-12">
+      <div
+        style="
+        transform: translatey(14px);
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        "
+      >
+        Here is why:
       </div>
     </div>
-  </form>
-  <p class="form-submition-message"></p>
+  </div>
 
-  <div id="credits">
-    <h2>Credits</h2>
-    <p>
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 title-form">
+      Around the time of your event in {{place | default("your location")}},
+      there will probably be
+      <span class="number">{{'%0.0f'|format(medianCases|float) | default("medianCases")}}</span>
+      cases
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 title-form">
+      The chance of one COVID-19 case being present is
+      <span class="number">{{ '%0.2f'|format(probability|float) | default("Unknown") }}%</span>
+      cases
+    </div>
+  </div>
+  <div class="col-lg-2">
+    <button
+      id="showCases"
+      onclick="showCalculation('showCases','hideCases','calculationCases')"
+      class="detail-button less-visible7"
+    >
+      See Calculation <i class="fas fa-caret-down"></i>
+    </button>
+    <button
+      id="hideCases"
+      onclick="hideCalculation('showCases','hideCases','calculationCases')"
+      class="detail-button less-visible7"
+      style="display: none;"
+    >
+      Close Calculation <i class="fas fa-caret-up"></i>
+    </button>
+  </div>
+
+  <!-- Mati: you can also use {% for calculation in calculations %} <div class="row"> [calculation] </div>{% endfor %} if it has many rows-->
+  <div id="calculationCases" class="row less-visible8" style="display: none;">
+    <div class="col-12">
+      <p>
+        {{ '%0.2f'|format(probability|float) | default("probability") }}% = (1-{{ '%0.2f'|format(prevalence|float) | default("prevalence") }}%)^{{ numberPeople | default("number of people") }}
+      </p>
+    </div>
+  </div>
+
+  <!-- TODO: this outputs 0.0 when there is an error -->
+
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 title-form">
+      In {{ place }}, saving one person from being infected at your event means
+      <span class="longrun-infections">{{ '%0.1f'|format(excess_infections|float) }}</span>
+      people will go free of COVID in the long run. This number can be smaller than 1 if the infection is very widespread - this is because all of the people you save by cancelling could be infected later on.
+    </div>
+  </div>
+  <div class="col-lg-2">
+    <button
+      id="showInfections"
+      onclick="showCalculation('showInfections','hideInfections','calculationInfections')"
+      class="detail-button less-visible7"
+    >
+      See Calculation <i class="fas fa-caret-down"></i>
+    </button>
+    <button
+      id="hideInfections"
+      onclick="hideCalculation('showInfections','hideInfections','calculationInfections')"
+      class="detail-button less-visible7"
+      style="display: none;"
+    >
+      Close Calculation <i class="fas fa-caret-up"></i>
+    </button>
+  </div>
+  <div
+    id="calculationInfections"
+    class="row less-visible8"
+    style="display: none;"
+  >
+    <div class="col-12">
+      This result comes from an <a href=https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIR_model>SIR model</a> simulating the progression in your country with {{ '%0.0f'|format(medianCases|float) }} infected compared to {{ '%0.0f'|format(medianCases+1|float) }} infected
+    </div>
+  </div>
+
+  {% if excess_hospital_load != 'Not applicable' %}
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 title-form">
+      In {{ place }}, saving one person from being infected at your event means
+      <span class="medical-care">{{ '%0.1f'|format(excess_hospital_load|float) }}</span>
+      more people would be able to get adequate medical care at peak load. 
+    </div>
+    <div class="col-lg-2">
+      <button
+        id="showHospital"
+        onclick="showCalculation('showHospital','hideHospital','calculationHospital')"
+        class="detail-button less-visible7"
+      >
+        See Calculation <i class="fas fa-caret-down"></i>
+      </button>
+      <button
+        id="hideHospital"
+        onclick="hideCalculation('showHospital','hideHospital','calculationHospital')"
+        class="detail-button less-visible7"
+        style="display: none;"
+      >
+        Close Calculation <i class="fas fa-caret-up"></i>
+      </button>
+    </div>
+  </div>
+  <div
+    id="calculationHospital"
+    class="row less-visible8"
+    style="display: none;"
+  >
+    <div class="col-12">
+      This result comes from an <a href=https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIR_model>SIR model</a> simulating the progression in your country with {{ '%0.0f'|format(medianCases|float) }} infected compared to {{ '%0.0f'|format(medianCases+1|float) }} infected
+    </div>
+  </div>
+  {% else %}
+  <div class="col-sm-12 col-lg-10 title-form">
+    Under the conditions you've specified the hospitals don't become overloaded.
+  </div>
+  {% endif %}
+
+  <!-- <div class="row">
+    <div class="col-sm-12 col-lg-10 title-form">
+      According to our models, it would be fine to host the event in
+      <span class="green underlined"
+        >{{proposedMonth | default("proposedMonth")}}</span
+      >
+      instead.
+    </div>
+    <div class="col-lg-2">
+      <button
+        id="showProposedMonth"
+        onclick="showCalculation('showProposedMonth','hideProposedMonth','calculationProposedMonth')"
+        class="detail-button less-visible7"
+      >
+        See Calculation <i class="fas fa-caret-down"></i>
+      </button>
+      <button
+        id="hideProposedMonth"
+        onclick="hideCalculation('showProposedMonth','hideProposedMonth','calculationProposedMonth')"
+        class="detail-button less-visible7"
+        style="display: none;"
+      >
+        Close Calculation <i class="fas fa-caret-up"></i>
+      </button>
+    </div>
+  </div>
+  <div
+    id="calculationProposedMonth"
+    class="row less-visible8"
+    style="display: none;"
+  >
+    <div class="col-12">
+      {{proposedMonthCalculation | default("[proposedMonthCalculation]")}}
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-12">
+      {{roposedMonthGraph | default("[roposedMonthGraph]")}}
+    </div>
+  </div>
+  <br /> -->
+
+
+  <div class="row">
+    <div class="col-12">
+      <h1 class="title-form">Did this change your mind at all?</h1>
+    </div>
+  </div>
+
+  <!--form-->
+  <div class="row">
+    <div class="col-12">
+      <form action="/decision">
+        <div class="form-group">
+          <div class="row btn-group-toggle" data-toggle="buttons">
+            <div class="col-md-auto col-sm-12">
+              <label class="btn btn-secondary submit">
+                <input type="radio" name="more" id="more" autocomplete="off" />
+                Yes, more likely to host
+              </label>
+            </div>
+            <div class="col-md-auto col-sm-12">
+              <label class="btn btn-secondary submit">
+                <input
+                  type="radio"
+                  name="less"
+                  id="less"
+                  autocomplete="off"
+                />Yes, less likely to host
+              </label>
+            </div>
+            <div class="col-md-auto col-sm-12">
+              <label class="btn btn-secondary submit">
+                <input
+                  type="radio"
+                  name="equal"
+                  id="equal"
+                  autocomplete="off"
+                />No
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row" style="margin-top: -16px;">
+    <div class="col-12">
+      <!-- Message confirming the answer has been submitted -->
+      {{formSubmitionMessage}}
+    </div>
+  </div>
+
+  <br />
+  <br />
+  <br />
+  <div class="less-visible7">
+    <p>Credits:</p>
+    <p class="credits">
       This site was created by the Future of Humanity Institute. It does not
       represent offical advice from the University of Oxford.
     </p>
     <!-- TODO: add various other credits, legal aspecs, and details about the project -->
   </div>
 </div>
+
+{% endblock %} {% block additional_js %}
+<script>
+  function showCalculation(showID, hideID, calculationID) {
+    document.getElementById(showID).style.display = "none";
+    document.getElementById(hideID).style.display = "block";
+    document.getElementById(calculationID).style.display = "block";
+  }
+  function hideCalculation(showID, hideID, calculationID) {
+    document.getElementById(showID).style.display = "block";
+    document.getElementById(hideID).style.display = "none";
+    document.getElementById(calculationID).style.display = "none";
+  }
+</script>
 {% endblock %}

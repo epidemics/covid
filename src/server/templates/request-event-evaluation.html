@@ -3,20 +3,8 @@
 <div>
   <br />
   <div class="row">
-    <div class="col-md-4 col-sm-12 order-md-2">
-      <img
-        src="/static/img/Oxford-logo-2.png"
-        alt="Logo of the Future of Humanity Institute"
-        height="150"
-      />
-      <img
-        src="/static/img/Oxford-logo.png"
-        alt="Logo of the University of Oxford"
-        height="150"
-      />
-    </div>
-    <div class="col-md-8 col-sm-12 order-md-1">
-      <h1 class="title-form">Should you cancel your event?</h1>
+    <div class="col-md-12">
+      <h1 class="title">Should you cancel your event?</h1>
       <p>This 5-min tool will help you figure out the risks involved.</p>
       <p>
         It relies on advanced pandemic simulation software and expert
@@ -143,9 +131,10 @@
 
         <select class="form-control" id="exampleFormControlSelect12">
           <option selected>Choose...</option>
-          <option value="0.7">30% reduced transmission</option>
-          <option value="0.5">50% reduced transmission</option>
-          <option value="0.3">70% reduced transmission</option>
+          <option value="none">No mitigation </option>
+          <option value="weak">Weak mitigation</option>
+          <option value="moderate">Moderate mitigation</option>
+          <option value="strong">Strong mitigation</option>
         </select>
       </div>
     </div>
@@ -154,7 +143,7 @@
     <br />
     <div class="row">
       <div class="col-lg-5 col-sm-12">
-        <button type="submit" class="btn btn-primary full-width active">
+        <button type="submit" class="btn btn-primary full-width submit">
           See results
         </button>
       </div>

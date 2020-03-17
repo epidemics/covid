@@ -6,7 +6,7 @@
 a,
 a:focus,
 a:hover {
-  color: #83908e;
+  color: #caddda;
 }
 
 /* Custom default button */
@@ -25,9 +25,9 @@ a:hover {
 html,
 body {
   font-family: "DM Sans", sans-serif;
-  background-color: #0e0d0d;
-  color: #a9a9ac;
+  background-color: #000000;
   height: 100%;
+  color: white; /*#a9a9ac*/
 }
 
 body {
@@ -53,18 +53,22 @@ h5,
 }
 
 .title {
-  color: white;
-  font-weight: normal;
-  padding-bottom: 1.5em;
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-size: 48px;
+  line-height: 81px !important;
 }
-
 .title-form {
   color: white;
+  padding-bottom: 18px;
+  font-size: 32px;
+}
+
+.title,
+.title-form {
   font-weight: normal;
-  font-size: 35px;
-  line-height: 50px;
+  line-height: 35px;
   text-transform: none;
-  padding-bottom: 10px;
 }
 
 .fill {
@@ -142,9 +146,6 @@ main {
   color: white;
 }
 
-footer {
-  font-size: 0.9em;
-}
 /*
  * Cover
  */
@@ -168,6 +169,11 @@ hr {
   border-color: #323232;
 }
 
+.logo {
+  height: 55px;
+  margin: 5px;
+}
+
 /*
 * Form
 */
@@ -181,7 +187,8 @@ label {
   border-radius: 0px;
 }
 
-.btn-secondary.active {
+.btn-secondary.active,
+.submit {
   background-color: white !important;
   color: black !important;
 }
@@ -239,8 +246,74 @@ label.btn-secondary > input {
   font-size: 25px;
 }
 
+
 .form-group .row {
   padding-bottom: 0.75rem;
+  border-radius: 0px;
+}
+
+}
+
+/*
+* Result event evaluation
+*/
+.recommendation {
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 5px 18px;
+  color: black;
+  font-weight: bold;
+}
+
+.cancel .recommendation {
+  background-color: #c51300;
+}
+.cancel .number {
+  color: #ff2710;
+}
+
+.uncertain .recommendation {
+  background-color: #fcb100;
+}
+.uncertain .number {
+  color: #fcb100;
+}
+
+.goahead .recommendation {
+  background-color: #90e10b;
+}
+.goahead .number,
+.green {
+  color: #90e10b;
+}
+
+.detail-button {
+  background-color: transparent;
+  border-width: 0px;
+  min-width: 132px;
+  margin-bottom: 12px;
+}
+
+.less-visible7 {
+  color: white;
+  mix-blend-mode: normal;
+  opacity: 0.7;
+}
+
+.less-visible8 {
+  color: white;
+  mix-blend-mode: normal;
+  opacity: 0.8;
+}
+
+.credits {
+  font-size: 13px;
+  margin-top: -10px;
+}
+
+.fa-caret-down,
+.fa-caret-up {
+  margin-left: 4px;
 }
 
 /*
@@ -255,11 +328,19 @@ label.btn-secondary > input {
   margin-left: 0px;
 }
 
+strong {
+  color: white
+
+}
+
 .mitigation-strenght > div > .btn-secondary {
   min-width: 76px;
 }
 
 @media only screen and (max-width: 991px) {
+  .title {
+    text-align: center;
+  }
   .population > label {
     margin-top: 20px;
     margin-right: 0px;
@@ -270,6 +351,9 @@ label.btn-secondary > input {
 }
 
 @media only screen and (min-width: 992px) {
+  .title {
+    text-align: left;
+  }
   .population {
     margin-left: -52px;
   }
@@ -296,9 +380,15 @@ label.btn-secondary > input {
 }
 
 .fill-available-width {
-  width: -webkit-fill-available;
+  width: 100%
 }
 
 textarea {
   height: 200px;
+}
+/*
+* General
+*/
+.underlined {
+  text-decoration: underline;
 }

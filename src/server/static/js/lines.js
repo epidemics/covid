@@ -1,16 +1,31 @@
+
 Date.prototype.addDays=function(d){return new Date(this.valueOf()+864E5*d);};
+function setGetParam(key,value) {
+  if (history.pushState) {
+    var params = new URLSearchParams(window.location.search);
+    params.set(key, value);
+    var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params.toString();
+    window.history.pushState({path:newUrl},'',newUrl);
+  }
+}
 let today = new Date();
 // set the dimensions and margins of the graph
-var margin = { top: 10, right: 100, bottom: 30, left: 30 },
-  width = 460 - margin.left - margin.right,
-  height = 400 - margin.top - margin.bottom;
 
+
+var chartDiv = document.getElementById("my_dataviz");
+
+// set the dimensions and margins of the graph
+var margin = {top: 10, right: 100, bottom: 30, left: 50},
+    width = 600,
+    height = 700;
 // append the svg object to the body of the page
 var svg = d3
   .select("#my_dataviz")
   .append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
+  .attr("preserveAspectRatio", "xMinYMin meet")
+  .attr("viewBox", "0 0 750 750")
+  .classed("svg-content", true)
+
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -20,34 +35,39 @@ function getCountries(data) {
 
 function getCountryBetaData(data) {
   result = [];
-  let combinations = _.uniqBy(data, r => [r.Country, r.beta].join()).map(r => ({country: r.Country, beta: r.beta, items:[]}));
+  let combinations = _.uniqBy(data, r => [r.Country, r.Mitigation].join())
+    .map(r => ({country: r.Country, beta: r.Mitigation, items:[]}));
   data.forEach(row => {
-    _.find(combinations, {'country':row.Country, 'beta': row.beta}).items.push([
+    _.find(combinations, {'country':row.Country, 'beta': row.Mitigation}).items.push([
       today.addDays(row.Timestep), 
-      row['Cumulative Median_0'], 
-      row['Cumulative Median_1'], 
-      row['Cumulative Median_2'],
+      row['Cumulative Median_s=0.85_at=0.2'], 
+      row['Cumulative Median_s=0.7_at=0.7'], 
+      row['Cumulative Median_s=0.1_at=0.2'],
+      row['Cumulative Median_s=0.85_at=0.7'],
+      row['Cumulative Median_s=0.1_at=0.7'],
+      row['Cumulative Median_s=0.7_at=0.2'],
     ])
   })
   return combinations;
 }
 
+
 function getSelectedCountry(data) {
   var url_string = window.location.href
   var url = new URL(url_string);
   var c = url.searchParams.get("selection");
-  console.log('search query', c, data[c], data)
-  return (c && data[c]) ? c : 'Abuja'
+  return (c && data.includes(c)) ? c : 'China'
 }
 
 //Read the data
-d3.csv("/static/data/line-data-with-beta.csv")
+d3.csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2')
   .then(function(data){
     var selectedBeta = "0.0";
     // List of groups (here I have one group per column)
     var allGroup = getCountries(data)
     countryBetas = getCountryBetaData(data);
-    selectedCountry = getSelectedCountry(data)
+    selectedCountry = getSelectedCountry(allGroup)
+    //console.log(allGroup)
     selectedCountryBeta = countryBetas.find(r => r.country === selectedCountry && r.beta === selectedBeta);
     countryBetaData=selectedCountryBeta.items;
 
@@ -77,7 +97,18 @@ d3.csv("/static/data/line-data-with-beta.csv")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%Y-%m-%d")));
 
-    var yDomain = [0, 1000]
+    var yDomain = [0, 200]
+
+    // text label for the x axis
+    svg.append("text")
+      .classed('xlabel', true)
+      .style('fill', '#a9a9ac')
+      .attr("transform",
+            "translate(" + (width/2) + " ," +
+                           (height + margin.top + 20) + ")")
+      .style("text-anchor", "middle")
+      .text("Date");
+
     // Add Y axis
     var y = d3.scaleLinear()
       .domain(yDomain)
@@ -86,6 +117,16 @@ d3.csv("/static/data/line-data-with-beta.csv")
     svg.append("g")
       .call(d3.axisLeft(y))
 
+    // text label for the y axis
+    svg.append("text")
+      .classed('ylabel', true)
+      .style('fill', '#a9a9ac')
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Value");
 
     function drawLine(i, color) {
       return svg
@@ -105,6 +146,9 @@ d3.csv("/static/data/line-data-with-beta.csv")
     var line1 = drawLine(1, '#753def')
     var line2 = drawLine(2, '#ef3d3d')
     var line3 = drawLine(3, '#ef993d')
+    var line4 = drawLine(4, '#9edf5c')
+    var line5 = drawLine(5, '#5cdfd3')
+    var line6 = drawLine(6, '#cf5cdf')
 
 
     // create crosshairs
@@ -125,18 +169,16 @@ d3.csv("/static/data/line-data-with-beta.csv")
       .attr("class", "tooltip")       
       .style("opacity", 0);
 
-
-
       svg.append('rect')
         .attr('class', 'overlay')
         .attr('width', width)
         .attr('height', height)
           .on('mouseover', function() {
-            console.log('over')
+            //console.log('over')
             crosshair.style("display", null);
           })
           .on('mouseout', function() {
-            console.log('out')
+            //console.log('out')
             tooltip.style('opacity', 0)
             crosshair.style("display", "none");
           })
@@ -160,19 +202,31 @@ d3.csv("/static/data/line-data-with-beta.csv")
             const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
             const diffDays = Math.round(Math.abs((mouseDate - today) / oneDay)); // number of days in the future
             const hoveredValues = selectedCountryBeta.items[diffDays]
-
+            //console.log('hv', hoveredValues)
+            var hVars = [
+              Math.round(hoveredValues[1]),
+              Math.round(hoveredValues[2]),
+              Math.round(hoveredValues[3]),
+              Math.round(hoveredValues[4]),
+              Math.round(hoveredValues[5]),
+              Math.round(hoveredValues[6]),
+            ]
             tooltip.style('opacity', 1)
-              .html('v1: '+hoveredValues[1]+'<br>'+'v2: '+hoveredValues[2]+'<br>'+'v3: '+hoveredValues[3]+'<br>'+'v4: '+hoveredValues[4]+'<br>')
+              .html(
+                'v1: '+hVars[0]+'<br>'+'v2: '+hVars[1]+'<br>'+'v3: '+hVars[2]+'<br>' +
+                'v4: '+hVars[3]+'<br>'+'v5: '+hVars[4]+'<br>'+'v6: '+hVars[5]+'<br>'
+                )
               .style("left", (d3.event.pageX) + "px")   
               .style("top", (d3.event.pageY - 28) + "px");  
 
-            console.log('move', diffDays)
+            //console.log('move', diffDays)
           });
 
-
-  
+    //initialization
     update({country: selectedCountry})
     d3.select('#selectButton').property('value', selectedCountry);
+    // update the containment measures with the new selected country
+    update_containment_measures(selectedCountry)
 
     // A function that update the chart
     function update({country=selectedCountryBeta.country, beta=selectedCountryBeta.beta}) {
@@ -191,14 +245,22 @@ d3.csv("/static/data/line-data-with-beta.csv")
       updateLine(line1, 1)
       updateLine(line2, 2)
       updateLine(line3, 3)
+      updateLine(line4, 4)
+      updateLine(line5, 5)
+      updateLine(line6, 6)
     }
 
     // When the button is changed, run the updateChart function
     d3.select("#selectButton").on("change", function(d) {
       // recover the option that has been chosen
       var selectedOption = d3.select(this).property("value");
+      // change url param
+      setGetParam('selection', selectedOption)
       // run the updateChart function with this selected option
       update({country: selectedOption});
+      // update the containment measures with the new selected country
+      update_containment_measures(selectedOption)
+
     });
 
     d3.select(".beta-0").on("click", function(){
@@ -214,6 +276,60 @@ d3.csv("/static/data/line-data-with-beta.csv")
       update({beta: "0.5"});
     })
 
-    console.log("RUNNING D3");
+    //console.log("RUNNING D3");
   }
 );
+
+
+function containment_entry(date='', text='', source_link=''){
+    /* write that jinja code with js for model.html template sidebar with containment measures entry
+     * <div class="containment_measure">
+     *   <h3 class="num">{{ date }}</h3>
+     *   <div class="area">{{ text }} <a href="{{ source_link }}" target="_blank">Source</a></div>
+     *</div>
+    */
+    var entryDiv = document.createElement("DIV");
+    entryDiv.setAttribute('class', 'containment_measure');
+    var title = document.createElement("H3");
+    title.setAttribute('class', 'num');
+    title.innerHTML = date;
+    var textDiv = document.createElement("DIV");
+    textDiv.setAttribute('class', 'area');
+    textDiv.innerHTML = text + " <a href='" + source_link +"'target='_blank'>Source</a>";
+    entryDiv.appendChild(title);
+    entryDiv.appendChild(textDiv);
+    return entryDiv
+};
+
+function update_containment_measures(selectedOption){
+    jQuery.get({
+         url: "/get_containment_measures",
+         data: {"country": selectedOption},
+         dataType: "json",
+         success: function(data){
+            // find the div dedicated to the side bar on the model.html template
+            var containmentMeasuresDiv = document.getElementById("containment_measures");
+            containmentMeasuresDiv.textContent = "";
+            var divTitle = document.createElement("H2");
+            divTitle.innerHTML = "Containment measures";
+            containmentMeasuresDiv.append(divTitle)
+            if(data != undefined){
+                // format each entry and append it to the containmentMeasuresDiv
+                for (let i in data["Description of measure implemented"]){
+                    containmentMeasuresDiv.appendChild(
+                        containment_entry(
+                            date=data["date"][i],
+                            text=data["Description of measure implemented"][i],
+                            source_link=data["Source"][i]
+                        )
+                    )
+                }
+            }
+            else{
+                var emptyDatasetMsg = document.createElement("P");
+                emptyDatasetMsg.innerHTML = "There is no containment measure in our database at the moment";
+                containmentMeasuresDiv.appendChild(emptyDatasetMsg)
+            }
+         }
+      });
+};
