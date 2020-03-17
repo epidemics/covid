@@ -8,7 +8,6 @@ import math
 from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
 
 PLACES = [
     "Africa",
@@ -126,16 +125,17 @@ async def request_event_evaluation(request: Request) -> Response:
 @app.get("/result-event-evaluation")
 async def result_event_evaluation(
     request: Request,
-    place: str = "USA",
-    number: str = "1-10",
-    datepicker: str = "02/02/2017",
-    control_strength: float = 0.5,
-    length: str = "hours",
-    size: str = "inbetween",
+    place: str,
+    datepicker: str,
+    length: str,
+    contactSize: str,
+    controlStrength: float,
+    peopleCount: str,  # formerly `number`
 ) -> Response:
     # TODO - implement the calculations based on parameters from the request-event-evaluation
     # TODO: Use real data model here, also use the real values from the forms, parameters are ignored
     # TODO: add control strength parameter
+    print(place, peopleCount, datepicker, length, contactSize, controlStrength)
     class Place:
         def __init__(self, name):
             self.name = name
@@ -151,7 +151,7 @@ async def result_event_evaluation(
 
     data = Data()
 
-    num = {"1-10": 5, "10-100": 50, "100-1000": 500, "1000+": 5000}[number]
+    num = {"1-10": 5, "10-100": 50, "100-1000": 500, "1000+": 5000}[peopleCount]
 
     # Wild stab at transmission probabilities
     transmission = {"hours": 0.02, "day": 0.05, "days": 0.08}
@@ -186,7 +186,7 @@ async def result_event_evaluation(
         probability = (1 - (1 - fraction) ** num) * 100  # in %
         fraction_oom = 10 ** math.floor(math.log(fraction, 10))
         expected_infections = (
-            transmission[length] * fraction * num ** effective_contacts[size]
+            transmission[length] * fraction * num ** effective_contacts[contactSize]
         )
         sorder_infections = expected_infections * 2.5
     except KeyError:
@@ -194,6 +194,9 @@ async def result_event_evaluation(
         fraction_oom = 0
         expected_infections = "unknown"
         sorder_infections = "unknown"
+
+        # if this branch occurs, expected_infections cannot be casted
+        # to floats in templates, us `unknown` can't be cased to float
 
     if place_data.gleamviz_predictions.max() * 0.15 < place_data.population * 0.002:
         excess_hospital_load = "Not applicable"
@@ -204,23 +207,25 @@ async def result_event_evaluation(
             excess_hospital_load = "unknown"
 
     try:
-        excess_infections = ai_fun[(fraction_oom, control_strength)]
+        excess_infections = ai_fun[(fraction_oom, controlStrength)]
     except KeyError:
         excess_infections = "unknown"
-
+        # if this branch occurs, you can't really compute `hund_events_infections`
+        # because excess_infections is `unknown` and that can't be multiplied
+        # by 100
     return templates.TemplateResponse(
         "result-event-evaluation.html",
         {
             "request": request,
             "datepicker": datepicker,
-            "number": number,
+            "number": peopleCount,
             "place": place,
             "probability": probability,
-            "expected_infections": expected_infections,
+            "expected_infections": -99999, #expected_infections,
             "excess_infections": excess_infections,
             "excess_hospital_load": excess_hospital_load,
             "sorder_infections": sorder_infections,
-            "hund_events_infections": 100 * excess_infections * expected_infections,
+            "hund_events_infections": -99999, #100 * excess_infections * expected_infections,
             "hund_events_load": 100 * excess_hospital_load,
         },
     )
