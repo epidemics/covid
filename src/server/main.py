@@ -136,6 +136,7 @@ async def result_event_evaluation(
     # TODO: Use real data model here, also use the real values from the forms, parameters are ignored
     # TODO: add control strength parameter
     print(place, peopleCount, datepicker, length, contactSize, controlStrength)
+
     class Place:
         def __init__(self, name):
             self.name = name
@@ -221,11 +222,11 @@ async def result_event_evaluation(
             "number": peopleCount,
             "place": place,
             "probability": probability,
-            "expected_infections": -99999, #expected_infections,
+            "expected_infections": -99999,  # expected_infections,
             "excess_infections": excess_infections,
             "excess_hospital_load": excess_hospital_load,
             "sorder_infections": sorder_infections,
-            "hund_events_infections": -99999, #100 * excess_infections * expected_infections,
+            "hund_events_infections": -99999,  # 100 * excess_infections * expected_infections,
             "hund_events_load": 100 * excess_hospital_load,
         },
     )
