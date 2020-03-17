@@ -70,6 +70,21 @@ function getSelectedCountry(data) {
   return c && data.includes(c) ? c : "China";
 }
 
+function getMaxYValueForCountry(countryBetas, selectedCountry) {
+  var highestVals = [];
+  countryBetas.forEach(b => {
+    if (b.country !== selectedCountry) {
+      return;
+    }
+    b.items.forEach(i => {
+      a = [...i]
+      a.shift() //// remove date
+      highestVals.push(Math.max(...a))
+    })
+  })
+  return Math.max(...highestVals)
+}
+
 //Read the data
 d3.csv(
   "https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2"
@@ -79,7 +94,7 @@ d3.csv(
   var allGroup = getCountries(data);
   countryBetas = getCountryBetaData(data);
   selectedCountry = getSelectedCountry(allGroup);
-  //console.log(allGroup)
+  console.log(countryBetas, 'betas')
   selectedCountryBeta = countryBetas.find(
     r => r.country === selectedCountry && r.beta === selectedBeta
   );
@@ -106,9 +121,7 @@ d3.csv(
   var x = d3
     .scaleTime()
     .range([0, width])
-    // .domain( [0,1000])
     .domain(xDomain);
-  // .ticks(d3.time.months, 1).tickFormat(d3.time.format("%b"));;
   svg
     .append("g")
     .attr("transform", "translate(0," + height + ")")
@@ -119,7 +132,6 @@ d3.csv(
         .tickFormat(d3.timeFormat("%Y-%m-%d"))
     );
 
-  var yDomain = [0, 200 / 1000];
 
   // text label for the x axis
   svg
@@ -133,13 +145,15 @@ d3.csv(
     .style("text-anchor", "middle")
     .text("Date");
 
+  var yDomain = [0, getMaxYValueForCountry(countryBetas, selectedCountry)];
+
   // Add Y axis
   var y = d3
     .scaleLinear()
     .domain(yDomain)
     //.domain([0, d3.max(selectedCountryBeta.items, function(d) { return Math.max(+d[1], +d[2], +d[3], +d[4]); })])
     .range([height, 0]);
-  svg.append("g").call(d3.axisLeft(y));
+  var yAxis = svg.append("g").attr("class", "y axis").call(d3.axisLeft(y));
 
   // text label for the y axis
   svg
@@ -290,6 +304,8 @@ d3.csv(
     selectedCountryBeta = countryBetas.find(
       r => r.country === country && r.beta === beta
     );
+    yDomain[1] = getMaxYValueForCountry(countryBetas, selectedCountry)
+    y = y.domain(yDomain)
     function updateLine(myLine, i) {
       myLine
         .datum(selectedCountryBeta.items)
@@ -305,8 +321,10 @@ d3.csv(
             .y(function(d) {
               return y(+d[i]);
             })
-        );
+        )
     }
+
+    yAxis.transition().duration(1000).call(d3.axisLeft(y))
 
     updateLine(line1, 1);
     updateLine(line2, 2);
@@ -314,18 +332,24 @@ d3.csv(
     updateLine(line4, 4);
     updateLine(line5, 5);
     updateLine(line6, 6);
+
+
+    // svg.select(".y.axis") // change the y axis
+    // .duration(750)
+    // .call(y);
   }
 
   // When the button is changed, run the updateChart function
   d3.select("#selectButton").on("change", function(d) {
     // recover the option that has been chosen
-    var selectedOption = d3.select(this).property("value");
+    selectedCountry= d3.select(this).property("value");
+
     // change url param
-    setGetParam("selection", selectedOption);
+    setGetParam("selection", selectedCountry);
     // run the updateChart function with this selected option
-    update({ country: selectedOption });
+    update({ country: selectedCountry });
     // update the containment measures with the new selected country
-    update_containment_measures(selectedOption);
+    update_containment_measures(selectedCountry);
   });
 
   d3.select(".beta-0").on("click", function() {
