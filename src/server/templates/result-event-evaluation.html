@@ -19,7 +19,7 @@ content %}
 
   {% if excess_hospital_load != 'Not applicable' %}
   <label>
-    Under the conditions of your country, saving one person from being infected at your event means
+    In {{ place }}, saving one person from being infected at your event means
     <span class="medical-care">{{ '%0.1f'|format(excess_hospital_load|float) }}</span>
     more people would be able to get adequate medical care at peak load. 
   </label>
