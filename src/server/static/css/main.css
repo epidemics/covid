@@ -128,8 +128,8 @@ header h1:before {
    padding: 0;
 }
 
-main {
-  padding: 1.5rem 0;
+.main {
+  margin: 20px auto;
 }
 
 /*@media (min-width: 48em) {
@@ -347,6 +347,10 @@ label.btn-secondary > input {
 strong {
   color: white
 
+}
+
+.containment_measure {
+  padding-bottom: 10px;
 }
 
 .mitigation-strenght > div > .btn-secondary {

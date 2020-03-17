@@ -290,7 +290,7 @@ function containment_entry(date='', text='', source_link=''){
     */
     var entryDiv = document.createElement("DIV");
     entryDiv.setAttribute('class', 'containment_measure');
-    var title = document.createElement("H3");
+    var title = document.createElement("H6");
     title.setAttribute('class', 'num');
     title.innerHTML = date;
     var textDiv = document.createElement("DIV");
@@ -310,7 +310,7 @@ function update_containment_measures(selectedOption){
             // find the div dedicated to the side bar on the model.html template
             var containmentMeasuresDiv = document.getElementById("containment_measures");
             containmentMeasuresDiv.textContent = "";
-            var divTitle = document.createElement("H2");
+            var divTitle = document.createElement("H5");
             divTitle.innerHTML = "Containment measures";
             containmentMeasuresDiv.append(divTitle)
             if(data != undefined){
