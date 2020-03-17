@@ -75,10 +75,6 @@ jobs:
     # Configure docker to use the gcloud command-line tool as a credential helper
     - run: |
         gcloud auth configure-docker
-   
-    - run: |
-        gsutil -m acl set -R -a public-read gs://static-covid/
-        gsutil -m setmeta -h "Cache-Control:public, max-age=10"
 
     # Build the Docker image
     - name: Build
