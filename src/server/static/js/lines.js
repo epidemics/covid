@@ -390,8 +390,6 @@ function update_containment_measures(selectedOption) {
 
       if (data != undefined) {
           data.forEach(function (item, index) {
-                console.log(item, index);
-                console.log(item["date"]);
                 containmentMeasuresDiv.appendChild(
                 containment_entry(
                   (date = item["date"]),
