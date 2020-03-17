@@ -1,16 +1,8 @@
-# Import from GleamViz HDF5
+# Moved to epidemics/epifor
 
-* Run all the 24 experiments (for the 3 * 2 * 4 parameter settings) and click "Retreive simlation" for each. (Do not "Export simulation", it is unnecessary.) (Simulations may be done on different machines, just the sim dirs are needed in one place.)
-* Locate the 24 directories under `GleamViz/data/sims/`, each named `NUMBER.gvh5`. Each should contain `definition.xml` and `results.h5` (cca 50M).
-* Optionally update the `country_selection.tsv` file with country/area/city selection. Needs the Gleam IDs and types (kinds), found in `md_cities.csv`, `md_countries.csv` etc.
-  * (Will likely be automated?)
-* Run `python process_data_hdf.py DIR1 DIR2 DIR3 ... DIR24` to process (~1 min) and get `line-data-v2.csv`. Run with `-h` to see some options.
-* Upload the `line-data-v2.csv` to GCS. Beware of static file caching https://github.com/epidemics/covid/issues/116
-  
+Functionality moved to https://github.com/epidemics/epifor, in particular to `process_h5s.py`.
 
-
-
-# OUTDATED for import from HDF5
+# [OUTDATED for import from HDF5]
 
 ## Converting data into a single file
 
