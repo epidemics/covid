@@ -22,7 +22,7 @@ jobs:
    
     - run: |
         gsutil -m acl set -R -a public-read gs://static-covid/
-        gsutil -m setmeta -h "Cache-Control:public, max-age=10"
+        gsutil -m setmeta -h "Cache-Control:public, max-age=10" -R gs://static-covid/
   checks:
     name: checks
     runs-on: ubuntu-latest
