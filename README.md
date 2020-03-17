@@ -2,9 +2,10 @@
 
 # covid-19 visualizer
 
+![Screenshot of local app](./covid_local_app.png)
+
 ## Architecture
 * `webserver` - a webserver using `fastapi` to render templates.
-
 
 # Development
 ## Using docker (the easiest)
