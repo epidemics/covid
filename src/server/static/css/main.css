@@ -152,6 +152,8 @@ header h1:before {
 
 .num {
   color: #df925c;
+  margin-bottom: 0.3rem;
+  margin-top: 3px;
 }
 
 .area {
@@ -350,7 +352,7 @@ strong {
 }
 
 .containment_measure {
-  padding-bottom: 10px;
+  padding-top: 10px;
 }
 
 .mitigation-strenght > div > .btn-secondary {
