@@ -47,6 +47,8 @@ Here is a template for new release sections
 ### Changed
 - Template for `model` (label "Request model") (#62, #52)
 - Version of jQuery (also add it as static file) (#88)
+- Model for calculating event risk (#11)
+- Template for `request-event-evaluation` (#11)
 
 ### Removed
 - Template for `selections` as well as view (duplicate of `request-event-calculation`) (#52)
