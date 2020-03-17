@@ -375,7 +375,6 @@ function update_containment_measures(selectedOption) {
       var containmentMeasuresDiv = document.getElementById(
         "containment_measures"
       );
-      console.log(data)
       containmentMeasuresDiv.textContent = "";
       var divTitle = document.createElement("H5");
       divTitle.innerHTML = "Containment measures";
@@ -388,7 +387,6 @@ function update_containment_measures(selectedOption) {
       containmentMeasuresSource.href =
         "https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e";
       containmentMeasuresDiv.append(containmentMeasuresSource);
-        console.log(data)
 
       if (data != undefined) {
           data.forEach(function (item, index) {
