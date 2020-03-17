@@ -375,6 +375,7 @@ function update_containment_measures(selectedOption) {
       var containmentMeasuresDiv = document.getElementById(
         "containment_measures"
       );
+      console.log(data)
       containmentMeasuresDiv.textContent = "";
       var divTitle = document.createElement("H5");
       divTitle.innerHTML = "Containment measures";
@@ -387,18 +388,20 @@ function update_containment_measures(selectedOption) {
       containmentMeasuresSource.href =
         "https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e";
       containmentMeasuresDiv.append(containmentMeasuresSource);
+        console.log(data)
 
       if (data != undefined) {
-        // format each entry and append it to the containmentMeasuresDiv
-        for (let i in data["Description of measure implemented"]) {
-          containmentMeasuresDiv.appendChild(
-            containment_entry(
-              (date = data["date"][i]),
-              (text = data["Description of measure implemented"][i]),
-              (source_link = data["Source"][i])
-            )
-          );
-        }
+          data.forEach(function (item, index) {
+                console.log(item, index);
+                console.log(item["date"]);
+                containmentMeasuresDiv.appendChild(
+                containment_entry(
+                  (date = item["date"]),
+                  (text = item["Description of measure implemented"]),
+                  (source_link = item["Source"])
+                )
+              );
+          });
       } else {
         var emptyDatasetMsg = document.createElement("P");
         emptyDatasetMsg.innerHTML =
