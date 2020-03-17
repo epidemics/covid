@@ -425,6 +425,29 @@ strong {
 textarea {
   height: 200px;
 }
+
+.color1 {
+  color: #753def;
+}
+.color2 {
+  color: #ef3d3d;
+}
+.color3 {
+  color: #ef993d;
+}
+.color4 {
+  color: #9edf5c;
+}
+.color5 {
+  color: #5cdfd3;
+}
+.color6 {
+  color: #cf5cdf;
+}
+
+
+
+
 /*
 * General
 */
