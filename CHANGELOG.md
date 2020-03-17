@@ -36,6 +36,8 @@ Here is a template for new release sections
 - Favicon (#86)
 ### Changed
 - Template for `model` (label "Request model") (#62, #52)
+- Model for calculating event risk (#11)
+- Template for `request-event-evaluation` (#11)
 
 ### Removed
 - Template for `selections` as well as view (duplicate of `request-event-calculation`) (#52)
