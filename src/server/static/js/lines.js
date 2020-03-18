@@ -377,8 +377,8 @@ function update_containment_measures(selectedOption) {
                 containmentMeasuresDiv.appendChild(
                 containment_entry(
                   (date = item["date"]),
-                  (text = item["Description of measure implemented"]),
-                  (source_link = item["Source"])
+                  (text = item["description"]),
+                  (source_link = item["source"])
                 )
               );
           });

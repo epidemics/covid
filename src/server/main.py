@@ -291,11 +291,11 @@ async def containment_measures(request: Request, country: str = "China") -> Resp
 
     if country is not None:
         sel = CONTAINMENT_MEAS.loc[
-            CONTAINMENT_MEAS.Country == country,
-            ["date", "Description of measure implemented", "Source"],
+            CONTAINMENT_MEAS.country == country,
         ].sort_values(by="date", ascending=False)
         sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
         measures = [val for _, val in sel.to_dict(orient="index").items()]
     else:
         measures = None
+
     return measures
