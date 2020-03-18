@@ -47,6 +47,7 @@ Here is a template for new release sections
 ### Changed
 - Template for `model` (label "Request model") (#62, #52)
 - Version of jQuery (also add it as static file) (#88)
+- Description text below the graph on `model` view (#138)
 
 ### Removed
 - Template for `selections` as well as view (duplicate of `request-event-calculation`) (#52)

@@ -25,7 +25,7 @@ a:hover {
 html,
 body {
   font-family: "DM Sans", sans-serif;
-  background-color: #000000;
+  background-color: #222028;
   height: 100%;
   color: white; /*#a9a9ac*/
 }
@@ -117,15 +117,15 @@ header h1:before {
 }
 
 .navbar ul li {
-   display: inline-block;
+  display: inline-block;
 }
 
 .navbar ul {
-   margin: 0;
+  margin: 0;
 }
 
 .navbar {
-   padding: 0;
+  padding: 0;
 }
 
 .main {
@@ -152,6 +152,8 @@ header h1:before {
 
 .num {
   color: #df925c;
+  margin-bottom: 0.3rem;
+  margin-top: 3px;
 }
 
 .area {
@@ -262,12 +264,9 @@ label.btn-secondary > input {
   font-size: 25px;
 }
 
-
 .form-group .row {
   padding-bottom: 0.75rem;
   border-radius: 0px;
-}
-
 }
 
 /*
@@ -345,12 +344,11 @@ label.btn-secondary > input {
 }
 
 strong {
-  color: white
-
+  color: white;
 }
 
 .containment_measure {
-  padding-bottom: 10px;
+  padding-top: 10px;
 }
 
 .mitigation-strenght > div > .btn-secondary {
@@ -398,13 +396,13 @@ strong {
     padding-right: 40px;
   }
   .navbar ul li {
-     display: block;
+    display: block;
   }
   .navbar ul {
-     padding: 0;
+    padding: 0;
   }
   .navbar {
-     padding: 10px 0;
+    padding: 10px 0;
   }
   .nav-masthead .nav-link {
     border-bottom: 0.1rem solid transparent;
@@ -419,7 +417,7 @@ strong {
 }
 
 .fill-available-width {
-  width: 100%
+  width: 100%;
 }
 
 textarea {
@@ -444,9 +442,6 @@ textarea {
 .color6 {
   color: #cf5cdf;
 }
-
-
-
 
 /*
 * General
