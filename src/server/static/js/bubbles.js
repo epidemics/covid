@@ -48,7 +48,7 @@ d3.csv(
     .attr("class", "bubble");
 
   d3.selectAll(".bubble").on("click", function(bubble) {
-    window.location += "model?selection=" + bubble.Country;
+    window.location = "/?selection=" + bubble.Country;
   });
 
   // Function that update circle position if something change
