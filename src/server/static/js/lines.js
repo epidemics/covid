@@ -41,69 +41,72 @@ function getCountries(data) {
   return [...new Set(data.map(d => d.Country))];
 }
 
-function getCountryBetaData(data) {
-  result = [];
-  let combinations = _.uniqBy(data, r =>
-    [r.Country, r.Mitigation].join()
-  ).map(r => ({ country: r.Country, beta: r.Mitigation, items: [] }));
-  data.forEach(row => {
-    _.find(combinations, {
-      country: row.Country,
-      beta: row.Mitigation
-    }).items.push([
-      today.addDays(row.Timestep),
-      row["Cumulative Median_s=0.85_at=0.2"],
-      row["Cumulative Median_s=0.7_at=0.7"],
-      row["Cumulative Median_s=0.1_at=0.2"],
-      row["Cumulative Median_s=0.85_at=0.7"],
-      row["Cumulative Median_s=0.1_at=0.7"],
-      row["Cumulative Median_s=0.7_at=0.2"]
-    ]);
-  });
-  return combinations;
-}
+// function getCountryBetaData(data) {
+//   result = [];
+//   let combinations = _.uniqBy(data, r =>
+//     [r.Country, r.Mitigation].join()
+//   ).map(r => ({ country: r.Country, beta: r.Mitigation, items: [] }));
+//   data.forEach(row => {
+//     _.find(combinations, {
+//       country: row.Country,
+//       beta: row.Mitigation
+//     }).items.push([
+//       today.addDays(row.Timestep),
+//       row["Cumulative Median_s=0.85_at=0.2"],
+//       row["Cumulative Median_s=0.7_at=0.7"],
+//       row["Cumulative Median_s=0.1_at=0.2"],
+//       row["Cumulative Median_s=0.85_at=0.7"],
+//       row["Cumulative Median_s=0.1_at=0.7"],
+//       row["Cumulative Median_s=0.7_at=0.2"]
+//     ]);
+//   });
+//   return combinations;
+// }
 
 function getSelectedCountry(data) {
   var url_string = window.location.href;
   var url = new URL(url_string);
   var c = url.searchParams.get("selection");
-  return c && data.includes(c) ? c : "France";
+  return c && data.includes(c) ? c : "hong kong city";
 }
 
-function getMaxYValueForCountry(countryBetas, selectedCountry) {
+function getMaxYValueForCountry(mitigations) {
   var highestVals = [];
-  countryBetas.forEach(b => {
-    if (b.country !== selectedCountry) {
-      return;
+  for (m in mitigations) {
+    for(a in mitigations[m]) {
+      highestVals.push(Math.max(...mitigations[m][a]))
     }
-    b.items.forEach(i => {
-      a = [...i]
-      a.shift() //// remove date
-      highestVals.push(Math.max(...a))
-    })
-  })
+  }
   return Math.max(...highestVals)
 }
 
-//Read the data
-d3.csv(
-  "https://storage.googleapis.com/static-covid/static/line-data-v4.csv"
-).then(function (data) {
-  var selectedBeta = "0.0";
-  // List of groups (here I have one group per column)
-  var allGroup = getCountries(data);
-  countryBetas = getCountryBetaData(data);
-  selectedCountry = getSelectedCountry(allGroup);
-  console.log(countryBetas, 'betas')
-  selectedCountryBeta = countryBetas.find(
-    r => r.country === selectedCountry && r.beta === selectedBeta
-  );
-  countryBetaData = selectedCountryBeta.items;
+function getListOfScenarios(activeData) {
+  return Object.keys(activeData)
+}
+
+
+
+
+d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.json")
+.then(function(data) {
+
+  // console.log('json data', data)
+  var listOfCountries = Object.keys(data.regions);
+  var selected = {
+    country: getSelectedCountry(listOfCountries),
+    mitigation: 'None'
+  }
+  var infectedPer1000 = data.regions[selected.country].data.infected_per_1000
+  var activeData = infectedPer1000.mitigations[selected.mitigation]
+  // console.log('activeData data', activeData)
+  // console.log('infectedPer1000 data', getMaxYValueForCountry(infectedPer1000.mitigations, selected.country))
+
+
 
   // add the options to the button
   d3.select("#selectButton")
     .selectAll("myOptions")
-    .data(allGroup)
+    .data(listOfCountries)
     .enter()
     .append("option")
     .text(function (d) {
@@ -114,8 +117,8 @@ d3.csv(
     })
     .sort(); // corresponding value returned by the button
 
-  var xDomain = d3.extent(selectedCountryBeta.items, function (d) {
-    return d[0];
+  var xDomain = d3.extent([...Array(360).keys()], function (d, i) {
+    return new Date().addDays(i)
   });
   // Add X axis --> it is a date format
   var x = d3
@@ -146,13 +149,12 @@ d3.csv(
     .style("text-anchor", "middle")
     .text("Date");
 
-  var yDomain = [0, getMaxYValueForCountry(countryBetas, selectedCountry)];
+    var yDomain = [0, getMaxYValueForCountry(infectedPer1000.mitigations, selected.country)];
 
-  // Add Y axis
+    // Add Y axis
   var y = d3
     .scaleLinear()
     .domain(yDomain)
-    //.domain([0, d3.max(selectedCountryBeta.items, function(d) { return Math.max(+d[1], +d[2], +d[3], +d[4]); })])
     .range([height, 0]);
   var yAxis = svg
     .append("g")
@@ -176,21 +178,20 @@ d3.csv(
   // Set font size for axis labels
   svg.style("font-size", "22px")
 
-  function drawLine(i, color) {
+  function drawLine(lineData, color) {
     return svg
       .append("g")
       .append("path")
-      .datum(selectedCountryBeta.items)
+      .datum(lineData)
       .attr(
         "d",
         d3
           .line()
-          .x(function (d) {
-            window.myX = x;
-            return x(d[0]);
+          .x(function (d, i) {
+            return x(new Date().addDays(i));
           })
           .y(function (d) {
-            return y(+d[i]);
+            return y(+d);
           })
       )
       .attr("stroke", color)
@@ -198,12 +199,11 @@ d3.csv(
       .style("fill", "none");
   }
 
-  var line1 = drawLine(1, "#753def");
-  var line2 = drawLine(2, "#ef3d3d");
-  var line3 = drawLine(3, "#ef993d");
-  var line4 = drawLine(4, "#9edf5c");
-  var line5 = drawLine(5, "#5cdfd3");
-  var line6 = drawLine(6, "#cf5cdf");
+  var lines = {}
+  var colors = ["#753def", "#ef3d3d", "#ef993d", "#9edf5c", "#5cdfd3", "#cf5cdf"]
+  getListOfScenarios(activeData).forEach((s, i) => {
+    lines[s] = drawLine(activeData[s], colors[i])
+  })
 
   // create crosshairs
   var crosshair = svg.append("g").attr("class", "line");
@@ -232,11 +232,9 @@ d3.csv(
     .attr("width", width)
     .attr("height", height)
     .on("mouseover", function () {
-      //console.log('over')
       crosshair.style("display", null);
     })
     .on("mouseout", function () {
-      //console.log('out')
       tooltip.style("opacity", 0);
       crosshair.style("display", "none");
     })
@@ -261,122 +259,93 @@ d3.csv(
 
       const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
       const diffDays = Math.round(Math.abs((mouseDate - today) / oneDay)); // number of days in the future
-      const hoveredValues = selectedCountryBeta.items[diffDays];
-      //console.log('hv', hoveredValues)
-      var hVars = [
-        Math.round(hoveredValues[1]),
-        Math.round(hoveredValues[2]),
-        Math.round(hoveredValues[3]),
-        Math.round(hoveredValues[4]),
-        Math.round(hoveredValues[5]),
-        Math.round(hoveredValues[6])
-      ];
+      const scenarios = getListOfScenarios(activeData)
+      const hoveredValues = scenarios.map(s => {
+        return activeData[s][diffDays]
+      })
       tooltip
         .style("opacity", 1)
-        .html(
-          "v1: " +
-          hVars[0] +
-          "<br>" +
-          "v2: " +
-          hVars[1] +
-          "<br>" +
-          "v3: " +
-          hVars[2] +
-          "<br>" +
-          "v4: " +
-          hVars[3] +
-          "<br>" +
-          "v5: " +
-          hVars[4] +
-          "<br>" +
-          "v6: " +
-          hVars[5] +
-          "<br>"
-        )
+        .html(hoveredValues.map((h, i) => scenarios[i] + ': ' + h).join('<br>'))
         .style("left", d3.event.pageX + "px")
         .style("top", d3.event.pageY - 28 + "px");
 
-      //console.log('move', diffDays)
     });
 
   //initialization
-  update({ country: selectedCountry });
-  d3.select("#selectButton").property("value", selectedCountry);
+  update({ country: selected.country });
+  d3.select("#selectButton").property("value", selected.country);
   // update the containment measures with the new selected country
-  update_containment_measures(selectedCountry);
-  update_country_in_text(selectedCountry);
+  update_containment_measures(selected.country);
+  update_country_in_text(selected.country);
 
   // A function that update the chart
-  function update({
-    country = selectedCountryBeta.country,
-    beta = selectedCountryBeta.beta
-  }) {
-    selectedCountryBeta = countryBetas.find(
-      r => r.country === country && r.beta === beta
-    );
-    yDomain[1] = getMaxYValueForCountry(countryBetas, selectedCountry)
+  function update() {
+
+    yDomain[1] = getMaxYValueForCountry(infectedPer1000.mitigations, selected.country)
     y = y.domain(yDomain)
-    function updateLine(myLine, i) {
+    function updateLine(myLine, lineData) {
       myLine
-        .datum(selectedCountryBeta.items)
+        .datum(lineData)
         .transition()
         .duration(1000)
         .attr(
           "d",
           d3
             .line()
-            .x(function (d) {
-              return x(d[0]);
+            .x(function (d, i) {
+              return x(new Date().addDays(i));
             })
             .y(function (d) {
-              return y(+d[i]);
+              return y(+d);
             })
         )
     }
 
     yAxis.transition().duration(1000).call(d3.axisLeft(y))
 
-    updateLine(line1, 1);
-    updateLine(line2, 2);
-    updateLine(line3, 3);
-    updateLine(line4, 4);
-    updateLine(line5, 5);
-    updateLine(line6, 6);
+    for (l in lines) {
+      updateLine(lines[l], activeData[l])
+    }
 
-
-    // svg.select(".y.axis") // change the y axis
-    // .duration(750)
-    // .call(y);
   }
 
   // When the button is changed, run the updateChart function
   d3.select("#selectButton").on("change", function (d) {
     // recover the option that has been chosen
-    selectedCountry= d3.select(this).property("value");
+    selected.country= d3.select(this).property("value");
     // change url param
-    setGetParam("selection", selectedCountry);
+    setGetParam("selection", selected.country);
+    infectedPer1000 = data.regions[selected.country].data.infected_per_1000
+    activeData = infectedPer1000.mitigations[selected.mitigation]
     // run the updateChart function with this selected option
-    update({ country: selectedCountry });
+    update();
     // update the containment measures with the new selected country
-    update_containment_measures(selectedCountry);
+    update_containment_measures(selected.country);
     // update the name of the country in the text below the graph
-    update_country_in_text(selectedCountry);
+    update_country_in_text(selected.country);
   });
 
   d3.select(".beta-0").on("click", function () {
-    update({ beta: "0.0" });
+    selected.mitigation = 'None'
+    activeData = infectedPer1000.mitigations[selected.mitigation]
+    update();
   });
   d3.select(".beta-03").on("click", function () {
-    update({ beta: "0.3" });
+    selected.mitigation = 'High'
+    activeData = infectedPer1000.mitigations[selected.mitigation]
+    update();
   });
   d3.select(".beta-04").on("click", function () {
-    update({ beta: "0.4" });
+    selected.mitigation = 'Medium'
+    activeData = infectedPer1000.mitigations[selected.mitigation]
+    update();
   });
   d3.select(".beta-05").on("click", function () {
-    update({ beta: "0.5" });
+    selected.mitigation = 'Low'
+    activeData = infectedPer1000.mitigations[selected.mitigation]
+    update();
   });
 
-  //console.log("RUNNING D3");
 });
 
 function update_country_in_text(selectedCountry){
@@ -449,3 +418,4 @@ function update_containment_measures(selectedOption) {
     }
   });
 }
+
