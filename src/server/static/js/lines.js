@@ -67,7 +67,7 @@ function getSelectedCountry(data) {
   var url_string = window.location.href;
   var url = new URL(url_string);
   var c = url.searchParams.get("selection");
-  return c && data.includes(c) ? c : "China";
+  return c && data.includes(c) ? c : "France";
 }
 
 function getMaxYValueForCountry(countryBetas, selectedCountry) {
