@@ -443,6 +443,16 @@ textarea {
   color: #cf5cdf;
 }
 
+.tooltip {
+  opacity: 1 !important;
+  user-select: auto;
+  width: 100% !important;
+  margin-top: 136px;
+  margin-left: -26px;
+  background-color: transparent;
+  background: transparent !important;
+}
+
 /*
 * General
 */

@@ -25,17 +25,69 @@ var margin = { top: 10, right: 100, bottom: 30, left: 100 },
   width = 600,
   height = 675;
 // append the svg object to the body of the page
-var graphSize = "75%";
 var svg = d3
   .select("#my_dataviz")
-  .style("width", graphSize)
-  .style("padding-bottom", graphSize)
+  .attr("class", "row")
+  .style("width", "100%")
+  .style("padding-bottom", "78%")
+  .append("div")
+  .attr("class", "col-9")
   .append("svg")
   .attr("preserveAspectRatio", "xMinYMin meet")
   .attr("viewBox", "0 0 750 750")
   .classed("svg-content", true)
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Legend
+d3.select("#my_dataviz")
+  .append("div")
+  .attr("class", "col-3")
+  .append("div")
+  .attr("class", "tooltip")
+  .append("div")
+  .html(
+    '<span class="color1">\
+      Weak seasonality\
+      <br/>\
+      Weak reduction in air travel\
+    </span>\
+    <br>\
+    <br>\
+    <span class="color2">\
+      Medium seasonality\
+      <br/>\
+      Weak reduction in air travel\
+    </span>\
+    <br>\
+    <br>\
+    <span class="color3">\
+      Strong seasonality\
+      <br/>\
+      Weak reduction in air travel\
+    </span>\
+    <br>\
+    <br>\
+    <span class="color41">\
+      Weak seasonality\
+      <br/>\
+      Strong reduction in air travel\
+    </span>\
+    <br>\
+    <br>\
+    <span class="color5">\
+      Medium seasonality\
+      <br/>\
+      Strong reduction in air travel\
+    </span>\
+    <br>\
+    <br>\
+    <span class="color6">\
+      Strong seasonality\
+      <br/>\
+      Strong reduction in air travel\
+    </span>'
+  );
 
 function getCountries(data) {
   return [...new Set(data.map(d => d.Country))];
@@ -222,12 +274,6 @@ d3.csv(
     .attr("id", "crosshairY")
     .attr("class", "crosshair");
 
-  var tooltip = d3
-    .select("body")
-    .append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
-
   svg
     .append("rect")
     .attr("class", "overlay")
@@ -239,7 +285,6 @@ d3.csv(
     })
     .on("mouseout", function() {
       //console.log('out')
-      tooltip.style("opacity", 0);
       crosshair.style("display", "none");
     })
     .on("mousemove", function() {
@@ -273,30 +318,6 @@ d3.csv(
         Math.round(hoveredValues[5]),
         Math.round(hoveredValues[6])
       ];
-      tooltip
-        .style("opacity", 1)
-        .html(
-          '<span class="color1">Weak seasonality, weak reduction in air travel: ' +
-            hVars[0] +
-            "</span><br>" +
-            '<span class="color2">Medium seasonality, weak reduction in air travel: ' +
-            hVars[1] +
-            "</span><br>" +
-            '<span class="color3">Strong seasonality, weak reduction in air travel: ' +
-            hVars[2] +
-            "</span><br>" +
-            '<span class="color4">Weak seasonality, strong reduction in air travel: ' +
-            hVars[3] +
-            "</span><br>" +
-            '<span class="color5">Medium seasonality, strong reduction in air travel: ' +
-            hVars[4] +
-            "</span><br>" +
-            '<span class="color6">Strong seasonality, strong reduction in air travel: ' +
-            hVars[5] +
-            "</span><br>"
-        )
-        .style("left", d3.event.pageX + "px")
-        .style("top", d3.event.pageY - 28 + "px");
 
       //console.log('move', diffDays)
     });
