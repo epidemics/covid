@@ -34,22 +34,6 @@ active_page = 'models' -%} {% block additional_js_pre %}
     pointer-events: none;
   }
 
-  .svg-container {
-    display: inline-block;
-    position: relative;
-    width: 100%;
-    padding-bottom: 100%;
-    vertical-align: top;
-    overflow: hidden;
-  }
-
-  .svg-content {
-    display: inline-block;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
   /* apply column-specific scrolling only if columns are side-by-side */
   @media only screen and (min-width: 576px) {
     html {
@@ -107,7 +91,7 @@ active_page = 'models' -%} {% block additional_js_pre %}
       </div>
       <hr />
       <!-- Create a div where the graph will take place -->
-      <div id="my_dataviz" class="svg-container"></div>
+      <div id="my_dataviz"></div>
 
       <p>
         The impact on <span class="selected-country"></span> is simulated using an epidemiological model based on
