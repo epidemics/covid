@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from .event_model import stress, excess
+from server.event_model import stress, excess
 
 PLACES = [
     "Africa",
