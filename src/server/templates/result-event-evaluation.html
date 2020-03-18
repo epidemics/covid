@@ -20,6 +20,14 @@ active_page = "events" %} {% block content %}
     </p>
   </div>
 
+  {% if medianCases < -9000 %}
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 title-form">
+      We can't determine results at this data. Currently the dataset begins at {{ startDate }}
+    </div>
+  </div>
+  {% else %}
+
   <div class="row">
     <label class="col-sm-12 col-lg-10 title-form">
       At the time of your event in {{ place }} with {{ controlStrength }} measures, the chance of one person being infected at the event is
@@ -127,27 +135,13 @@ active_page = "events" %} {% block content %}
   {% else %}
   <div class="row">
     <div class="col-sm-12 col-lg-10 title-form">
-      With {{ controlStrength }} controls in place, hospital stress is low enough that we can't easily know the impact of your decision.
+      We can't evaluate the effect of this particular event on hospital stress.
     </div>
   </div>
   {% endif %}
+
+  {% endif %}
   <!-- TODO: insert graph -->
-
-
-<!--   <label>Overall, we'd recommend</label>
-  <button class="green">Go ahead</button>
-  <button class="orange">Uncertain</button>
-  <button class="red highlighted">Cancel</button>
-  <p>
-    Your event poses a high risk, and by cancelling you can meaningfully
-    contribute to prevent further spread of covid-19
-  </p>
-
-  <label>
-    According to our models, it would be fine to host the event in
-    <span class="proposed-month"></span>
-    instead.
-  </label> -->
 
   <!-- graph -->
 

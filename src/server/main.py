@@ -234,6 +234,8 @@ async def result_event_evaluation(
     except KeyError:
         probability = "unknown"
         fraction_oom = 0
+        medianCases = -99999
+        fraction = -99999
         # expected_infections = -99999
 
         # if this branch occurs, expected_infections cannot be casted
@@ -245,7 +247,7 @@ async def result_event_evaluation(
         try:
             excess_hospital_load = stress_fun[(fraction_oom,strength)]
         except KeyError:
-            excess_hospital_load = -99999
+            excess_hospital_load = "Not applicable"
 
     try:
         excess_infections = ai_fun[(fraction_oom, strength)]
@@ -266,7 +268,8 @@ async def result_event_evaluation(
             "excess_hospital_load": excess_hospital_load,
             "medianCases": medianCases,
             "prevalence":fraction*100,
-            "eventDate":datepicker
+            "eventDate":datepicker,
+            "startDate":STARTDATE
         },
     )
 
