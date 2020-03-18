@@ -248,22 +248,22 @@ d3.csv(
       tooltip
         .style("opacity", 1)
         .html(
-          '<span class="color1">v1: ' +
+          '<span class="color1">Weak seasonality, weak reduction in air travel: ' +
             hVars[0] +
             "</span><br>" +
-            '<span class="color2">v1: ' +
+            '<span class="color2">Medium seasonality, weak reduction in air travel: ' +
             hVars[1] +
             "</span><br>" +
-            '<span class="color3">v1: ' +
+            '<span class="color3">Strong seasonality, weak reduction in air travel: ' +
             hVars[2] +
             "</span><br>" +
-            '<span class="color4">v1: ' +
+            '<span class="color4">Weak seasonality, strong reduction in air travel: ' +
             hVars[3] +
             "</span><br>" +
-            '<span class="color5">v1: ' +
+            '<span class="color5">Medium seasonality, strong reduction in air travel: ' +
             hVars[4] +
             "</span><br>" +
-            '<span class="color6">v1: ' +
+            '<span class="color6">Strong seasonality, strong reduction in air travel: ' +
             hVars[5] +
             "</span><br>"
         )
