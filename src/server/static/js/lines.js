@@ -41,27 +41,6 @@ function getCountries(data) {
   return [...new Set(data.map(d => d.Country))];
 }
 
-// function getCountryBetaData(data) {
-//   result = [];
-//   let combinations = _.uniqBy(data, r =>
-//     [r.Country, r.Mitigation].join()
-//   ).map(r => ({ country: r.Country, beta: r.Mitigation, items: [] }));
-//   data.forEach(row => {
-//     _.find(combinations, {
-//       country: row.Country,
-//       beta: row.Mitigation
-//     }).items.push([
-//       today.addDays(row.Timestep),
-//       row["Cumulative Median_s=0.85_at=0.2"],
-//       row["Cumulative Median_s=0.7_at=0.7"],
-//       row["Cumulative Median_s=0.1_at=0.2"],
-//       row["Cumulative Median_s=0.85_at=0.7"],
-//       row["Cumulative Median_s=0.1_at=0.7"],
-//       row["Cumulative Median_s=0.7_at=0.2"]
-//     ]);
-//   });
-//   return combinations;
-// }
 
 function getSelectedCountry(data) {
   var url_string = window.location.href;
@@ -84,10 +63,12 @@ function getListOfScenarios(activeData) {
   return Object.keys(activeData)
 }
 
+var url_string = window.location.href;
+var url = new URL(url_string);
+var channel = url.searchParams.get('channel')
 
 
-
-d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.json")
+d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? channel : 'main') +"-gleam.json")
 .then(function(data) {
 
   // console.log('json data', data)
