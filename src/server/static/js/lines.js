@@ -1,6 +1,3 @@
-Date.prototype.addDays = function (d) {
-  return new Date(this.valueOf() + 864e5 * d);
-};
 function setGetParam(key, value) {
   if (history.pushState) {
     var params = new URLSearchParams(window.location.search);
@@ -15,7 +12,7 @@ function setGetParam(key, value) {
     window.history.pushState({ path: newUrl }, "", newUrl);
   }
 }
-let today = new Date();
+
 // set the dimensions and margins of the graph
 
 var chartDiv = document.getElementById("my_dataviz"); //Mati: this doesn't seem to be doing anythnig
@@ -36,28 +33,6 @@ var svg = d3
 function getCountries(data) {
   return [...new Set(data.map(d => d.Country))];
 }
-
-// function getCountryBetaData(data) {
-//   result = [];
-//   let combinations = _.uniqBy(data, r =>
-//     [r.Country, r.Mitigation].join()
-//   ).map(r => ({ country: r.Country, beta: r.Mitigation, items: [] }));
-//   data.forEach(row => {
-//     _.find(combinations, {
-//       country: row.Country,
-//       beta: row.Mitigation
-//     }).items.push([
-//       today.addDays(row.Timestep),
-//       row["Cumulative Median_s=0.85_at=0.2"],
-//       row["Cumulative Median_s=0.7_at=0.7"],
-//       row["Cumulative Median_s=0.1_at=0.2"],
-//       row["Cumulative Median_s=0.85_at=0.7"],
-//       row["Cumulative Median_s=0.1_at=0.7"],
-//       row["Cumulative Median_s=0.7_at=0.2"]
-//     ]);
-//   });
-//   return combinations;
-// }
 
 function getSelectedCountry(data) {
   var url_string = window.location.href;
@@ -114,7 +89,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
     .sort(); // corresponding value returned by the button
 
   var xDomain = d3.extent([...Array(360).keys()], function (d, i) {
-    return new Date().addDays(i)
+    return d3.timeDay.offset(new Date(), i)
   });
   // Add X axis --> it is a date format
   var x = d3
@@ -156,7 +131,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
     .append("g")
     .style("font-size", "20px")
     .call(
-      d3.axisLeft(y).ticks(10).tickFormat(d3.format(".0%"))
+      d3.axisLeft(y).ticks(10)
     );
 
   // text label for the y axis
@@ -169,7 +144,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
     .attr("x", 0 - height / 2)
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .text("Active infections");
+    .text("New infections per day per 1000 people");
 
   // Set font size for axis labels
   svg.style("font-size", "22px")
@@ -184,7 +159,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
         d3
           .line()
           .x(function (d, i) {
-            return x(new Date().addDays(i));
+            return x(d3.timeDay.offset(new Date(), i));
           })
           .y(function (d) {
             return y(+d);
@@ -204,13 +179,13 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
   // create crosshairs
   var crosshair = svg.append("g").attr("class", "line");
 
-  // create horizontal line
+  // create vertical line
   crosshair
     .append("line")
     .attr("id", "crosshairX")
     .attr("class", "crosshair");
 
-  // create vertical line
+  // create horizontal line
   crosshair
     .append("line")
     .attr("id", "crosshairY")
@@ -253,8 +228,8 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
         .attr("x2", x(xDomain[1]))
         .attr("y2", mouse[1]);
 
-      const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-      const diffDays = Math.round(Math.abs((mouseDate - today) / oneDay)); // number of days in the future
+      const oneDay = 864e5; // milliseconds
+      const diffDays = Math.round(Math.abs((mouseDate - new Date()) / oneDay)); // number of days in the future
       const scenarios = getListOfScenarios(activeData)
       const hoveredValues = scenarios.map(s => {
         return activeData[s][diffDays]
@@ -289,7 +264,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
           d3
             .line()
             .x(function (d, i) {
-              return x(new Date().addDays(i));
+              return x(d3.timeDay.offset(new Date(), i));
             })
             .y(function (d) {
               return y(+d);
@@ -297,7 +272,9 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
         )
     }
 
-    yAxis.transition().duration(1000).call(d3.axisLeft(y))
+    yAxis.transition().duration(1000).call(
+      d3.axisLeft(y).ticks(10)
+    );
 
     for (l in lines) {
       updateLine(lines[l], activeData[l])
@@ -414,4 +391,3 @@ function update_containment_measures(selectedOption) {
     }
   });
 }
-
