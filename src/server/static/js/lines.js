@@ -148,7 +148,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
     .attr("x", 0 - height / 2)
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .text("Active Infections per 1000 people");
+    .text("New infections per day per 1000 people");
 
   // Set font size for axis labels
   svg.style("font-size", "22px")
