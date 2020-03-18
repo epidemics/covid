@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block title %} Event Prediction {% endblock title%}
 {% set active_page = "events" %} {% block content %}
-<div>
+<div class="container main">
   <br />
   <div class="row">
     <div class="col-md-12">
@@ -19,8 +19,8 @@
         <div class="col-lg-5 col-sm-12">
           <label for="place">Where is your event?</label>
 
-          <select class="form-control" id="exampleFormControlSelect12">
-            <option selected>Choose...</option>
+          <select name="place" class="form-control" id="exampleFormControlSelect123" required>
+            <option value="" selected>Choose...</option>
             {% for place in places %}
             <option value="{{ place.name }}">{{ place.name }}</option>
             {% endfor %}
@@ -43,9 +43,9 @@
 
       <div class="row">
         <div class="col-lg-5 col-sm-12">
-          <label for="number">How many people will attend?</label>
-          <select class="form-control" id="exampleFormControlSelect1">
-            <option selected>Choose...</option>
+          <label for="peopleCount">How many people will attend?</label>
+          <select name="peopleCount" class="form-control" id="peopleCount" required>
+            <option value="" selected>Choose...</option>
             <option value="1-10">1-10</option>
             <option value="10-100">10-100</option>
             <option value="100-1000">100-1000</option>
@@ -54,39 +54,40 @@
         </div>
       </div>
 
-      <label for="length">How long is your event?</label>
+      <label>How long is your event?</label>
       <div class="btn-group-toggle" data-toggle="buttons">
         <div class="row">
           <div class="col-md-auto col-sm-12">
             <label class="btn btn-secondary active">
-              <input type="radio" name="hours" id="hours" autocomplete="off" />
+              <input type="radio" name="length" id="hours" autocomplete="off" value="hours" checked/>
               A few hours
             </label>
           </div>
           <div class="col-md-auto col-sm-12">
             <label class="btn btn-secondary">
-              <input type="radio" name="day" id="day" autocomplete="off" /> A
+              <input type="radio" name="length" id="day" autocomplete="off" value="day" /> A
               day
             </label>
           </div>
           <div class="col-md-auto col-sm-12">
             <label class="btn btn-secondary">
-              <input type="radio" name="days" id="days" autocomplete="off" /> A
+              <input type="radio" name="length" id="days" autocomplete="off" value="days"/> A
               few days or more
             </label>
           </div>
         </div>
       </div>
-      <label for="size">How much contact will people have?</label>
+      <label>How much contact will people have?</label>
       <div class="btn-group-toggle vertical-buttons" data-toggle="buttons">
         <div class="row">
           <div class="col-lg-2 col-md-3 col-sm-12">
             <label class="btn btn-secondary active" for="little">
               <input
                 type="radio"
-                name="little"
+                name="contactSize"
                 id="little"
                 autocomplete="off"
+                value="little"
               />
               A little
             </label>
@@ -97,12 +98,14 @@
         </div>
         <div class="row">
           <div class="col-lg-2 col-md-3 col-sm-12">
-            <label class="btn btn-secondary" class="radio-button">
+            <label class="btn btn-secondary radio-button">
               <input
                 type="radio"
-                name="inbetween"
+                name="contactSize"
                 id="inbetween"
                 autocomplete="off"
+                value="inbetween"
+                checked
               />
               In-between
             </label>
@@ -113,8 +116,8 @@
         </div>
         <div class="row">
           <div class="col-lg-2 col-md-3 col-sm-12">
-            <label class="btn btn-secondary" class="radio-button">
-              <input type="radio" name="lot" id="lot" autocomplete="off" />
+            <label class="btn btn-secondary radio-button">
+              <input type="radio" name="contactSize" id="lot" autocomplete="off" value="lot" />
               A lot
             </label>
           </div>
@@ -124,6 +127,21 @@
         </div>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-lg-5 col-sm-12">
+        <label for="controlStrength">What strength of control do you expect your country to implement?</label>
+
+        <select name="controlStrength" class="form-control" id="controlStrength" required>
+          <option value="" selected>Choose...</option>
+          <option value="none">None</option>
+          <option value="weak">Weak</option>
+          <option value="moderate">Moderate</option>
+          <option value="strong">Strong</option>
+        </select>
+      </div>
+    </div>
+
     <hr />
     <br />
     <div class="row">
