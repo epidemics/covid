@@ -1,4 +1,4 @@
-Date.prototype.addDays = function (d) {
+Date.prototype.addDays = function(d) {
   return new Date(this.valueOf() + 864e5 * d);
 };
 function setGetParam(key, value) {
@@ -77,24 +77,24 @@ function getMaxYValueForCountry(countryBetas, selectedCountry) {
       return;
     }
     b.items.forEach(i => {
-      a = [...i]
-      a.shift() //// remove date
-      highestVals.push(Math.max(...a))
-    })
-  })
-  return Math.max(...highestVals)
+      a = [...i];
+      a.shift(); //// remove date
+      highestVals.push(Math.max(...a));
+    });
+  });
+  return Math.max(...highestVals);
 }
 
 //Read the data
 d3.csv(
   "https://storage.googleapis.com/static-covid/static/line-data-v4.csv"
-).then(function (data) {
+).then(function(data) {
   var selectedBeta = "0.0";
   // List of groups (here I have one group per column)
   var allGroup = getCountries(data);
   countryBetas = getCountryBetaData(data);
   selectedCountry = getSelectedCountry(allGroup);
-  console.log(countryBetas, 'betas')
+  console.log(countryBetas, "betas");
   selectedCountryBeta = countryBetas.find(
     r => r.country === selectedCountry && r.beta === selectedBeta
   );
@@ -106,15 +106,15 @@ d3.csv(
     .data(allGroup)
     .enter()
     .append("option")
-    .text(function (d) {
+    .text(function(d) {
       return d;
     }) // text showed in the menu
-    .attr("value", function (d) {
+    .attr("value", function(d) {
       return d;
     })
     .sort(); // corresponding value returned by the button
 
-  var xDomain = d3.extent(selectedCountryBeta.items, function (d) {
+  var xDomain = d3.extent(selectedCountryBeta.items, function(d) {
     return d[0];
   });
   // Add X axis --> it is a date format
@@ -132,7 +132,6 @@ d3.csv(
         .ticks(6)
         .tickFormat(d3.timeFormat("%b %Y"))
     );
-
 
   // text label for the x axis
   svg
@@ -158,7 +157,10 @@ d3.csv(
     .append("g")
     .style("font-size", "20px")
     .call(
-      d3.axisLeft(y).ticks(10).tickFormat(d3.format(".0%"))
+      d3
+        .axisLeft(y)
+        .ticks(10)
+        .tickFormat(d3.format(".0%"))
     );
 
   // text label for the y axis
@@ -174,7 +176,7 @@ d3.csv(
     .text("Active infections");
 
   // Set font size for axis labels
-  svg.style("font-size", "22px")
+  svg.style("font-size", "22px");
 
   function drawLine(i, color) {
     return svg
@@ -185,11 +187,11 @@ d3.csv(
         "d",
         d3
           .line()
-          .x(function (d) {
+          .x(function(d) {
             window.myX = x;
             return x(d[0]);
           })
-          .y(function (d) {
+          .y(function(d) {
             return y(+d[i]);
           })
       )
@@ -231,16 +233,16 @@ d3.csv(
     .attr("class", "overlay")
     .attr("width", width)
     .attr("height", height)
-    .on("mouseover", function () {
+    .on("mouseover", function() {
       //console.log('over')
       crosshair.style("display", null);
     })
-    .on("mouseout", function () {
+    .on("mouseout", function() {
       //console.log('out')
       tooltip.style("opacity", 0);
       crosshair.style("display", "none");
     })
-    .on("mousemove", function () {
+    .on("mousemove", function() {
       var mouse = d3.mouse(this);
       var mouseDate = x.invert(mouse[0]);
       var mouseVal = y.invert(mouse[1]);
@@ -275,23 +277,23 @@ d3.csv(
         .style("opacity", 1)
         .html(
           "v1: " +
-          hVars[0] +
-          "<br>" +
-          "v2: " +
-          hVars[1] +
-          "<br>" +
-          "v3: " +
-          hVars[2] +
-          "<br>" +
-          "v4: " +
-          hVars[3] +
-          "<br>" +
-          "v5: " +
-          hVars[4] +
-          "<br>" +
-          "v6: " +
-          hVars[5] +
-          "<br>"
+            hVars[0] +
+            "<br>" +
+            "v2: " +
+            hVars[1] +
+            "<br>" +
+            "v3: " +
+            hVars[2] +
+            "<br>" +
+            "v4: " +
+            hVars[3] +
+            "<br>" +
+            "v5: " +
+            hVars[4] +
+            "<br>" +
+            "v6: " +
+            hVars[5] +
+            "<br>"
         )
         .style("left", d3.event.pageX + "px")
         .style("top", d3.event.pageY - 28 + "px");
@@ -314,8 +316,8 @@ d3.csv(
     selectedCountryBeta = countryBetas.find(
       r => r.country === country && r.beta === beta
     );
-    yDomain[1] = getMaxYValueForCountry(countryBetas, selectedCountry)
-    y = y.domain(yDomain)
+    yDomain[1] = getMaxYValueForCountry(countryBetas, selectedCountry);
+    y = y.domain(yDomain);
     function updateLine(myLine, i) {
       myLine
         .datum(selectedCountryBeta.items)
@@ -325,16 +327,19 @@ d3.csv(
           "d",
           d3
             .line()
-            .x(function (d) {
+            .x(function(d) {
               return x(d[0]);
             })
-            .y(function (d) {
+            .y(function(d) {
               return y(+d[i]);
             })
-        )
+        );
     }
 
-    yAxis.transition().duration(1000).call(d3.axisLeft(y))
+    yAxis
+      .transition()
+      .duration(1000)
+      .call(d3.axisLeft(y));
 
     updateLine(line1, 1);
     updateLine(line2, 2);
@@ -343,16 +348,15 @@ d3.csv(
     updateLine(line5, 5);
     updateLine(line6, 6);
 
-
     // svg.select(".y.axis") // change the y axis
     // .duration(750)
     // .call(y);
   }
 
   // When the button is changed, run the updateChart function
-  d3.select("#selectButton").on("change", function (d) {
+  d3.select("#selectButton").on("change", function(d) {
     // recover the option that has been chosen
-    selectedCountry= d3.select(this).property("value");
+    selectedCountry = d3.select(this).property("value");
     // change url param
     setGetParam("selection", selectedCountry);
     // run the updateChart function with this selected option
@@ -363,27 +367,27 @@ d3.csv(
     update_country_in_text(selectedCountry);
   });
 
-  d3.select(".beta-0").on("click", function () {
+  d3.select(".beta-0").on("click", function() {
     update({ beta: "0.0" });
   });
-  d3.select(".beta-03").on("click", function () {
+  d3.select(".beta-03").on("click", function() {
     update({ beta: "0.3" });
   });
-  d3.select(".beta-04").on("click", function () {
+  d3.select(".beta-04").on("click", function() {
     update({ beta: "0.4" });
   });
-  d3.select(".beta-05").on("click", function () {
+  d3.select(".beta-05").on("click", function() {
     update({ beta: "0.5" });
   });
 
   //console.log("RUNNING D3");
 });
 
-function update_country_in_text(selectedCountry){
-    var countrySpans = jQuery(".selected-country");
-    for (i = 0; i < countrySpans.length; i++){
-        countrySpans[i].innerHTML = selectedCountry;
-    }
+function update_country_in_text(selectedCountry) {
+  var countrySpans = jQuery(".selected-country");
+  for (i = 0; i < countrySpans.length; i++) {
+    countrySpans[i].innerHTML = selectedCountry;
+  }
 }
 
 function containment_entry(date = "", text = "", source_link = "") {
@@ -412,15 +416,34 @@ function update_containment_measures(selectedOption) {
     url: "/get_containment_measures",
     data: { country: selectedOption },
     dataType: "json",
-    success: function (data) {
+    success: function(data) {
       // find the div dedicated to the side bar on the model.html template
       var containmentMeasuresDiv = document.getElementById(
         "containment_measures"
       );
       containmentMeasuresDiv.textContent = "";
+
+      var caseTitle = document.createElement("H5");
+      caseTitle.innerHTML = "Case count";
+      containmentMeasuresDiv.append(caseTitle);
+
+      var confirmedCase, minEstimatedCase, maxEstimatedCase, lastUpdatedDate;
+      var confirmedCaseElement = document.createElement("div");
+      confirmedCaseElement.innerHTML = `<strong>Confirmed: ${confirmedCase}</strong>`;
+      confirmedCaseElement.style.marginBottom = "6px";
+      containmentMeasuresDiv.append(confirmedCaseElement);
+      var estimatedCaseElement = document.createElement("div");
+      estimatedCaseElement.innerHTML = `<strong>Estimated true infections: ${minEstimatedCase} to ${maxEstimatedCase}</strong> (90% confidence interval)`;
+      estimatedCaseElement.style.marginBottom = "6px";
+      containmentMeasuresDiv.append(estimatedCaseElement);
+      var lastUpdatedDateElement = document.createElement("div");
+      lastUpdatedDateElement.innerHTML = `(Updated ${lastUpdatedDate})`;
+      lastUpdatedDateElement.style.marginBottom = "6px";
+      containmentMeasuresDiv.append(lastUpdatedDateElement);
+
       var divTitle = document.createElement("H5");
       divTitle.innerHTML = "Containment measures";
-
+      divTitle.style.marginTop = "24px";
       containmentMeasuresDiv.append(divTitle);
       var containmentMeasuresSource = document.createElement("a");
       var linkText = document.createTextNode("(data source)");
@@ -431,15 +454,15 @@ function update_containment_measures(selectedOption) {
       containmentMeasuresDiv.append(containmentMeasuresSource);
 
       if (data != undefined) {
-          data.forEach(function (item, index) {
-                containmentMeasuresDiv.appendChild(
-                containment_entry(
-                  (date = item["date"]),
-                  (text = item["Description of measure implemented"]),
-                  (source_link = item["Source"])
-                )
-              );
-          });
+        data.forEach(function(item, index) {
+          containmentMeasuresDiv.appendChild(
+            containment_entry(
+              (date = item["date"]),
+              (text = item["Description of measure implemented"]),
+              (source_link = item["Source"])
+            )
+          );
+        });
       } else {
         var emptyDatasetMsg = document.createElement("P");
         emptyDatasetMsg.innerHTML =
