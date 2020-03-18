@@ -1,6 +1,54 @@
 {% extends "base.html" %} {% block title %} Results {% endblock title%} {% set
 active_page = "events" %} {% block content %}
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+<style type="text/css">
+  .overlay {
+    fill: none;
+    stroke: none;
+    pointer-events: all;
+  }
 
+  .line .crosshair {
+    fill: none;
+    stroke-width: 1px;
+  }
+
+  .line .crosshair {
+    stroke: white;
+    opacity: 0.2;
+  }
+
+  div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 100px;
+    height: auto;
+    padding: 2px;
+    font: 12px sans-serif;
+    color: #fff;
+    background: #6c757d;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+  }
+
+  .svg-container {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    vertical-align: top;
+    overflow: hidden;
+  }
+  .svg-content {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+</style>
 
   <!-- options: goahead, uncertain, cancel -->
 
@@ -8,30 +56,101 @@ active_page = "events" %} {% block content %}
     <h1 class="title">
       At this stage we recommend
       <span class="recommendation"
-        >{{recommendation | default("cancel")}}</span
+        >{{recommendation | default("uncertain")}}</span
       >
     </h1>
     <p>
-      {{message | default("By default we suggest cancelling unless the event is critical. 
+      {{message | default("By default we suggest you consider cancelling unless the event is critical. 
         Our model is not yet reliable for predicting the long run effects 
         of your decisions if your country implements strong containment measures,
         and we expect many countries will implement strong
-        containment measures as many have already.")}}
+        containment measures just as many have already.")}}
     </p>
   </div>
+
+
 
   {% if medianCases < -9000 %}
   <div class="row">
     <div class="col-sm-12 col-lg-10 title-form">
-      We can't determine results at this data. Currently the dataset begins at {{ startDate }}
+      We can't determine results at this date. Currently the dataset begins at {{ startDate }}
     </div>
   </div>
   {% else %}
 
+ <div class="row">
+    <label class="col-sm-12 col-lg-10 title-form">
+      At the time of your event in {{ place }} with {{ controlStrength }} measures, we estimate there were {{ minCases }} to {{ maxCases }} cases in {{ place }}.</span>
+    </label>
+  </div>
+
+  <div class="row">
+  <div class="col-lg-8 col-xs-12">
+    <h5>Location</h5>
+    <select id="selectButton" class="form-control medium"> </select>
+    <hr />
+    <h5>Global mitigation strength</h5>
+    <div class="btn-group-toggle" data-toggle="buttons">
+      <div class="row mitigation-strenght">
+        <div class="col-sm-auto col-xm-12">
+          <label class="btn btn-secondary active beta-0">
+            <input
+              type="radio"
+              name="mitigation-none"
+              id="mitigation-none"
+              autocomplete="off"
+            />
+            None
+          </label>
+        </div>
+        <div class="col-sm-auto col-xm-12">
+          <label class="btn btn-secondary active beta-05">
+            <input
+              type="radio"
+              name="mitigation-weak"
+              id="mitigation-weak"
+              autocomplete="off"
+            />
+            Weak
+          </label>
+        </div>
+        <div class="col-sm-auto col-xm-12">
+          <label class="btn btn-secondary active beta-04">
+            <input
+              type="radio"
+              name="mitigation-moderate"
+              id="mitigation-moderate"
+              autocomplete="off"
+            />
+            Moderate
+          </label>
+        </div>
+        <div class="col-sm-auto col-xm-12">
+          <label class="btn btn-secondary active beta-03">
+            <input
+              type="radio"
+              name="mitigation-strong"
+              id="mitigation-strong"
+              autocomplete="off"
+            />
+            Strong
+          </label>
+        </div>
+      </div>
+      {{message | default("Different global mitigation practices will change the
+      rate of spread of COVID-19")}}
+      <hr />
+      <!-- Create a div where the graph will take place -->
+      <div id="my_dataviz" class="svg-container"></div>
+      <hr />
+</div>
+
+
   <div class="row">
     <label class="col-sm-12 col-lg-10 title-form">
-      At the time of your event in {{ place }} with {{ controlStrength }} measures, the chance of one person being infected at the event is
-      <span class="probability">{{ '%0.2f'|format(probability|float) }}%</span>
+      This means that the chance of one person with COVID-19 being at the event is
+      <span class="probability">{{ '%0.2f'|format(minProbability) }}%</span> to 
+      <span class="probability">{{ '%0.2f'|format(maxProbability) }}%</span>
     </label>
     <div class="col-lg-2">
       <button
@@ -49,13 +168,13 @@ active_page = "events" %} {% block content %}
       >
         Close Calculation <i class="fas fa-caret-up"></i>
       </button>
-  </div>
+    </div>
   </div>
 
   <div id="calculationCases" class="row less-visible8" style="display: none;">
     <div class="col-12">
       <p>
-        {{ '%0.2f'|format(probability|float) | default("probability") }}% = (1-{{ '%0.2f'|format(prevalence|float) | default("prevalence") }}%)^{{ peopleCount | default("number of people") }}
+        {{ '%0.2f'|format(minProbability|float) | default("probability") }}% = (1-{{ '%0.2f'|format(minPrevalence|float) | default("prevalence") }}%)^{{ peopleCount | default("number of people") }}
       </p>
     </div>
   </div>
@@ -66,9 +185,10 @@ active_page = "events" %} {% block content %}
 
   <div class="row">
     <div class="col-sm-12 col-lg-10 title-form">
-      If {{ place }} implements {{ controlStrength }} mitigation, saving one person from being infected at your event means
-    <span class="longrun-infections">{{ '%0.1f'|format(excess_infections|float) }}</span>
-    people will go free of COVID in the long run. This number can be smaller than 1 if the infection is very widespread because all of the people you save by cancelling might be infected later on.
+      If {{ place }} implements {{ controlStrength }} mitigation, we think that saving one person from being infected at your event means
+    <span class="longrun-infections">{{ '%0.1f'|format(maxExcess|float) }}</span> to
+    <span class="longrun-infections">{{ '%0.1f'|format(maxExcess|float) }}</span>
+    more people will go free of COVID in the long run. This number can be smaller than 1 if the infection is very widespread because all of the people you save by cancelling might be infected later on.
     </div>
     <div class="col-lg-2">
       <button
@@ -98,11 +218,12 @@ active_page = "events" %} {% block content %}
     </div>
   </div>
 
-  {% if excess_hospital_load != 'Not applicable' %}
+  {% if minStress != 'Not applicable' %}
   <div class="row">
     <div class="col-sm-12 col-lg-10 title-form">
-      In addition, saving one person from being infected at your event on {{ eventDate }} means
-      <span class="medical-care">{{ '%0.1f'|format(excess_hospital_load|float) }}</span>
+      In addition, we think saving one person from being infected at your event on {{ eventDate }} means
+      <span class="medical-care">{{ '%0.1f'|format(minStress|float) }}</span> to
+      <span class="medical-care">{{ '%0.1f'|format(maxStress|float) }}</span>
       more people would be able to get adequate medical care at peak load. 
     </div>
     <div class="col-lg-2">
@@ -188,4 +309,5 @@ active_page = "events" %} {% block content %}
     document.getElementById(calculationID).style.display = "none";
   }
 </script>
+<script src="{{ url_for('static', path='/js/lines.js') }}"></script>
 {% endblock %}

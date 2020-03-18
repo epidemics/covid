@@ -3,11 +3,12 @@ import os
 from datetime import date
 import numpy as np
 import pandas as pd
-import math
 
 from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+
+from event_model import stress, excess
 
 PLACES = [
     "Africa",
@@ -82,7 +83,29 @@ STARTDATE = pd.to_datetime('03/14/2020',format='%m/%d/%Y')
 
 # TODO: Does it break anything to replace PLACES above?
 
-PLACES_GV = LINES['Country'].unique()
+PLACES_GV = {'Egypt':9.7e7,
+             'China':1.4e9,
+             'Hong Kong':7.4e6,
+             'India':1.3e9,
+             'Russia':1.44e8,
+             'South Korea':5.1e7,
+             'Singapore':5.6e6,
+             'Japan':1.28e8,
+             'Indonesia':2.64e8,
+             'Dubai':3.3e6,
+             'Iran':8.1e7,
+             'US':3.3e8,
+             'Australia':2.5e7,
+             'France':6.7e7,
+             'Italy':6e7,
+             'Germany':8.3e7,
+             'Spain':4.7e7,
+             'Netherlands':1.7e7,
+             'Switzerland':8.5e6,
+             'United Kingdom':6.6e7,
+             'Czech Republic':1.1e7}
+
+LINES['Country'].unique()
 
 
 class Place:
@@ -122,7 +145,7 @@ async def model(request: Request, country: str = "USA") -> Response:
 @app.get("/request-event-evaluation")
 async def request_event_evaluation(request: Request) -> Response:
 
-    places = [Place(place) for place in PLACES_GV]
+    places = [Place(place) for place in PLACES_GV.keys()]
 
     return templates.TemplateResponse(
         "request-event-evaluation.html",
@@ -152,16 +175,17 @@ async def result_event_evaluation(
     
     # Wild stab at transmission probabilities
     transmission = {"hours": 0.02, "day": 0.05, "days": 0.08}[length]
-    effective_contacts = {"little": 3 / 2, "inbetween": 5 / 3, "lot": 2}[contactSize]
+    effectiveContacts = {"little": 3 / 2, "inbetween": 5 / 3, "lot": 2}[contactSize]
     class Place:
         def __init__(self, name):
             self.name = name
-            self.population = 33e7
+            self.population = PLACES_GV[name]
             cols = [i for i in LINES.columns if i.startswith('Cumulative')]
-            self.gleamviz_predictions = (self.population*
-                LINES[(LINES['Country']==name) & (LINES['Mitigation']==strength)]
-                .set_index('Timestep')[cols]
-                .mean(axis=1)/1000)
+            timesteps = (LINES[(LINES['Country']==name) & (LINES['Mitigation']==strength)]
+                .set_index('Timestep')[cols])/1000
+            self.gleamviz_predictions = timesteps.mean(axis=1)
+            self.gleamviz_upper = timesteps.max(axis=1)
+            self.gleamviz_lower = timesteps.min(axis=1)
 
 
     class Data:
@@ -170,52 +194,6 @@ async def result_event_evaluation(
 
     data = Data()
 
-    # TODO: would be better to load these from a csv
-
-    stress_fun = {(1e-6,0.3):1.5,
-                  (1e-6,0.4):2.4,
-                  (1e-6,0):0.8,
-                  (1e-5,0.4):2.4,
-                  (1e-5,0.3):1.5,
-                  (1e-5,0):.9,
-                  (1e-4,0.4):2.3,
-                  (1e-4,0.3):1.5,
-                  (1e-4,0):0.8,
-                  (1e-3,0.4):3.9,
-                  (1e-3,0.3):2.2,
-                  (1e-3,0):0.9,
-                  (1e-2,0.4):3.8,
-                  (1e-2,0.3):2.2,
-                  (1e-2,0):0.8,
-                  (1e-1,0.4):1,
-                  (1e-1,0.3):0.7,
-                  (1e-1,0):0.2}
-
-    ai_fun = {(1e-6,0):0.2,
-              (1e-6,0.3):0.4,
-              (1e-6,0.4):0.7,
-              (1e-6,0.5):34.5,
-              (1e-5,0):0.2,
-              (1e-5,0.3):0.4,
-              (1e-5,0.4):0.7,
-              (1e-5,0.5):9.5,
-              (1e-4,0):0.2,
-              (1e-4,0.3):0.4,
-              (1e-4,0.4):0.7,
-              (1e-4,0.5):2.6,
-              (1e-3,0):0.2,
-              (1e-3,0.3):0.6,
-              (1e-3,0.4):1.1,
-              (1e-3,0.5):3.2,
-              (1e-2,0):0.6,
-              (1e-2,0.3):0.6,
-              (1e-2,0.4):1.1,
-              (1e-2,0.5):2.5,
-              (1e-1,0):0.2,
-              (1e-1,0.3):0.5,
-              (1e-1,0.4):0.9,
-              (1e-1,0.5):1.3}
-
     event_index = (pd.to_datetime(datepicker,format='%m/%d/%Y') - STARTDATE).days
 
     dispControlStrength = controlStrength.replace("none","no")
@@ -223,36 +201,42 @@ async def result_event_evaluation(
     place_data = data[place]
 
     try:
-        medianCases= place_data.gleamviz_predictions.loc[event_index]
-        fraction = medianCases / place_data.population
-        probability = (1 - (1 - fraction) ** num) * 100  # in %
-        fraction_oom = 10 ** math.floor(math.log(fraction, 10))
+        medianFraction = place_data.gleamviz_predictions.loc[event_index]
+        minFraction = place_data.gleamviz_lower.loc[event_index]
+        maxFraction = place_data.gleamviz_upper.loc[event_index]
+        minCases, maxCases, medianCases = tuple(int(place_data.population*i) for i in (minFraction,maxFraction,medianFraction))
+        minProbability = (1 - (1 - minFraction) ** num) * 100  # in %
+        maxProbability = (1 - (1 - maxFraction) ** num) * 100 
         # Not currently displayed
-        # expected_infections = (
-        #     transmission[length] * fraction * num ** effective_contacts[contactSize]
+        # minExpected = (
+        #     transmission * minFraction * num ** effectiveContacts
+        # )
+        # maxExpected = (
+        #   transmission * maxFraction * num ** effectiveContacts
         # )
     except KeyError:
-        probability = "unknown"
-        fraction_oom = 0
+        minProbability = -99999
+        maxProbability = -99999
         medianCases = -99999
         fraction = -99999
-        # expected_infections = -99999
+        minCases = -99999
+        maxCases = -99999
+        minExpected = -99999
+        maxExpected = -99999
 
-        # if this branch occurs, expected_infections cannot be casted
-        # to floats in templates, us `unknown` can't be cased to float
 
     if strength >= 0.5:
-        excess_hospital_load = "Not applicable"
+        minStress = "Not applicable"
+        maxStress = "Not applicable"
     else:
-        try:
-            excess_hospital_load = stress_fun[(fraction_oom,strength)]
-        except KeyError:
-            excess_hospital_load = "Not applicable"
+      stresses = [stress(fraction*a,strength+b) for a in [10,1,0.1] for b in [0,0.1,-0.1] for fraction in [minFraction,maxFraction]]
+      minStress = min(stresses)
+      maxStress = max(stresses)
 
-    try:
-        excess_infections = ai_fun[(fraction_oom, strength)]
-    except KeyError:
-        excess_infections = "unknown"
+    excesses = [excess(fraction*a,strength+b) for a in [10,1,0.1] for b in [0,0.1,-0.1] for fraction in [minFraction,maxFraction]]
+    minExcess = min(excesses)
+    maxExcess = max(excesses)
+
 
     return templates.TemplateResponse(
         "result-event-evaluation.html",
@@ -262,12 +246,18 @@ async def result_event_evaluation(
             "datepicker": datepicker,
             "peopleCount": num,
             "place": place,
-            "probability": probability,
-            "expected_infections": -99999,  # expected_infections,
-            "excess_infections": excess_infections,
-            "excess_hospital_load": excess_hospital_load,
+            "minProbability": minProbability,
+            "maxProbability": maxProbability,
+            # "minExpected": minExpected,
+            # "maxExpected": maxExpected,
+            "minExcess": minExcess,
+            "maxExcess": maxExcess,
+            "minStress": minStress,
+            "maxStress": maxStress,
             "medianCases": medianCases,
-            "prevalence":fraction*100,
+            "minCases":minCases,
+            "maxCases":maxCases,
+            "minPrevalence":minFraction*100,
             "eventDate":datepicker,
             "startDate":STARTDATE
         },
