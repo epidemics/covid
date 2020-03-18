@@ -20,7 +20,7 @@ and visit http://localhost:8000 (main `server`).
 2. [Install Poetry](https://python-poetry.org/docs/#installation).
 3. Open a terminal, move to (`cd`) the root of the cloned repository, and run:
 
-        $ conda create -n covid python=3.8  # creates a new conda environment with python 3.8
+        $ conda create -n covid python=3.7  # creates a new conda environment with python 3.8
         $ conda activate covid  # activates the conda environment
         $ poetry install  # installs the project's dependencies
         $ poetry shell
