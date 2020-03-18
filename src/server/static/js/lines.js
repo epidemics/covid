@@ -87,7 +87,7 @@ function getListOfScenarios(activeData) {
 
 
 
-d3.json("https://srv-file11.gofile.io/download/mKfSCQ/tmp.json")
+d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.json")
 .then(function(data) {
 
   // console.log('json data', data)
