@@ -304,6 +304,7 @@ d3.csv(
   d3.select("#selectButton").property("value", selectedCountry);
   // update the containment measures with the new selected country
   update_containment_measures(selectedCountry);
+  update_country_in_text(selectedCountry);
 
   // A function that update the chart
   function update({
@@ -352,13 +353,14 @@ d3.csv(
   d3.select("#selectButton").on("change", function (d) {
     // recover the option that has been chosen
     selectedCountry= d3.select(this).property("value");
-
     // change url param
     setGetParam("selection", selectedCountry);
     // run the updateChart function with this selected option
     update({ country: selectedCountry });
     // update the containment measures with the new selected country
     update_containment_measures(selectedCountry);
+    // update the name of the country in the text below the graph
+    update_country_in_text(selectedCountry);
   });
 
   d3.select(".beta-0").on("click", function () {
@@ -376,6 +378,13 @@ d3.csv(
 
   //console.log("RUNNING D3");
 });
+
+function update_country_in_text(selectedCountry){
+    var countrySpans = jQuery(".selected-country");
+    for (i = 0; i < countrySpans.length; i++){
+        countrySpans[i].innerHTML = selectedCountry;
+    }
+}
 
 function containment_entry(date = "", text = "", source_link = "") {
   /* write that jinja code with js for model.html template sidebar with containment measures entry

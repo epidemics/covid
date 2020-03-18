@@ -42,6 +42,7 @@ active_page = 'models' -%} {% block additional_js_pre %}
     vertical-align: top;
     overflow: hidden;
   }
+
   .svg-content {
     display: inline-block;
     position: absolute;
@@ -61,56 +62,61 @@ active_page = 'models' -%} {% block additional_js_pre %}
       <div class="row mitigation-strenght">
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-0">
-            <input
-              type="radio"
-              name="mitigation-none"
-              id="mitigation-none"
-              autocomplete="off"
-            />
+            <input type="radio" name="mitigation-none" id="mitigation-none" autocomplete="off" />
             None
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-05">
-            <input
-              type="radio"
-              name="mitigation-weak"
-              id="mitigation-weak"
-              autocomplete="off"
-            />
+            <input type="radio" name="mitigation-weak" id="mitigation-weak" autocomplete="off" />
             Weak
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-04">
-            <input
-              type="radio"
-              name="mitigation-moderate"
-              id="mitigation-moderate"
-              autocomplete="off"
-            />
+            <input type="radio" name="mitigation-moderate" id="mitigation-moderate" autocomplete="off" />
             Moderate
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-03">
-            <input
-              type="radio"
-              name="mitigation-strong"
-              id="mitigation-strong"
-              autocomplete="off"
-            />
+            <input type="radio" name="mitigation-strong" id="mitigation-strong" autocomplete="off" />
             Strong
           </label>
         </div>
       </div>
-      {{message | default("Different global mitigation practices will change the
-      rate of spread of COVID-19")}}
       <hr />
       <!-- Create a div where the graph will take place -->
       <div id="my_dataviz" class="svg-container"></div>
+
+      <p>
+        The impact on <span class="selected-country"></span> is simulated using a global, real-time database of human travel patterns.
+      </p>
+      <p>
+        The model also takes into account that the outcome is uncertain, and depends on:
+        <ul>
+          <li>
+            the mitigation decisions made by <i>other countries</i>
+          </li>
+          <li>
+            the expected reduction in air traffic
+          </li>
+          <li>
+            the seasonality of the virus and its response to changing weather conditions
+          </li>
+
+        </ul>
+        For now we are capturing the international response in a single parameter determining the rate of spread of
+        SARS-CoV-2, but we are building <a
+          href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e">a database of
+          containment and mitigation efforts</a> and working to integrate them into the model.
+      </p>
       <hr />
       <h5>How the model works</h5>
+
+      <p><em>If you&#39;re a decision-maker thinking about COVID-19, we are happy to run the model with custom settings
+          on demand. Please reach out <a href="http://epidemicforecasting.org/request-calculation">here</a>.</em></p>
+
       <p><strong> Human forecasting</strong></p>
       <p>
         We are trying to augment data on confirmed cases by estimating the true
@@ -122,7 +128,7 @@ active_page = 'models' -%} {% block additional_js_pre %}
       <p>
         The results are used as an input to advanced epidemic modelling
         software, called
-        <a href="[http://www.gleamviz.org/](http://www.gleamviz.org/">GLEaM</a>,
+        <a href="http://www.gleamviz.org/" target="_blank">GLEaM</a>,
         running on high-performance computers.
       </p>
       <p>The global development of COVID-19 is simulated using:</p>
@@ -135,7 +141,7 @@ active_page = 'models' -%} {% block additional_js_pre %}
           a commuting database covering over five million commuting connections
           within 40 countries
         </li>
-        <li>multiple levels of global mitigation measures</li>
+        <li>multiple levels of global mitigation measures (currently captured as changes in the β of our model) </li>
         <li>
           multiple models of SARS-CoV-2, capturing uncertainty about seasonality
           and transmissibility
@@ -149,10 +155,8 @@ active_page = 'models' -%} {% block additional_js_pre %}
       <p><strong> Database of containment measures</strong></p>
       <p>
         We are tracking the effectiveness of containments measures in a
-        <a
-          href="[https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e](https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e"
-          >public database</a
-        >
+        <a href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e" target="_blank">public
+          database</a>
         with hundreds of entries. As more data becomes available on their
         effectiveness we will integrate them into the simulation.
       </p>
