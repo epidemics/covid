@@ -130,6 +130,7 @@ header h1:before {
 
 .main {
   margin: 20px auto;
+  padding-bottom: 5em;
 }
 
 .container-wrapper {
@@ -208,6 +209,13 @@ header h1:before {
 }*/
 
 .custom-footer {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  background-color: #000;
+  user-select: auto;
+  opacity: 100%;
+  font-size: 0.9em;
   border-top: 1px solid #323232;
 }
 
