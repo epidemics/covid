@@ -82,11 +82,9 @@ class Place:
         self.name = name
 
 
-@app.get("/")
-async def index(request: Request) -> Response:
-    """TODO: this is the main hompage, should have a bubble map which should
-    link ot the /model"""
-    return templates.TemplateResponse("index.html", {"request": request},)
+@app.get("/case-map")
+async def case_map(request: Request) -> Response:
+    return templates.TemplateResponse("case-map.html", {"request": request},)
 
 
 @app.get("/request-calculation")
@@ -102,7 +100,7 @@ async def request_calculation(request: Request) -> Response:
     )
 
 
-@app.get("/model")
+@app.get("/")
 async def model(request: Request, country: str = "USA") -> Response:
     """serve the main model visualization"""
     arguments = {"country": country} if country else {}
