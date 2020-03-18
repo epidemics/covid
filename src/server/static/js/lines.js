@@ -22,20 +22,16 @@ var chartDiv = document.getElementById("my_dataviz"); //Mati: this doesn't seem 
 
 // set the dimensions and margins of the graph
 var margin = { top: 10, right: 100, bottom: 30, left: 100 },
-  width = 600,
+  width = 800,
   height = 675;
 // append the svg object to the body of the page
-var graphSize = "75%";
 var svg = d3
   .select("#my_dataviz")
-  .style("width", graphSize)
-  .style("padding-bottom", graphSize)
   .append("svg")
   .attr("preserveAspectRatio", "xMinYMin meet")
-  .attr("viewBox", "0 0 750 750")
-  .classed("svg-content", true)
+  .attr("viewBox", `0 0 ${width + 150} ${height + 75}`)
   .append("g")
-  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  .attr("transform", `translate(${margin.left},${margin.top})`);
 
 function getCountries(data) {
   return [...new Set(data.map(d => d.Country))];
