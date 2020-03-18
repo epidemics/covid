@@ -1,5 +1,29 @@
 {% extends "base.html" %} {% block title %} Results {% endblock title%} {% set
-active_page = "events" %} {% block content %}
+active_page = "events" %} {% block additional_js_pre %}
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+<style type="text/css">
+  .svg-content {
+    max-width: 490px !important;
+  }
+
+  #my_dataviz {
+    max-width: 731px;
+  }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .legend {
+      min-height: 500px;
+    }
+  }
+  @media only screen and (min-width: 1200px) {
+    .legend {
+      min-height: 517px;
+    }
+  }
+</style>
+
+{% endblock %} {% block content %}
 
 <!-- options: goahead, uncertain, cancel -->
 <div class="container main">
@@ -14,8 +38,9 @@ active_page = "events" %} {% block content %}
           >
         </h1>
         <p>
-          {{message | default("Your event poses a high risk, and by cancelling you
-          can meaningfully contribute to prevent further spread of covid-19")}}
+          {{message | default("Your event poses a high risk, and by cancelling
+          you can meaningfully contribute to prevent further spread of
+          covid-19")}}
         </p>
       </div>
     </div>
@@ -35,8 +60,8 @@ active_page = "events" %} {% block content %}
 
     <div class="row">
       <div class="col-sm-12 col-lg-10 title-form">
-        Around the time of your event in {{location | default("your location")}},
-        there will probably be
+        Around the time of your event in {{location | default("your
+        location")}}, there will probably be
         <span class="number">{{minCases | default("minCases")}}</span>
         to
         <span class="number">{{maxCases | default("maxCases")}}</span>
@@ -64,16 +89,16 @@ active_page = "events" %} {% block content %}
     <div id="calculationCases" class="row less-visible8" style="display: none;">
       <div class="col-12">
         <p>
-          {{caseCalculation1 | default("A simple POC for using bokeh to visualize
-          modelled covid-19 data. Based on botek weather example.")}}
+          {{caseCalculation1 | default("A simple POC for using bokeh to
+          visualize modelled covid-19 data. Based on botek weather example.")}}
         </p>
         <p>
-          {{caseCalculation2 | default("There two main components: charts — using
-          bokeh serve to serve bokeh charts in src/charts directory. webserver — a
-          webserver using fastapi to render templates and embeds bokeh charts via
-          the running charts bokeh server using JS scripts. That means that when
-          you access the index site of the fastapi server, it generates the tag
-          for the relevant chart.")}}
+          {{caseCalculation2 | default("There two main components: charts —
+          using bokeh serve to serve bokeh charts in src/charts directory.
+          webserver — a webserver using fastapi to render templates and embeds
+          bokeh charts via the running charts bokeh server using JS scripts.
+          That means that when you access the index site of the fastapi server,
+          it generates the tag for the relevant chart.")}}
         </p>
       </div>
     </div>
@@ -81,7 +106,7 @@ active_page = "events" %} {% block content %}
     <br />
     <div class="row">
       <div class="col-12">
-        {{caseGraph | default("[caseGraph]")}}
+        <div id="my_dataviz" class="svg-container"></div>
       </div>
     </div>
     <br />
@@ -203,14 +228,22 @@ active_page = "events" %} {% block content %}
         <span class="green underlined"
           >{{percentSmoothen | default("percentSmoothen")}}%</span
         >, which means
-        <span class="green">{{minMedicalCare | default("minMedicalCare")}}</span>
+        <span class="green"
+          >{{minMedicalCare | default("minMedicalCare")}}</span
+        >
         to
-        <span class="green">{{maxMedicalCare | default("maxMedicalCare")}}</span>
+        <span class="green"
+          >{{maxMedicalCare | default("maxMedicalCare")}}</span
+        >
         more people would be able to get adequate medical care.
       </div>
       <div class="col-lg-2"></div>
     </div>
-    <div id="calculationAvoided" class="row less-visible8" style="display: none;">
+    <div
+      id="calculationAvoided"
+      class="row less-visible8"
+      style="display: none;"
+    >
       <div class="col-12">
         {{avoidedCalculation | default("[avoidedCalculation]")}}
       </div>
@@ -280,7 +313,12 @@ active_page = "events" %} {% block content %}
             <div class="row btn-group-toggle" data-toggle="buttons">
               <div class="col-md-auto col-sm-12">
                 <label class="btn btn-secondary submit">
-                  <input type="radio" name="more" id="more" autocomplete="off" />
+                  <input
+                    type="radio"
+                    name="more"
+                    id="more"
+                    autocomplete="off"
+                  />
                   Yes, more likely to host
                 </label>
               </div>
@@ -331,6 +369,7 @@ active_page = "events" %} {% block content %}
 </div>
 
 {% endblock %} {% block additional_js %}
+<script src="{{ url_for('static', path='/js/lines.js') }}"></script>
 <script>
   function showCalculation(showID, hideID, calculationID) {
     document.getElementById(showID).style.display = "none";

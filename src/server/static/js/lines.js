@@ -29,9 +29,8 @@ var svg = d3
   .select("#my_dataviz")
   .attr("class", "row")
   .style("width", "100%")
-  .style("padding-bottom", "78%")
   .append("div")
-  .attr("class", "col-9")
+  .attr("class", "col-md-9 col-sm-12")
   .append("svg")
   .attr("preserveAspectRatio", "xMinYMin meet")
   .attr("viewBox", "0 0 750 750")
@@ -42,51 +41,52 @@ var svg = d3
 // Legend
 d3.select("#my_dataviz")
   .append("div")
-  .attr("class", "col-3")
+  .attr("class", "col-md-3 col-sm-12")
+  .style("padding", "0px")
   .append("div")
   .attr("class", "legend")
   .append("div")
   .html(
-    '<span class="color1">\
-      Weak seasonality\
-      <br/>\
-      Weak reduction in air travel\
-    </span>\
-    <br>\
-    <br>\
-    <span class="color2">\
-      Medium seasonality\
-      <br/>\
-      Weak reduction in air travel\
-    </span>\
-    <br>\
-    <br>\
-    <span class="color3">\
-      Strong seasonality\
-      <br/>\
-      Weak reduction in air travel\
-    </span>\
-    <br>\
-    <br>\
-    <span class="color41">\
-      Weak seasonality\
-      <br/>\
-      Strong reduction in air travel\
-    </span>\
-    <br>\
-    <br>\
-    <span class="color5">\
-      Medium seasonality\
-      <br/>\
-      Strong reduction in air travel\
-    </span>\
-    <br>\
-    <br>\
-    <span class="color6">\
-      Strong seasonality\
-      <br/>\
-      Strong reduction in air travel\
-    </span>'
+    `<span class="color1">
+      Weak seasonality
+      <br/>
+      Weak reduction in air travel
+    </span>
+    <br>
+    <br>
+    <span class="color2">
+      Medium seasonality
+      <br/>
+      Weak reduction in air travel
+    </span>
+    <br>
+    <br>
+    <span class="color3">
+      Strong seasonality
+      <br/>
+      Weak reduction in air travel
+    </span>
+    <br>
+    <br>
+    <span class="color41">
+      Weak seasonality
+      <br/>
+      Strong reduction in air travel
+    </span>
+    <br>
+    <br>
+    <span class="color5">
+      Medium seasonality
+      <br/>
+      Strong reduction in air travel
+    </span>
+    <br>
+    <br>
+    <span class="color6">
+      Strong seasonality
+      <br/>
+      Strong reduction in air travel
+    </span>`
   );
 
 function getCountries(data) {

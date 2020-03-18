@@ -447,18 +447,77 @@ textarea {
   opacity: 1 !important;
   user-select: auto;
   width: 100% !important;
-  margin-top: 136px;
   background-color: transparent;
   background: transparent !important;
   font: 12px sans-serif;
   text-align: center;
 }
 
-.tooltip {
-  background-color: #342e47 !important;
+div.tooltip {
+  position: absolute;
+  text-align: center;
   width: 30px !important;
+  height: auto;
+  padding: 2px;
+  font: 12px sans-serif;
+  color: #fff;
+  background: #050547;
+  border: 1px solid #212121;
+  border-radius: 8px;
+  pointer-events: none;
+  background-color: #342e47 !important;
   margin-left: 16px;
   margin-top: -8px;
+}
+
+.overlay {
+  fill: none;
+  stroke: none;
+  pointer-events: all;
+}
+
+.line .crosshair {
+  fill: none;
+  stroke-width: 1px;
+}
+
+.line .crosshair {
+  stroke: white;
+  opacity: 0.2;
+}
+
+.svg-container {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%;
+  vertical-align: top;
+  overflow: hidden;
+}
+
+.svg-content {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+/* 
+@media only screen and (max-width: 767px) {
+  .legend {
+    margin-top: 111%;
+  } */
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .legend {
+    min-height: 526px;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .legend {
+    margin-top: 100%;
+    margin-bottom: 18px;
+  }
 }
 
 /*
