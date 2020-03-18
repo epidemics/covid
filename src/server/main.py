@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from server.event_model import stress, excess
+from server.notion_connect import query_containment_measures
 
 PLACES = [
     "Africa",
@@ -61,21 +62,9 @@ templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 df = pd.read_csv(
     os.path.join(SERVER_ROOT, "static", "data", "covid-containment-measures.csv")
 )
-df = df.loc[
-    df.Country.notna(),
-    [
-        "Country",
-        "Description of measure implemented",
-        "Keywords",
-        "Source",
-        "Date Start",
-    ],
-]
-df["date"] = pd.to_datetime(
-    df["Date Start"].str.upper(), format="%b %d, %Y", yearfirst=False
-)
-del df["Date Start"]
-CONTAINMENT_MEAS = df
+
+
+CONTAINMENT_MEAS = query_containment_measures()
 
 LINES = pd.read_csv(
     "https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2"
