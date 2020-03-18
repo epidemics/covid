@@ -44,7 +44,7 @@ d3.select("#my_dataviz")
   .append("div")
   .attr("class", "col-3")
   .append("div")
-  .attr("class", "tooltip")
+  .attr("class", "legend")
   .append("div")
   .html(
     '<span class="color1">\
@@ -274,6 +274,12 @@ d3.csv(
     .attr("id", "crosshairY")
     .attr("class", "crosshair");
 
+  var tooltip = d3
+    .select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
   svg
     .append("rect")
     .attr("class", "overlay")
@@ -285,6 +291,7 @@ d3.csv(
     })
     .on("mouseout", function() {
       //console.log('out')
+      tooltip.style("opacity", 0);
       crosshair.style("display", "none");
     })
     .on("mousemove", function() {
@@ -318,6 +325,26 @@ d3.csv(
         Math.round(hoveredValues[5]),
         Math.round(hoveredValues[6])
       ];
+
+      tooltip
+        .style("opacity", 1)
+        .html(
+          `<div>
+            <span class='color1'>${hVars[0]}</span>
+            <br>
+            <span class='color2'>${hVars[1]}</span>
+            <br>
+            <span class='color3'>${hVars[2]}</span>
+            <br>
+            <span class='color4'>${hVars[3]}</span>
+            <br>
+            <span class='color5'>${hVars[4]}</span>
+            <br>
+            <span class='color6'>${hVars[5]}</span>
+          </div>`
+        )
+        .style("left", d3.event.pageX + "px")
+        .style("top", d3.event.pageY - 28 + "px");
 
       //console.log('move', diffDays)
     });
