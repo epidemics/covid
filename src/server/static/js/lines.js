@@ -67,7 +67,7 @@ function getSelectedCountry(data) {
   var url_string = window.location.href;
   var url = new URL(url_string);
   var c = url.searchParams.get("selection");
-  return c && data.includes(c) ? c : "China";
+  return c && data.includes(c) ? c : "France";
 }
 
 function getMaxYValueForCountry(countryBetas, selectedCountry) {
@@ -87,7 +87,7 @@ function getMaxYValueForCountry(countryBetas, selectedCountry) {
 
 //Read the data
 d3.csv(
-  "https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2"
+  "https://storage.googleapis.com/static-covid/static/line-data-v4.csv"
 ).then(function (data) {
   var selectedBeta = "0.0";
   // List of groups (here I have one group per column)
