@@ -49,6 +49,24 @@ active_page = 'models' -%} {% block additional_js_pre %}
     top: 0;
     left: 0;
   }
+
+  /* apply column-specific scrolling only if columns are side-by-side */
+  @media only screen and (min-width: 992px) {
+    html {
+      overflow: hidden;
+    }
+    .main {
+      height: 100vh;
+    }
+    .main > .row {
+      height: inherit;
+    }
+    .main > .row > div {
+      height: inherit;
+      overflow: scroll;
+      padding-bottom: 12em;
+    }
+  }
 </style>
 {% endblock %} {% block content %}
 
