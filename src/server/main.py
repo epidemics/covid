@@ -279,9 +279,10 @@ async def about(request: Request) -> Response:
 @app.get("/get_containment_measures")
 async def containment_measures(request: Request, country: str = "China") -> Response:
     """serve the main model visualization"""
-
-    if country not in CONTAINMENT_MEAS.Country.unique():
-        country = CAPITALS.loc[CAPITALS.capital == country, ["country"]]
+    capital = country
+    country = country.title()
+    if country not in CONTAINMENT_MEAS.country.unique():
+        country = CAPITALS.loc[CAPITALS.capital == capital, ["country"]]
 
         if country.empty is True:
             country = None
