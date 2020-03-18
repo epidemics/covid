@@ -2,178 +2,161 @@
 active_page = "events" %} {% block content %}
 
 
-  <!-- options: goahead, uncertain, cancel -->
+<!-- options: goahead, uncertain, cancel -->
 
-  <div class="col-md-12 col-sm-12">
-    <h1 class="title">
-      At this stage we recommend
-      <span class="recommendation"
-        >{{recommendation | default("cancel")}}</span
-      >
-    </h1>
-    <p>
-      {{message | default("By default we suggest cancelling unless the event is critical. 
+<div class="col-md-12 col-sm-12">
+  <h1 class="title">
+    At this stage we recommend
+    <span class="recommendation">{{recommendation | default("cancel")}}</span>
+  </h1>
+  <p>
+    {{message | default("By default we suggest cancelling unless the event is critical. 
         Our model is not yet reliable for predicting the long run effects 
         of your decisions if your country implements strong containment measures,
         and we expect many countries will implement strong
         containment measures as many have already.")}}
-    </p>
+  </p>
+</div>
+
+{% if medianCases < -9000 %}
+<div class="row">
+  <div class="col-sm-12 col-lg-10 title-form">
+    We can't determine results at this data. Currently the dataset begins at {{ startDate }}
   </div>
+</div>
+{% else %}
 
-  {% if medianCases < -9000 %}
-  <div class="row">
-    <div class="col-sm-12 col-lg-10 title-form">
-      We can't determine results at this data. Currently the dataset begins at {{ startDate }}
-    </div>
+<div class="row">
+  <label class="col-sm-12 col-lg-10 title-form">
+    At the time of your event in {{ place }}, with {{ controlStrength }} measures, the chance of one attendee being
+    infected is
+    <span class="probability">{{ '%0.2f'|format(probability|float) }}%</span>
+  </label>
+  <div class="col-lg-2">
+    <button id="showCases" onclick="showCalculation('showCases','hideCases','calculationCases')"
+      class="detail-button less-visible7">
+      See Calculation <i class="fas fa-caret-down"></i>
+    </button>
+    <button id="hideCases" onclick="hideCalculation('showCases','hideCases','calculationCases')"
+      class="detail-button less-visible7" style="display: none;">
+      Close Calculation <i class="fas fa-caret-up"></i>
+    </button>
   </div>
-  {% else %}
+</div>
 
-  <div class="row">
-    <label class="col-sm-12 col-lg-10 title-form">
-      At the time of your event in {{ place }} with {{ controlStrength }} measures, the chance of one person being infected at the event is
-      <span class="probability">{{ '%0.2f'|format(probability|float) }}%</span>
-    </label>
-    <div class="col-lg-2">
-      <button
-        id="showCases"
-        onclick="showCalculation('showCases','hideCases','calculationCases')"
-        class="detail-button less-visible7"
-      >
-        See Calculation <i class="fas fa-caret-down"></i>
-      </button>
-      <button
-        id="hideCases"
-        onclick="hideCalculation('showCases','hideCases','calculationCases')"
-        class="detail-button less-visible7"
-        style="display: none;"
-      >
-        Close Calculation <i class="fas fa-caret-up"></i>
-      </button>
-  </div>
-  </div>
-
-  <div id="calculationCases" class="row less-visible8" style="display: none;">
-    <div class="col-12">
-      <p>
-        {{ '%0.2f'|format(probability|float) | default("probability") }}% = (1-{{ '%0.2f'|format(prevalence|float) | default("prevalence") }}%)^{{ peopleCount | default("number of people") }}
-      </p>
-    </div>
-  </div>
-
-
-
-  <!-- TODO: this outputs 0.0 when there is an error -->
-
-  <div class="row">
-    <div class="col-sm-12 col-lg-10 title-form">
-      If {{ place }} implements {{ controlStrength }} mitigation, saving one person from being infected at your event means
-    <span class="longrun-infections">{{ '%0.1f'|format(excess_infections|float) }}</span>
-    people will go free of COVID in the long run. This number can be smaller than 1 if the infection is very widespread because all of the people you save by cancelling might be infected later on.
-    </div>
-    <div class="col-lg-2">
-      <button
-        id="showInfections"
-        onclick="showCalculation('showInfections','hideInfections','calculationInfections')"
-        class="detail-button less-visible7"
-      >
-        See Calculation <i class="fas fa-caret-down"></i>
-      </button>
-      <button
-        id="hideInfections"
-        onclick="hideCalculation('showInfections','hideInfections','calculationInfections')"
-        class="detail-button less-visible7"
-        style="display: none;"
-      >
-        Close Calculation <i class="fas fa-caret-up"></i>
-      </button>
-    </div>
-  </div>
-  <div
-    id="calculationInfections"
-    class="row less-visible8"
-    style="display: none;"
-  >
-    <div class="col-12">
-      This result comes from an <a href=https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIR_model>SIR model</a> simulating the progression in your country with {{ '%0.0f'|format(medianCases|float) }} infected compared to {{ '%0.0f'|format(medianCases+1|float) }} infected
-    </div>
-  </div>
-
-  {% if excess_hospital_load != 'Not applicable' %}
-  <div class="row">
-    <div class="col-sm-12 col-lg-10 title-form">
-      In addition, saving one person from being infected at your event on {{ eventDate }} means
-      <span class="medical-care">{{ '%0.1f'|format(excess_hospital_load|float) }}</span>
-      more people would be able to get adequate medical care at peak load. 
-    </div>
-    <div class="col-lg-2">
-      <button
-        id="showHospital"
-        onclick="showCalculation('showHospital','hideHospital','calculationHospital')"
-        class="detail-button less-visible7"
-      >
-        See Calculation <i class="fas fa-caret-down"></i>
-      </button>
-      <button
-        id="hideHospital"
-        onclick="hideCalculation('showHospital','hideHospital','calculationHospital')"
-        class="detail-button less-visible7"
-        style="display: none;"
-      >
-        Close Calculation <i class="fas fa-caret-up"></i>
-      </button>
-    </div>
-  </div>
-  <div
-    id="calculationHospital"
-    class="row less-visible8"
-    style="display: none;"
-  >
-    <div class="col-12">
-      This result comes from an <a href=https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIR_model>SIR model</a> simulating the progression in your country with {{ '%0.0f'|format(medianCases|float) }} infected compared to {{ '%0.0f'|format(medianCases+1|float) }} infected
-    </div>
-  </div>
-  {% else %}
-  <div class="row">
-    <div class="col-sm-12 col-lg-10 title-form">
-      We can't evaluate the effect of this particular event on hospital stress.
-    </div>
-  </div>
-  {% endif %}
-
-  {% endif %}
-  <!-- TODO: insert graph -->
-
-  <!-- graph -->
-
-  <label>Did this change your mind at all?</label>
-  <!--form-->
-  <form action="/decision">
-    <div class="form-group">
-      <div class="btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-secondary">
-          <input type="radio" name="more" id="more" autocomplete="off" />
-          Yes, more likely to host
-        </label>
-        <label class="btn btn-secondary">
-          <input type="radio" name="less" id="less" autocomplete="off" />Yes,
-          less likely to host
-        </label>
-        <label class="btn btn-secondary">
-          <input type="radio" name="equal" id="equal" autocomplete="off" />No
-        </label>
-      </div>
-    </div>
-  </form>
-  <p class="form-submition-message"></p>
-
-  <div id="credits">
-    <h2>Credits</h2>
+<div id="calculationCases" class="row less-visible8" style="display: none;">
+  <div class="col-12">
     <p>
-      This site was created by the Future of Humanity Institute. It does not
-      represent offical advice from the University of Oxford.
+      {{ '%0.2f'|format(probability|float) | default("probability") }}% =
+      (1-{{ '%0.2f'|format(prevalence|float) | default("prevalence") }}%)^{{ peopleCount | default("number of people") }}
     </p>
-    <!-- TODO: add various other credits, legal aspecs, and details about the project -->
   </div>
+</div>
+
+
+
+<!-- TODO: this outputs 0.0 when there is an error -->
+
+<div class="row">
+  <div class="col-sm-12 col-lg-10 title-form">
+    <!-- If {{ place }} implements {{ controlStrength }} mitigation, -->
+    Given how COVID-19 might be spreading in {{ place }} at this time, preventing one attendee from being infected
+    means
+    <span class="longrun-infections">{{ '%0.1f'|format(excess_infections|float) }}</span>
+    people go free of COVID in the long run.
+  </div>
+  <div class="col-lg-2">
+    <button id="showInfections" onclick="showCalculation('showInfections','hideInfections','calculationInfections')"
+      class="detail-button less-visible7">
+      See Calculation <i class="fas fa-caret-down"></i>
+    </button>
+    <button id="hideInfections" onclick="hideCalculation('showInfections','hideInfections','calculationInfections')"
+      class="detail-button less-visible7" style="display: none;">
+      Close Calculation <i class="fas fa-caret-up"></i>
+    </button>
+  </div>
+</div>
+<div id="calculationInfections" class="row less-visible8" style="display: none;">
+  <div class="col-12">
+    This result comes from an epidemiological model known as an <a
+      href=https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIR_model>SIR model</a> simulating the
+    progression in your country with {{ '%0.0f'|format(medianCases|float) }} infected compared to
+    {{ '%0.0f'|format(medianCases+1|float) }} infected, available <a
+      href=https://nbviewer.jupyter.org/github/davidoj/covid-exploration/blob/master/Impact%20of%20a%20small%20number%20of%20infections.ipynb>here</a>.
+    This number can be smaller than 1 if the infection is very
+    widespread because all of the people you save by cancelling might be infected later on.
+  </div>
+</div>
+
+{% if excess_hospital_load != 'Not applicable' %}
+<div class="row">
+  <div class="col-sm-12 col-lg-10 title-form">
+    Saving one person from being infected at your event means
+    <!-- {{ eventDate }}-->
+    <span class="medical-care">{{ '%0.1f'|format(excess_hospital_load|float) }}</span>
+    more people would be able to get adequate medical care at peak load.
+  </div>
+  <div class="col-lg-2">
+    <button id="showHospital" onclick="showCalculation('showHospital','hideHospital','calculationHospital')"
+      class="detail-button less-visible7">
+      See Calculation <i class="fas fa-caret-down"></i>
+    </button>
+    <button id="hideHospital" onclick="hideCalculation('showHospital','hideHospital','calculationHospital')"
+      class="detail-button less-visible7" style="display: none;">
+      Close Calculation <i class="fas fa-caret-up"></i>
+    </button>
+  </div>
+</div>
+<div id="calculationHospital" class="row less-visible8" style="display: none;">
+  <div class="col-12">
+    This result comes from an <a
+      href=https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIR_model>SIR model</a> simulating the
+    progression in your country with {{ '%0.0f'|format(medianCases|float) }} infected compared to
+    {{ '%0.0f'|format(medianCases+1|float) }} infected
+  </div>
+</div>
+{% else %}
+<div class="row">
+  <div class="col-sm-12 col-lg-10 title-form">
+    We can't evaluate the effect of this particular event on hospital stress.
+  </div>
+</div>
+{% endif %}
+
+{% endif %}
+<!-- TODO: insert graph -->
+
+<!-- graph -->
+
+<label>Did this change your mind at all?</label>
+<!--form-->
+<form action="/decision">
+  <div class="form-group">
+    <div class="btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="radio" name="more" id="more" autocomplete="off" />
+        Yes, more likely to host
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" name="less" id="less" autocomplete="off" />Yes,
+        less likely to host
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" name="equal" id="equal" autocomplete="off" />No
+      </label>
+    </div>
+  </div>
+</form>
+<p class="form-submition-message"></p>
+
+<div id="credits">
+  <h2>Credits</h2>
+  <p>
+    This site was created by the Future of Humanity Institute. It does not
+    represent offical advice from the University of Oxford.
+  </p>
+  <!-- TODO: add various other credits, legal aspecs, and details about the project -->
+</div>
 </div>
 {% endblock %} {% block additional_js %}
 <script>
