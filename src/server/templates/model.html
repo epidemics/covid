@@ -51,20 +51,17 @@ active_page = 'models' -%} {% block additional_js_pre %}
   }
 
   /* apply column-specific scrolling only if columns are side-by-side */
-  @media only screen and (min-width: 992px) {
+  @media only screen and (min-width: 576px) {
     html {
       overflow: hidden;
     }
-    .main {
+    .container-wrapper {
       height: 100vh;
     }
-    .main > .row {
-      height: inherit;
-    }
-    .main > .row > div {
+    .container-left, .container-right {
       height: inherit;
       overflow: scroll;
-      padding-bottom: 12em;
+      padding-bottom: 10em;
     }
   }
 </style>
