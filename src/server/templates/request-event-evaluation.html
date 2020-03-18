@@ -19,8 +19,8 @@
         <div class="col-lg-5 col-sm-12">
           <label for="place">Where is your event?</label>
 
-          <select name="place" class="form-control" id="exampleFormControlSelect123">
-            <option selected>Choose...</option>
+          <select name="place" class="form-control" id="exampleFormControlSelect123" required>
+            <option value="" selected>Choose...</option>
             {% for place in places %}
             <option value="{{ place.name }}">{{ place.name }}</option>
             {% endfor %}
@@ -44,8 +44,8 @@
       <div class="row">
         <div class="col-lg-5 col-sm-12">
           <label for="peopleCount">How many people will attend?</label>
-          <select name="peopleCount" class="form-control" id="peopleCount">
-            <option selected>Choose...</option>
+          <select name="peopleCount" class="form-control" id="peopleCount" required>
+            <option value="" selected>Choose...</option>
             <option value="1-10">1-10</option>
             <option value="10-100">10-100</option>
             <option value="100-1000">100-1000</option>
@@ -59,7 +59,7 @@
         <div class="row">
           <div class="col-md-auto col-sm-12">
             <label class="btn btn-secondary active">
-              <input type="radio" name="length" id="hours" autocomplete="off" value="hours" />
+              <input type="radio" name="length" id="hours" autocomplete="off" value="hours" checked/>
               A few hours
             </label>
           </div>
@@ -105,6 +105,7 @@
                 id="inbetween"
                 autocomplete="off"
                 value="inbetween"
+                checked
               />
               In-between
             </label>
@@ -129,13 +130,14 @@
 
     <div class="row">
       <div class="col-lg-5 col-sm-12">
-        <label for="controlStrength">What reduction in transmission do you expect your country to achieve?</label>
+        <label for="controlStrength">What strength of control do you expect your country to implement?</label>
 
-        <select name="controlStrength" class="form-control" id="controlStrength">
-          <option selected>Choose...</option>
-          <option value="0.7">30% reduced transmission</option>
-          <option value="0.5">50% reduced transmission</option>
-          <option value="0.3">70% reduced transmission</option>
+        <select name="controlStrength" class="form-control" id="controlStrength" required>
+          <option value="" selected>Choose...</option>
+          <option value="none">None</option>
+          <option value="weak">Weak</option>
+          <option value="moderate">Moderate</option>
+          <option value="strong">Strong</option>
         </select>
       </div>
     </div>

@@ -76,6 +76,14 @@ df["date"] = pd.to_datetime(
 del df["Date Start"]
 CONTAINMENT_MEAS = df
 
+LINES = pd.read_csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2')
+
+STARTDATE = pd.to_datetime('03/14/2020',format='%m/%d/%Y')
+
+# TODO: Does it break anything to replace PLACES above?
+
+PLACES_GV = LINES['Country'].unique()
+
 
 class Place:
     def __init__(self, name):
@@ -114,7 +122,7 @@ async def model(request: Request, country: str = "USA") -> Response:
 @app.get("/request-event-evaluation")
 async def request_event_evaluation(request: Request) -> Response:
 
-    places = [Place(place) for place in PLACES]
+    places = [Place(place) for place in PLACES_GV]
 
     return templates.TemplateResponse(
         "request-event-evaluation.html",
@@ -129,22 +137,32 @@ async def result_event_evaluation(
     datepicker: str,
     length: str,
     contactSize: str,
-    controlStrength: float,
-    peopleCount: str,  # formerly `number`
+    controlStrength: str,
+    peopleCount: str,
 ) -> Response:
-    # TODO - implement the calculations based on parameters from the request-event-evaluation
-    # TODO: Use real data model here, also use the real values from the forms, parameters are ignored
-    # TODO: add control strength parameter
-    print(place, peopleCount, datepicker, length, contactSize, controlStrength)
 
+    strength = {'none':0,
+                'weak':0.3,
+                'moderate':0.4,
+                'strong':0.5}[controlStrength]
+    num = {"1-10":5,
+           "10-100":50,
+           "100-1000":500,
+           "1000+":5000}[peopleCount]
+    
+    # Wild stab at transmission probabilities
+    transmission = {"hours": 0.02, "day": 0.05, "days": 0.08}[length]
+    effective_contacts = {"little": 3 / 2, "inbetween": 5 / 3, "lot": 2}[contactSize]
     class Place:
         def __init__(self, name):
             self.name = name
-            self.population = 4000000
-            self.gleamviz_predictions = pd.Series(  # From gleamviz
-                np.logspace(2, 6, num=31),
-                index=pd.date_range(start=date.today(), periods=31),
-            )
+            self.population = 33e7
+            cols = [i for i in LINES.columns if i.startswith('Cumulative')]
+            self.gleamviz_predictions = (self.population*
+                LINES[(LINES['Country']==name) & (LINES['Mitigation']==strength)]
+                .set_index('Timestep')[cols]
+                .mean(axis=1)/1000)
+
 
     class Data:
         def __getitem__(self, name):
@@ -152,82 +170,103 @@ async def result_event_evaluation(
 
     data = Data()
 
-    num = {"1-10": 5, "10-100": 50, "100-1000": 500, "1000+": 5000}[peopleCount]
+    # TODO: would be better to load these from a csv
 
-    # Wild stab at transmission probabilities
-    transmission = {"hours": 0.02, "day": 0.05, "days": 0.08}
-    effective_contacts = {"little": 3 / 2, "inbetween": 5 / 3, "lot": 2}
+    stress_fun = {(1e-6,0.3):1.5,
+                  (1e-6,0.4):2.4,
+                  (1e-6,0):0.8,
+                  (1e-5,0.4):2.4,
+                  (1e-5,0.3):1.5,
+                  (1e-5,0):.9,
+                  (1e-4,0.4):2.3,
+                  (1e-4,0.3):1.5,
+                  (1e-4,0):0.8,
+                  (1e-3,0.4):3.9,
+                  (1e-3,0.3):2.2,
+                  (1e-3,0):0.9,
+                  (1e-2,0.4):3.8,
+                  (1e-2,0.3):2.2,
+                  (1e-2,0):0.8,
+                  (1e-1,0.4):1,
+                  (1e-1,0.3):0.7,
+                  (1e-1,0):0.2}
 
-    stress_fun = {1e-6: 1.5, 1e-5: 1.5, 1e-4: 1.5, 1e-3: 2, 1e-2: 17}
+    ai_fun = {(1e-6,0):0.2,
+              (1e-6,0.3):0.4,
+              (1e-6,0.4):0.7,
+              (1e-6,0.5):34.5,
+              (1e-5,0):0.2,
+              (1e-5,0.3):0.4,
+              (1e-5,0.4):0.7,
+              (1e-5,0.5):9.5,
+              (1e-4,0):0.2,
+              (1e-4,0.3):0.4,
+              (1e-4,0.4):0.7,
+              (1e-4,0.5):2.6,
+              (1e-3,0):0.2,
+              (1e-3,0.3):0.6,
+              (1e-3,0.4):1.1,
+              (1e-3,0.5):3.2,
+              (1e-2,0):0.6,
+              (1e-2,0.3):0.6,
+              (1e-2,0.4):1.1,
+              (1e-2,0.5):2.5,
+              (1e-1,0):0.2,
+              (1e-1,0.3):0.5,
+              (1e-1,0.4):0.9,
+              (1e-1,0.5):1.3}
 
-    ai_fun = {
-        (1e-6, 0.7): 0.4,
-        (1e-6, 0.5): 34.5,
-        (1e-6, 0.3): 1.2,
-        (1e-5, 0.7): 0.4,
-        (1e-5, 0.5): 9.5,
-        (1e-5, 0.3): 1.2,
-        (1e-4, 0.7): 0.4,
-        (1e-4, 0.5): 2.6,
-        (1e-4, 0.3): 1.2,
-        (1e-3, 0.7): 0.6,
-        (1e-3, 0.5): 3.2,
-        (1e-3, 0.3): 3.9,
-        (1e-2, 0.7): 0.6,
-        (1e-2, 0.5): 2.5,
-        (1e-2, 0.3): 3.4,
-    }
+    event_index = (pd.to_datetime(datepicker,format='%m/%d/%Y') - STARTDATE).days
 
-    # The following is not a mock, but until data are fixed, it is irrelevant
+    dispControlStrength = controlStrength.replace("none","no")
+
     place_data = data[place]
 
     try:
-        median = place_data.gleamviz_predictions.loc[datepicker]
-        fraction = median / place_data.population
+        medianCases= place_data.gleamviz_predictions.loc[event_index]
+        fraction = medianCases / place_data.population
         probability = (1 - (1 - fraction) ** num) * 100  # in %
         fraction_oom = 10 ** math.floor(math.log(fraction, 10))
-        expected_infections = (
-            transmission[length] * fraction * num ** effective_contacts[contactSize]
-        )
-        sorder_infections = expected_infections * 2.5
+        # Not currently displayed
+        # expected_infections = (
+        #     transmission[length] * fraction * num ** effective_contacts[contactSize]
+        # )
     except KeyError:
         probability = "unknown"
         fraction_oom = 0
-        expected_infections = "unknown"
-        sorder_infections = "unknown"
+        # expected_infections = -99999
 
         # if this branch occurs, expected_infections cannot be casted
         # to floats in templates, us `unknown` can't be cased to float
 
-    if place_data.gleamviz_predictions.max() * 0.15 < place_data.population * 0.002:
+    if strength >= 0.5:
         excess_hospital_load = "Not applicable"
     else:
         try:
-            excess_hospital_load = stress_fun[fraction_oom]
+            excess_hospital_load = stress_fun[(fraction_oom,strength)]
         except KeyError:
-            excess_hospital_load = "unknown"
+            excess_hospital_load = -99999
 
     try:
-        excess_infections = ai_fun[(fraction_oom, controlStrength)]
+        excess_infections = ai_fun[(fraction_oom, strength)]
     except KeyError:
         excess_infections = "unknown"
-        # if this branch occurs, you can't really compute `hund_events_infections`
-        # because excess_infections is `unknown` and that can't be multiplied
-        # by 100
+
     return templates.TemplateResponse(
         "result-event-evaluation.html",
         {
             "request": request,
+            "controlStrength":dispControlStrength,
             "datepicker": datepicker,
-            "number": peopleCount,
+            "peopleCount": num,
             "place": place,
             "probability": probability,
             "expected_infections": -99999,  # expected_infections,
             "excess_infections": excess_infections,
             "excess_hospital_load": excess_hospital_load,
-            "sorder_infections": sorder_infections,
-            "hund_events_infections": -99999,  # 100 * excess_infections * expected_infections,
-            "hund_events_load": 100 * excess_hospital_load,
+            "medianCases": medianCases,
+            "prevalence":fraction*100,
+            "eventDate":datepicker
         },
     )
 
