@@ -474,7 +474,7 @@ function update_containment_measures(selectedOption) {
       } else {
         var emptyDatasetMsg = document.createElement("P");
         emptyDatasetMsg.innerHTML =
-          "There is no containment measure in our database at the moment";
+          "There are no containment measures for this country in our database at the moment";
         containmentMeasuresDiv.appendChild(emptyDatasetMsg);
       }
     }
