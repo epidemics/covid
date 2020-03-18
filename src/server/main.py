@@ -77,35 +77,39 @@ df["date"] = pd.to_datetime(
 del df["Date Start"]
 CONTAINMENT_MEAS = df
 
-LINES = pd.read_csv('https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2')
+LINES = pd.read_csv(
+    "https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2"
+)
 
-STARTDATE = pd.to_datetime('03/14/2020',format='%m/%d/%Y')
+STARTDATE = pd.to_datetime("03/14/2020", format="%m/%d/%Y")
 
 # TODO: Does it break anything to replace PLACES above?
 
-PLACES_GV = {'Egypt':9.7e7,
-             'China':1.4e9,
-             'Hong Kong':7.4e6,
-             'India':1.3e9,
-             'Russia':1.44e8,
-             'South Korea':5.1e7,
-             'Singapore':5.6e6,
-             'Japan':1.28e8,
-             'Indonesia':2.64e8,
-             'Dubai':3.3e6,
-             'Iran':8.1e7,
-             'US':3.3e8,
-             'Australia':2.5e7,
-             'France':6.7e7,
-             'Italy':6e7,
-             'Germany':8.3e7,
-             'Spain':4.7e7,
-             'Netherlands':1.7e7,
-             'Switzerland':8.5e6,
-             'United Kingdom':6.6e7,
-             'Czech Republic':1.1e7}
+PLACES_GV = {
+    "Egypt": 9.7e7,
+    "China": 1.4e9,
+    "Hong Kong": 7.4e6,
+    "India": 1.3e9,
+    "Russia": 1.44e8,
+    "South Korea": 5.1e7,
+    "Singapore": 5.6e6,
+    "Japan": 1.28e8,
+    "Indonesia": 2.64e8,
+    "Dubai": 3.3e6,
+    "Iran": 8.1e7,
+    "US": 3.3e8,
+    "Australia": 2.5e7,
+    "France": 6.7e7,
+    "Italy": 6e7,
+    "Germany": 8.3e7,
+    "Spain": 4.7e7,
+    "Netherlands": 1.7e7,
+    "Switzerland": 8.5e6,
+    "United Kingdom": 6.6e7,
+    "Czech Republic": 1.1e7,
+}
 
-LINES['Country'].unique()
+LINES["Country"].unique()
 
 
 class Place:
@@ -113,11 +117,9 @@ class Place:
         self.name = name
 
 
-@app.get("/")
-async def index(request: Request) -> Response:
-    """TODO: this is the main hompage, should have a bubble map which should
-    link ot the /model"""
-    return templates.TemplateResponse("index.html", {"request": request},)
+@app.get("/case-map")
+async def case_map(request: Request) -> Response:
+    return templates.TemplateResponse("case-map.html", {"request": request},)
 
 
 @app.get("/request-calculation")
@@ -133,7 +135,7 @@ async def request_calculation(request: Request) -> Response:
     )
 
 
-@app.get("/model")
+@app.get("/")
 async def model(request: Request, country: str = "USA") -> Response:
     """serve the main model visualization"""
     arguments = {"country": country} if country else {}
@@ -164,29 +166,26 @@ async def result_event_evaluation(
     peopleCount: str,
 ) -> Response:
 
-    strength = {'none':0,
-                'weak':0.3,
-                'moderate':0.4,
-                'strong':0.5}[controlStrength]
-    num = {"1-10":5,
-           "10-100":50,
-           "100-1000":500,
-           "1000+":5000}[peopleCount]
-    
+    strength = {"none": 0, "weak": 0.3, "moderate": 0.4, "strong": 0.5}[controlStrength]
+    num = {"1-10": 5, "10-100": 50, "100-1000": 500, "1000+": 5000}[peopleCount]
+
     # Wild stab at transmission probabilities
     transmission = {"hours": 0.02, "day": 0.05, "days": 0.08}[length]
     effectiveContacts = {"little": 3 / 2, "inbetween": 5 / 3, "lot": 2}[contactSize]
+
     class Place:
         def __init__(self, name):
             self.name = name
             self.population = PLACES_GV[name]
-            cols = [i for i in LINES.columns if i.startswith('Cumulative')]
-            timesteps = (LINES[(LINES['Country']==name) & (LINES['Mitigation']==strength)]
-                .set_index('Timestep')[cols])/1000
+            cols = [i for i in LINES.columns if i.startswith("Cumulative")]
+            timesteps = (
+                LINES[
+                    (LINES["Country"] == name) & (LINES["Mitigation"] == strength)
+                ].set_index("Timestep")[cols]
+            ) / 1000
             self.gleamviz_predictions = timesteps.mean(axis=1)
             self.gleamviz_upper = timesteps.max(axis=1)
             self.gleamviz_lower = timesteps.min(axis=1)
-
 
     class Data:
         def __getitem__(self, name):
@@ -194,9 +193,9 @@ async def result_event_evaluation(
 
     data = Data()
 
-    event_index = (pd.to_datetime(datepicker,format='%m/%d/%Y') - STARTDATE).days
+    event_index = (pd.to_datetime(datepicker, format="%m/%d/%Y") - STARTDATE).days
 
-    dispControlStrength = controlStrength.replace("none","no")
+    dispControlStrength = controlStrength.replace("none", "no")
 
     place_data = data[place]
 
@@ -204,9 +203,12 @@ async def result_event_evaluation(
         medianFraction = place_data.gleamviz_predictions.loc[event_index]
         minFraction = place_data.gleamviz_lower.loc[event_index]
         maxFraction = place_data.gleamviz_upper.loc[event_index]
-        minCases, maxCases, medianCases = tuple(int(place_data.population*i) for i in (minFraction,maxFraction,medianFraction))
+        minCases, maxCases, medianCases = tuple(
+            int(place_data.population * i)
+            for i in (minFraction, maxFraction, medianFraction)
+        )
         minProbability = (1 - (1 - minFraction) ** num) * 100  # in %
-        maxProbability = (1 - (1 - maxFraction) ** num) * 100 
+        maxProbability = (1 - (1 - maxFraction) ** num) * 100
         # Not currently displayed
         # minExpected = (
         #     transmission * minFraction * num ** effectiveContacts
@@ -223,26 +225,36 @@ async def result_event_evaluation(
         maxCases = -99999
         minExpected = -99999
         maxExpected = -99999
-
+        minFraction = 0.5  # TODO: MOCKED! It was undefined in some cases
+        maxFraction = 0.5  # TODO: MOCKED! It was undefined in some cases
 
     if strength >= 0.5:
         minStress = "Not applicable"
         maxStress = "Not applicable"
     else:
-      stresses = [stress(fraction*a,strength+b) for a in [10,1,0.1] for b in [0,0.1,-0.1] for fraction in [minFraction,maxFraction]]
-      minStress = min(stresses)
-      maxStress = max(stresses)
+        stresses = [
+            stress(fraction * a, strength + b)
+            for a in [10, 1, 0.1]
+            for b in [0, 0.1, -0.1]
+            for fraction in [minFraction, maxFraction]
+        ]
+        minStress = min(stresses)
+        maxStress = max(stresses)
 
-    excesses = [excess(fraction*a,strength+b) for a in [10,1,0.1] for b in [0,0.1,-0.1] for fraction in [minFraction,maxFraction]]
+    excesses = [
+        excess(fraction * a, strength + b)
+        for a in [10, 1, 0.1]
+        for b in [0, 0.1, -0.1]
+        for fraction in [minFraction, maxFraction]
+    ]
     minExcess = min(excesses)
     maxExcess = max(excesses)
-
 
     return templates.TemplateResponse(
         "result-event-evaluation.html",
         {
             "request": request,
-            "controlStrength":dispControlStrength,
+            "controlStrength": dispControlStrength,
             "datepicker": datepicker,
             "peopleCount": num,
             "place": place,
@@ -255,11 +267,11 @@ async def result_event_evaluation(
             "minStress": minStress,
             "maxStress": maxStress,
             "medianCases": medianCases,
-            "minCases":minCases,
-            "maxCases":maxCases,
-            "minPrevalence":minFraction*100,
-            "eventDate":datepicker,
-            "startDate":STARTDATE
+            "minCases": minCases,
+            "maxCases": maxCases,
+            "minPrevalence": minFraction * 100,
+            "eventDate": datepicker,
+            "startDate": STARTDATE,
         },
     )
 
