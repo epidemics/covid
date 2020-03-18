@@ -133,6 +133,34 @@ header h1:before {
   padding-bottom: 5em;
 }
 
+.container-wrapper {
+  display: flex;
+}
+
+.container-left {
+  height: -o-calc(100vh - 120px); /* opera */
+  height: -webkit-calc(100vh - 120px); /* google, safari */
+  height: -moz-calc(100vh - 120px); /* firefox */
+  display: inline-block;
+  vertical-align: top;
+  overflow: scroll;
+  padding: 20px;
+  flex: 6;
+}
+
+.container-right {
+  height: -o-calc(100vh - 120px); /* opera */
+  height: -webkit-calc(100vh - 120px); /* google, safari */
+  height: -moz-calc(100vh - 120px); /* firefox */
+  display: inline-block;
+  vertical-align: top;
+  overflow: scroll;
+  background: #000000;
+  padding: 20px;
+  float: right;
+  flex: 4;
+}
+
 /*@media (min-width: 48em) {
   .masthead-brand {
     float: left;
@@ -425,6 +453,17 @@ strong {
   }
   .nav-masthead .nav-link {
     padding-left: 0px;
+  }
+  .container-wrapper {
+    display: block;
+  }
+  .container-left {
+    flex: none;
+    width: 100%;
+  }
+  .container-right {
+    flex: none;
+    width: 100%;
   }
 }
 
