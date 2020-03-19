@@ -41,7 +41,6 @@ function getCountries(data) {
   return [...new Set(data.map(d => d.Country))];
 }
 
-
 function getSelectedCountry(data) {
   var url_string = window.location.href;
   var url = new URL(url_string);
