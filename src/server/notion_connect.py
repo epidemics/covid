@@ -16,13 +16,7 @@ def query_containment_measures():
         "=aa8e0c75520a479ea48f56cb4c289b7e"
     )
 
-    data = {
-            "country": [],
-            "description": [],
-            "keywords": [],
-            "source": [],
-            "date": []
-    }
+    data = {"country": [], "description": [], "keywords": [], "source": [], "date": []}
     # Run a filtered/sorted query using a view's default parameters
     result = cv.default_query().execute()
     for row in result:

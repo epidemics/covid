@@ -59,10 +59,6 @@ app.mount(
 
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 
-df = pd.read_csv(
-    os.path.join(SERVER_ROOT, "static", "data", "covid-containment-measures.csv")
-)
-
 
 CONTAINMENT_MEAS = query_containment_measures()
 
@@ -290,9 +286,9 @@ async def containment_measures(request: Request, country: str = "China") -> Resp
             country = country.values[0][0]
 
     if country is not None:
-        sel = CONTAINMENT_MEAS.loc[
-            CONTAINMENT_MEAS.country == country,
-        ].sort_values(by="date", ascending=False)
+        sel = CONTAINMENT_MEAS.loc[CONTAINMENT_MEAS.country == country,].sort_values(
+            by="date", ascending=False
+        )
         sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
         measures = [val for _, val in sel.to_dict(orient="index").items()]
     else:

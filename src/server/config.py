@@ -33,5 +33,6 @@ class Config(BaseConfig):
     APP_REVISION: str = "000000"
 
     NOTION_TOKEN: str = "xxx"
-    
+
+
 CONFIG = Config()
