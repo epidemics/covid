@@ -125,6 +125,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
 .then(function(data) {
 
   // console.log('json data', data)
+  var listOfCountries = getListOfRegions(data.regions);
   var selected = {
     country: getSelectedCountry(listOfCountries),
     mitigation: "None"
