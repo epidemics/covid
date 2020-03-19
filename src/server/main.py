@@ -82,6 +82,7 @@ LINES = pd.read_csv(
 )
 
 STARTDATE = pd.to_datetime("03/14/2020", format="%m/%d/%Y")
+ENDDATE = pd.Timedelta(360) + STARTDATE
 
 PLACES_GV = {
     "Egypt": 9.7e7,
@@ -106,8 +107,6 @@ PLACES_GV = {
     "United Kingdom": 6.6e7,
     "Czech Republic": 1.1e7,
 }
-
-LINES["Country"].unique()
 
 
 class Place:
@@ -167,6 +166,8 @@ async def result_event_evaluation(
     strength = {"none": 0, "weak": 0.3, "moderate": 0.4, "strong": 0.5}[controlStrength]
     num = {"1-10": 5, "10-100": 50, "100-1000": 500, "1000+": 5000}[peopleCount]
 
+    dispControlStrength = controlStrength.replace("none", "no")
+
     # Wild stab at transmission probabilities
     transmission = {"hours": 0.02, "day": 0.05, "days": 0.08}[length]
     effectiveContacts = {"little": 3 / 2, "inbetween": 5 / 3, "lot": 2}[contactSize]
@@ -191,39 +192,30 @@ async def result_event_evaluation(
 
     data = Data()
 
-    event_index = (pd.to_datetime(datepicker, format="%m/%d/%Y") - STARTDATE).days
-
-    dispControlStrength = controlStrength.replace("none", "no")
-
     place_data = data[place]
 
-    try:
-        medianFraction = place_data.gleamviz_predictions.loc[event_index]
-        minFraction = place_data.gleamviz_lower.loc[event_index]
-        maxFraction = place_data.gleamviz_upper.loc[event_index]
-        minCases, maxCases, medianCases = tuple(
-            int(place_data.population * i)
-            for i in (minFraction, maxFraction, medianFraction)
-        )
-        minProbability = (1 - (1 - minFraction) ** num) * 100  # in %
-        maxProbability = (1 - (1 - maxFraction) ** num) * 100
-        # Not currently displayed
-        # minExpected = (
-        #     transmission * minFraction * num ** effectiveContacts
-        # )
-        # maxExpected = (
-        #   transmission * maxFraction * num ** effectiveContacts
-        # )
-    except KeyError:
-        minProbability = -99999
-        maxProbability = -99999
-        medianCases = -99999
-        minCases = -99999
-        maxCases = -99999
-        # minExpected = -99999
-        # maxExpected = -99999
-        minFraction = 0.5  # TODO: MOCKED! It was undefined in some cases
-        maxFraction = 0.5  # TODO: MOCKED! It was undefined in some cases
+    event_index = (pd.to_datetime(datepicker, format="%m/%d/%Y") - STARTDATE).days
+    if event_index in place_data.gleamviz_predictions.index:
+        validDate=True
+    else:
+        validDate=False
+
+    medianFraction = place_data.gleamviz_predictions.loc[event_index]
+    minFraction = place_data.gleamviz_lower.loc[event_index]
+    maxFraction = place_data.gleamviz_upper.loc[event_index]
+    minCases, maxCases, medianCases = tuple(
+        int(place_data.population * i)
+        for i in (minFraction, maxFraction, medianFraction)
+    )
+    minProbability = (1 - (1 - minFraction) ** num) * 100  # in %
+    maxProbability = (1 - (1 - maxFraction) ** num) * 100
+    # Not currently displayed
+    # minExpected = (
+    #     transmission * minFraction * num ** effectiveContacts
+    # )
+    # maxExpected = (
+    #   transmission * maxFraction * num ** effectiveContacts
+    # )
 
     if strength >= 0.5:
         minStress = "Not applicable"
@@ -252,6 +244,7 @@ async def result_event_evaluation(
         "result-event-evaluation.html",
         {
             "request": request,
+            "validDate":validDate,
             "controlStrength": dispControlStrength,
             "datepicker": datepicker,
             "peopleCount": num,
@@ -270,6 +263,7 @@ async def result_event_evaluation(
             "minPrevalence": minFraction * 100,
             "eventDate": datepicker,
             "startDate": STARTDATE,
+            "endDate": ENDDATE
         },
     )
 
