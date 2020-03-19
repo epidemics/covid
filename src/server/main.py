@@ -10,6 +10,7 @@ from fastapi.templating import Jinja2Templates
 
 from server.event_model import stress, excess
 from server.notion_connect import query_containment_measures
+from server.config import CONFIG
 
 PLACES = [
     "Africa",
@@ -295,3 +296,8 @@ async def containment_measures(request: Request, country: str = "China") -> Resp
         measures = None
 
     return measures
+
+
+@app.get("/status")
+async def status():
+    return {"app_version": CONFIG.APP_VERSION}

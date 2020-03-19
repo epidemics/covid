@@ -13,3 +13,8 @@ def test_index():
 def test_request_event_evaluation():
     response = client.get("/request-event-evaluation")
     assert response.status_code == 200
+
+def test_status():
+    response = client.get("/status")
+    assert response.status_code == 200
+    assert list(response.json().keys()) == ["app_version"]
