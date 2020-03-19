@@ -140,10 +140,17 @@ function updateInfectionTotals() {
 
   const { population, data } = estimatesData.regions[selected.country];
   const infections = data.estimates.days[d3.timeFormat('%Y-%m-%d')(new Date())];
-  console.log(infections);
-  d3.select('#infections-confirmed').text(infections['JH_Confirmed']);
-  d3.select('#infections-estimated').text(infections['FT_Infected']);
-  d3.select('#infections-population').text(population);
+  d3.select('#infections-confirmed').text(insertCommas(infections['JH_Confirmed']));
+  d3.select('#infections-estimated').text(insertCommas(infections['FT_Infected']));
+  d3.select('#infections-population').text(insertCommas(population));
+}
+
+function insertCommas(number) {
+  if (number < 10000 && number > -10000) {
+    return String(number);
+  } else {
+    return number.toLocaleString();
+  }
 }
 
 // Lines Chart
