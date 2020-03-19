@@ -64,7 +64,7 @@ d3.select("#my_dataviz")
     </span>
     <br>
     <br>
-    <span class="color41">
+    <span class="color4">
       Weak seasonality
       <br/>
       Strong reduction in air travel
@@ -144,7 +144,7 @@ d3.json(
   };
   var infectedPer1000 = data.regions[selected.country].data.infected_per_1000;
   var activeData = infectedPer1000.mitigations[selected.mitigation];
-  // console.log('activeData data', activeData)
+  console.log('activeData data', activeData)
   // console.log('infectedPer1000 data', getMaxYValueForCountry(infectedPer1000.mitigations, selected.country))
 
   // add the options to the button
@@ -246,6 +246,7 @@ d3.json(
   }
 
   var lines = {};
+  /* Previous color scheme, saving in comment for reference
   var colors = [
     "#753def",
     "#ef3d3d",
@@ -254,6 +255,16 @@ d3.json(
     "#5cdfd3",
     "#cf5cdf"
   ];
+*/
+  var colors = [
+    "#edcdab",
+    "#edb77e",
+    "#ed810e",
+    "#9ac9d9",
+    "#5abbdb",
+    "#007ca6"
+  ];
+
   getListOfScenarios(activeData).forEach((s, i) => {
     lines[s] = drawLine(activeData[s], colors[i]);
   });
