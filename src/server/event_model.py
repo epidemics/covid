@@ -6,14 +6,15 @@ from ast import literal_eval
 import pandas as pd
 
 
-PARAM_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                          '..', '..', 'models')
+PARAM_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "..", "models"
+)
 # Load stress and ei parameter values
-STRESS_DF = pd.read_csv(os.path.join(PARAM_PATH, 'stress.csv'), header=None)
+STRESS_DF = pd.read_csv(os.path.join(PARAM_PATH, "stress.csv"), header=None)
 STRESS_DF[0] = [literal_eval(x) for x in STRESS_DF[0]]
 stress_dict = STRESS_DF.set_index(0).to_dict()[1]
 
-EI_DF = pd.read_csv(os.path.join(PARAM_PATH, 'ei.csv'), header=None)
+EI_DF = pd.read_csv(os.path.join(PARAM_PATH, "ei.csv"), header=None)
 EI_DF[0] = [literal_eval(x) for x in EI_DF[0]]
 ei_dict = EI_DF.set_index(0).to_dict()[1]
 
