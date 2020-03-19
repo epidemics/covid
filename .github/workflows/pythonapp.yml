@@ -27,7 +27,7 @@ jobs:
       env:
         JSON_KEY: ${{ secrets.SuperSecret }}
       run: |
-        cat ${JSON_KEY} > key.json
+        echo ${JSON_KEY} > key.json
         gcloud auth activate-service-account --key-file key.json
         wget -q -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
         ls -la
