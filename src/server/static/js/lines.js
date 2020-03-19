@@ -135,7 +135,7 @@ function getListOfScenarios(activeData) {
 
 d3.json(
   "https://storage.googleapis.com/static-covid/static/data-staging-gleam.json"
-).then(function(data) {
+).then(function (data) {
   // console.log('json data', data)
   var listOfCountries = Object.keys(data.regions);
   var selected = {
@@ -153,15 +153,15 @@ d3.json(
     .data(listOfCountries)
     .enter()
     .append("option")
-    .text(function(d) {
+    .text(function (d) {
       return d;
     }) // text showed in the menu
-    .attr("value", function(d) {
+    .attr("value", function (d) {
       return d;
     })
     .sort(); // corresponding value returned by the button
 
-  var xDomain = d3.extent([...Array(360).keys()], function(d, i) {
+  var xDomain = d3.extent([...Array(360).keys()], function (d, i) {
     return d3.timeDay.offset(new Date(), i);
   });
   // Add X axis --> it is a date format
@@ -233,10 +233,10 @@ d3.json(
         "d",
         d3
           .line()
-          .x(function(d, i) {
+          .x(function (d, i) {
             return x(d3.timeDay.offset(new Date(), i));
           })
-          .y(function(d) {
+          .y(function (d) {
             return y(+d);
           })
       )
@@ -284,14 +284,14 @@ d3.json(
     .attr("class", "overlay")
     .attr("width", width)
     .attr("height", height)
-    .on("mouseover", function() {
+    .on("mouseover", function () {
       crosshair.style("display", null);
     })
-    .on("mouseout", function() {
+    .on("mouseout", function () {
       tooltip.style("opacity", 0);
       crosshair.style("display", "none");
     })
-    .on("mousemove", function() {
+    .on("mousemove", function () {
       var mouse = d3.mouse(this);
       var mouseDate = x.invert(mouse[0]);
       var mouseVal = y.invert(mouse[1]);
@@ -318,7 +318,7 @@ d3.json(
       });
       tooltip
         .style("opacity", 1)
-        .html(hoveredValues.map((h, i) => scenarios[i] + ": " + h).join("<br>")) //TODO: `<span class="color${i}">h</span>`
+        .html(hoveredValues.map((h, i) => h).join("<br>")) //TODO: `<span class="color${i}">h</span>` // scenarios[i] + ": " +
         .style("left", d3.event.pageX + "px")
         .style("top", d3.event.pageY - 28 + "px");
     });
@@ -346,10 +346,10 @@ d3.json(
           "d",
           d3
             .line()
-            .x(function(d, i) {
+            .x(function (d, i) {
               return x(d3.timeDay.offset(new Date(), i));
             })
-            .y(function(d) {
+            .y(function (d) {
               return y(+d);
             })
         );
@@ -366,7 +366,7 @@ d3.json(
   }
 
   // When the button is changed, run the updateChart function
-  d3.select("#selectButton").on("change", function(d) {
+  d3.select("#selectButton").on("change", function (d) {
     // recover the option that has been chosen
     selected.country = d3.select(this).property("value");
     // change url param
@@ -381,22 +381,22 @@ d3.json(
     update_country_in_text(selected.country);
   });
 
-  d3.select(".beta-0").on("click", function() {
+  d3.select(".beta-0").on("click", function () {
     selected.mitigation = "None";
     activeData = infectedPer1000.mitigations[selected.mitigation];
     update();
   });
-  d3.select(".beta-03").on("click", function() {
+  d3.select(".beta-03").on("click", function () {
     selected.mitigation = "High";
     activeData = infectedPer1000.mitigations[selected.mitigation];
     update();
   });
-  d3.select(".beta-04").on("click", function() {
+  d3.select(".beta-04").on("click", function () {
     selected.mitigation = "Medium";
     activeData = infectedPer1000.mitigations[selected.mitigation];
     update();
   });
-  d3.select(".beta-05").on("click", function() {
+  d3.select(".beta-05").on("click", function () {
     selected.mitigation = "Low";
     activeData = infectedPer1000.mitigations[selected.mitigation];
     update();
@@ -436,7 +436,7 @@ function update_containment_measures(selectedOption) {
     url: "/get_containment_measures",
     data: { country: selectedOption },
     dataType: "json",
-    success: function(data) {
+    success: function (data) {
       // find the div dedicated to the side bar on the model.html template
       var containmentMeasuresDiv = document.getElementById(
         "containment_measures"
@@ -455,7 +455,7 @@ function update_containment_measures(selectedOption) {
       containmentMeasuresDiv.append(containmentMeasuresSource);
 
       if (data != undefined) {
-        data.forEach(function(item, index) {
+        data.forEach(function (item, index) {
           containmentMeasuresDiv.appendChild(
             containment_entry(
               (date = item["date"]),
