@@ -31,13 +31,8 @@
       <div class="row">
         <div class="col-lg-5 col-sm-12">
           <label for="datepicker">When is your event?</label>
-          <input
-            class="form-control"
-            id="datepicker"
-            name="datepicker"
-            data-provide="datepicker"
-            data-date-format="mm/dd/yyyy"
-          />
+          <input class="form-control" id="datepicker" name="datepicker" data-provide="datepicker"
+            data-date-format="mm/dd/yyyy" />
         </div>
       </div>
 
@@ -59,7 +54,7 @@
         <div class="row">
           <div class="col-md-auto col-sm-12">
             <label class="btn btn-secondary active">
-              <input type="radio" name="length" id="hours" autocomplete="off" value="hours" checked/>
+              <input type="radio" name="length" id="hours" autocomplete="off" value="hours" checked />
               A few hours
             </label>
           </div>
@@ -71,7 +66,7 @@
           </div>
           <div class="col-md-auto col-sm-12">
             <label class="btn btn-secondary">
-              <input type="radio" name="length" id="days" autocomplete="off" value="days"/> A
+              <input type="radio" name="length" id="days" autocomplete="off" value="days" /> A
               few days or more
             </label>
           </div>
@@ -82,13 +77,7 @@
         <div class="row">
           <div class="col-lg-2 col-md-3 col-sm-12">
             <label class="btn btn-secondary active" for="little">
-              <input
-                type="radio"
-                name="contactSize"
-                id="little"
-                autocomplete="off"
-                value="little"
-              />
+              <input type="radio" name="contactSize" id="little" autocomplete="off" value="little" />
               A little
             </label>
           </div>
@@ -99,14 +88,7 @@
         <div class="row">
           <div class="col-lg-2 col-md-3 col-sm-12">
             <label class="btn btn-secondary radio-button">
-              <input
-                type="radio"
-                name="contactSize"
-                id="inbetween"
-                autocomplete="off"
-                value="inbetween"
-                checked
-              />
+              <input type="radio" name="contactSize" id="inbetween" autocomplete="off" value="inbetween" checked />
               In-between
             </label>
           </div>
@@ -156,11 +138,8 @@
 </div>
 
 {% endblock %} {% block additional_js %}
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"
-  integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8="
-  crossorigin="anonymous"
-></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"
+  integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8=" crossorigin="anonymous"></script>
 <script>
   $("#datepicker").datepicker();
 </script>
