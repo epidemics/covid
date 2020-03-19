@@ -26,7 +26,7 @@ jobs:
     - name: Decrypt secrets
       run: |
         gcloud auth list
-        gcloud auth 
+        gcloud info
         wget -q -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
         ls -la
         chmod +x sops
