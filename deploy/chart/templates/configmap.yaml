@@ -4,5 +4,4 @@ metadata:
   name: {{ .Chart.Name }}
 data:
   APP_VERSION: {{ .Chart.AppVersion | quote }}
-  LOG_LEVEL: {{ .Values.env.logLevel }}
-  ENABLE_NOTION: {{ .Values.env.enableNotion }}
+  ENABLE_NOTION: {{ .Values.env.enableNotion | quote }}
