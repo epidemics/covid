@@ -1,8 +1,9 @@
 # Long term effects of infections model
 
-import math
+import numpy as np
 
-# TODO: would be better to load these from a csv
+# The first argument is the order of magnitude of the infection prevalence, 
+# the second is the strength of control measures: Reff=R0*(1-controlStrength)
 
 stress_dict = {
     (1e-6, 0.4): 2.4,
@@ -23,6 +24,12 @@ stress_dict = {
     (1e-1, 0.4): 1,
     (1e-1, 0.3): 0.7,
     (1e-1, 0): 0.2,
+    (1e-6,0.5): 0,
+    (1e-5,0.5): 0,
+    (1e-4,0.5): 0,
+    (1e-3,0.5): 0,
+    (1e-2,0.5): 0,
+    (1e-1,0.5): 0
 }
 
 
@@ -53,26 +60,28 @@ ei_dict = {
     (1e-1, 0.5): 1.3,
 }
 
+def handle_inputs(frac,ms):
+    frac_oom = 10 ** np.floor(np.log10(frac))
+    ms_clipped = min(0.5, ms)
+    if ms_clipped==0.1:
+        ms_clipped = 0.3
+    elif (0< ms_clipped) and (0.3>ms_clipped):
+        ms_clipped = 0
+    else:
+        ms_clipped = max(0, ms_clipped)
+    frac_oom = min(1e-1, frac_oom)
+    frac_oom = max(1e-6, frac_oom)
+    ms_clipped = np.round(ms_clipped,1)
+    return frac_oom, ms_clipped
+
 
 def stress(frac, ms):
-    frac_oom = 10 ** math.floor(math.log(frac, 10))
-    ms = max(0.5, ms)
-    ms = min(0, ms)
-    frac = max(1e-1, frac_oom)
-    frac = min(1e-6, frac_oom)
-    try:
-        return stress_dict[frac_oom, ms]
-    except KeyError:
-        return -99999
+    frac_oom, ms_clipped = handle_inputs(frac,ms)
+    return stress_dict[frac_oom, ms_clipped]
+
 
 
 def excess(frac, ms):
-    frac_oom = 10 ** math.floor(math.log(frac, 10))
-    ms = max(0.5, ms)
-    ms = min(0, ms)
-    frac = max(1e-1, frac_oom)
-    frac = min(1e-6, frac_oom)
-    try:
-        return ei_dict[frac_oom, ms]
-    except KeyError:
-        return -99999
+    frac_oom, ms_clipped = handle_inputs(frac,ms)
+    return ei_dict[frac_oom, ms_clipped]
+

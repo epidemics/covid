@@ -83,8 +83,6 @@ LINES = pd.read_csv(
 
 STARTDATE = pd.to_datetime("03/14/2020", format="%m/%d/%Y")
 
-# TODO: Does it break anything to replace PLACES above?
-
 PLACES_GV = {
     "Egypt": 9.7e7,
     "China": 1.4e9,
@@ -220,11 +218,10 @@ async def result_event_evaluation(
         minProbability = -99999
         maxProbability = -99999
         medianCases = -99999
-        fraction = -99999
         minCases = -99999
         maxCases = -99999
-        minExpected = -99999
-        maxExpected = -99999
+        # minExpected = -99999
+        # maxExpected = -99999
         minFraction = 0.5  # TODO: MOCKED! It was undefined in some cases
         maxFraction = 0.5  # TODO: MOCKED! It was undefined in some cases
 
@@ -247,6 +244,7 @@ async def result_event_evaluation(
         for b in [0, 0.1, -0.1]
         for fraction in [minFraction, maxFraction]
     ]
+
     minExcess = min(excesses)
     maxExcess = max(excesses)
 

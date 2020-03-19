@@ -194,7 +194,7 @@ active_page = "events" %} {% block content %}
       Given how COVID-19 might be spreading in {{ place }} at this time, we
       think that preventing one attendee from being infected means
       <span class="longrun-infections"
-        >{{ '%0.1f'|format(maxExcess|float) }}</span
+        >{{ '%0.1f'|format(minExcess|float) }}</span
       >
       to
       <span class="longrun-infections"
