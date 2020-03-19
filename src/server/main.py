@@ -61,7 +61,11 @@ app.mount(
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 
 
-CONTAINMENT_MEAS = query_containment_measures()
+# TODO: for testing purposes, make a fixture/mock
+if CONFIG.ENABLE_NOTION:
+    CONTAINMENT_MEAS = query_containment_measures()
+else:
+    CONTAINMENT_MEAS = None
 
 LINES = pd.read_csv(
     "https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2"

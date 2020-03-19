@@ -30,7 +30,8 @@ class BaseConfig:
 
 @dataclass(init=False)
 class Config(BaseConfig):
-    APP_REVISION: str = "000000"
+    APP_VERSION: str = "000000"
+    ENABLE_NOTION: bool = False
 
     NOTION_TOKEN: str = "xxx"
 
