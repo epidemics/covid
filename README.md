@@ -78,5 +78,5 @@ Rather overcommunicate what you are working on.
 # Deployment
 We use Github Actions. The pipeline is specified in `.github/workflows/pythonapp.yml`
 
-* On a merge to `staging` branch, the code is deployed to the staging environment.
-* On a merge to `master` branch, the code is deployed to the production environment.
+* On a merge to `staging` branch, the code is deployed to the staging environment: http://staging.epidemicforecasting.org/
+* On a merge to `master` branch, the code is deployed to the production environment: http://epidemicforecasting.org/
