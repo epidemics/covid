@@ -1,3 +1,5 @@
+/* global d3:false Set:false */
+
 function setGetParam(key, value) {
   if (history.pushState) {
     var params = new URLSearchParams(window.location.search);
@@ -120,19 +122,40 @@ var url_string = window.location.href;
 var url = new URL(url_string);
 var channel = url.searchParams.get('channel')
 
+var selected = {
+  country: url.searchParams.get('selection'),
+  mitigation: "None"
+};
 
+// Reported & Estimated Infections
+var estimatesData;
+
+d3.json("static/data/mock-estimates.json").then(function(data) {
+    estimatesData = data;
+    updateInfectionTotals();
+});
+
+function updateInfectionTotals() {
+  if (typeof estimatesData === 'undefined') return;
+
+  const { population, data } = estimatesData.regions[selected.country];
+  const infections = data.estimates.days[d3.timeFormat('%Y-%m-%d')(new Date())];
+  console.log(infections);
+  d3.select('#infections-confirmed').text(infections['JH_Confirmed']);
+  d3.select('#infections-estimated').text(infections['FT_Infected']);
+  d3.select('#infections-population').text(population);
+}
+
+// Lines Chart
 d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? channel : 'main') +"-gleam.json")
 .then(function(data) {
 
   // console.log('json data', data)
   var listOfCountries = getListOfRegions(data.regions);
-  var selected = {
-    country: getSelectedCountry(listOfCountries),
-    mitigation: "None"
-  };
+  selected.country = getSelectedCountry(listOfCountries);
   var infectedPer1000 = data.regions[selected.country].data.infected_per_1000;
   var activeData = infectedPer1000.mitigations[selected.mitigation];
-  console.log('activeData data', activeData)
+  // console.log('activeData data', activeData)
   // console.log('infectedPer1000 data', getMaxYValueForCountry(infectedPer1000.mitigations, selected.country))
 
   // add the options to the button
@@ -327,12 +350,13 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
     });
 
   //initialization
-  update({ country: selected.country });
+  update();
   d3.select("#selectButton").property("value", selected.country);
   // update the containment measures with the new selected country
   var countryName = listOfCountries.find(c => c.key == selected.country).value
-  update_containment_measures(countryName);
+  // update_containment_measures(countryName);
   update_country_in_text(countryName);
+  updateInfectionTotals()
 
   // A function that update the chart
   function update() {
@@ -367,6 +391,8 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
     for (l in lines) {
       updateLine(lines[l], activeData[l]);
     }
+
+    updateInfectionTotals()
   }
 
   // When the button is changed, run the updateChart function
@@ -382,7 +408,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
     // run the updateChart function with this selected option
     update();
     // update the containment measures with the new selected country
-    update_containment_measures(countryName);
+    // update_containment_measures(countryName);
     // update the name of the country in the text below the graph
     update_country_in_text(countryName);
   });
@@ -438,7 +464,7 @@ function containment_entry(date = "", text = "", source_link = "") {
 }
 
 function update_containment_measures(selectedOption) {
-  console.log('selecteddOption', selectedOption)
+  // console.log('selecteddOption', selectedOption)
   jQuery.get({
     url: "/get_containment_measures",
     data: { country: selectedOption },
