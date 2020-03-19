@@ -223,18 +223,14 @@ header h1:before {
 }
 
 .container-right-footer {
-    position: fixed;
-    bottom: 0px;
-    width: 100%;
-    background-color: #000;
-    user-select: auto;
-    opacity: 100%;
-    font-size: 0.9em;
-    border-top: 1px solid #323232;
-    img {
-
-    }
-  }
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  background-color: #000;
+  user-select: auto;
+  opacity: 100%;
+  font-size: 0.9em;
+  border-top: 1px solid #323232;
 }
 
 hr {

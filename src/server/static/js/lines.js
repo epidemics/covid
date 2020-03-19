@@ -161,9 +161,13 @@ d3.json(
     })
     .sort(); // corresponding value returned by the button
 
-  var xDomain = d3.extent([...Array(360).keys()], function (d, i) {
-    return d3.timeDay.offset(new Date(), i);
-  });
+  var tomorrow = d3.timeDay.ceil(new Date());
+  var xDomain = [
+    tomorrow,
+    d3.timeDay.offset(
+      tomorrow, activeData[Object.keys(activeData)[0]].length - 1)
+  ];
+
   // Add X axis --> it is a date format
   var x = d3
     .scaleTime()
