@@ -25,6 +25,8 @@ jobs:
     # TODO: could be different for staging and production
     - name: Decrypt secrets
       run: |
+        #gcloud auth login
+        gcloud auth application-default login
         wget -q -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
         ls -la
         chmod +x sops
