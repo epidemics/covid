@@ -93,7 +93,7 @@ function getSelectedCountry(data) {
   var url_string = window.location.href;
   var url = new URL(url_string);
   var c = url.searchParams.get("selection");
-  return c && data.includes(c) ? c : "hong kong city";
+  return c && data.map(c => c.key).includes(c) ? c : "hong kong city";
 }
 
 function getMaxYValueForCountry(mitigations) {
@@ -110,6 +110,12 @@ function getListOfScenarios(activeData) {
   return Object.keys(activeData);
 }
 
+function getListOfRegions(regions) {
+  return Object.keys(regions).map(k => {
+    return { key: k, value: regions[k].name }
+  })
+}
+
 var url_string = window.location.href;
 var url = new URL(url_string);
 var channel = url.searchParams.get('channel')
@@ -117,9 +123,9 @@ var channel = url.searchParams.get('channel')
 
 d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? channel : 'main') +"-gleam.json")
 .then(function(data) {
+  window.regions = data.regions
 
   // console.log('json data', data)
-  var listOfCountries = Object.keys(data.regions);
   var selected = {
     country: getSelectedCountry(listOfCountries),
     mitigation: "None"
@@ -136,10 +142,10 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
     .enter()
     .append("option")
     .text(function (d) {
-      return d;
+      return d.value;
     }) // text showed in the menu
     .attr("value", function (d) {
-      return d;
+      return d.key;
     })
     .sort(); // corresponding value returned by the button
 
@@ -324,8 +330,9 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
   update({ country: selected.country });
   d3.select("#selectButton").property("value", selected.country);
   // update the containment measures with the new selected country
-  update_containment_measures(selected.country);
-  update_country_in_text(selected.country);
+  var countryName = listOfCountries.find(c => c.key == selected.country).value
+  update_containment_measures(countryName);
+  update_country_in_text(countryName);
 
   // A function that update the chart
   function update() {
@@ -429,6 +436,7 @@ function containment_entry(date = "", text = "", source_link = "") {
 }
 
 function update_containment_measures(selectedOption) {
+  console.log('selecteddOption', selectedOption)
   jQuery.get({
     url: "/get_containment_measures",
     data: { country: selectedOption },
