@@ -462,19 +462,19 @@ function update_containment_measures(selectedOption) {
       containmentMeasuresDiv.append(containmentMeasuresSource);
 
       if (data != undefined) {
-        data.forEach(function (item, index) {
-          containmentMeasuresDiv.appendChild(
-            containment_entry(
-              (date = item["date"]),
-              (text = item["Description of measure implemented"]),
-              (source_link = item["Source"])
-            )
-          );
-        });
+          data.forEach(function (item, index) {
+                containmentMeasuresDiv.appendChild(
+                containment_entry(
+                  (date = item["date"]),
+                  (text = item["description"]),
+                  (source_link = item["source"])
+                )
+              );
+          });
       } else {
         var emptyDatasetMsg = document.createElement("P");
         emptyDatasetMsg.innerHTML =
-          "There is no containment measure in our database at the moment";
+          "There are no containment measures for this country in our database at the moment";
         containmentMeasuresDiv.appendChild(emptyDatasetMsg);
       }
     }
