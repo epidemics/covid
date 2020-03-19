@@ -321,7 +321,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
       });
       tooltip
         .style("opacity", 1)
-        .html(hoveredValues.map((h, i) => h).join("<br>")) //TODO: `<span class="color${i}">h</span>` // scenarios[i] + ": " +
+        .html(hoveredValues.map((h, i) => `<span class="color${i+1}">${h}</span>`).join("<br>")) //TODO: `<span class="color${i}">h</span>` // scenarios[i] + ": " +
         .style("left", d3.event.pageX + "px")
         .style("top", d3.event.pageY - 28 + "px");
     });
