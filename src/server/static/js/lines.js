@@ -377,12 +377,14 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
     setGetParam("selection", selected.country);
     infectedPer1000 = data.regions[selected.country].data.infected_per_1000;
     activeData = infectedPer1000.mitigations[selected.mitigation];
+
+    var countryName = listOfCountries.find(c => c.key == selected.country).value
     // run the updateChart function with this selected option
     update();
     // update the containment measures with the new selected country
-    update_containment_measures(selected.country);
+    update_containment_measures(countryName);
     // update the name of the country in the text below the graph
-    update_country_in_text(selected.country);
+    update_country_in_text(countryName);
   });
 
   d3.select(".beta-0").on("click", function () {
