@@ -154,9 +154,9 @@ active_page = "events" %} {% block content %}
     <label class="col-sm-12 col-lg-10 title-form">
       This means that the chance of one person with COVID-19 being at the event
       is
-      <span class="probability">{{ '%0.2f'|format(minProbability) }}%</span>
+      <span class="probability">{{ minProbability }}%</span>
       to
-      <span class="probability">{{ '%0.2f'|format(maxProbability) }}%</span>
+      <span class="probability">{{ maxProbability }}%</span>
     </label>
     <div class="col-lg-2">
       <button
@@ -179,8 +179,8 @@ active_page = "events" %} {% block content %}
     <div id="calculationCases" class="row less-visible8" style="display: none;">
       <div class="col-12">
         <p>
-          {{ '%0.2f'|format(minProbability|float) | default("probability") }}% =
-          (1-{{ '%0.2f'|format(minPrevalence|float) | default("prevalence")
+          {{ minProbability | default("probability") }}% =
+          (1-{{ minPrevalence | default("prevalence")
           }}%)^{{ peopleCount | default("number of people") }}
         </p>
       </div>
@@ -194,11 +194,11 @@ active_page = "events" %} {% block content %}
       Given how COVID-19 might be spreading in {{ place }} at this time, we
       think that preventing one attendee from being infected means
       <span class="longrun-infections"
-        >{{ '%0.1f'|format(minExcess|float) }}</span
+        >{{ minExcess }}</span
       >
       to
       <span class="longrun-infections"
-        >{{ '%0.1f'|format(maxExcess|float) }}</span
+        >{{ maxExcess }}</span
       >
       more people will go free of COVID in the long run. This number can be
       smaller than 1 if the infection is very widespread because all of the
@@ -235,8 +235,8 @@ active_page = "events" %} {% block content %}
         >SIR model</a
       >
       simulating the progression in your country with {{
-      '%0.0f'|format(medianCases|float) }} infected compared to {{
-      '%0.0f'|format(medianCases+1|float) }} infected, available
+      medianCases }} infected compared to {{
+      medianCases+1 }} infected, available
       <a
         href="https://nbviewer.jupyter.org/github/davidoj/covid-exploration/blob/master/Impact%20of%20a%20small%20number%20of%20infections.ipynb"
         >here</a
@@ -250,9 +250,9 @@ active_page = "events" %} {% block content %}
   <div class="row">
     <div class="col-sm-12 col-lg-10 title-form">
       We think saving one person from being infected at your event means
-      <span class="medical-care">{{ '%0.1f'|format(minStress|float) }}</span>
+      <span class="medical-care">{{ minStress }}</span>
       to
-      <span class="medical-care">{{ '%0.1f'|format(maxStress|float) }}</span>
+      <span class="medical-care">{{ maxStress }}</span>
       more people would be able to get adequate medical care at peak load.
     </div>
     <div class="col">
@@ -284,8 +284,8 @@ active_page = "events" %} {% block content %}
           >SIR model</a
         >
         simulating the progression in your country with {{
-        '%0.0f'|format(medianCases|float) }} infected compared to {{
-        '%0.0f'|format(medianCases+1|float) }} infected
+        medianCases }} infected compared to {{
+        medianCases+1 }} infected
       </div>
     </div>
   </div>

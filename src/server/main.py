@@ -240,9 +240,7 @@ async def result_event_evaluation(
     minExcess = min(excesses)
     maxExcess = max(excesses)
 
-    return templates.TemplateResponse(
-        "result-event-evaluation.html",
-        {
+    resultsDict = {
             "request": request,
             "validDate":validDate,
             "controlStrength": dispControlStrength,
@@ -264,7 +262,18 @@ async def result_event_evaluation(
             "eventDate": datepicker,
             "startDate": STARTDATE,
             "endDate": ENDDATE
-        },
+        }
+
+    for k,v in resultsDict.items():
+        if np.issubdtype(type(v),np.floating):
+            print(v,resultsDict[k])
+            resultsDict[k] = np.round(v,1)
+            print(v,resultsDict[k])
+
+    print(resultsDict)
+    return templates.TemplateResponse(
+        "result-event-evaluation.html",
+        resultsDict,
     )
 
 
