@@ -24,9 +24,11 @@ jobs:
     # decrypt secrets
     # TODO: could be different for staging and production
     - name: Decrypt secrets
+      env:
+        JSON_KEY: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
       run: |
-        gcloud auth list
-        gcloud info
+        echo "${JSON_KEY}" > key.json
+        head -n 2 key.json
         wget -q -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
         ls -la
         chmod +x sops
