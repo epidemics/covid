@@ -14,6 +14,7 @@ aiofiles = "^0.4.0"
 uvicorn = "^0.11.3"
 covid = {path = "src"}
 pandas = "^1.0.2"
+notion = "^0.0.25"
 
 
 [tool.poetry.dev-dependencies]
