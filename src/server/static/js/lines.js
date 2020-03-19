@@ -186,7 +186,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
 
   var yDomain = [
     0,
-    getMaxYValueForCountry(infectedPer1000.mitigations, selected.country)
+    getMaxYValueForCountry(infectedPer1000.mitigations, selected.country) / 10
   ];
 
   // Add Y axis
@@ -211,7 +211,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
     .attr("x", 0 - height / 2)
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .text("New infections per day per 1000 people");
+    .text("Active infections as a percentage of the population");
 
   // Set font size for axis labels
   svg.style("font-size", "22px");
@@ -221,17 +221,17 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
       .append("g")
       .append("path")
       .datum(lineData)
-      .attr(
-        "d",
-        d3
-          .line()
-          .x(function (d, i) {
-            return x(d3.timeDay.offset(new Date(), i));
-          })
-          .y(function (d) {
-            return y(+d);
-          })
-      )
+      // .attr(
+      //   "d",
+      //   d3
+      //     .line()
+      //     .x(function (d, i) {
+      //       return x(d3.timeDay.offset(new Date(), i));
+      //     })
+      //     .y(function (d) {
+      //       return y(+d/10);
+      //     })
+      // )
       .attr("stroke", color)
       .style("stroke-width", 2)
       .style("fill", "none");
@@ -339,7 +339,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
     yDomain[1] = getMaxYValueForCountry(
       infectedPer1000.mitigations,
       selected.country
-    );
+    ) / 10;
     y = y.domain(yDomain);
     function updateLine(myLine, lineData) {
       myLine
@@ -354,7 +354,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
               return x(d3.timeDay.offset(new Date(), i));
             })
             .y(function (d) {
-              return y(+d);
+              return y(+d/10);
             })
         );
     }
