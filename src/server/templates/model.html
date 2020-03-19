@@ -42,7 +42,7 @@ active_page = 'models' -%} {% block additional_js_pre %}
     <h5>Location</h5>
     <select id="selectButton" class="form-control medium col-md-4"> </select>
     <hr />
-    <h5>Current Infections</h5>
+    <h5>Current Infections <span id="infections-date"></span></h5>
     <table id="country-estimates">
       <thead>
         <th>Confirmed</th>
@@ -51,9 +51,9 @@ active_page = 'models' -%} {% block additional_js_pre %}
       </thead>
       <tbody>
         <tr>
-          <td id='infections-confirmed'>&mdash;</td>
-          <td id='infections-estimated'>&mdash;</td>
-          <td id='infections-population'>&mdash;</td>
+          <td id="infections-confirmed">&mdash;</td>
+          <td id="infections-estimated">&mdash;</td>
+          <td id="infections-population">&mdash;</td>
         </tr>
       </tbody>
     </table>

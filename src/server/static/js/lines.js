@@ -139,7 +139,16 @@ function updateInfectionTotals() {
   if (typeof estimatesData === 'undefined') return;
 
   const { population, data } = estimatesData.regions[selected.country];
-  const infections = data.estimates.days[d3.timeFormat('%Y-%m-%d')(new Date())];
+  const dates = Object.keys(data.estimates.days);
+  let maxDate = dates[0];
+  dates.slice(1).forEach(date => {
+    if (new Date(maxDate) < new Date(date)) {
+      maxDate = date;
+    }
+  });
+  const infections = data.estimates.days[maxDate];
+
+  d3.select('#infections-date').text(`(${maxDate})`);
   d3.select('#infections-confirmed').text(insertCommas(infections['JH_Confirmed']));
   d3.select('#infections-estimated').text(insertCommas(infections['FT_Infected']));
   d3.select('#infections-population').text(insertCommas(population));
