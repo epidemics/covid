@@ -1,27 +1,22 @@
 import pandas as pd
 from notion.client import NotionClient
 
-# TODO use github secrets
-# Obtain the `token_v2` value by inspecting your browser cookies on a logged-in session on Notion.so
-token_v2 = "NOTION_TOKEN on github secrets"
+from server.config import CONFIG
+
+# Obtain the `NOTION_TOKEn` value by inspecting your browser cookies on a logged-in session on Notion.so
+NOTION_TOKEN = CONFIG.NOTION_TOKEN
 
 
 def query_containment_measures():
 
-    client = NotionClient(token_v2=token_v2)
+    client = NotionClient(token_v2=NOTION_TOKEN)
 
     cv = client.get_collection_view(
         "https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v"
         "=aa8e0c75520a479ea48f56cb4c289b7e"
     )
 
-    data = {
-            "country": [],
-            "description": [],
-            "keywords": [],
-            "source": [],
-            "date": []
-    }
+    data = {"country": [], "description": [], "keywords": [], "source": [], "date": []}
     # Run a filtered/sorted query using a view's default parameters
     result = cv.default_query().execute()
     for row in result:

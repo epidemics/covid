@@ -1,7 +1,5 @@
 import os
 
-from datetime import date
-import numpy as np
 import pandas as pd
 
 from fastapi import FastAPI, Request, Response
@@ -10,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 
 from server.event_model import stress, excess
 from server.notion_connect import query_containment_measures
+from server.config import CONFIG
 
 PLACES = [
     "Africa",
@@ -59,12 +58,12 @@ app.mount(
 
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 
-df = pd.read_csv(
-    os.path.join(SERVER_ROOT, "static", "data", "covid-containment-measures.csv")
-)
 
-
-CONTAINMENT_MEAS = query_containment_measures()
+# TODO: for testing purposes, make a fixture/mock
+if CONFIG.ENABLE_NOTION:
+    CONTAINMENT_MEAS = query_containment_measures()
+else:
+    CONTAINMENT_MEAS = None
 
 LINES = pd.read_csv(
     "https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2"
@@ -290,9 +289,9 @@ async def containment_measures(request: Request, country: str = "China") -> Resp
             country = country.values[0][0]
 
     if country is not None:
-        sel = CONTAINMENT_MEAS.loc[
-            CONTAINMENT_MEAS.country == country,
-        ].sort_values(by="date", ascending=False)
+        sel = CONTAINMENT_MEAS.loc[CONTAINMENT_MEAS.country == country,].sort_values(
+            by="date", ascending=False
+        )
         sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
         measures = [
             val for _, val in sel.fillna("Unknown").to_dict(orient="index").items()
@@ -301,3 +300,8 @@ async def containment_measures(request: Request, country: str = "China") -> Resp
         measures = None
 
     return measures
+
+
+@app.get("/status")
+async def status():
+    return {"app_version": CONFIG.APP_VERSION}
