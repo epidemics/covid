@@ -4,38 +4,17 @@ active_page = 'models' -%} {% block additional_js_pre %}
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
 <style type="text/css">
-  .overlay {
-    fill: none;
-    stroke: none;
-    pointer-events: all;
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .legend {
+    min-height: 473px;
   }
-
-  .line .crosshair {
-    fill: none;
-    stroke-width: 1px;
-  }
-
-  .line .crosshair {
-    stroke: white;
-    opacity: 0.2;
-  }
-
-  div.tooltip {
-    position: absolute;
-    text-align: center;
-    width: 100px;
-    height: auto;
-    padding: 2px;
-    font: 12px sans-serif;
-    color: #fff;
-    background: #6c757d;
-    border: 0px;
-    border-radius: 8px;
-    pointer-events: none;
-  }
-
+}
+@media only screen and (min-width: 1200px) {
+  .legend {
+    min-height: 555px;
+ 
   /* apply column-specific scrolling only if columns are side-by-side */
-  @media only screen and (min-width: 576px) {
+ /* @media only screen and (min-width: 576px) {
     html {
       overflow: hidden;
     }
@@ -46,8 +25,9 @@ active_page = 'models' -%} {% block additional_js_pre %}
       height: inherit;
       overflow: scroll;
       padding-bottom: 10em;
-    }
+    } */
   }
+}
 </style>
 {% endblock %} {% block content %}
 
