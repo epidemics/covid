@@ -1,5 +1,6 @@
 env:
   logLevel: 'INFO'
+  enableNotion: "False"  # TODO: change to true when correct secret token set
 
 imageName: ""
 

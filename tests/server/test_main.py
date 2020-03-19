@@ -5,8 +5,10 @@ from fastapi.testclient import TestClient
 @pytest.fixture
 def client():
     from server.main import app
+
     client = TestClient(app)
     return client
+
 
 def test_index(client):
     response = client.get("/")
@@ -16,6 +18,7 @@ def test_index(client):
 def test_request_event_evaluation(client):
     response = client.get("/request-event-evaluation")
     assert response.status_code == 200
+
 
 def test_status(client):
     response = client.get("/status")

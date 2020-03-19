@@ -5,3 +5,4 @@ metadata:
 data:
   APP_REVISION: {{ .Chart.AppVersion | quote }}
   LOG_LEVEL: {{ .Values.env.logLevel }}
+  ENABLE_NOTION: {{ .Values.env.enableNotion }}
