@@ -12,22 +12,22 @@ active_page = 'models' -%} {% block additional_js_pre %}
 @media only screen and (min-width: 1200px) {
   .legend {
     min-height: 555px;
-
-  /* apply column-specific scrolling only if columns are side-by-side */
- /* @media only screen and (min-width: 576px) {
-    html {
-      overflow: hidden;
-    }
-    .container-wrapper {
-      height: 100vh;
-    }
-    .container-left, .container-right {
-      height: inherit;
-      overflow: scroll;
-      padding-bottom: 10em;
-    } */
   }
 }
+/* apply column-specific scrolling only if columns are side-by-side */
+/* @media only screen and (min-width: 576px) {
+  html {
+    overflow: hidden;
+  }
+  .container-wrapper {
+    height: 100vh;
+  }
+  .container-left, .container-right {
+    height: inherit;
+    overflow: scroll;
+    padding-bottom: 10em;
+  }
+} */
 </style>
 {% endblock %} {% block content %}
 
