@@ -51,6 +51,7 @@ Here is a template for new release sections
 - Template for `request-event-evaluation` (#11)
 - Description text below the graph on `model` view (#138)
 - Fontawesome fix buggy cdn (#196)
+- Formspree link so that they all belong to same account (#198)
 
 ### Removed
 - Template for `selections` as well as view (duplicate of `request-event-calculation`) (#52)
