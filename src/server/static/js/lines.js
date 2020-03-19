@@ -120,7 +120,7 @@ function getListOfRegions(regions) {
 
 var url_string = window.location.href;
 var url = new URL(url_string);
-var channel = url.searchParams.get('channel')
+var channel = url.searchParams.get('channel') || 'main';
 
 var selected = {
   country: url.searchParams.get('selection'),
@@ -130,7 +130,7 @@ var selected = {
 // Reported & Estimated Infections
 var estimatesData;
 
-d3.json("static/data/mock-estimates.json").then(function(data) {
+d3.json(`https://storage.googleapis.com/static-covid/static/data-${channel}-estimates-v1.json`).then(function(data) {
     estimatesData = data;
     updateInfectionTotals();
 });
@@ -163,7 +163,7 @@ function insertCommas(number) {
 }
 
 // Lines Chart
-d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? channel : 'main') +"-gleam.json")
+d3.json(`https://storage.googleapis.com/static-covid/static/data-${channel}-gleam.json`)
 .then(function(data) {
 
   // console.log('json data', data)
