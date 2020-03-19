@@ -123,7 +123,6 @@ var channel = url.searchParams.get('channel')
 
 d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? channel : 'main') +"-gleam.json")
 .then(function(data) {
-  window.regions = data.regions
 
   // console.log('json data', data)
   var selected = {
