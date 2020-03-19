@@ -31,8 +31,9 @@ active_page = 'models' -%} {% block additional_js_pre %}
 </style>
 {% endblock %} {% block content %}
 
-<div class="container-wrapper">
-  <div class="container-left">
+<div class="row">
+  <div class="col"></div>
+  <div class="col-lg-6">
     <p><em> NOTE (March 17): This is a demo, and while it runs on real data it will be a few days until it's properly
         vetted. Please <a href="http://epidemicforecasting.org/request-calculation">contact us</a> before using it for
         major
@@ -148,20 +149,7 @@ active_page = 'models' -%} {% block additional_js_pre %}
       </p>
     </div>
   </div>
-  <div class="container-right">
-    <div class="container-right-inner">
-      <div id="containment_measures">
-        <!-- filled with a js script from static/js/lines.js -->
-      </div>
-    </div>
-    <div class="container-right-footer">
-      <img
-        class="logo"
-        src="/static/img/Oxford-logo.png"
-        alt="Logo of the University of Oxford"
-      />
-    </div>
-  </div>
+  <div class="col"></div>
 </div>
 {% endblock %} {% block additional_js %}
 <script src="{{ url_for('static', path='/js/lines.js') }}"></script>
