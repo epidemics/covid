@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: {{ .Chart.Name }}
 data:
-  APP_REVISION: {{ .Chart.AppVersion | quote }}
+  APP_VERSION: {{ .Chart.AppVersion | quote }}
   LOG_LEVEL: {{ .Values.env.logLevel }}
   ENABLE_NOTION: {{ .Values.env.enableNotion }}
