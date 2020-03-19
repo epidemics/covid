@@ -25,7 +25,8 @@ jobs:
     # TODO: could be different for staging and production
     - name: Decrypt secrets
       run: |
-        wget -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
+        wget -q -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
+        ls -la
         chmod +x sops
         ./sops -d ./deploy/chart/secret.yaml > secrets.yaml.dec
         cat secrets.yaml.dec
