@@ -103,7 +103,7 @@ jobs:
 
     - name: Export app version
       run: |
-        - sed -i -e "s/^appVersion: .*$/appVersion: ${{ github.sha }}/g" deploy/chart/Chart.yaml
+        sed -i -e "s/^appVersion: .*$/appVersion: ${{ github.sha }}/g" deploy/chart/Chart.yaml
 
     - name: Helm deploy [STAGING]
       if: contains(github.ref, 'staging')
