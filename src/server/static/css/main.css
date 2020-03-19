@@ -143,7 +143,7 @@ header h1:before {
   height: -moz-calc(100vh - 120px); /* firefox */
   display: inline-block;
   vertical-align: top;
-  overflow: scroll;
+  /*overflow: scroll;*/
   padding: 20px;
   flex: 6;
 }
@@ -154,7 +154,7 @@ header h1:before {
   height: -moz-calc(100vh - 120px); /* firefox */
   display: inline-block;
   vertical-align: top;
-  overflow: scroll;
+  /*overflow: scroll;*/
   background: #000000;
   float: right;
   flex: 4;
