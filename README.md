@@ -44,7 +44,6 @@ $ docker-compose run --entrypoint poetry server add pyarrow
 ```
 poetry run pytest tests
 ```
-or inside the container
 
 ## linting
 
@@ -64,6 +63,17 @@ To automatically lint your files run
 ```
 prettier --write "{src/server/static/**, src/server/templates/**}"
 ```
+
+## Development flow
+It's the author responsibility to do the merge, ideally after having it reviewed. That is:
+
+1. do your PR
+2. ask for review relevant reviewers
+3. as soon as you get :heavy_check_mark: , you can merge
+4. if you don't get :heavy_check_mark: before you go to sleep, you can merge anyway (after manual "testing"). It's of course fine to wait for a review when you don't feel confident merging it without one.
+5. there are three teams you can add on review: `frontend`, `backend` and `data`
+
+Rather overcommunicate what you are working on.
 
 # Deployment
 We use Github Actions. The pipeline is specified in `.github/workflows/pythonapp.yml`
