@@ -1,57 +1,21 @@
 # Long term effects of infections model
 
 import math
-
-# TODO: would be better to load these from a csv
-
-stress_dict = {
-    (1e-6, 0.4): 2.4,
-    (1e-6, 0.3): 1.5,
-    (1e-6, 0): 0.8,
-    (1e-5, 0.4): 2.4,
-    (1e-5, 0.3): 1.5,
-    (1e-5, 0): 0.9,
-    (1e-4, 0.4): 2.3,
-    (1e-4, 0.3): 1.5,
-    (1e-4, 0): 0.8,
-    (1e-3, 0.4): 3.9,
-    (1e-3, 0.3): 2.2,
-    (1e-3, 0): 0.9,
-    (1e-2, 0.4): 3.8,
-    (1e-2, 0.3): 2.2,
-    (1e-2, 0): 0.8,
-    (1e-1, 0.4): 1,
-    (1e-1, 0.3): 0.7,
-    (1e-1, 0): 0.2,
-}
+import os
+from ast import literal_eval
+import pandas as pd
 
 
-ei_dict = {
-    (1e-6, 0): 0.2,
-    (1e-6, 0.3): 0.4,
-    (1e-6, 0.4): 0.7,
-    (1e-6, 0.5): 34.5,
-    (1e-5, 0): 0.2,
-    (1e-5, 0.3): 0.4,
-    (1e-5, 0.4): 0.7,
-    (1e-5, 0.5): 9.5,
-    (1e-4, 0): 0.2,
-    (1e-4, 0.3): 0.4,
-    (1e-4, 0.4): 0.7,
-    (1e-4, 0.5): 2.6,
-    (1e-3, 0): 0.2,
-    (1e-3, 0.3): 0.6,
-    (1e-3, 0.4): 1.1,
-    (1e-3, 0.5): 3.2,
-    (1e-2, 0): 0.2,
-    (1e-2, 0.3): 0.6,
-    (1e-2, 0.4): 1.1,
-    (1e-2, 0.5): 2.5,
-    (1e-1, 0): 0.2,
-    (1e-1, 0.3): 0.5,
-    (1e-1, 0.4): 0.9,
-    (1e-1, 0.5): 1.3,
-}
+PARAM_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                          '..', '..', 'models')
+# Load stress and ei parameter values
+STRESS_DF = pd.read_csv(os.path.join(PARAM_PATH, 'stress.csv'), header=None)
+STRESS_DF[0] = [literal_eval(x) for x in STRESS_DF[0]]
+stress_dict = STRESS_DF.set_index(0).to_dict()[1]
+
+EI_DF = pd.read_csv(os.path.join(PARAM_PATH, 'ei.csv'), header=None)
+EI_DF[0] = [literal_eval(x) for x in EI_DF[0]]
+ei_dict = EI_DF.set_index(0).to_dict()[1]
 
 
 def stress(frac, ms):
