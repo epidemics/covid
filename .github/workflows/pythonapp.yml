@@ -27,7 +27,7 @@ jobs:
       env:
         JSON_KEY: ${{ secrets.SuperSecret }}
       run: |
-        'echo "$JSON_KEY"' > key.json
+        'echo "${JSON_KEY}"' > key.json
         ls key.json
         cat key.json | head -n 1
         gcloud auth activate-service-account --key-file key.json
