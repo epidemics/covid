@@ -175,6 +175,27 @@ function country_change() {
     // update the name of the country in the text below the graph
     update_country_in_text(countryName);
 };
+
+
+// load the data used for the graph
+jQuery.getJSON(
+    "https://storage.googleapis.com/static-covid/static/data-" + (channel ? channel :'main') +"-gleam.json",
+    function(data){
+        dataJSON = data;
+        // populate the dropdown menu with countries from received data
+        listOfCountries = getListOfRegions(data.regions);
+        var region = null;
+        for(k in listOfCountries) {
+           region = listOfCountries[k]
+           var opt = document.createElement("option");
+           opt.value = region.key;
+           opt.innerHTML = region.value;
+           selectButton.appendChild(opt);
+        }
+        // initialize the graph
+        update_plot(opt=selected)
+    }
+)
 // update the graph
 function update_plot(opt=null) {
     var mitigation_value = null
