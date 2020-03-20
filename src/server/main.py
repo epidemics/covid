@@ -266,6 +266,7 @@ async def result_event_evaluation(
 
     for k,v in resultsDict.items():
         if np.issubdtype(type(v),np.floating):
+            print(v,resultsDict[k])
             resultsDict[k] = np.round(v,1)
 
     print(resultsDict)
