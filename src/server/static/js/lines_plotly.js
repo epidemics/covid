@@ -2,6 +2,7 @@
 var plotyGraph = document.getElementById('my_dataviz');
 
 var layout = {
+    height: 675,
     margin: { t: 0 },
     // title: '',
     paper_bgcolor: "#222028",
@@ -26,24 +27,36 @@ var layout = {
         ticklen: 8,
         tickwidth: 1,
         tickcolor: '#fff',
-        showgrid: false,
-        zeroline: true,
-        zerolinecolor: '#fff',
-        zerolinewidth: 4,
 
     },
     yaxis: {
         title: 'Active infections as a percentage of the population',
+        titlefont: {
+          family: 'Arial, sans-serif',
+          size: 18,
+          color: 'white'
+        },
+        ticks: 'outside',
+        tickfont: {
+          family: 'Old Standard TT, serif',
+          size: 14,
+          color: 'white'
+        },
         ticks: 'outside',
         tick0: 0,
         dtick: 0.0,
         ticklen: 8,
         tickwidth: 1,
         tickcolor: '#fff',
+        showline: true,
+        linecolor: '#fff',
+        linewidth: 1,
         showgrid: false,
         zeroline: true,
         zerolinecolor: '#fff',
-        zerolinewidth: 4,
+        zerolinewidth: 1,
+
+        range: [0, 1]
     }
 };
 
