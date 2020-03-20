@@ -153,6 +153,10 @@ function updateInfectionTotals() {
     formatInfectionTotal(infections['JH_Confirmed']));
   d3.select('#infections-estimated').html(
     formatInfectionTotal(infections['FT_Infected']));
+  d3.select('#infections-estimated-ci').html(`${
+    formatInfectionTotal(infections['FT_Infected_q05'])} - ${
+    formatInfectionTotal(infections['FT_Infected_q95'])
+  }`);
   d3.select('#infections-population').html(
     formatInfectionTotal(population));
 }
