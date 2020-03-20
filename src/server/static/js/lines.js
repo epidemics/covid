@@ -1,3 +1,5 @@
+/* global $:true d3:true Plotly:true */
+
 var url_string = window.location.href;
 var url = new URL(url_string);
 var channel = url.searchParams.get("channel") || "main";
@@ -263,26 +265,26 @@ function update_plot(opt = null) {
       mitigation_value
     ];
 
-  traces = [];
+  const traces = [];
 
   var x = null;
   var x_start = dataJSON.regions[selectedCountry].data.infected_per_1000.start;
 
   var idx = 0;
-  for (seasonality in countryData) {
+  getScenariosWithLabels(countryData).forEach(({ scenario, label }) => {
     // the x axis is the same for all traces so only defining it once
     if (x == undefined) {
-      x = new Array(countryData[seasonality].length);
-      for (i = 0; i < countryData[seasonality].length; ++i) {
+      x = new Array(countryData[scenario].length);
+      for (i = 0; i < countryData[scenario].length; ++i) {
         x[i] = new Date(x_start);
         x[i].setDate(x[i].getDate() + i);
       }
     }
     traces.push({
       x: x,
-      y: countryData[seasonality],
+      y: countryData[scenario],
       mode: "lines",
-      name: seasonality,
+      name: label,
       line: {
         dash: "solid",
         width: 2,
@@ -291,7 +293,39 @@ function update_plot(opt = null) {
       hoverlabel: {namelength :-1}
     });
     idx = idx + 1;
-  }
+  });
   // redraw the lines on the graph
   Plotly.newPlot(plotyGraph, traces, layout, plotlyConfig);
+}
+
+function getScenariosWithLabels(countryData) {
+  const labels = [
+    'WEAK seasonality + <br />WEAK reduced air travel',
+    'MEDIUM seasonality + <br />STRONG reduced air travel',
+    'STRONG seasonality + <br />WEAK reduced air travel',
+    'WEAK seasonality + <br />STRONG reduced air travel',
+    'MEDIUM seasonality + <br />WEAK reduced air travel',
+    'STRONG seasonality + <br />STRONG reduced air travel'
+  ];
+
+  const paramSets = Object.keys(countryData).map(getScenarioParameters);
+  const sortedParamSets = paramSets.sort((a, b) => {
+    return parseFloat(b['COVID seasonality']) - parseFloat(a['COVID seasonality']);
+  }).sort((a, b) => {
+    return parseFloat(a['Air traffic']) - parseFloat(b['Air traffic']);
+  });
+  return sortedParamSets.map((params, i) => ({
+    scenario: `COVID seasonality ${params['COVID seasonality']
+              }, Air traffic ${params['Air traffic']}`,
+    label: labels[i]
+  }));
+}
+
+function getScenarioParameters(scenario) {
+  const params = {};
+  scenario.split(', ').forEach(part => {
+    const match = /^(?<param>[^\d\.]+) (?<value>[\d\.]+)$/.exec(part);
+    params[match.groups.param] = match.groups.value;
+  });
+  return params;
 }
