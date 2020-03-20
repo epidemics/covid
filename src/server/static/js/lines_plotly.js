@@ -144,6 +144,79 @@ var channel = url.searchParams.get('channel')
 
 
 
+// update the graph
+function update_plot(opt=null) {
+    var mitigation_value = null
+    var mitigation_ids = {
+        "none": "None",
+        "weak": "Low",
+        "moderate": "Medium",
+        "strong": "High",
+    }
+
+    if(opt != undefined) {
+        // assign value of the mitigation given by argument
+        document.getElementById("mitigation-" + opt.mitigation).click();
+        mitigation_value = mitigation_ids[opt.mitigation];
+
+        // assign value of the country given by argument
+        var selectedCountry = opt.country;
+        document.getElementById("selectButton").value = selectedCountry;
+    }
+    else {
+        // find the current value of the mitigation
+        for (mit_id in mitigation_ids) {
+            if(document.getElementById("mitigation-" + mit_id).checked) {
+                mitigation_value = mitigation_ids[mit_id];
+            };
+        };
+        // find the current value of the selected country
+        var selectedCountry = document.getElementById("selectButton").value;
+
+        // update the selected variable
+        selected = {
+            country: selectedCountry,
+            mitigation: mitigation_value
+        };
+    }
+
+    // find the max value across all mitigations and update the axis range
+    y_max = getMaxYValueForCountry(dataJSON.regions[selectedCountry].data.infected_per_1000.mitigations)
+    layout.yaxis.range = [0, y_max];
+
+    var countryData = dataJSON.regions[selectedCountry].data.infected_per_1000.mitigations[mitigation_value];
+
+    traces = [];
+
+    var x = null
+    var x_start = dataJSON.regions[selectedCountry].data.infected_per_1000.start;
+
+    var idx = 0
+    for (seasonality in countryData) {
+        // the x axis is the same for all traces so only defining it once
+        if (x == undefined) {
+            x = new Array(countryData[seasonality].length)
+            for(i=0;i<countryData[seasonality].length;++i) {
+                x[i] = new Date(x_start);
+                x[i].setDate(x[i].getDate() + i);
+            };
+        };
+        traces.push({
+            x: x,
+            y: countryData[seasonality],
+            mode: 'lines',
+            name: seasonality,
+            line: {
+                dash: 'solid',
+                width: 1,
+                color: colors[idx]
+            }
+        });
+        idx = idx + 1;
+    };
+    // redraw the lines on the graph
+    Plotly.newPlot(plotyGraph, traces, layout, plotlyConfig);
+};
 function update_country_in_text(selectedCountry) {
   var countrySpans = jQuery(".selected-country");
   for (i = 0; i < countrySpans.length; i++) {
