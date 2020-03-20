@@ -148,13 +148,19 @@ function updateInfectionTotals() {
   });
   const infections = data.estimates.days[maxDate];
 
-  d3.select('#infections-date').text(`(${maxDate})`);
-  d3.select('#infections-confirmed').text(insertCommas(infections['JH_Confirmed']));
-  d3.select('#infections-estimated').text(insertCommas(infections['FT_Infected']));
-  d3.select('#infections-population').text(insertCommas(population));
+  d3.select('#infections-date').html(`(${maxDate})`);
+  d3.select('#infections-confirmed').html(
+    formatInfectionTotal(infections['JH_Confirmed']));
+  d3.select('#infections-estimated').html(
+    formatInfectionTotal(infections['FT_Infected']));
+  d3.select('#infections-population').html(
+    formatInfectionTotal(population));
 }
 
-function insertCommas(number) {
+const formatInfectionTotal = function(number) {
+  if (typeof number !== 'number' || Number.isNaN(number)) {
+    return "&mdash;";
+  }
   if (number < 10000 && number > -10000) {
     return String(number);
   } else {
