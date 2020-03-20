@@ -1,7 +1,5 @@
 import os
 
-from datetime import date
-import numpy as np
 import pandas as pd
 
 from fastapi import FastAPI, Request, Response
@@ -9,6 +7,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from server.event_model import stress, excess
+from server.notion_connect import query_containment_measures
+from server.config import CONFIG
 
 PLACES = [
     "Africa",
@@ -58,24 +58,12 @@ app.mount(
 
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 
-df = pd.read_csv(
-    os.path.join(SERVER_ROOT, "static", "data", "covid-containment-measures.csv")
-)
-df = df.loc[
-    df.Country.notna(),
-    [
-        "Country",
-        "Description of measure implemented",
-        "Keywords",
-        "Source",
-        "Date Start",
-    ],
-]
-df["date"] = pd.to_datetime(
-    df["Date Start"].str.upper(), format="%b %d, %Y", yearfirst=False
-)
-del df["Date Start"]
-CONTAINMENT_MEAS = df
+
+# TODO: for testing purposes, make a fixture/mock
+if CONFIG.ENABLE_NOTION:
+    CONTAINMENT_MEAS = query_containment_measures()
+else:
+    CONTAINMENT_MEAS = None
 
 LINES = pd.read_csv(
     "https://storage.googleapis.com/static-covid/static/line-data-v2.csv?cache_bump=2"
@@ -290,9 +278,10 @@ async def about(request: Request) -> Response:
 @app.get("/get_containment_measures")
 async def containment_measures(request: Request, country: str = "China") -> Response:
     """serve the main model visualization"""
-
-    if country not in CONTAINMENT_MEAS.Country.unique():
-        country = CAPITALS.loc[CAPITALS.capital == country, ["country"]]
+    capital = country
+    country = country.title()
+    if country not in CONTAINMENT_MEAS.country.unique():
+        country = CAPITALS.loc[CAPITALS.capital == capital, ["country"]]
 
         if country.empty is True:
             country = None
@@ -300,12 +289,19 @@ async def containment_measures(request: Request, country: str = "China") -> Resp
             country = country.values[0][0]
 
     if country is not None:
-        sel = CONTAINMENT_MEAS.loc[
-            CONTAINMENT_MEAS.Country == country,
-            ["date", "Description of measure implemented", "Source"],
-        ].sort_values(by="date", ascending=False)
+        sel = CONTAINMENT_MEAS.loc[CONTAINMENT_MEAS.country == country,].sort_values(
+            by="date", ascending=False
+        )
         sel["date"] = sel.date.dt.strftime("%Y-%m-%d")
-        measures = [val for _, val in sel.to_dict(orient="index").items()]
+        measures = [
+            val for _, val in sel.fillna("Unknown").to_dict(orient="index").items()
+        ]
     else:
         measures = None
+
     return measures
+
+
+@app.get("/status")
+async def status():
+    return {"app_version": CONFIG.APP_VERSION}

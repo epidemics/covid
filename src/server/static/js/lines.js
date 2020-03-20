@@ -1,3 +1,5 @@
+/* global d3:false Set:false */
+
 function setGetParam(key, value) {
   if (history.pushState) {
     var params = new URLSearchParams(window.location.search);
@@ -24,11 +26,66 @@ var margin = { top: 10, right: 100, bottom: 30, left: 100 },
 // append the svg object to the body of the page
 var svg = d3
   .select("#my_dataviz")
+  .attr("class", "row")
+  .style("width", "100%")
+  .append("div")
+  .attr("class", "col-md-9 col-sm-12")
   .append("svg")
   .attr("preserveAspectRatio", "xMinYMin meet")
   .attr("viewBox", `0 0 ${width + 150} ${height + 75}`)
   .append("g")
   .attr("transform", `translate(${margin.left},${margin.top})`);
+
+// Legend
+d3.select("#my_dataviz")
+  .append("div")
+  .attr("class", "col-md-3 col-sm-12")
+  .style("padding", "0px")
+  .append("div")
+  .attr("class", "legend")
+  .append("div")
+  .html(
+    `<span class="color1">
+      Weak seasonality
+      <br/>
+      Weak reduction in air travel
+    </span>
+    <br>
+    <br>
+    <span class="color2">
+      Medium seasonality
+      <br/>
+      Weak reduction in air travel
+    </span>
+    <br>
+    <br>
+    <span class="color3">
+      Strong seasonality
+      <br/>
+      Weak reduction in air travel
+    </span>
+    <br>
+    <br>
+    <span class="color4">
+      Weak seasonality
+      <br/>
+      Strong reduction in air travel
+    </span>
+    <br>
+    <br>
+    <span class="color5">
+      Medium seasonality
+      <br/>
+      Strong reduction in air travel
+    </span>
+    <br>
+    <br>
+    <span class="color6">
+      Strong seasonality
+      <br/>
+      Strong reduction in air travel
+    </span>`
+  );
 
 function getCountries(data) {
   return [...new Set(data.map(d => d.Country))];
@@ -38,41 +95,94 @@ function getSelectedCountry(data) {
   var url_string = window.location.href;
   var url = new URL(url_string);
   var c = url.searchParams.get("selection");
-  return c && data.includes(c) ? c : "hong kong city";
+  return c && data.map(c => c.key).includes(c) ? c : "hong kong city";
 }
 
 function getMaxYValueForCountry(mitigations) {
   var highestVals = [];
   for (m in mitigations) {
-    for(a in mitigations[m]) {
-      highestVals.push(Math.max(...mitigations[m][a]))
+    for (a in mitigations[m]) {
+      highestVals.push(Math.max(...mitigations[m][a]));
     }
   }
-  return Math.max(...highestVals)
+  return Math.max(...highestVals);
 }
 
 function getListOfScenarios(activeData) {
-  return Object.keys(activeData)
+  return Object.keys(activeData);
 }
 
+function getListOfRegions(regions) {
+  return Object.keys(regions).map(k => {
+    return { key: k, value: regions[k].name }
+  })
+}
 
+var url_string = window.location.href;
+var url = new URL(url_string);
+var channel = url.searchParams.get('channel') || 'main';
 
+var selected = {
+  country: url.searchParams.get('selection'),
+  mitigation: "None"
+};
 
-d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.json")
+// Reported & Estimated Infections
+var estimatesData;
+
+d3.json(`https://storage.googleapis.com/static-covid/static/data-${channel}-estimates-v1.json`).then(function(data) {
+    estimatesData = data;
+    updateInfectionTotals();
+});
+
+function updateInfectionTotals() {
+  if (typeof estimatesData === 'undefined') return;
+
+  const { population, data } = estimatesData.regions[selected.country];
+  const dates = Object.keys(data.estimates.days);
+  let maxDate = dates[0];
+  dates.slice(1).forEach(date => {
+    if (new Date(maxDate) < new Date(date)) {
+      maxDate = date;
+    }
+  });
+  const infections = data.estimates.days[maxDate];
+
+  d3.select('#infections-date').html(`(${maxDate})`);
+  d3.select('#infections-confirmed').html(
+    formatInfectionTotal(infections['JH_Confirmed']));
+  d3.select('#infections-estimated').html(
+    formatInfectionTotal(infections['FT_Infected']));
+  d3.select('#infections-estimated-ci').html(`${
+    formatInfectionTotal(infections['FT_Infected_q05'])} - ${
+    formatInfectionTotal(infections['FT_Infected_q95'])
+  }`);
+  d3.select('#infections-population').html(
+    formatInfectionTotal(population));
+}
+
+const formatInfectionTotal = function(number) {
+  if (typeof number !== 'number' || Number.isNaN(number)) {
+    return "&mdash;";
+  }
+  if (number < 10000 && number > -10000) {
+    return String(number);
+  } else {
+    return number.toLocaleString();
+  }
+}
+
+// Lines Chart
+d3.json(`https://storage.googleapis.com/static-covid/static/data-${channel}-gleam.json`)
 .then(function(data) {
 
   // console.log('json data', data)
-  var listOfCountries = Object.keys(data.regions);
-  var selected = {
-    country: getSelectedCountry(listOfCountries),
-    mitigation: 'None'
-  }
-  var infectedPer1000 = data.regions[selected.country].data.infected_per_1000
-  var activeData = infectedPer1000.mitigations[selected.mitigation]
+  var listOfCountries = getListOfRegions(data.regions);
+  selected.country = getSelectedCountry(listOfCountries);
+  var infectedPer1000 = data.regions[selected.country].data.infected_per_1000;
+  var activeData = infectedPer1000.mitigations[selected.mitigation];
   // console.log('activeData data', activeData)
   // console.log('infectedPer1000 data', getMaxYValueForCountry(infectedPer1000.mitigations, selected.country))
-
-
 
   // add the options to the button
   d3.select("#selectButton")
@@ -81,10 +191,10 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
     .enter()
     .append("option")
     .text(function (d) {
-      return d;
+      return d.value;
     }) // text showed in the menu
     .attr("value", function (d) {
-      return d;
+      return d.key;
     })
     .sort(); // corresponding value returned by the button
 
@@ -111,7 +221,6 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
         .tickFormat(d3.timeFormat("%b %Y"))
     );
 
-
   // text label for the x axis
   svg
     .append("text")
@@ -124,9 +233,12 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
     .style("text-anchor", "middle")
     .text("Date");
 
-    var yDomain = [0, getMaxYValueForCountry(infectedPer1000.mitigations, selected.country)];
+  var yDomain = [
+    0,
+    getMaxYValueForCountry(infectedPer1000.mitigations, selected.country) / 10
+  ];
 
-    // Add Y axis
+  // Add Y axis
   var y = d3
     .scaleLinear()
     .domain(yDomain)
@@ -135,7 +247,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
     .append("g")
     .style("font-size", "20px")
     .call(
-      d3.axisLeft(y).ticks(10)
+      d3.axisLeft(y).ticks(10) //TODO: consider adding: .tickFormat(d3.format(".0%"))
     );
 
   // text label for the y axis
@@ -148,37 +260,55 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
     .attr("x", 0 - height / 2)
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .text("New infections per day per 1000 people");
+    .text("Active infections as a percentage of the population");
 
   // Set font size for axis labels
-  svg.style("font-size", "22px")
+  svg.style("font-size", "22px");
 
   function drawLine(lineData, color) {
     return svg
       .append("g")
       .append("path")
       .datum(lineData)
-      .attr(
-        "d",
-        d3
-          .line()
-          .x(function (d, i) {
-            return x(d3.timeDay.offset(new Date(), i));
-          })
-          .y(function (d) {
-            return y(+d);
-          })
-      )
+      // .attr(
+      //   "d",
+      //   d3
+      //     .line()
+      //     .x(function (d, i) {
+      //       return x(d3.timeDay.offset(new Date(), i));
+      //     })
+      //     .y(function (d) {
+      //       return y(+d/10);
+      //     })
+      // )
       .attr("stroke", color)
       .style("stroke-width", 2)
       .style("fill", "none");
   }
 
-  var lines = {}
-  var colors = ["#753def", "#ef3d3d", "#ef993d", "#9edf5c", "#5cdfd3", "#cf5cdf"]
+  var lines = {};
+  /* Previous color scheme, saving in comment for reference
+  var colors = [
+    "#753def",
+    "#ef3d3d",
+    "#ef993d",
+    "#9edf5c",
+    "#5cdfd3",
+    "#cf5cdf"
+  ];
+*/
+  var colors = [
+    "#edcdab",
+    "#edb77e",
+    "#ed810e",
+    "#9ac9d9",
+    "#5abbdb",
+    "#007ca6"
+  ];
+
   getListOfScenarios(activeData).forEach((s, i) => {
-    lines[s] = drawLine(activeData[s], colors[i])
-  })
+    lines[s] = drawLine(activeData[s], colors[i]);
+  });
 
   // create crosshairs
   var crosshair = svg.append("g").attr("class", "line");
@@ -234,30 +364,33 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
 
       const oneDay = 864e5; // milliseconds
       const diffDays = Math.round(Math.abs((mouseDate - new Date()) / oneDay)); // number of days in the future
-      const scenarios = getListOfScenarios(activeData)
+      const scenarios = getListOfScenarios(activeData);
       const hoveredValues = scenarios.map(s => {
-        return activeData[s][diffDays]
-      })
+        return activeData[s][diffDays];
+      });
       tooltip
         .style("opacity", 1)
-        .html(hoveredValues.map((h, i) => scenarios[i] + ': ' + h).join('<br>'))
+        .html(hoveredValues.map((h, i) => `<span class="color${i+1}">${(h/10).toFixed(5)}</span>`).join("<br>")) //TODO: `<span class="color${i}">h</span>` // scenarios[i] + ": " +
         .style("left", d3.event.pageX + "px")
         .style("top", d3.event.pageY - 28 + "px");
-
     });
 
   //initialization
-  update({ country: selected.country });
+  update();
   d3.select("#selectButton").property("value", selected.country);
   // update the containment measures with the new selected country
-  update_containment_measures(selected.country);
-  update_country_in_text(selected.country);
+  var countryName = listOfCountries.find(c => c.key == selected.country).value
+  // update_containment_measures(countryName);
+  update_country_in_text(countryName);
+  updateInfectionTotals()
 
   // A function that update the chart
   function update() {
-
-    yDomain[1] = getMaxYValueForCountry(infectedPer1000.mitigations, selected.country)
-    y = y.domain(yDomain)
+    yDomain[1] = getMaxYValueForCountry(
+      infectedPer1000.mitigations,
+      selected.country
+    ) / 10;
+    y = y.domain(yDomain);
     function updateLine(myLine, lineData) {
       myLine
         .datum(lineData)
@@ -271,65 +404,68 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-staging-gleam.j
               return x(d3.timeDay.offset(new Date(), i));
             })
             .y(function (d) {
-              return y(+d);
+              return y(+d/10);
             })
-        )
+        );
     }
 
-    yAxis.transition().duration(1000).call(
-      d3.axisLeft(y).ticks(10)
-    );
+    yAxis
+      .transition()
+      .duration(1000)
+      .call(d3.axisLeft(y).ticks(10));
 
     for (l in lines) {
-      updateLine(lines[l], activeData[l])
+      updateLine(lines[l], activeData[l]);
     }
 
+    updateInfectionTotals()
   }
 
   // When the button is changed, run the updateChart function
   d3.select("#selectButton").on("change", function (d) {
     // recover the option that has been chosen
-    selected.country= d3.select(this).property("value");
+    selected.country = d3.select(this).property("value");
     // change url param
     setGetParam("selection", selected.country);
-    infectedPer1000 = data.regions[selected.country].data.infected_per_1000
-    activeData = infectedPer1000.mitigations[selected.mitigation]
+    infectedPer1000 = data.regions[selected.country].data.infected_per_1000;
+    activeData = infectedPer1000.mitigations[selected.mitigation];
+
+    var countryName = listOfCountries.find(c => c.key == selected.country).value
     // run the updateChart function with this selected option
     update();
     // update the containment measures with the new selected country
-    update_containment_measures(selected.country);
+    // update_containment_measures(countryName);
     // update the name of the country in the text below the graph
-    update_country_in_text(selected.country);
+    update_country_in_text(countryName);
   });
 
   d3.select(".beta-0").on("click", function () {
-    selected.mitigation = 'None'
-    activeData = infectedPer1000.mitigations[selected.mitigation]
+    selected.mitigation = "None";
+    activeData = infectedPer1000.mitigations[selected.mitigation];
     update();
   });
   d3.select(".beta-03").on("click", function () {
-    selected.mitigation = 'High'
-    activeData = infectedPer1000.mitigations[selected.mitigation]
+    selected.mitigation = "High";
+    activeData = infectedPer1000.mitigations[selected.mitigation];
     update();
   });
   d3.select(".beta-04").on("click", function () {
-    selected.mitigation = 'Medium'
-    activeData = infectedPer1000.mitigations[selected.mitigation]
+    selected.mitigation = "Medium";
+    activeData = infectedPer1000.mitigations[selected.mitigation];
     update();
   });
   d3.select(".beta-05").on("click", function () {
-    selected.mitigation = 'Low'
-    activeData = infectedPer1000.mitigations[selected.mitigation]
+    selected.mitigation = "Low";
+    activeData = infectedPer1000.mitigations[selected.mitigation];
     update();
   });
-
 });
 
-function update_country_in_text(selectedCountry){
-    var countrySpans = jQuery(".selected-country");
-    for (i = 0; i < countrySpans.length; i++){
-        countrySpans[i].innerHTML = selectedCountry;
-    }
+function update_country_in_text(selectedCountry) {
+  var countrySpans = jQuery(".selected-country");
+  for (i = 0; i < countrySpans.length; i++) {
+    countrySpans[i].innerHTML = selectedCountry;
+  }
 }
 
 function containment_entry(date = "", text = "", source_link = "") {
@@ -354,6 +490,7 @@ function containment_entry(date = "", text = "", source_link = "") {
 }
 
 function update_containment_measures(selectedOption) {
+  // console.log('selecteddOption', selectedOption)
   jQuery.get({
     url: "/get_containment_measures",
     data: { country: selectedOption },
@@ -381,15 +518,15 @@ function update_containment_measures(selectedOption) {
                 containmentMeasuresDiv.appendChild(
                 containment_entry(
                   (date = item["date"]),
-                  (text = item["Description of measure implemented"]),
-                  (source_link = item["Source"])
+                  (text = item["description"]),
+                  (source_link = item["source"])
                 )
               );
           });
       } else {
         var emptyDatasetMsg = document.createElement("P");
         emptyDatasetMsg.innerHTML =
-          "There is no containment measure in our database at the moment";
+          "There are no containment measures for this country in our database at the moment";
         containmentMeasuresDiv.appendChild(emptyDatasetMsg);
       }
     }

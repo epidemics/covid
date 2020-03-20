@@ -15,7 +15,7 @@ jobs:
         version: '270.0.0'
         service_account_email: ${{ secrets.SA_EMAIL }}
         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-   
+
     - run: |
         gsutil -m acl set -R -a public-read gs://static-covid/
         gsutil -m setmeta -h "Cache-Control:public, max-age=10" -R gs://static-covid/
@@ -86,6 +86,25 @@ jobs:
       run: |
         docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
 
+    # decrypt secrets
+    # TODO: could be different for staging and production
+    - name: Decrypt secrets
+      env:
+        JSON_KEY: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      run: |
+        echo "${JSON_KEY}" > key.json
+        export GOOGLE_APPLICATION_CREDENTIALS=key.json
+        gcloud auth activate-service-account --key-file key.json
+
+        wget -q -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
+        chmod +x sops
+
+        ./sops -d ./deploy/chart/secrets.yaml > secrets.yaml.dec
+
+    - name: Export app version
+      run: |
+        sed -i -e "s/^appVersion: .*$/appVersion: ${{ github.sha }}/g" deploy/chart/Chart.yaml
+
     - name: Helm deploy [STAGING]
       if: contains(github.ref, 'staging')
       uses: hahow/install-helm-chart-action@v1.0.0
@@ -100,6 +119,7 @@ jobs:
         helm_upgrade_args: |
           --values ./deploy/chart/values.yaml
           --values ./deploy/chart/values.staging.yaml
+          --values secrets.yaml.dec
           --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           --debug
 
@@ -118,5 +138,6 @@ jobs:
         helm_upgrade_args: |
           --values ./deploy/chart/values.yaml
           --values ./deploy/chart/values.production.yaml
+          --values secrets.yaml.dec
           --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           --debug

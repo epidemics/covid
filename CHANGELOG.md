@@ -50,7 +50,10 @@ Here is a template for new release sections
 - Model for calculating event risk (#11)
 - Template for `request-event-evaluation` (#11)
 - Description text below the graph on `model` view (#138)
+- Fontawesome fix buggy cdn (#196)
+- Formspree link so that they all belong to same account (#198)
 
 ### Removed
 - Template for `selections` as well as view (duplicate of `request-event-calculation`) (#52)
 - Update of `selectButton` dropdown via d3 (#88)
+

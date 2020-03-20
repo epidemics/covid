@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block title %} Results {% endblock title%} {% set
-active_page = "events" %} {% block content %}
+  active_page = "events" %} {% block content %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
@@ -42,6 +42,7 @@ active_page = "events" %} {% block content %}
     vertical-align: top;
     overflow: hidden;
   }
+
   .svg-content {
     display: inline-block;
     position: absolute;
@@ -56,16 +57,14 @@ active_page = "events" %} {% block content %}
     <div class="col-md-12 col-sm-12">
       <h1 class="title">
         At this stage we recommend
-        <span class="recommendation"
-          >{{recommendation | default("uncertain")}}</span
-        >
+        <span class="recommendation">{{recommendation | default("uncertain")}}</span>
       </h1>
       <p>
         {{message | default("By default we suggest cancelling unless the event
-        is critical. Our model is not yet reliable for predicting the long run
-        effects of your decisions if your country implements strong containment
-        measures, and we expect many countries will implement strong containment
-        measures just as many have already.")}}
+          is critical. Our model is not yet reliable for predicting the long run
+          effects of your decisions if your country implements strong containment
+          measures, and we expect many countries will implement strong containment
+          measures just as many have already.")}}
       </p>
     </div>
   </div>
@@ -92,56 +91,54 @@ active_page = "events" %} {% block content %}
       <h5>Location</h5>
       <select id="selectButton" class="form-control medium"> </select>
       <hr />
+      <h5>Current Infections <span id="infections-date"></span></h5>
+      <table id="country-estimates">
+        <thead>
+          <th>Confirmed</th>
+          <th>Estimated</th>
+          <th>90% CI</th>
+          <th>Population</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="infections-confirmed">&mdash;</td>
+            <td id="infections-estimated">&mdash;</td>
+            <td id="infections-estimated-ci">&mdash;</td>
+            <td id="infections-population">&mdash;</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
       <h5>Global mitigation strength</h5>
       <div class="btn-group-toggle" data-toggle="buttons">
         <div class="row mitigation-strenght">
           <div class="col-sm-auto col-xm-12">
             <label class="btn btn-secondary active beta-0">
-              <input
-                type="radio"
-                name="mitigation-none"
-                id="mitigation-none"
-                autocomplete="off"
-              />
+              <input type="radio" name="mitigation-none" id="mitigation-none" autocomplete="off" />
               None
             </label>
           </div>
           <div class="col-sm-auto col-xm-12">
             <label class="btn btn-secondary active beta-05">
-              <input
-                type="radio"
-                name="mitigation-weak"
-                id="mitigation-weak"
-                autocomplete="off"
-              />
+              <input type="radio" name="mitigation-weak" id="mitigation-weak" autocomplete="off" />
               Weak
             </label>
           </div>
           <div class="col-sm-auto col-xm-12">
             <label class="btn btn-secondary active beta-04">
-              <input
-                type="radio"
-                name="mitigation-moderate"
-                id="mitigation-moderate"
-                autocomplete="off"
-              />
+              <input type="radio" name="mitigation-moderate" id="mitigation-moderate" autocomplete="off" />
               Moderate
             </label>
           </div>
           <div class="col-sm-auto col-xm-12">
             <label class="btn btn-secondary active beta-03">
-              <input
-                type="radio"
-                name="mitigation-strong"
-                id="mitigation-strong"
-                autocomplete="off"
-              />
+              <input type="radio" name="mitigation-strong" id="mitigation-strong" autocomplete="off" />
               Strong
             </label>
           </div>
         </div>
         {{message | default("Different global mitigation practices will change
-        the rate of spread of COVID-19")}}
+          the rate of spread of COVID-19")}}
         <hr />
         <!-- Create a div where the graph will take place -->
         <div id="my_dataviz" class="svg-container"></div>
@@ -159,19 +156,12 @@ active_page = "events" %} {% block content %}
       <span class="probability">{{ maxProbability }}%</span>
     </label>
     <div class="col-lg-2">
-      <button
-        id="showCases"
-        onclick="showCalculation('showCases','hideCases','calculationCases')"
-        class="detail-button less-visible7"
-      >
+      <button id="showCases" onclick="showCalculation('showCases','hideCases','calculationCases')"
+        class="detail-button less-visible7">
         See Calculation <i class="fas fa-caret-down"></i>
       </button>
-      <button
-        id="hideCases"
-        onclick="hideCalculation('showCases','hideCases','calculationCases')"
-        class="detail-button less-visible7"
-        style="display: none;"
-      >
+      <button id="hideCases" onclick="hideCalculation('showCases','hideCases','calculationCases')"
+        class="detail-button less-visible7" style="display: none;">
         Close Calculation <i class="fas fa-caret-up"></i>
       </button>
     </div>
@@ -205,42 +195,27 @@ active_page = "events" %} {% block content %}
       people you save by cancelling might be infected later on.
     </div>
     <div class="col-lg-2">
-      <button
-        id="showInfections"
-        onclick="showCalculation('showInfections','hideInfections','calculationInfections')"
-        class="detail-button less-visible7"
-      >
+      <button id="showInfections" onclick="showCalculation('showInfections','hideInfections','calculationInfections')"
+        class="detail-button less-visible7">
         See Calculation <i class="fas fa-caret-down"></i>
       </button>
-      <button
-        id="hideInfections"
-        onclick="hideCalculation('showInfections','hideInfections','calculationInfections')"
-        class="detail-button less-visible7"
-        style="display: none;"
-      >
+      <button id="hideInfections" onclick="hideCalculation('showInfections','hideInfections','calculationInfections')"
+        class="detail-button less-visible7" style="display: none;">
         Close Calculation <i class="fas fa-caret-up"></i>
       </button>
     </div>
   </div>
 
-  <div
-    id="calculationInfections"
-    class="row less-visible8"
-    style="display: none;"
-  >
+  <div id="calculationInfections" class="row less-visible8" style="display: none;">
     <div class="col-12">
       This result comes from an epidemiological model known as an
-      <a
-        href="https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIR_model"
-        >SIR model</a
-      >
+      <a href="https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIR_model">SIR model</a>
       simulating the progression in your country with {{
       medianCases }} infected compared to {{
       medianCases+1 }} infected, available
       <a
-        href="https://nbviewer.jupyter.org/github/davidoj/covid-exploration/blob/master/Impact%20of%20a%20small%20number%20of%20infections.ipynb"
-        >here</a
-      >. This number can be smaller than 1 if the infection is very widespread
+        href="https://nbviewer.jupyter.org/github/davidoj/covid-exploration/blob/master/Impact%20of%20a%20small%20number%20of%20infections.ipynb">here</a>.
+      This number can be smaller than 1 if the infection is very widespread
       because all of the people you save by cancelling might be infected later
       on.
     </div>
@@ -256,33 +231,19 @@ active_page = "events" %} {% block content %}
       more people would be able to get adequate medical care at peak load.
     </div>
     <div class="col">
-      <button
-        id="showHospital"
-        onclick="showCalculation('showHospital','hideHospital','calculationHospital')"
-        class="detail-button less-visible7"
-      >
+      <button id="showHospital" onclick="showCalculation('showHospital','hideHospital','calculationHospital')"
+        class="detail-button less-visible7">
         See Calculation <i class="fas fa-caret-down"></i>
       </button>
-      <button
-        id="hideHospital"
-        onclick="hideCalculation('showHospital','hideHospital','calculationHospital')"
-        class="detail-button less-visible7"
-        style="display: none;"
-      >
+      <button id="hideHospital" onclick="hideCalculation('showHospital','hideHospital','calculationHospital')"
+        class="detail-button less-visible7" style="display: none;">
         Close Calculation <i class="fas fa-caret-up"></i>
       </button>
     </div>
-    <div
-      id="calculationHospital"
-      class="row less-visible8"
-      style="display: none;"
-    >
+    <div id="calculationHospital" class="row less-visible8" style="display: none;">
       <div class="col-12">
         This result comes from an
-        <a
-          href="https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIR_model"
-          >SIR model</a
-        >
+        <a href="https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIR_model">SIR model</a>
         simulating the progression in your country with {{
         medianCases }} infected compared to {{
         medianCases+1 }} infected
@@ -311,20 +272,10 @@ active_page = "events" %} {% block content %}
               Yes, more likely to host
             </label>
             <label class="btn btn-secondary">
-              <input
-                type="radio"
-                name="less"
-                id="less"
-                autocomplete="off"
-              />Yes, less likely to host
+              <input type="radio" name="less" id="less" autocomplete="off" />Yes, less likely to host
             </label>
             <label class="btn btn-secondary">
-              <input
-                type="radio"
-                name="equal"
-                id="equal"
-                autocomplete="off"
-              />No
+              <input type="radio" name="equal" id="equal" autocomplete="off" />No
             </label>
           </div>
         </div>
