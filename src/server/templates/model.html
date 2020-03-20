@@ -31,144 +31,146 @@ active_page = 'models' -%} {% block additional_js_pre %}
 </style>
 {% endblock %} {% block content %}
 
-<div class="row">
-  <div class="col"></div>
-  <div class="col-lg-6">
-    <p><em> NOTE (March 17): This is a demo, and while it runs on real data it will be a few days until it's properly
-        vetted. Please <a href="http://epidemicforecasting.org/request-calculation">contact us</a> before using it for
-        major
-        decisions.</em></p>
+<div class="main-wrapper">
+  <div class="row">
+    <div class="col"></div>
+    <div class="col-lg-6">
+      <p><em> NOTE (March 17): This is a demo, and while it runs on real data it will be a few days until it's properly
+          vetted. Please <a href="http://epidemicforecasting.org/request-calculation">contact us</a> before using it for
+          major
+          decisions.</em></p>
 
-    <h5>Location</h5>
-    <select id="selectButton" class="form-control medium col-md-4"> </select>
-    <hr />
-    <h5>Current Infections <span id="infections-date"></span></h5>
-    <table id="country-estimates">
-      <thead>
-        <th>Confirmed</th>
-        <th>Estimated</th>
-        <th>90% CI</th>
-        <th>Population</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td id="infections-confirmed">&mdash;</td>
-          <td id="infections-estimated">&mdash;</td>
-          <td id="infections-estimated-ci">&mdash;</td>
-          <td id="infections-population">&mdash;</td>
-        </tr>
-      </tbody>
-    </table>
-    <hr />
-    <h5>Global mitigation strength</h5>
-    <div class="btn-group-toggle" data-toggle="buttons">
-      <div class="row mitigation-strenght">
-        <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary active beta-0">
-            <input type="radio" name="mitigation-none" id="mitigation-none" autocomplete="off" />
-            None
-          </label>
-        </div>
-        <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary active beta-05">
-            <input type="radio" name="mitigation-weak" id="mitigation-weak" autocomplete="off" />
-            Weak
-          </label>
-        </div>
-        <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary active beta-04">
-            <input type="radio" name="mitigation-moderate" id="mitigation-moderate" autocomplete="off" />
-            Moderate
-          </label>
-        </div>
-        <div class="col-sm-auto col-xm-12">
-          <label class="btn btn-secondary active beta-03">
-            <input type="radio" name="mitigation-strong" id="mitigation-strong" autocomplete="off" />
-            Strong
-          </label>
-        </div>
-      </div>
+      <h5>Location</h5>
+      <select id="selectButton" class="form-control medium col-md-4"> </select>
       <hr />
-      <!-- Create a div where the graph will take place -->
-      <div id="my_dataviz"></div>
+      <h5>Current Infections <span id="infections-date"></span></h5>
+      <table id="country-estimates">
+        <thead>
+          <th>Confirmed</th>
+          <th>Estimated</th>
+          <th>90% CI</th>
+          <th>Population</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="infections-confirmed">&mdash;</td>
+            <td id="infections-estimated">&mdash;</td>
+            <td id="infections-estimated-ci">&mdash;</td>
+            <td id="infections-population">&mdash;</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
+      <h5>Global mitigation strength</h5>
+      <div class="btn-group-toggle" data-toggle="buttons">
+        <div class="row mitigation-strenght">
+          <div class="col-sm-auto col-xm-12">
+            <label class="btn btn-secondary active beta-0">
+              <input type="radio" name="mitigation-none" id="mitigation-none" autocomplete="off" />
+              None
+            </label>
+          </div>
+          <div class="col-sm-auto col-xm-12">
+            <label class="btn btn-secondary active beta-05">
+              <input type="radio" name="mitigation-weak" id="mitigation-weak" autocomplete="off" />
+              Weak
+            </label>
+          </div>
+          <div class="col-sm-auto col-xm-12">
+            <label class="btn btn-secondary active beta-04">
+              <input type="radio" name="mitigation-moderate" id="mitigation-moderate" autocomplete="off" />
+              Moderate
+            </label>
+          </div>
+          <div class="col-sm-auto col-xm-12">
+            <label class="btn btn-secondary active beta-03">
+              <input type="radio" name="mitigation-strong" id="mitigation-strong" autocomplete="off" />
+              Strong
+            </label>
+          </div>
+        </div>
+        <hr />
+        <!-- Create a div where the graph will take place -->
+        <div id="my_dataviz"></div>
 
-      <p>
-        The impact on <span class="selected-country"></span> is simulated using an epidemiological model based on
-        global, real-world data on human population and travel patterns, displayed as an <a
-          href="https://en.wikipedia.org/wiki/Epidemic_curve">an epidemic curve</a>.
-      </p>
-      <p>
-        We want to emphasise that real outcomes depend on human actions. The mitigation strength is our choice. Even
-        given some mitigation level, the outcome is still uncertain, and depends on: <ul>
-          <li>
-            the seasonality of the virus and its response to changing weather conditions
-          </li>
-          <li>
-            the mitigation decisions made by <i>other countries</i>
-          </li>
-          <li>
-            technological progress in testing, contact tracing and vaccines
-          </li>
+        <p>
+          The impact on <span class="selected-country"></span> is simulated using an epidemiological model based on
+          global, real-world data on human population and travel patterns, displayed as an <a
+            href="https://en.wikipedia.org/wiki/Epidemic_curve">an epidemic curve</a>.
+        </p>
+        <p>
+          We want to emphasise that real outcomes depend on human actions. The mitigation strength is our choice. Even
+          given some mitigation level, the outcome is still uncertain, and depends on: <ul>
+            <li>
+              the seasonality of the virus and its response to changing weather conditions
+            </li>
+            <li>
+              the mitigation decisions made by <i>other countries</i>
+            </li>
+            <li>
+              technological progress in testing, contact tracing and vaccines
+            </li>
 
+          </ul>
+          For now we are capturing the international response in a single parameter determining the rate of spread of
+          SARS-CoV-2, but we are building <a
+            href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e">a database of
+            containment and mitigation efforts</a> and working to integrate them into the model.
+        </p>
+        <p><em>If you&#39;re a decision-maker thinking about how various measures can impact COVID-19 outcomes, please
+            reach out <a href="http://epidemicforecasting.org/request-calculation">here</a>.</em></p>
+        <hr />
+        <h5>How the model works</h5>
+
+        <p><strong> Human forecasting</strong></p>
+        <p>
+          We are trying to augment data on confirmed cases by estimating the true
+          number of infections in selected countries. This gets around issues of
+          testing capacity and under-reporting in official statistics. This is
+          done using a combination of statistical modelling and human forecasting.
+        </p>
+        <p><strong>Computational modelling</strong></p>
+        <p>
+          The results are used as an input to advanced epidemic modelling
+          software, called
+          <a href="http://www.gleamviz.org/" target="_blank">GLEaM</a>,
+          running on high-performance computers.
+        </p>
+        <p>The global development of COVID-19 is simulated using:</p>
+        <ul>
+          <li>
+            an airline booking dataset covering 3,800 commercial airports in about
+            230 countries
+          </li>
+          <li>
+            a commuting database covering over five million commuting connections
+            within 40 countries
+          </li>
+          <li>multiple levels of global mitigation measures (currently captured as changes in the β of our model) </li>
+          <li>
+            multiple models of SARS-CoV-2, capturing uncertainty about seasonality
+            and transmissibility
+          </li>
         </ul>
-        For now we are capturing the international response in a single parameter determining the rate of spread of
-        SARS-CoV-2, but we are building <a
-          href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e">a database of
-          containment and mitigation efforts</a> and working to integrate them into the model.
-      </p>
-      <p><em>If you&#39;re a decision-maker thinking about how various measures can impact COVID-19 outcomes, please
-          reach out <a href="http://epidemicforecasting.org/request-calculation">here</a>.</em></p>
-      <hr />
-      <h5>How the model works</h5>
-
-      <p><strong> Human forecasting</strong></p>
-      <p>
-        We are trying to augment data on confirmed cases by estimating the true
-        number of infections in selected countries. This gets around issues of
-        testing capacity and under-reporting in official statistics. This is
-        done using a combination of statistical modelling and human forecasting.
-      </p>
-      <p><strong>Computational modelling</strong></p>
-      <p>
-        The results are used as an input to advanced epidemic modelling
-        software, called
-        <a href="http://www.gleamviz.org/" target="_blank">GLEaM</a>,
-        running on high-performance computers.
-      </p>
-      <p>The global development of COVID-19 is simulated using:</p>
-      <ul>
-        <li>
-          an airline booking dataset covering 3,800 commercial airports in about
-          230 countries
-        </li>
-        <li>
-          a commuting database covering over five million commuting connections
-          within 40 countries
-        </li>
-        <li>multiple levels of global mitigation measures (currently captured as changes in the β of our model) </li>
-        <li>
-          multiple models of SARS-CoV-2, capturing uncertainty about seasonality
-          and transmissibility
-        </li>
-      </ul>
-      <p>
-        The results are displayed as a pack of trajectories, representing the
-        uncertainty inherent in our model — and the difference in trajectory
-        caused by the response of us as a society.
-      </p>
-      <p><strong> Database of containment measures</strong></p>
-      <p>
-        We are tracking the effectiveness of containments measures in a
-        <a href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e"
-          target="_blank">public
-          database</a>
-        with hundreds of entries. As more data becomes available on their
-        effectiveness we will integrate them into the simulation.
-      </p>
+        <p>
+          The results are displayed as a pack of trajectories, representing the
+          uncertainty inherent in our model — and the difference in trajectory
+          caused by the response of us as a society.
+        </p>
+        <p><strong> Database of containment measures</strong></p>
+        <p>
+          We are tracking the effectiveness of containments measures in a
+          <a href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e"
+            target="_blank">public
+            database</a>
+          with hundreds of entries. As more data becomes available on their
+          effectiveness we will integrate them into the simulation.
+        </p>
+      </div>
     </div>
+    <div class="col"></div>
   </div>
-  <div class="col"></div>
+  {% endblock %} {% block additional_js %}
+  <script src="{{ url_for('static', path='/js/lines.js') }}"></script>
+  {% endblock %}
 </div>
-{% endblock %} {% block additional_js %}
-<script src="{{ url_for('static', path='/js/lines.js') }}"></script>
-{% endblock %}
