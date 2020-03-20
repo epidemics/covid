@@ -1,4 +1,26 @@
-/* global $:true d3:true Plotly:true */
+/* global $:false d3:false Plotly:false */
+
+const SCENARIOS = [
+  {
+    scenario: "COVID seasonality 0.85, Air traffic 0.20",
+    label: "WEAK seasonality + <br />WEAK reduced air travel"
+  }, {
+    scenario: "COVID seasonality 0.70, Air traffic 0.20",
+    label: "MEDIUM seasonality + <br />STRONG reduced air travel"
+  }, {
+    scenario: "COVID seasonality 0.50, Air traffic 0.20",
+    label: "STRONG seasonality + <br />WEAK reduced air travel"
+  }, {
+    scenario: "COVID seasonality 0.85, Air traffic 0.70",
+    label: "WEAK seasonality + <br />STRONG reduced air travel"
+  }, {
+    scenario: "COVID seasonality 0.70, Air traffic 0.70",
+    label: "MEDIUM seasonality + <br />WEAK reduced air travel"
+  }, {
+    scenario: "COVID seasonality 0.50, Air traffic 0.70",
+    label: "STRONG seasonality + <br />STRONG reduced air travel"
+  }
+];
 
 function getUrlParams(data) {
   var urlString = window.location.href;
@@ -264,7 +286,7 @@ function updatePlot(opt) {
   var xStart = new Date(linesData.regions[selectedRegion].data.infected_per_1000.start);
 
   var idx = 0;
-  getScenariosWithLabels(regionData).forEach(({ scenario, label }) => {
+  SCENARIOS.forEach(({ scenario, label }) => {
     // the x axis is the same for all traces so only defining it once
     if (typeof x === "undefined") {
       x = [];
@@ -289,36 +311,4 @@ function updatePlot(opt) {
   });
   // redraw the lines on the graph
   Plotly.newPlot(plotyGraph, traces, layout, plotlyConfig);
-}
-
-function getScenariosWithLabels(regionData) {
-  const labels = [
-    'WEAK seasonality + <br />WEAK reduced air travel',
-    'MEDIUM seasonality + <br />STRONG reduced air travel',
-    'STRONG seasonality + <br />WEAK reduced air travel',
-    'WEAK seasonality + <br />STRONG reduced air travel',
-    'MEDIUM seasonality + <br />WEAK reduced air travel',
-    'STRONG seasonality + <br />STRONG reduced air travel'
-  ];
-
-  const paramSets = Object.keys(regionData).map(getScenarioParameters);
-  const sortedParamSets = paramSets.sort((a, b) => {
-    return parseFloat(b['COVID seasonality']) - parseFloat(a['COVID seasonality']);
-  }).sort((a, b) => {
-    return parseFloat(a['Air traffic']) - parseFloat(b['Air traffic']);
-  });
-  return sortedParamSets.map((params, i) => ({
-    scenario: `COVID seasonality ${params['COVID seasonality']
-              }, Air traffic ${params['Air traffic']}`,
-    label: labels[i]
-  }));
-}
-
-function getScenarioParameters(scenario) {
-  const params = {};
-  scenario.split(', ').forEach(part => {
-    const match = /^([^\d\.]+) ([\d\.]+)$/.exec(part);
-    params[match[1]] = match[2];
-  });
-  return params;
 }
