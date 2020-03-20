@@ -1,24 +1,37 @@
+var url_string = window.location.href;
+var url = new URL(url_string);
+var channel = url.searchParams.get('channel')
 
+var dataJSON = null;
+var listOfRegions = null;
+var selected = {
+   country: "france",
+   mitigation: "none"
+};
+
+// dropdown of countries
+var selectButton = document.getElementById("selectButton");
+
+// graph
 var plotyGraph = document.getElementById('my_dataviz');
 
+// graph layout
 var layout = {
     height: 675,
-    margin: { t: 0 },
-    // title: '',
+    //margin: { t: 0 },
     paper_bgcolor: "#222028",
     plot_bgcolor: "#222028",
-    // #222028
     xaxis: {
         type: 'date',
         title: 'Date',
         titlefont: {
-          family: 'Arial, sans-serif',
+          family: 'DM Sans, sans-serif',
           size: 18,
           color: 'white'
         },
         ticks: 'outside',
         tickfont: {
-          family: 'Old Standard TT, serif',
+          family: 'DM Sans, sans-serif',
           size: 14,
           color: 'white'
         },
@@ -32,13 +45,13 @@ var layout = {
     yaxis: {
         title: 'Active infections as a percentage of the population',
         titlefont: {
-          family: 'Arial, sans-serif',
+          family: 'DM Sans, sans-serif',
           size: 18,
           color: 'white'
         },
         ticks: 'outside',
         tickfont: {
-          family: 'Old Standard TT, serif',
+          family: 'DM Sans, sans-serif',
           size: 14,
           color: 'white'
         },
@@ -60,56 +73,23 @@ var layout = {
     }
 };
 
+var colors = [
+    "#edcdab",
+    "#edb77e",
+    "#e97f0f",
+    "#9ac9d9",
+    "#5abbdb",
+    "#007ca6"
+]
+
 var plotlyConfig = {
     displaylogo: false,
     responsive: true,
     scrollZoom: true,
 };
 
-Plotly.newPlot(plotyGraph, [{
-x: [1, 2, 3, 4, 5],
-y: [1, 2, 4, 8, 16] }], layout, plotlyConfig );
+Plotly.newPlot(plotyGraph, [], layout, plotlyConfig );
 
-var dataJSON = null
-
-jQuery.getJSON(
-    "https://storage.googleapis.com/static-covid/static/data-" + (channel ? channel :'main') +"-gleam.json",
-    function(data){
-        console.log(data);
-        dataJSON = data;
-    }
-)
-
-function update_plot() {
-
-    var mitigation_value = null
-    var mitigation_ids = {
-        "none": "None",
-        "weak": "Low",
-        "moderate": "Medium",
-        "strong": "High",
-    }
-
-    for (mit_id in mitigation_ids) {
-        if(document.getElementById("mitigation-" + mit_id).checked) {
-            mitigation_value = mitigation_ids[mit_id];
-        };
-    };
-
-
-
-    console.log(mitigation_value)
-    var selectedCountry = document.getElementById("selectButton").value;
-    console.log(selectedCountry)
-
-    // TODO for testing only
-    selectedCountry = "australia";
-
-
-};
-
-
-// https://plot.ly/javascript/configuration-options/#remove-modebar-buttons
 
 /* start from lines.js */
 function getSelectedCountry(data) {
@@ -139,9 +119,6 @@ function getListOfRegions(regions) {
   })
 }
 
-var url_string = window.location.href;
-var url = new URL(url_string);
-var channel = url.searchParams.get('channel')
 function setGetParam(key, value) {
   if (history.pushState) {
     var params = new URLSearchParams(window.location.search);
@@ -196,6 +173,7 @@ jQuery.getJSON(
         update_plot(opt=selected)
     }
 )
+
 // update the graph
 function update_plot(opt=null) {
     var mitigation_value = null
@@ -269,6 +247,8 @@ function update_plot(opt=null) {
     // redraw the lines on the graph
     Plotly.newPlot(plotyGraph, traces, layout, plotlyConfig);
 };
+
+/* CONTAINMENT MEASURES */
 function update_country_in_text(selectedCountry) {
   var countrySpans = jQuery(".selected-country");
   for (i = 0; i < countrySpans.length; i++) {
@@ -298,7 +278,6 @@ function containment_entry(date = "", text = "", source_link = "") {
 }
 
 function update_containment_measures(selectedOption) {
-  console.log('selecteddOption', selectedOption)
   jQuery.get({
     url: "/get_containment_measures",
     data: { country: selectedOption },
