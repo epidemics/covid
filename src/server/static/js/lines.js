@@ -108,8 +108,31 @@ function getMaxYValueForCountry(mitigations) {
   return Math.max(...highestVals);
 }
 
+let scenarios = undefined; // cache scenarios b/c they're requested often
 function getListOfScenarios(activeData) {
-  return Object.keys(activeData);
+  if (typeof scenarios !== 'undefined') return scenarios;
+
+  const paramSets = Object.keys(activeData).map(getScenarioParameters);
+  const sortedParamSets = paramSets.sort((a, b) => {
+    return parseFloat(b['COVID seasonality']) - parseFloat(a['COVID seasonality']);
+  }).sort((a, b) => {
+    return parseFloat(a['Air traffic']) - parseFloat(b['Air traffic']);
+  })
+  scenarios = sortedParamSets.map(
+    params => `COVID seasonality ${params['COVID seasonality']
+              }, Air traffic ${params['Air traffic']}`
+  );
+  console.log(scenarios);
+  return scenarios;
+}
+
+function getScenarioParameters(scenario) {
+  const params = {}
+  scenario.split(', ').forEach(part => {
+    const match = /^(?<param>[^\d\.]+) (?<value>[\d\.]+)$/.exec(part);
+    params[match.groups.param] = match.groups.value;
+  });
+  return params;
 }
 
 function getListOfRegions(regions) {
