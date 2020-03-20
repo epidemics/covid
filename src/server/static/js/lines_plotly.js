@@ -111,6 +111,7 @@ function update_plot() {
 
 // https://plot.ly/javascript/configuration-options/#remove-modebar-buttons
 
+/* start from lines.js */
 function getSelectedCountry(data) {
   var url_string = window.location.href;
   var url = new URL(url_string);
@@ -141,9 +142,39 @@ function getListOfRegions(regions) {
 var url_string = window.location.href;
 var url = new URL(url_string);
 var channel = url.searchParams.get('channel')
+function setGetParam(key, value) {
+  if (history.pushState) {
+    var params = new URLSearchParams(window.location.search);
+    params.set(key, value);
+    var newUrl =
+      window.location.protocol +
+      "//" +
+      window.location.host +
+      window.location.pathname +
+      "?" +
+      params.toString();
+    window.history.pushState({ path: newUrl }, "", newUrl);
+  }
+}
+/* end from lines.js */
 
 
 
+
+// triggered by change of country in the drop down menu
+function country_change() {
+    // recover the option that has been chosen
+    selected.country = selectButton.value;
+    // change url param
+    setGetParam("selection", selected.country);
+    var countryName = listOfCountries.find(c => c.key == selected.country).value
+    // update the graph
+    update_plot()
+    // update the containment measures with the new selected country
+    update_containment_measures(countryName);
+    // update the name of the country in the text below the graph
+    update_country_in_text(countryName);
+};
 // update the graph
 function update_plot(opt=null) {
     var mitigation_value = null
