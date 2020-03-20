@@ -1,19 +1,22 @@
 /* global $:true d3:true Plotly:true */
 
-var url_string = window.location.href;
-var url = new URL(url_string);
-var channel = url.searchParams.get("channel") || "main";
+function getUrlParams(data) {
+  var urlString = window.location.href;
+  var url = new URL(urlString);
+  return {
+    region: url.searchParams.get("selection") || "united kingdom",
+    channel: url.searchParams.get("channel") || "main"
+  };
+}
 
-var dataJSON = null;
-var listOfRegions = null;
-var selected = {
-  country: url.searchParams.get("selection") || "france",
+const { channel } = getUrlParams();
+var linesData, estimatesData, listOfRegions;
+let selected = {
+  region: getUrlParams().region,
   mitigation: "none"
 };
 
 // Reported & Estimated Infections
-var estimatesData;
-
 d3.json(
   `https://storage.googleapis.com/static-covid/static/data-${channel}-estimates-v1.json`
 ).then(function(data) {
@@ -24,7 +27,7 @@ d3.json(
 function updateInfectionTotals() {
   if (typeof estimatesData === "undefined") return;
 
-  const { population, data } = estimatesData.regions[selected.country];
+  const { population, data } = estimatesData.regions[selected.region];
   const dates = Object.keys(data.estimates.days);
   let maxDate = dates[0];
   dates.slice(1).forEach(date => {
@@ -99,7 +102,6 @@ var layout = {
       size: 18,
       color: "white"
     },
-    ticks: "outside",
     tickfont: {
       family: "DM Sans, sans-serif",
       size: 14,
@@ -133,28 +135,21 @@ var plotlyConfig = {
 
 Plotly.newPlot(plotyGraph, [], layout, plotlyConfig);
 
-/* start from lines.js */
-function getSelectedCountry(data) {
-  var url_string = window.location.href;
-  var url = new URL(url_string);
-  var c = url.searchParams.get("selection");
-  return c && data.map(c => c.key).includes(c) ? c : "hong kong city";
-}
 
-function getMaxYValueForCountry(mitigations) {
+function getMaxYValueForRegion(mitigations) {
   var highestVals = [];
-  for (m in mitigations) {
-    for (a in mitigations[m]) {
-      highestVals.push(Math.max(...mitigations[m][a]));
-    }
-  }
+  Object.values(mitigations).forEach(mitigation => {
+    Object.values(mitigation).forEach(values => {
+      highestVals.push(Math.max(...values));
+    });
+  });
   return Math.max(...highestVals);
 }
 
 
 function getListOfRegions(regions) {
-  return Object.keys(regions).map(k => {
-    return { key: k, value: regions[k].name };
+  return Object.keys(regions).map(key => {
+    return { key, name: regions[key].name };
   });
 }
 
@@ -174,24 +169,24 @@ function setGetParam(key, value) {
 }
 /* end from lines.js */
 
-function update_country_in_text(selectedCountry) {
-  var countrySpans = jQuery(".selected-country");
-  for (i = 0; i < countrySpans.length; i++) {
-    countrySpans[i].innerHTML = selectedCountry;
+function updateRegionInText(selectedRegion) {
+  var regionSpans = jQuery(".selected-region");
+  for (let i = 0; i < regionSpans.length; i++) {
+    regionSpans[i].innerHTML = selectedRegion;
   }
 }
 
-// triggered by change of country in the drop down menu
-function country_change() {
+// triggered by change of region in the drop down menu
+function changeRegion() {
   // recover the option that has been chosen
-  selected.country = selectButton.value;
+  selected.region = selectButton.value;
   // change url param
-  setGetParam("selection", selected.country);
-  var countryName = listOfCountries.find(c => c.key == selected.country).value;
+  setGetParam("selection", selected.region);
+  var countryName = listOfRegions.find(c => c.key === selected.region).value;
   // update the graph
-  update_plot();
-  // update the name of the country in the text below the graph
-  update_country_in_text(countryName);
+  updatePlot();
+  // update the name of the region in the text below the graph
+  updateRegionInText(countryName);
   updateInfectionTotals();
 }
 
@@ -201,88 +196,86 @@ jQuery.getJSON(
     (channel ? channel : "main") +
     "-gleam.json",
   function(data) {
-    dataJSON = data;
+    linesData = data;
     // populate the dropdown menu with countries from received data
-    listOfCountries = getListOfRegions(data.regions);
-    var region = null;
-    for (k in listOfCountries) {
-      region = listOfCountries[k];
-      var opt = document.createElement("option");
-      opt.value = region.key;
-      opt.innerHTML = region.value;
+    listOfRegions = getListOfRegions(data.regions);
+    listOfRegions.forEach(({ key, name }) => {
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.innerHTML = name;
       selectButton.appendChild(opt);
-    }
+    });
     // initialize the graph
-    update_plot((opt = selected));
+    updatePlot(selected);
   }
 );
 
 
 
 // update the graph
-function update_plot(opt = null) {
-  var mitigation_value = null;
-  var mitigation_ids = {
+function updatePlot(opt) {
+  var mitigationValue, selectedRegion;
+  var mitigationIds = {
     none: "None",
     weak: "Low",
     moderate: "Medium",
     strong: "High"
   };
 
-  if (opt != undefined) {
+  if (typeof opt !== "undefined") {
     // assign value of the mitigation given by argument
     document.getElementById("mitigation-" + opt.mitigation).click();
-    mitigation_value = mitigation_ids[opt.mitigation];
+    mitigationValue = mitigationIds[opt.mitigation];
 
-    // assign value of the country given by argument
-    var selectedCountry = opt.country;
-    document.getElementById("selectButton").value = selectedCountry;
+    // assign value of the region given by argument
+    selectedRegion = opt.region;
+    document.getElementById("selectButton").value = selectedRegion;
   } else {
     // find the current value of the mitigation
-    for (mit_id in mitigation_ids) {
-      if (document.getElementById("mitigation-" + mit_id).checked) {
-        mitigation_value = mitigation_ids[mit_id];
+    Object.keys(mitigationIds).forEach(mitId => {
+      if (document.getElementById("mitigation-" + mitId).checked) {
+        mitigationValue = mitigationIds[mitId];
       }
-    }
-    // find the current value of the selected country
-    var selectedCountry = document.getElementById("selectButton").value;
+    });
+    // find the current value of the selected region
+    selectedRegion = document.getElementById("selectButton").value;
 
     // update the selected variable
     selected = {
-      country: selectedCountry,
-      mitigation: mitigation_value
+      region: selectedRegion,
+      mitigation: mitigationValue
     };
   }
 
   // find the max value across all mitigations and update the axis range
-  y_max = getMaxYValueForCountry(
-    dataJSON.regions[selectedCountry].data.infected_per_1000.mitigations
+  const yMax = getMaxYValueForRegion(
+    linesData.regions[selectedRegion].data.infected_per_1000.mitigations
   );
-  layout.yaxis.range = [0, y_max];
+  layout.yaxis.range = [0, yMax / 10];
 
-  var countryData =
-    dataJSON.regions[selectedCountry].data.infected_per_1000.mitigations[
-      mitigation_value
+  var regionData =
+    linesData.regions[selectedRegion].data.infected_per_1000.mitigations[
+      mitigationValue
     ];
 
   const traces = [];
 
-  var x = null;
-  var x_start = dataJSON.regions[selectedCountry].data.infected_per_1000.start;
+  var x;
+  var xStart = new Date(linesData.regions[selectedRegion].data.infected_per_1000.start);
 
   var idx = 0;
-  getScenariosWithLabels(countryData).forEach(({ scenario, label }) => {
+  getScenariosWithLabels(regionData).forEach(({ scenario, label }) => {
     // the x axis is the same for all traces so only defining it once
-    if (x == undefined) {
-      x = new Array(countryData[scenario].length);
-      for (i = 0; i < countryData[scenario].length; ++i) {
-        x[i] = new Date(x_start);
-        x[i].setDate(x[i].getDate() + i);
+    if (typeof x === "undefined") {
+      x = [];
+      for (let i = 0; i < regionData[scenario].length; ++i) {
+        x[i] = d3.timeDay.offset(xStart, i);
       }
     }
+    // debugger;
     traces.push({
       x: x,
-      y: countryData[scenario],
+      y: regionData[scenario].map(y => y / 10),
       mode: "lines",
       name: label,
       line: {
@@ -298,7 +291,7 @@ function update_plot(opt = null) {
   Plotly.newPlot(plotyGraph, traces, layout, plotlyConfig);
 }
 
-function getScenariosWithLabels(countryData) {
+function getScenariosWithLabels(regionData) {
   const labels = [
     'WEAK seasonality + <br />WEAK reduced air travel',
     'MEDIUM seasonality + <br />STRONG reduced air travel',
@@ -308,7 +301,7 @@ function getScenariosWithLabels(countryData) {
     'STRONG seasonality + <br />STRONG reduced air travel'
   ];
 
-  const paramSets = Object.keys(countryData).map(getScenarioParameters);
+  const paramSets = Object.keys(regionData).map(getScenarioParameters);
   const sortedParamSets = paramSets.sort((a, b) => {
     return parseFloat(b['COVID seasonality']) - parseFloat(a['COVID seasonality']);
   }).sort((a, b) => {
@@ -324,8 +317,8 @@ function getScenariosWithLabels(countryData) {
 function getScenarioParameters(scenario) {
   const params = {};
   scenario.split(', ').forEach(part => {
-    const match = /^(?<param>[^\d\.]+) (?<value>[\d\.]+)$/.exec(part);
-    params[match.groups.param] = match.groups.value;
+    const match = /^([^\d\.]+) ([\d\.]+)$/.exec(part);
+    params[match[1]] = match[2];
   });
   return params;
 }

@@ -40,8 +40,8 @@ active_page = 'models' -%} {% block additional_js_pre %}
           major
           decisions.</em></p>
 
-    <h5>Location</h5>
-    <select id="selectButton" class="form-control medium col-md-4" onchange="country_change()"> </select>
+    <h5>Region</h5>
+    <select id="selectButton" class="form-control medium col-md-4" onchange="changeRegion()"> </select>
     <hr />
     <h5>Current Infections <span id="infections-date"></span></h5>
       <table id="country-estimates">
@@ -66,25 +66,25 @@ active_page = 'models' -%} {% block additional_js_pre %}
       <div class="row mitigation-strenght">
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-0">
-            <input type="radio" name="mitigation" id="mitigation-none" autocomplete="off" onclick="update_plot()" />
+            <input type="radio" name="mitigation" id="mitigation-none" autocomplete="off" onclick="updatePlot()" />
             None
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-05">
-            <input type="radio" name="mitigation" id="mitigation-weak" autocomplete="off" onclick="update_plot()"/>
+            <input type="radio" name="mitigation" id="mitigation-weak" autocomplete="off" onclick="updatePlot()"/>
             Weak
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-04">
-            <input type="radio" name="mitigation" id="mitigation-moderate" autocomplete="off" onclick="update_plot()"/>
+            <input type="radio" name="mitigation" id="mitigation-moderate" autocomplete="off" onclick="updatePlot()"/>
             Moderate
           </label>
         </div>
         <div class="col-sm-auto col-xm-12">
           <label class="btn btn-secondary active beta-03">
-            <input type="radio" name="mitigation" id="mitigation-strong" autocomplete="off" onclick="update_plot()"/>
+            <input type="radio" name="mitigation" id="mitigation-strong" autocomplete="off" onclick="updatePlot()"/>
             Strong
           </label>
         </div>
