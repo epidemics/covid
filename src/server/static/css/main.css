@@ -565,7 +565,7 @@ div.tooltip {
   top: 0;
   left: 0;
 }
-/* 
+/*
 @media only screen and (max-width: 767px) {
   .legend {
     margin-top: 111%;
@@ -589,4 +589,8 @@ div.tooltip {
 */
 .underlined {
   text-decoration: underline;
+}
+
+table th, table td {
+  padding: 0.1em 0.7em;
 }

@@ -91,6 +91,24 @@
       <h5>Location</h5>
       <select id="selectButton" class="form-control medium"> </select>
       <hr />
+      <h5>Current Infections <span id="infections-date"></span></h5>
+      <table id="country-estimates">
+        <thead>
+          <th>Confirmed</th>
+          <th>Estimated</th>
+          <th>90% CI</th>
+          <th>Population</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="infections-confirmed">&mdash;</td>
+            <td id="infections-estimated">&mdash;</td>
+            <td id="infections-estimated-ci">&mdash;</td>
+            <td id="infections-population">&mdash;</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
       <h5>Global mitigation strength</h5>
       <div class="btn-group-toggle" data-toggle="buttons">
         <div class="row mitigation-strenght">
