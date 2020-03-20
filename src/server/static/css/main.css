@@ -133,6 +133,10 @@ header h1:before {
   padding-bottom: 5em;
 }
 
+.main-wrapper {
+  padding: 20px 0px;
+}
+
 .container-wrapper {
   display: flex;
 }
@@ -441,10 +445,6 @@ strong {
   .large {
     font-size: 25px;
   }
-  .container {
-    padding-left: 40px;
-    padding-right: 40px;
-  }
   .navbar ul li {
     display: block;
   }
@@ -477,6 +477,9 @@ strong {
   }
   .container-right-footer {
     position: static;
+  }
+  .main-wrapper {
+    padding: 15px 15px;
   }
 }
 
@@ -565,7 +568,7 @@ div.tooltip {
   top: 0;
   left: 0;
 }
-/* 
+/*
 @media only screen and (max-width: 767px) {
   .legend {
     margin-top: 111%;
@@ -579,7 +582,7 @@ div.tooltip {
 
 @media only screen and (max-width: 767px) {
   .legend {
-    margin-top: 100%;
+    margin-top: 20px;
     margin-bottom: 18px;
   }
 }
@@ -589,4 +592,8 @@ div.tooltip {
 */
 .underlined {
   text-decoration: underline;
+}
+
+table th, table td {
+  padding: 0.1em 0.7em;
 }

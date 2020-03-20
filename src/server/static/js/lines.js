@@ -1,3 +1,5 @@
+/* global d3:false Set:false */
+
 function setGetParam(key, value) {
   if (history.pushState) {
     var params = new URLSearchParams(window.location.search);
@@ -106,8 +108,32 @@ function getMaxYValueForCountry(mitigations) {
   return Math.max(...highestVals);
 }
 
+let scenarios = undefined; // cache scenarios b/c they're requested often
 function getListOfScenarios(activeData) {
-  return Object.keys(activeData);
+  if (typeof scenarios !== 'undefined') return scenarios;
+
+  const paramSets = Object.keys(activeData).map(getScenarioParameters);
+  const sortedParamSets = paramSets.sort((a, b) => {
+    return parseFloat(b['COVID seasonality']) - parseFloat(a['COVID seasonality']);
+  }).sort((a, b) => {
+    return parseFloat(a['Air traffic']) - parseFloat(b['Air traffic']);
+  })
+  scenarios = sortedParamSets.map(
+    params => `COVID seasonality ${params['COVID seasonality']
+              }, Air traffic ${params['Air traffic']}`
+  );
+  console.log(scenarios);
+  return scenarios;
+}
+
+
+function getScenarioParameters(scenario) {
+  const params = {}
+  scenario.split(', ').forEach(part => {
+    const match = /^(?<param>[^\d\.]+) (?<value>[\d\.]+)$/.exec(part);
+    params[match.groups.param] = match.groups.value;
+  });
+  return params;
 }
 
 function getListOfRegions(regions) {
@@ -118,21 +144,68 @@ function getListOfRegions(regions) {
 
 var url_string = window.location.href;
 var url = new URL(url_string);
-var channel = url.searchParams.get('channel')
+var channel = url.searchParams.get('channel') || 'main';
 
+var selected = {
+  country: url.searchParams.get('selection'),
+  mitigation: "None"
+};
 
-d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? channel : 'main') +"-gleam.json")
+// Reported & Estimated Infections
+var estimatesData;
+
+d3.json(`https://storage.googleapis.com/static-covid/static/data-${channel}-estimates-v1.json`).then(function(data) {
+    estimatesData = data;
+    updateInfectionTotals();
+});
+
+function updateInfectionTotals() {
+  if (typeof estimatesData === 'undefined') return;
+
+  const { population, data } = estimatesData.regions[selected.country];
+  const dates = Object.keys(data.estimates.days);
+  let maxDate = dates[0];
+  dates.slice(1).forEach(date => {
+    if (new Date(maxDate) < new Date(date)) {
+      maxDate = date;
+    }
+  });
+  const infections = data.estimates.days[maxDate];
+
+  d3.select('#infections-date').html(`(${maxDate})`);
+  d3.select('#infections-confirmed').html(
+    formatInfectionTotal(infections['JH_Confirmed']));
+  d3.select('#infections-estimated').html(
+    formatInfectionTotal(infections['FT_Infected']));
+  d3.select('#infections-estimated-ci').html(`${
+    formatInfectionTotal(infections['FT_Infected_q05'])} - ${
+    formatInfectionTotal(infections['FT_Infected_q95'])
+  }`);
+  d3.select('#infections-population').html(
+    formatInfectionTotal(population));
+}
+
+const formatInfectionTotal = function(number) {
+  if (typeof number !== 'number' || Number.isNaN(number)) {
+    return "&mdash;";
+  }
+  if (number < 10000 && number > -10000) {
+    return String(number);
+  } else {
+    return number.toLocaleString();
+  }
+}
+
+// Lines Chart
+d3.json(`https://storage.googleapis.com/static-covid/static/data-${channel}-gleam.json`)
 .then(function(data) {
 
   // console.log('json data', data)
   var listOfCountries = getListOfRegions(data.regions);
-  var selected = {
-    country: getSelectedCountry(listOfCountries),
-    mitigation: "None"
-  };
+  selected.country = getSelectedCountry(listOfCountries);
   var infectedPer1000 = data.regions[selected.country].data.infected_per_1000;
   var activeData = infectedPer1000.mitigations[selected.mitigation];
-  console.log('activeData data', activeData)
+  // console.log('activeData data', activeData)
   // console.log('infectedPer1000 data', getMaxYValueForCountry(infectedPer1000.mitigations, selected.country))
 
   // add the options to the button
@@ -327,12 +400,13 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
     });
 
   //initialization
-  update({ country: selected.country });
+  update();
   d3.select("#selectButton").property("value", selected.country);
   // update the containment measures with the new selected country
   var countryName = listOfCountries.find(c => c.key == selected.country).value
-  update_containment_measures(countryName);
+  // update_containment_measures(countryName);
   update_country_in_text(countryName);
+  updateInfectionTotals()
 
   // A function that update the chart
   function update() {
@@ -367,6 +441,8 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
     for (l in lines) {
       updateLine(lines[l], activeData[l]);
     }
+
+    updateInfectionTotals()
   }
 
   // When the button is changed, run the updateChart function
@@ -382,7 +458,7 @@ d3.json("https://storage.googleapis.com/static-covid/static/data-" + (channel ? 
     // run the updateChart function with this selected option
     update();
     // update the containment measures with the new selected country
-    update_containment_measures(countryName);
+    // update_containment_measures(countryName);
     // update the name of the country in the text below the graph
     update_country_in_text(countryName);
   });
@@ -438,7 +514,7 @@ function containment_entry(date = "", text = "", source_link = "") {
 }
 
 function update_containment_measures(selectedOption) {
-  console.log('selecteddOption', selectedOption)
+  // console.log('selecteddOption', selectedOption)
   jQuery.get({
     url: "/get_containment_measures",
     data: { country: selectedOption },
