@@ -61,9 +61,9 @@ function updateInfectionTotals() {
   const infections = data.estimates.days[maxDate];
 
   d3.select("#infections-date").html(`(${maxDate})`);
-  d3.select("#infections-confirmed").html(
-    formatInfectionTotal(infections["JH_Confirmed"])
-  );
+  d3.select("#infections-confirmed").html(formatInfectionTotal(
+    infections["JH_Confirmed"] - infections["JH_Recovered"] - infections["JH_Deaths"]
+  ));
   d3.select("#infections-estimated").html(
     formatInfectionTotal(infections["FT_Infected"])
   );
