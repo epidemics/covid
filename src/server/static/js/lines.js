@@ -1,5 +1,6 @@
 /* global $:false d3:false Plotly:false */
 
+const Y_SCALE = 1000;
 const SCENARIOS = [
   {
     scenario: "COVID seasonality 0.85, Air traffic 0.20",
@@ -93,7 +94,7 @@ var plotyGraph = document.getElementById("my_dataviz");
 
 // graph layout
 var layout = {
-  height: 675,
+  height: 600,
   //margin: { t: 0 },
   paper_bgcolor: "#222028",
   plot_bgcolor: "#222028",
@@ -118,7 +119,7 @@ var layout = {
     tickcolor: "#fff"
   },
   yaxis: {
-    title: "Active infections as a percentage of the population",
+    title: "Active infections (% of population)",
     titlefont: {
       family: "DM Sans, sans-serif",
       size: 18,
@@ -148,9 +149,10 @@ var layout = {
   showlegend: true,
   legend: {
     x: 1,
-    xanchor: 'right',
+    xanchor: "right",
     y: 1,
-    yanchor: 'top'
+    yanchor: "top",
+    bgcolor: "#22202888"
   }
 };
 
@@ -280,7 +282,7 @@ function updatePlot(opt) {
   const yMax = getMaxYValueForRegion(
     linesData.regions[selectedRegion].data.infected_per_1000.mitigations
   );
-  layout.yaxis.range = [0, yMax / 10];
+  layout.yaxis.range = [0, yMax / Y_SCALE];
 
   var regionData =
     linesData.regions[selectedRegion].data.infected_per_1000.mitigations[
@@ -304,7 +306,7 @@ function updatePlot(opt) {
     // debugger;
     traces.push({
       x: x,
-      y: regionData[scenario].map(y => y / 10),
+      y: regionData[scenario].map(y => y / Y_SCALE),
       mode: "lines",
       name: label,
       line: {
