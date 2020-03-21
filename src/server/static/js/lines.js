@@ -1,4 +1,188 @@
-/* global d3:false Set:false */
+/* global $:false d3:false Plotly:false */
+
+const Y_SCALE = 1000;
+const SCENARIOS = [
+  {
+    scenario: "COVID seasonality 0.85, Air traffic 0.20",
+    label: "WEAK seasonality + <br />WEAK reduced air travel"
+  }, {
+    scenario: "COVID seasonality 0.70, Air traffic 0.20",
+    label: "MEDIUM seasonality + <br />STRONG reduced air travel"
+  }, {
+    scenario: "COVID seasonality 0.50, Air traffic 0.20",
+    label: "STRONG seasonality + <br />WEAK reduced air travel"
+  }, {
+    scenario: "COVID seasonality 0.85, Air traffic 0.70",
+    label: "WEAK seasonality + <br />STRONG reduced air travel"
+  }, {
+    scenario: "COVID seasonality 0.70, Air traffic 0.70",
+    label: "MEDIUM seasonality + <br />WEAK reduced air travel"
+  }, {
+    scenario: "COVID seasonality 0.50, Air traffic 0.70",
+    label: "STRONG seasonality + <br />STRONG reduced air travel"
+  }
+];
+
+function getUrlParams(data) {
+  var urlString = window.location.href;
+  var url = new URL(urlString);
+  return {
+    region: url.searchParams.get("selection") || "united kingdom",
+    channel: url.searchParams.get("channel") || "main"
+  };
+}
+
+const { channel } = getUrlParams();
+var linesData, estimatesData, listOfRegions;
+let selected = {
+  region: getUrlParams().region,
+  mitigation: "none"
+};
+
+// Reported & Estimated Infections
+d3.json(
+  `https://storage.googleapis.com/static-covid/static/data-${channel}-estimates-v1.json`
+).then(function(data) {
+  estimatesData = data;
+  updateInfectionTotals();
+});
+
+function updateInfectionTotals() {
+  if (typeof estimatesData === "undefined") return;
+
+  const { population, data } = estimatesData.regions[selected.region];
+  const dates = Object.keys(data.estimates.days);
+  let maxDate = dates[0];
+  dates.slice(1).forEach(date => {
+    if (new Date(maxDate) < new Date(date)) {
+      maxDate = date;
+    }
+  });
+  const infections = data.estimates.days[maxDate];
+
+  d3.select("#infections-date").html(`(${maxDate})`);
+  d3.select("#infections-confirmed").html(
+    formatInfectionTotal(infections["JH_Confirmed"])
+  );
+  d3.select("#infections-estimated").html(
+    formatInfectionTotal(infections["FT_Infected"])
+  );
+  d3.select("#infections-estimated-ci").html(
+    `${formatInfectionTotal(
+      infections["FT_Infected_q05"]
+    )} - ${formatInfectionTotal(infections["FT_Infected_q95"])}`
+  );
+  d3.select("#infections-population").html(formatInfectionTotal(population));
+}
+
+const formatInfectionTotal = function(number) {
+  if (typeof number !== "number" || Number.isNaN(number)) {
+    return "&mdash;";
+  }
+  if (number < 10000 && number > -10000) {
+    return String(number);
+  } else {
+    return number.toLocaleString();
+  }
+};
+
+// dropdown of countries
+var selectButton = document.getElementById("selectButton");
+
+// graph
+var plotyGraph = document.getElementById("my_dataviz");
+
+// graph layout
+var layout = {
+  height: 600,
+  //margin: { t: 0 },
+  paper_bgcolor: "#222028",
+  plot_bgcolor: "#222028",
+  xaxis: {
+    type: "date",
+    title: "Date",
+    titlefont: {
+      family: "DM Sans, sans-serif",
+      size: 18,
+      color: "white"
+    },
+    ticks: "outside",
+    tickfont: {
+      family: "DM Sans, sans-serif",
+      size: 14,
+      color: "white"
+    },
+    tick0: 0,
+    dtick: 0.0,
+    ticklen: 8,
+    tickwidth: 1,
+    tickcolor: "#fff"
+  },
+  yaxis: {
+    title: "Active infections (% of population)",
+    titlefont: {
+      family: "DM Sans, sans-serif",
+      size: 18,
+      color: "white"
+    },
+    tickfont: {
+      family: "DM Sans, sans-serif",
+      size: 14,
+      color: "white"
+    },
+    ticks: "outside",
+    tick0: 0,
+    dtick: 0.0,
+    ticklen: 8,
+    tickwidth: 1,
+    tickcolor: "#fff",
+    showline: true,
+    linecolor: "#fff",
+    linewidth: 1,
+    showgrid: false,
+    zeroline: true,
+    zerolinecolor: "#fff",
+    zerolinewidth: 1,
+
+    range: [0, 1]
+  },
+  showlegend: true,
+  legend: {
+    x: 1,
+    xanchor: "right",
+    y: 1,
+    yanchor: "top",
+    bgcolor: "#22202888"
+  }
+};
+
+var colors = ["#edcdab", "#edb77e", "#e97f0f", "#9ac9d9", "#5abbdb", "#007ca6"];
+
+var plotlyConfig = {
+  displaylogo: false,
+  responsive: true,
+  scrollZoom: false
+};
+
+Plotly.newPlot(plotyGraph, [], layout, plotlyConfig);
+
+
+function getMaxYValueForRegion(mitigations) {
+  var highestVals = [];
+  Object.values(mitigations).forEach(mitigation => {
+    Object.values(mitigation).forEach(values => {
+      highestVals.push(Math.max(...values));
+    });
+  });
+  return Math.max(...highestVals);
+}
+
+
+function getListOfRegions(regions) {
+  return Object.keys(regions).map(key => {
+    return { key, name: regions[key].name };
+  });
+}
 
 function setGetParam(key, value) {
   if (history.pushState) {
@@ -14,544 +198,126 @@ function setGetParam(key, value) {
     window.history.pushState({ path: newUrl }, "", newUrl);
   }
 }
+/* end from lines.js */
 
-// set the dimensions and margins of the graph
-
-var chartDiv = document.getElementById("my_dataviz"); //Mati: this doesn't seem to be doing anythnig
-
-// set the dimensions and margins of the graph
-var margin = { top: 10, right: 100, bottom: 30, left: 100 },
-  width = 800,
-  height = 675;
-// append the svg object to the body of the page
-var svg = d3
-  .select("#my_dataviz")
-  .attr("class", "row")
-  .style("width", "100%")
-  .append("div")
-  .attr("class", "col-md-9 col-sm-12")
-  .append("svg")
-  .attr("preserveAspectRatio", "xMinYMin meet")
-  .attr("viewBox", `0 0 ${width + 150} ${height + 75}`)
-  .append("g")
-  .attr("transform", `translate(${margin.left},${margin.top})`);
-
-// Legend
-d3.select("#my_dataviz")
-  .append("div")
-  .attr("class", "col-md-3 col-sm-12")
-  .style("padding", "0px")
-  .append("div")
-  .attr("class", "legend")
-  .append("div")
-  .html(
-    `<span class="color1">
-      Weak seasonality
-      <br/>
-      Weak reduction in air travel
-    </span>
-    <br>
-    <br>
-    <span class="color2">
-      Medium seasonality
-      <br/>
-      Weak reduction in air travel
-    </span>
-    <br>
-    <br>
-    <span class="color3">
-      Strong seasonality
-      <br/>
-      Weak reduction in air travel
-    </span>
-    <br>
-    <br>
-    <span class="color4">
-      Weak seasonality
-      <br/>
-      Strong reduction in air travel
-    </span>
-    <br>
-    <br>
-    <span class="color5">
-      Medium seasonality
-      <br/>
-      Strong reduction in air travel
-    </span>
-    <br>
-    <br>
-    <span class="color6">
-      Strong seasonality
-      <br/>
-      Strong reduction in air travel
-    </span>`
-  );
-
-function getCountries(data) {
-  return [...new Set(data.map(d => d.Country))];
-}
-
-function getSelectedCountry(data) {
-  var url_string = window.location.href;
-  var url = new URL(url_string);
-  var c = url.searchParams.get("selection");
-  return c && data.map(c => c.key).includes(c) ? c : "hong kong city";
-}
-
-function getMaxYValueForCountry(mitigations) {
-  var highestVals = [];
-  for (m in mitigations) {
-    for (a in mitigations[m]) {
-      highestVals.push(Math.max(...mitigations[m][a]));
-    }
-  }
-  return Math.max(...highestVals);
-}
-
-let scenarios = undefined; // cache scenarios b/c they're requested often
-function getListOfScenarios(activeData) {
-  if (typeof scenarios !== 'undefined') return scenarios;
-
-  const paramSets = Object.keys(activeData).map(getScenarioParameters);
-  const sortedParamSets = paramSets.sort((a, b) => {
-    return parseFloat(b['COVID seasonality']) - parseFloat(a['COVID seasonality']);
-  }).sort((a, b) => {
-    return parseFloat(a['Air traffic']) - parseFloat(b['Air traffic']);
-  })
-  scenarios = sortedParamSets.map(
-    params => `COVID seasonality ${params['COVID seasonality']
-              }, Air traffic ${params['Air traffic']}`
-  );
-  console.log(scenarios);
-  return scenarios;
-}
-
-function getScenarioParameters(scenario) {
-  const params = {}
-  scenario.split(', ').forEach(part => {
-    const match = /^(?<param>[^\d\.]+) (?<value>[\d\.]+)$/.exec(part);
-    params[match.groups.param] = match.groups.value;
-  });
-  return params;
-}
-
-function getListOfRegions(regions) {
-  return Object.keys(regions).map(k => {
-    return { key: k, value: regions[k].name }
-  })
-}
-
-var url_string = window.location.href;
-var url = new URL(url_string);
-var channel = url.searchParams.get('channel') || 'main';
-
-var selected = {
-  country: url.searchParams.get('selection'),
-  mitigation: "None"
-};
-
-// Reported & Estimated Infections
-var estimatesData;
-
-d3.json(`https://storage.googleapis.com/static-covid/static/data-${channel}-estimates-v1.json`).then(function(data) {
-    estimatesData = data;
-    updateInfectionTotals();
-});
-
-function updateInfectionTotals() {
-  if (typeof estimatesData === 'undefined') return;
-
-  const { population, data } = estimatesData.regions[selected.country];
-  const dates = Object.keys(data.estimates.days);
-  let maxDate = dates[0];
-  dates.slice(1).forEach(date => {
-    if (new Date(maxDate) < new Date(date)) {
-      maxDate = date;
-    }
-  });
-  const infections = data.estimates.days[maxDate];
-
-  d3.select('#infections-date').html(`(${maxDate})`);
-  d3.select('#infections-confirmed').html(
-    formatInfectionTotal(infections['JH_Confirmed']));
-  d3.select('#infections-estimated').html(
-    formatInfectionTotal(infections['FT_Infected']));
-  d3.select('#infections-estimated-ci').html(`${
-    formatInfectionTotal(infections['FT_Infected_q05'])} - ${
-    formatInfectionTotal(infections['FT_Infected_q95'])
-  }`);
-  d3.select('#infections-population').html(
-    formatInfectionTotal(population));
-}
-
-const formatInfectionTotal = function(number) {
-  if (typeof number !== 'number' || Number.isNaN(number)) {
-    return "&mdash;";
-  }
-  if (number < 10000 && number > -10000) {
-    return String(number);
-  } else {
-    return number.toLocaleString();
+function updateRegionInText(selectedRegion) {
+  var regionSpans = jQuery(".selected-region");
+  for (let i = 0; i < regionSpans.length; i++) {
+    regionSpans[i].innerHTML = selectedRegion;
   }
 }
 
-// Lines Chart
-d3.json(`https://storage.googleapis.com/static-covid/static/data-${channel}-gleam.json`)
-.then(function(data) {
+// triggered by change of region in the drop down menu
+function changeRegion() {
+  // recover the option that has been chosen
+  selected.region = selectButton.value;
+  // change url param
+  setGetParam("selection", selected.region);
+  var countryName = listOfRegions.find(c => c.key === selected.region).value;
+  // update the graph
+  updatePlot();
+  // update the name of the region in the text below the graph
+  updateRegionInText(countryName);
+  updateInfectionTotals();
+}
 
-  // console.log('json data', data)
-  var listOfCountries = getListOfRegions(data.regions);
-  selected.country = getSelectedCountry(listOfCountries);
-  var infectedPer1000 = data.regions[selected.country].data.infected_per_1000;
-  var activeData = infectedPer1000.mitigations[selected.mitigation];
-  // console.log('activeData data', activeData)
-  // console.log('infectedPer1000 data', getMaxYValueForCountry(infectedPer1000.mitigations, selected.country))
-
-  // add the options to the button
-  d3.select("#selectButton")
-    .selectAll("myOptions")
-    .data(listOfCountries)
-    .enter()
-    .append("option")
-    .text(function (d) {
-      return d.value;
-    }) // text showed in the menu
-    .attr("value", function (d) {
-      return d.key;
-    })
-    .sort(); // corresponding value returned by the button
-
-  var tomorrow = d3.timeDay.ceil(new Date());
-  var xDomain = [
-    tomorrow,
-    d3.timeDay.offset(
-      tomorrow, activeData[Object.keys(activeData)[0]].length - 1)
-  ];
-
-  // Add X axis --> it is a date format
-  var x = d3
-    .scaleTime()
-    .range([0, width])
-    .domain(xDomain);
-  svg
-    .append("g")
-    .style("font-size", "20px")
-    .attr("transform", "translate(0," + height + ")")
-    .call(
-      d3
-        .axisBottom(x)
-        .ticks(6)
-        .tickFormat(d3.timeFormat("%b %Y"))
-    );
-
-  // text label for the x axis
-  svg
-    .append("text")
-    .classed("xlabel", true)
-    .style("fill", "#a9a9ac")
-    .attr(
-      "transform",
-      "translate(" + width / 2 + " ," + (height + margin.top + 40) + ")"
-    )
-    .style("text-anchor", "middle")
-    .text("Date");
-
-  var yDomain = [
-    0,
-    getMaxYValueForCountry(infectedPer1000.mitigations, selected.country) / 10
-  ];
-
-  // Add Y axis
-  var y = d3
-    .scaleLinear()
-    .domain(yDomain)
-    .range([height, 0]);
-  var yAxis = svg
-    .append("g")
-    .style("font-size", "20px")
-    .call(
-      d3.axisLeft(y).ticks(10) //TODO: consider adding: .tickFormat(d3.format(".0%"))
-    );
-
-  // text label for the y axis
-  svg
-    .append("text")
-    .classed("ylabel", true)
-    .style("fill", "#a9a9ac")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left)
-    .attr("x", 0 - height / 2)
-    .attr("dy", "1em")
-    .style("text-anchor", "middle")
-    .text("Active infections as a percentage of the population");
-
-  // Set font size for axis labels
-  svg.style("font-size", "22px");
-
-  function drawLine(lineData, color) {
-    return svg
-      .append("g")
-      .append("path")
-      .datum(lineData)
-      // .attr(
-      //   "d",
-      //   d3
-      //     .line()
-      //     .x(function (d, i) {
-      //       return x(d3.timeDay.offset(new Date(), i));
-      //     })
-      //     .y(function (d) {
-      //       return y(+d/10);
-      //     })
-      // )
-      .attr("stroke", color)
-      .style("stroke-width", 2)
-      .style("fill", "none");
-  }
-
-  var lines = {};
-  /* Previous color scheme, saving in comment for reference
-  var colors = [
-    "#753def",
-    "#ef3d3d",
-    "#ef993d",
-    "#9edf5c",
-    "#5cdfd3",
-    "#cf5cdf"
-  ];
-*/
-  var colors = [
-    "#edcdab",
-    "#edb77e",
-    "#ed810e",
-    "#9ac9d9",
-    "#5abbdb",
-    "#007ca6"
-  ];
-
-  getListOfScenarios(activeData).forEach((s, i) => {
-    lines[s] = drawLine(activeData[s], colors[i]);
-  });
-
-  // create crosshairs
-  var crosshair = svg.append("g").attr("class", "line");
-
-  // create vertical line
-  crosshair
-    .append("line")
-    .attr("id", "crosshairX")
-    .attr("class", "crosshair");
-
-  // create horizontal line
-  crosshair
-    .append("line")
-    .attr("id", "crosshairY")
-    .attr("class", "crosshair");
-
-  var tooltip = d3
-    .select("body")
-    .append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
-
-  svg
-    .append("rect")
-    .attr("class", "overlay")
-    .attr("width", width)
-    .attr("height", height)
-    .on("mouseover", function () {
-      crosshair.style("display", null);
-    })
-    .on("mouseout", function () {
-      tooltip.style("opacity", 0);
-      crosshair.style("display", "none");
-    })
-    .on("mousemove", function () {
-      var mouse = d3.mouse(this);
-      var mouseDate = x.invert(mouse[0]);
-      var mouseVal = y.invert(mouse[1]);
-
-      crosshair
-        .select("#crosshairX")
-        .attr("x1", mouse[0])
-        .attr("y1", y(yDomain[0]))
-        .attr("x2", mouse[0])
-        .attr("y2", y(yDomain[1]));
-
-      crosshair
-        .select("#crosshairY")
-        .attr("x1", x(xDomain[0]))
-        .attr("y1", mouse[1])
-        .attr("x2", x(xDomain[1]))
-        .attr("y2", mouse[1]);
-
-      const oneDay = 864e5; // milliseconds
-      const diffDays = Math.round(Math.abs((mouseDate - new Date()) / oneDay)); // number of days in the future
-      const scenarios = getListOfScenarios(activeData);
-      const hoveredValues = scenarios.map(s => {
-        return activeData[s][diffDays];
-      });
-      tooltip
-        .style("opacity", 1)
-        .html(hoveredValues.map((h, i) => `<span class="color${i+1}">${(h/10).toFixed(5)}</span>`).join("<br>")) //TODO: `<span class="color${i}">h</span>` // scenarios[i] + ": " +
-        .style("left", d3.event.pageX + "px")
-        .style("top", d3.event.pageY - 28 + "px");
+// load the data used for the graph
+jQuery.getJSON(
+  "https://storage.googleapis.com/static-covid/static/data-" +
+    (channel ? channel : "main") +
+    "-gleam.json",
+  function(data) {
+    linesData = data;
+    // populate the dropdown menu with countries from received data
+    listOfRegions = getListOfRegions(data.regions);
+    listOfRegions.forEach(({ key, name }) => {
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.innerHTML = name;
+      selectButton.appendChild(opt);
     });
+    // initialize the graph
+    updatePlot(selected);
+  }
+);
 
-  //initialization
-  update();
-  d3.select("#selectButton").property("value", selected.country);
-  // update the containment measures with the new selected country
-  var countryName = listOfCountries.find(c => c.key == selected.country).value
-  // update_containment_measures(countryName);
-  update_country_in_text(countryName);
-  updateInfectionTotals()
 
-  // A function that update the chart
-  function update() {
-    yDomain[1] = getMaxYValueForCountry(
-      infectedPer1000.mitigations,
-      selected.country
-    ) / 10;
-    y = y.domain(yDomain);
-    function updateLine(myLine, lineData) {
-      myLine
-        .datum(lineData)
-        .transition()
-        .duration(1000)
-        .attr(
-          "d",
-          d3
-            .line()
-            .x(function (d, i) {
-              return x(d3.timeDay.offset(new Date(), i));
-            })
-            .y(function (d) {
-              return y(+d/10);
-            })
-        );
-    }
 
-    yAxis
-      .transition()
-      .duration(1000)
-      .call(d3.axisLeft(y).ticks(10));
+// update the graph
+function updatePlot(opt) {
+  var mitigationValue, selectedRegion;
+  var mitigationIds = {
+    none: "None",
+    weak: "Low",
+    moderate: "Medium",
+    strong: "High"
+  };
 
-    for (l in lines) {
-      updateLine(lines[l], activeData[l]);
-    }
+  if (typeof opt !== "undefined") {
+    // assign value of the mitigation given by argument
+    document.getElementById("mitigation-" + opt.mitigation).click();
+    mitigationValue = mitigationIds[opt.mitigation];
 
-    updateInfectionTotals()
+    // assign value of the region given by argument
+    selectedRegion = opt.region;
+    document.getElementById("selectButton").value = selectedRegion;
+  } else {
+    // find the current value of the mitigation
+    Object.keys(mitigationIds).forEach(mitId => {
+      if (document.getElementById("mitigation-" + mitId).checked) {
+        mitigationValue = mitigationIds[mitId];
+      }
+    });
+    // find the current value of the selected region
+    selectedRegion = document.getElementById("selectButton").value;
+
+    // update the selected variable
+    selected = {
+      region: selectedRegion,
+      mitigation: mitigationValue
+    };
   }
 
-  // When the button is changed, run the updateChart function
-  d3.select("#selectButton").on("change", function (d) {
-    // recover the option that has been chosen
-    selected.country = d3.select(this).property("value");
-    // change url param
-    setGetParam("selection", selected.country);
-    infectedPer1000 = data.regions[selected.country].data.infected_per_1000;
-    activeData = infectedPer1000.mitigations[selected.mitigation];
+  // find the max value across all mitigations and update the axis range
+  const yMax = getMaxYValueForRegion(
+    linesData.regions[selectedRegion].data.infected_per_1000.mitigations
+  );
+  layout.yaxis.range = [0, yMax / Y_SCALE];
 
-    var countryName = listOfCountries.find(c => c.key == selected.country).value
-    // run the updateChart function with this selected option
-    update();
-    // update the containment measures with the new selected country
-    // update_containment_measures(countryName);
-    // update the name of the country in the text below the graph
-    update_country_in_text(countryName);
-  });
+  var regionData =
+    linesData.regions[selectedRegion].data.infected_per_1000.mitigations[
+      mitigationValue
+    ];
 
-  d3.select(".beta-0").on("click", function () {
-    selected.mitigation = "None";
-    activeData = infectedPer1000.mitigations[selected.mitigation];
-    update();
-  });
-  d3.select(".beta-03").on("click", function () {
-    selected.mitigation = "High";
-    activeData = infectedPer1000.mitigations[selected.mitigation];
-    update();
-  });
-  d3.select(".beta-04").on("click", function () {
-    selected.mitigation = "Medium";
-    activeData = infectedPer1000.mitigations[selected.mitigation];
-    update();
-  });
-  d3.select(".beta-05").on("click", function () {
-    selected.mitigation = "Low";
-    activeData = infectedPer1000.mitigations[selected.mitigation];
-    update();
-  });
-});
+  const traces = [];
 
-function update_country_in_text(selectedCountry) {
-  var countrySpans = jQuery(".selected-country");
-  for (i = 0; i < countrySpans.length; i++) {
-    countrySpans[i].innerHTML = selectedCountry;
-  }
-}
+  var x;
+  var xStart = new Date(linesData.regions[selectedRegion].data.infected_per_1000.start);
 
-function containment_entry(date = "", text = "", source_link = "") {
-  /* write that jinja code with js for model.html template sidebar with containment measures entry
-   * <div class="containment_measure">
-   *   <h3 class="num">{{ date }}</h3>
-   *   <div class="area">{{ text }} <a href="{{ source_link }}" target="_blank">Source</a></div>
-   *</div>
-   */
-  var entryDiv = document.createElement("DIV");
-  entryDiv.setAttribute("class", "containment_measure");
-  var title = document.createElement("H6");
-  title.setAttribute("class", "num");
-  title.innerHTML = date;
-  var textDiv = document.createElement("DIV");
-  textDiv.setAttribute("class", "area");
-  textDiv.innerHTML =
-    text + " <a href='" + source_link + "'target='_blank'>Source</a>";
-  entryDiv.appendChild(title);
-  entryDiv.appendChild(textDiv);
-  return entryDiv;
-}
-
-function update_containment_measures(selectedOption) {
-  // console.log('selecteddOption', selectedOption)
-  jQuery.get({
-    url: "/get_containment_measures",
-    data: { country: selectedOption },
-    dataType: "json",
-    success: function (data) {
-      // find the div dedicated to the side bar on the model.html template
-      var containmentMeasuresDiv = document.getElementById(
-        "containment_measures"
-      );
-      containmentMeasuresDiv.textContent = "";
-      var divTitle = document.createElement("H5");
-      divTitle.innerHTML = "Containment measures";
-
-      containmentMeasuresDiv.append(divTitle);
-      var containmentMeasuresSource = document.createElement("a");
-      var linkText = document.createTextNode("(data source)");
-      containmentMeasuresSource.appendChild(linkText);
-      containmentMeasuresSource.title = "(data source)";
-      containmentMeasuresSource.href =
-        "https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e";
-      containmentMeasuresDiv.append(containmentMeasuresSource);
-
-      if (data != undefined) {
-          data.forEach(function (item, index) {
-                containmentMeasuresDiv.appendChild(
-                containment_entry(
-                  (date = item["date"]),
-                  (text = item["description"]),
-                  (source_link = item["source"])
-                )
-              );
-          });
-      } else {
-        var emptyDatasetMsg = document.createElement("P");
-        emptyDatasetMsg.innerHTML =
-          "There are no containment measures for this country in our database at the moment";
-        containmentMeasuresDiv.appendChild(emptyDatasetMsg);
+  var idx = 0;
+  SCENARIOS.forEach(({ scenario, label }) => {
+    // the x axis is the same for all traces so only defining it once
+    if (typeof x === "undefined") {
+      x = [];
+      for (let i = 0; i < regionData[scenario].length; ++i) {
+        x[i] = d3.timeDay.offset(xStart, i);
       }
     }
+    // debugger;
+    traces.push({
+      x: x,
+      y: regionData[scenario].map(y => y / Y_SCALE),
+      mode: "lines",
+      name: label,
+      line: {
+        dash: "solid",
+        width: 2,
+        color: colors[idx]
+      },
+      hoverlabel: {namelength :-1}
+    });
+    idx = idx + 1;
   });
+  // redraw the lines on the graph
+  Plotly.newPlot(plotyGraph, traces, layout, plotlyConfig);
 }
