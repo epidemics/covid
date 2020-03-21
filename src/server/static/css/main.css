@@ -216,10 +216,9 @@ header h1:before {
 }*/
 
 .custom-footer {
-  position: fixed;
+  position: static;
   bottom: 0px;
   width: 100%;
-  background-color: #000;
   user-select: auto;
   opacity: 100%;
   font-size: 0.9em;
@@ -244,6 +243,11 @@ hr {
 .logo {
   height: 70px;
   margin: 15px;
+  display: inline-block;
+}
+
+.disclaimer {
+  padding-bottom: 10px;
 }
 
 /*
