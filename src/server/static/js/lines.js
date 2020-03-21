@@ -1,25 +1,25 @@
 /* global $:false d3:false Plotly:false */
 
-const Y_SCALE = 1000;
+const Y_SCALE = 10; // Going from per_1000_pops to per 100 (%)
 const SCENARIOS = [
   {
     scenario: "COVID seasonality 0.85, Air traffic 0.20",
-    label: "WEAK seasonality + <br />WEAK reduced air travel"
+    label: "WEAK seasonality + <br />STRONGLY reduced air travel"
   }, {
     scenario: "COVID seasonality 0.70, Air traffic 0.20",
-    label: "MEDIUM seasonality + <br />STRONG reduced air travel"
+    label: "MEDIUM seasonality + <br />STRONGLY reduced air travel"
   }, {
     scenario: "COVID seasonality 0.50, Air traffic 0.20",
-    label: "STRONG seasonality + <br />WEAK reduced air travel"
+    label: "STRONG seasonality + <br />STRONGLY reduced air travel"
   }, {
     scenario: "COVID seasonality 0.85, Air traffic 0.70",
-    label: "WEAK seasonality + <br />STRONG reduced air travel"
+    label: "WEAK seasonality + <br />WEAKLY reduced air travel"
   }, {
     scenario: "COVID seasonality 0.70, Air traffic 0.70",
-    label: "MEDIUM seasonality + <br />WEAK reduced air travel"
+    label: "MEDIUM seasonality + <br />WEAKLY reduced air travel"
   }, {
     scenario: "COVID seasonality 0.50, Air traffic 0.70",
-    label: "STRONG seasonality + <br />STRONG reduced air travel"
+    label: "STRONG seasonality + <br />WEAKLY reduced air travel"
   }
 ];
 
