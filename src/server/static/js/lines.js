@@ -144,6 +144,13 @@ var layout = {
     zerolinewidth: 1,
 
     range: [0, 1]
+  },
+  showlegend: true,
+  legend: {
+    x: 1,
+    xanchor: 'right',
+    y: 1,
+    yanchor: 'top'
   }
 };
 
@@ -152,7 +159,7 @@ var colors = ["#edcdab", "#edb77e", "#e97f0f", "#9ac9d9", "#5abbdb", "#007ca6"];
 var plotlyConfig = {
   displaylogo: false,
   responsive: true,
-  scrollZoom: true
+  scrollZoom: false
 };
 
 Plotly.newPlot(plotyGraph, [], layout, plotlyConfig);
