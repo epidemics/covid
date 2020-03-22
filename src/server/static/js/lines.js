@@ -200,10 +200,11 @@ function setGetParam(key, value) {
 }
 /* end from lines.js */
 
-function updateRegionInText(selectedRegion) {
+function updateRegionInText(region) {
+	var countryName = listOfRegions.find(c => c.key === region).name;
   var regionSpans = jQuery(".selected-region");
   for (let i = 0; i < regionSpans.length; i++) {
-    regionSpans[i].innerHTML = selectedRegion;
+    regionSpans[i].innerHTML = countryName;
   }
 }
 
@@ -213,11 +214,8 @@ function changeRegion() {
   selected.region = selectButton.value;
   // change url param
   setGetParam("selection", selected.region);
-  var countryName = listOfRegions.find(c => c.key === selected.region).value;
   // update the graph
   updatePlot();
-  // update the name of the region in the text below the graph
-  updateRegionInText(countryName);
   updateInfectionTotals();
 }
 
@@ -277,6 +275,9 @@ function updatePlot(opt) {
       mitigation: mitigationValue
     };
   }
+
+  // update the name of the region in the text below the graph
+  updateRegionInText(selectedRegion);
 
   // find the max value across all mitigations and update the axis range
   const yMax = getMaxYValueForRegion(
