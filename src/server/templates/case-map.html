@@ -42,5 +42,6 @@ title%} {% set active_page = 'case-map' -%} {% block additional_js_pre %}
 </div>
 
 {% endblock %} {% block additional_js %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="{{ url_for('static', path='/js/bubbles.js') }}"></script>
 {% endblock %}

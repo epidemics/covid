@@ -1,67 +1,45 @@
-// function transformBubbleData(data) {
-//   return data.map(bubble => ({ lat: bubble.lat, lang: bubble.lng, country: bubble.Country, city: bubble.City  }));
-// }
+Plotly.d3.csv('https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv', function(err, rows){
+      function unpack(rows, key) {
+          return rows.map(function(row) { return row[key]; });
+      }
 
-// mapid is the id of the div where the map will appear
-var map = L.map("mapid").setView([35, 2], 2); // center position + zoom
+       var data = [{
+            type: 'choropleth',
+            locations: unpack(rows, 'CODE'),
+            z: unpack(rows, 'GDP (BILLIONS)'),
+            text: unpack(rows, 'COUNTRY'),
+            colorscale: [
+                [0,'rgb(5, 10, 172)'],[0.35,'rgb(40, 60, 190)'],
+                [0.5,'rgb(70, 100, 245)'], [0.6,'rgb(90, 120, 245)'],
+                [0.7,'rgb(106, 137, 247)'],[1,'rgb(220, 220, 220)']],
+            autocolorscale: false,
+            reversescale: true,
+            marker: {
+                line: {
+                    color: 'rgb(180,180,180)',
+                    width: 0.5
+                }
+            },
+            tick0: 0,
+            zmin: 0,
+            dtick: 1000,
+            colorbar: {
+                autotic: false,
+                tickprefix: '$',
+                title: 'GDP<br>Billions US$'
+            }
+      }];
 
-// Add a tile to the map = a background. Comes from OpenStreetmap
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-  attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  subdomains: "abcd",
-  maxZoom: 19
-}).addTo(map);
-
-// Add a svg layer to the map
-L.svg().addTo(map);
-
-
-d3.csv(
-  "https://storage.googleapis.com/static-covid/static/countries-spread.csv"
-).then(function(data) {
-  // Select the svg area and add circles:
-  d3.select("#mapid")
-    .select("svg")
-    .attr("pointer-events", "visible")
-    .selectAll("myCircles")
-    .data(data)
-    .enter()
-    .append("circle")
-    .attr("cx", function(d) {
-      return map.latLngToLayerPoint([d.lat, d.lng]).x;
-    })
-    .attr("cy", function(d) {
-      return map.latLngToLayerPoint([d.lat, d.lng]).y;
-    })
-    .attr("r", function(d) {
-      return Math.sqrt(d.Spreadsize / 100);
-    })
-    .style("fill", function(d) {
-      return d.Colour;
-    })
-    .attr("stroke", function(d) {
-      return d.Colour;
-    })
-    .attr("stroke-width", 3)
-    .attr("fill-opacity", 0.4)
-    .attr("class", "bubble");
-
-  d3.selectAll(".bubble").on("click", function(bubble) {
-    window.location = "/?selection=" + bubble.Country;
-  });
-
-  // Function that update circle position if something change
-  function update() {
-    d3.selectAll("circle")
-      .attr("cx", function(d) {
-        return map.latLngToLayerPoint([d.lat, d.lng]).x;
-      })
-      .attr("cy", function(d) {
-        return map.latLngToLayerPoint([d.lat, d.lng]).y;
-      });
-  }
-
-  // If the user change the map (zoom or drag), I update circle position:
-  map.on("moveend", update);
+      var layout = {
+          title: '2014 Global GDP<br>Source: <a href="https://www.cia.gov/library/publications/the-world-factbook/fields/2195.html"> CIA World Factbook</a>',
+          geo:{
+              showframe: false,
+              showcoastlines: false,
+              projection:{
+                  type: 'mercator'
+              }
+          },
+          mapbox: {style: "dark"},
+      };
+      Plotly.newPlot("mapid", data, layout, {showLink: false});
 });

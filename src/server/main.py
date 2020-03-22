@@ -125,11 +125,8 @@ async def request_calculation(request: Request) -> Response:
 
 
 @app.get("/")
-async def model(request: Request, country: str = "USA") -> Response:
+async def model(request: Request) -> Response:
     """serve the main model visualization"""
-    arguments = {"country": country} if country else {}
-
-    # TODO: parse the argument for the plot
     return templates.TemplateResponse("model.html", {"request": request})
 
 
