@@ -42,7 +42,7 @@ let selected = {
 // Reported & Estimated Infections
 d3.json(
   `https://storage.googleapis.com/static-covid/static/data-${channel}-estimates-v1.json`
-).then(function(data) {
+).then(function (data) {
   estimatesData = data;
   updateInfectionTotals();
 });
@@ -59,8 +59,24 @@ function updateInfectionTotals() {
     }
   });
   const infections = data.estimates.days[maxDate];
+  console.log(maxDate)
+  console.log(typeof maxDate)
 
-  d3.select("#infections-date").html(`(${maxDate})`);
+  formatDate = (date) => {
+
+    var [year, month_id, day] = date.split("-")
+
+    let month_names = ["Jan", "Feb", "Mar",
+      "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep",
+      "Oct", "Nov", "Dec"]
+
+    let month_string = month_names[month_id - 1]
+
+    return month_string + " " + day + ", " + year
+  }
+
+  d3.select("#infections-date").html(`(${formatDate(maxDate)})`);
   d3.select("#infections-confirmed").html(formatInfectionTotal(
     infections["JH_Confirmed"] - infections["JH_Recovered"] - infections["JH_Deaths"]
   ));
@@ -75,7 +91,7 @@ function updateInfectionTotals() {
   d3.select("#infections-population").html(formatInfectionTotal(population));
 }
 
-const formatInfectionTotal = function(number) {
+const formatInfectionTotal = function (number) {
   if (typeof number !== "number" || Number.isNaN(number)) {
     return "&mdash;";
   }
@@ -201,7 +217,7 @@ function setGetParam(key, value) {
 /* end from lines.js */
 
 function updateRegionInText(region) {
-	var countryName = listOfRegions.find(c => c.key === region).name;
+  var countryName = listOfRegions.find(c => c.key === region).name;
   var regionSpans = jQuery(".selected-region");
   for (let i = 0; i < regionSpans.length; i++) {
     regionSpans[i].innerHTML = countryName;
@@ -222,9 +238,9 @@ function changeRegion() {
 // load the data used for the graph
 jQuery.getJSON(
   "https://storage.googleapis.com/static-covid/static/data-" +
-    (channel ? channel : "main") +
-    "-gleam.json",
-  function(data) {
+  (channel ? channel : "main") +
+  "-gleam.json",
+  function (data) {
     linesData = data;
     // populate the dropdown menu with countries from received data
     listOfRegions = getListOfRegions(data.regions);
@@ -287,7 +303,7 @@ function updatePlot(opt) {
 
   var regionData =
     linesData.regions[selectedRegion].data.infected_per_1000.mitigations[
-      mitigationValue
+    mitigationValue
     ];
 
   const traces = [];
@@ -315,7 +331,7 @@ function updatePlot(opt) {
         width: 2,
         color: colors[idx]
       },
-      hoverlabel: {namelength :-1}
+      hoverlabel: { namelength: -1 }
     });
     idx = idx + 1;
   });

@@ -1,12 +1,12 @@
 <p><em> NOTE (March 17): This is a demo, and while it runs on real data it will be a few days until it's properly
-  vetted. Please <a href="http://epidemicforecasting.org/request-calculation">contact us</a> before using it for
-  major
-  decisions.
-</em></p>
+    vetted. Please <a href="http://epidemicforecasting.org/request-calculation">contact us</a> before using it for
+    major
+    decisions.
+  </em></p>
 <h5>Region</h5>
 <select id="selectButton" class="form-control medium col-md-4" onchange="changeRegion()"> </select>
 <hr />
-<h5>Current Active Infections <span id="infections-date"></span></h5>
+<h5>Active Infections <span id="infections-date"></span></h5>
 <table id="country-estimates">
   <thead>
     <th>Confirmed</th>
@@ -35,19 +35,19 @@
     </div>
     <div class="col-sm-auto col-xm-12">
       <label class="btn btn-secondary active beta-05">
-        <input type="radio" name="mitigation" id="mitigation-weak" autocomplete="off" onclick="updatePlot()"/>
+        <input type="radio" name="mitigation" id="mitigation-weak" autocomplete="off" onclick="updatePlot()" />
         Weak
       </label>
     </div>
     <div class="col-sm-auto col-xm-12">
       <label class="btn btn-secondary active beta-04">
-        <input type="radio" name="mitigation" id="mitigation-moderate" autocomplete="off" onclick="updatePlot()"/>
+        <input type="radio" name="mitigation" id="mitigation-moderate" autocomplete="off" onclick="updatePlot()" />
         Moderate
       </label>
     </div>
     <div class="col-sm-auto col-xm-12">
       <label class="btn btn-secondary active beta-03">
-        <input type="radio" name="mitigation" id="mitigation-strong" autocomplete="off" onclick="updatePlot()"/>
+        <input type="radio" name="mitigation" id="mitigation-strong" autocomplete="off" onclick="updatePlot()" />
         Strong
       </label>
     </div>
