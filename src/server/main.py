@@ -7,7 +7,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from server.event_model import stress, excess
-#from server.notion_connect import query_containment_measures
+
+# from server.notion_connect import query_containment_measures
 from server.config import CONFIG
 
 PLACES = [
