@@ -4,18 +4,20 @@ active_page = 'models' -%} {% block additional_js_pre %}
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
 <style type="text/css">
-@media only screen and (min-width: 992px) and (max-width: 1199px) {
-  .legend {
-    min-height: 473px;
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .legend {
+      min-height: 473px;
+    }
   }
-}
-@media only screen and (min-width: 1200px) {
-  .legend {
-    min-height: 555px;
+
+  @media only screen and (min-width: 1200px) {
+    .legend {
+      min-height: 555px;
+    }
   }
-}
-/* apply column-specific scrolling only if columns are side-by-side */
-/* @media only screen and (min-width: 576px) {
+
+  /* apply column-specific scrolling only if columns are side-by-side */
+  /* @media only screen and (min-width: 576px) {
   html {
     overflow: hidden;
   }
@@ -36,7 +38,7 @@ active_page = 'models' -%} {% block additional_js_pre %}
     <div class="col"></div>
     <div class="col-xs-11 col-sm-10 col-md-9 col-lg-8 col-xl-6">
       {% include "lines.html" %}
-      <hr />
+
       <p>
         The impact on <span class="selected-region"></span> is simulated using an epidemiological model based on
         global, real-world data on human population and travel patterns, displayed as an <a
@@ -58,7 +60,8 @@ active_page = 'models' -%} {% block additional_js_pre %}
 
         </ul>
         For now we are capturing the international response in a single parameter determining the rate of spread of
-        SARS-CoV-2, but we are building <a href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e">a database of
+        SARS-CoV-2, but we are building <a
+          href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e">a database of
           containment and mitigation efforts</a> and working to integrate them into the model.
       </p>
       <p><em>If you&#39;re a decision-maker thinking about how various measures can impact COVID-19 outcomes, please
