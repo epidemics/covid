@@ -12,6 +12,42 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 		});
 	}
 
+	var country_map = {
+          "AUS": "australia",
+          "CHE": "switzerland",
+          "CZE": "czech+republic",
+          "DEU": "germany",
+          "EGY": "egypt",
+          "ESP": "spain",
+          "FRA": "france",
+          "GBR": "united+kingdom",
+          "IDN": "indonesia",
+          "IND": "india",
+          "IRN": "iran",
+          "ITA": "italy",
+          "JPN": "japan",
+          "KOR": "south+korea",
+          "NLD": "netherlands",
+          "RUS": "russia",
+          "SGP": "singapore",
+          "USA": "united+states",
+    };
+
+    //function get_country(rows) {
+	//	return rows.map(function(row) {
+	//	    if (!(row['code'] in country_map)) {
+	//	        return row['name'].toLowerCase().replace(" ", "+")
+	//	    }
+	//		return country_map[row['code']];
+	//	});
+	//}
+
+	function get_country(rows) {
+	    return rows.map(function(row) {
+	        return country_map[row['code']]
+	    });
+	}
+
 	var data = [{
 		type: "choroplethmapbox",
 		name: "US states",
@@ -22,6 +58,7 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
         text: get_text(rows),
 		colorscale: [[0,'rgb(255,255,255)'],[1,'rgb(255,0,0)']],
 		showscale: true,
+		customdata: get_country(rows),
 		colorbar: {
 			y: 0,
 			yanchor: "bottom",
@@ -43,6 +80,12 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 		},
 	};
 
-
-	Plotly.newPlot('mapid', data, layout);
+	Plotly.newPlot('mapid', data, layout)
+	    .then(gd => {
+            gd.on('plotly_click', d => {
+                var pt = (d.points || [])[0]
+                console.log('you clicked on '+pt.location)
+                window.open("/?selection="+pt.customdata,);
+            })
+    })
 });
