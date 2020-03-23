@@ -5,6 +5,15 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 		});
 	}
 
+	function log_data(rows, key) {
+		return rows.map(function(row) {
+			return Math.log(row[key]);
+		});
+	}
+
+	function exp_data(x) {
+		return Math.exp(x);
+	}
 
 	function get_text(rows) {
 		return rows.map(function(row) {
@@ -48,6 +57,16 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 	    });
 	}
 
+	function get_customdata(rows) {
+	    return rows.map(function(row) {
+	        return {
+	            "country": country_map[row['code']],
+	            "orig_risk": row['risk']
+	        }
+	    });
+	}
+
+
 	var data = [{
 		type: "choroplethmapbox",
 		name: "US states",
@@ -56,9 +75,9 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 		locations: unpack(rows, 'code'),
         z: unpack(rows, 'risk'),
         text: get_text(rows),
-		colorscale: [[0,'rgb(255,255,255)'],[1,'rgb(255,0,0)']],
+		colorscale: [[0,'rgb(255,255,0)'],[1,'rgb(255,0,0)']],
 		showscale: true,
-		customdata: get_country(rows),
+		customdata: get_customdata(rows),
 		colorbar: {
 			y: 0,
 			yanchor: "bottom",
@@ -85,7 +104,7 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
             gd.on('plotly_click', d => {
                 var pt = (d.points || [])[0]
                 console.log('you clicked on '+pt.location)
-                window.open("/?selection="+pt.customdata,);
+                window.open("/?selection="+pt.customdata["country"],);
             })
     })
 });
