@@ -18,14 +18,6 @@ let selected = {
   mitigation: "none"
 };
 
-// Reported & Estimated Infections
-d3.json(
-  `https://storage.googleapis.com/static-covid/static/data-${channel}-estimates-v1.json`
-).then(function (data) {
-  estimatesData = data;
-  updateInfectionTotals();
-});
-
 function updateInfectionTotals() {
   if (typeof estimatesData === "undefined") return;
 
@@ -62,11 +54,13 @@ function updateInfectionTotals() {
   d3.select("#infections-estimated").html(
     formatInfectionTotal(infections["FT_Infected"])
   );
+  /*  /// Temporarily swithed off - we do not have confidence intervals for non-FT estimates
   d3.select("#infections-estimated-ci").html(
     `${formatInfectionTotal(
       infections["FT_Infected_q05"]
     )} - ${formatInfectionTotal(infections["FT_Infected_q95"])}`
   );
+  */
   d3.select("#infections-population").html(formatInfectionTotal(population));
 }
 
@@ -74,6 +68,7 @@ const formatInfectionTotal = function (number) {
   if (typeof number !== "number" || Number.isNaN(number)) {
     return "&mdash;";
   }
+  number = Math.round(number)
   if (number < 10000 && number > -10000) {
     return String(number);
   } else {
@@ -248,27 +243,6 @@ function changeRegion() {
   updateInfectionTotals();
 }
 
-// load the data used for the graph
-jQuery.getJSON(
-  "https://storage.googleapis.com/static-covid/static/data-" +
-  (channel ? channel : "main") +
-  "-gleam-v2.json",
-  function (data) {
-    linesData = data;
-    // populate the dropdown menu with countries from received data
-    listOfRegions = getListOfRegions(data.regions);
-    listOfRegions.forEach(({ key, name }) => {
-      const opt = document.createElement("option");
-      opt.value = key;
-      opt.innerHTML = name;
-      selectButton.appendChild(opt);
-    });
-    // initialize the graph
-    updatePlot(selected);
-  }
-);
-
-
 
 // update the graph
 function updatePlot(opt) {
@@ -317,3 +291,25 @@ function updatePlot(opt) {
 }
 
 
+// Load the basic data (estimates and graph URLs) for all generated countries
+d3.json(
+  `https://storage.googleapis.com/static-covid/static/data-${channel}-v3.json`
+).then(function (data) {
+
+  linesData = data;
+  // populate the dropdown menu with countries from received data
+  listOfRegions = getListOfRegions(data.regions);
+  listOfRegions.forEach(({ key, name }) => {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.innerHTML = name;
+    selectButton.appendChild(opt);
+  });
+
+  // Reported & Estimated Infections
+  estimatesData = data;
+  updateInfectionTotals();
+
+  // initialize the graph
+  updatePlot(selected);
+});
