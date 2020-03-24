@@ -17,7 +17,7 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 
 	function get_text(rows) {
 		return rows.map(function(row) {
-			return row["est_active"] + " estimated active";
+			return row["est_active"];
 		});
 	}
 
@@ -42,14 +42,11 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
           "USA": "united+states",
     };
 
-    //function get_country(rows) {
-	//	return rows.map(function(row) {
-	//	    if (!(row['code'] in country_map)) {
-	//	        return row['name'].toLowerCase().replace(" ", "+")
-	//	    }
-	//		return country_map[row['code']];
-	//	});
-	//}
+    function get_infected_per_1m(rows) {
+		return rows.map(function(row) {
+			return row["risk"] * 1000000;
+		});
+	}
 
 	function get_country(rows) {
 	    return rows.map(function(row) {
@@ -61,7 +58,10 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 	    return rows.map(function(row) {
 	        return {
 	            "country": country_map[row['code']],
-	            "orig_risk": row['risk']
+	            "orig_risk": row['risk'],
+	            "infected_per_1m": row['risk'] * 1000000,
+	            "country_name": row['name'],
+	            "est_active": row['est_active'],
 	        }
 	    });
 	}
@@ -73,22 +73,41 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 		geojson: "/static/data/custom.geo.json",
 		featureidkey: "properties.iso_a3",
 		locations: unpack(rows, 'code'),
-        z: unpack(rows, 'risk'),
+        z: get_infected_per_1m(rows),
         text: get_text(rows),
 		colorscale: [[0,'rgb(255,255,0)'],[1,'rgb(255,0,0)']],
 		showscale: true,
 		customdata: get_customdata(rows),
+		hovertemplate:
+		    '<b>%{customdata.country_name}</b><br><br>' +
+		    'Estimations:<br>' +
+		    'Infected per 1M: <b>%{z:,.0f}</b><br>' +
+		    'Infected total: <b>%{customdata.est_active:,.0f}</b>' +
+            '<extra></extra>',
+		//hovertemplate:
+        //    "<b>%{text}</b><br><br>" +
+        //    "%{yaxis.title.text}: %{y:$,.0f}<br>" +
+        //    "%{xaxis.title.text}: %{x:.0%}<br>" +
+        //    "Number Employed: %{marker.size:,}" +
+        //    "<extra></extra>",
 		colorbar: {
 			y: 0,
 			yanchor: "bottom",
 			title: {
-				text: "Risk",
+				text: "Infected per 1M",
 				side: "right"
 			}
 		}
 	}];
 
 	var layout = {
+	    title: {
+	        text: "Estimations for number of infected people.",
+	        font: {
+	            color: "#E9E9E9",
+	            size: 25,
+	        }
+	    },
 		mapbox: {
 			style: "carto-darkmatter",
 		},
