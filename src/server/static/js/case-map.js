@@ -77,6 +77,11 @@ Plotly.d3.json('https://storage.googleapis.com/static-covid/static/data-ttest5-v
 		    'Infected per 1M: <b>%{customdata.infected_per_1m:,.0f}</b><br>' +
 		    'Infected total: <b>%{customdata.est_active:,.0f}</b>' +
             '<extra></extra>',
+        hoverlabel: {
+            font: {
+                family: "DM Sans",
+            }
+        },
 		//hovertemplate:
         //    "<b>%{text}</b><br><br>" +
         //    "%{yaxis.title.text}: %{y:$,.0f}<br>" +
@@ -91,12 +96,14 @@ Plotly.d3.json('https://storage.googleapis.com/static-covid/static/data-ttest5-v
 				side: "right",
 				font: {
 				    color: "#B5B5B5",
+				    family: "DM Sans",
 				}
 			},
 			tickvals: tick_values,
 			ticktext: tick_names,
 			tickfont: {
 			    color: "#B5B5B5",
+			    family: "DM Sans",
 			}
 		}
 	}];
@@ -107,6 +114,7 @@ Plotly.d3.json('https://storage.googleapis.com/static-covid/static/data-ttest5-v
 	        font: {
 	            color: "#E9E9E9",
 	            size: 25,
+	            family: "DM Sans",
 	        }
 	    },
 		mapbox: {
