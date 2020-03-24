@@ -276,7 +276,7 @@ async def about(request: Request) -> Response:
 
 
 @app.get("/containment")
-async def about(request: Request) -> Response:
+async def containment(request: Request) -> Response:
     return templates.TemplateResponse("containment.html", {"request": request},)
 
 
