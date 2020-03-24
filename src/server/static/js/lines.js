@@ -1,27 +1,6 @@
 /* global $:false d3:false Plotly:false */
 
 const Y_SCALE = 10; // Going from per_1000_pops to per 100 (%)
-const SCENARIOS = [
-  {
-    scenario: "COVID seasonality 0.85, Air traffic 0.20",
-    label: "WEAK seasonality + <br />STRONGLY reduced air travel"
-  }, {
-    scenario: "COVID seasonality 0.70, Air traffic 0.20",
-    label: "MEDIUM seasonality + <br />STRONGLY reduced air travel"
-  }, {
-    scenario: "COVID seasonality 0.50, Air traffic 0.20",
-    label: "STRONG seasonality + <br />STRONGLY reduced air travel"
-  }, {
-    scenario: "COVID seasonality 0.85, Air traffic 0.70",
-    label: "WEAK seasonality + <br />WEAKLY reduced air travel"
-  }, {
-    scenario: "COVID seasonality 0.70, Air traffic 0.70",
-    label: "MEDIUM seasonality + <br />WEAKLY reduced air travel"
-  }, {
-    scenario: "COVID seasonality 0.50, Air traffic 0.70",
-    label: "STRONG seasonality + <br />WEAKLY reduced air travel"
-  }
-];
 
 function getUrlParams(data) {
   var urlString = window.location.href;
@@ -172,8 +151,6 @@ var layout = {
   }
 };
 
-var colors = ["#edcdab", "#edb77e", "#e97f0f", "#9ac9d9", "#5abbdb", "#007ca6"];
-
 var plotlyConfig = {
   displaylogo: false,
   responsive: true,
@@ -239,7 +216,7 @@ function changeRegion() {
 jQuery.getJSON(
   "https://storage.googleapis.com/static-covid/static/data-" +
   (channel ? channel : "main") +
-  "-gleam.json",
+  "-gleam-v2.json",
   function (data) {
     linesData = data;
     // populate the dropdown menu with countries from received data
@@ -295,46 +272,36 @@ function updatePlot(opt) {
   // update the name of the region in the text below the graph
   updateRegionInText(selectedRegion);
 
-  // find the max value across all mitigations and update the axis range
-  const yMax = getMaxYValueForRegion(
-    linesData.regions[selectedRegion].data.infected_per_1000.mitigations
-  );
-  layout.yaxis.range = [0, yMax / Y_SCALE];
+  var regionRec = linesData.regions[selectedRegion];
+  var traces_url = regionRec.data.infected_per_1000.traces_url;
+  d3.json(
+    `https://storage.googleapis.com/static-covid/static/${traces_url}`
+  ).then(function (mitigations_data) {
+    var highestVals = [];
 
-  var regionData =
-    linesData.regions[selectedRegion].data.infected_per_1000.mitigations[
-    mitigationValue
-    ];
+    // Iterate over mitigations (groups)
+    Object.values(mitigations_data).forEach(mitigation_traces => {
+      // Iterate over Plotly traces in groups
+      Object.values(mitigation_traces).forEach(trace => {
 
-  const traces = [];
-
-  var x;
-  var xStart = new Date(linesData.regions[selectedRegion].data.infected_per_1000.start);
-
-  var idx = 0;
-  SCENARIOS.forEach(({ scenario, label }) => {
-    // the x axis is the same for all traces so only defining it once
-    if (typeof x === "undefined") {
-      x = [];
-      for (let i = 0; i < regionData[scenario].length; ++i) {
-        x[i] = d3.timeDay.offset(xStart, i);
-      }
-    }
-    // debugger;
-    traces.push({
-      x: x,
-      y: regionData[scenario].map(y => y / Y_SCALE),
-      mode: "lines",
-      name: label,
-      line: {
-        dash: "solid",
-        width: 2,
-        color: colors[idx]
-      },
-      hoverlabel: { namelength: -1 }
+        // Scale all trace Ys to percent
+        Object.keys(trace.y).forEach(i => {
+          trace.y[i] = trace.y[i] / Y_SCALE;
+        });
+        highestVals.push(Math.max(...trace.y));
+        // When x has length 1, extend it to a day sequence of len(y) days
+        if (trace.x.length == 1) {
+          var xStart = new Date(trace.x[0]);
+          for (let i = 1; i < trace.y.length; ++i) {
+            trace.x[i] = d3.timeDay.offset(xStart, i);
+          }
+        }
+      });
     });
-    idx = idx + 1;
+    layout.yaxis.range = [0, Math.max(...highestVals)];
+    var traces = mitigations_data[mitigationValue];
+
+    // redraw the lines on the graph
+    Plotly.newPlot(plotyGraph, traces, layout, plotlyConfig);
   });
-  // redraw the lines on the graph
-  Plotly.newPlot(plotyGraph, traces, layout, plotlyConfig);
 }
