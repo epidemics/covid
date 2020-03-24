@@ -1,5 +1,5 @@
 env:
-  enableNotion: "True"
+  enableNotion: "False"
 
 imageName: ""
 
