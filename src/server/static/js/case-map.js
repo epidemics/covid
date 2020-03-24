@@ -1,75 +1,32 @@
-Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.csv', function(err, rows) {
+Plotly.d3.json('https://storage.googleapis.com/static-covid/static/data-ttest5-v3.json', function(err, regions_data) {
 	function unpack(rows, key) {
 		return rows.map(function(row) {
 			return row[key];
 		});
 	}
 
-	function log_data(rows, key) {
-		return rows.map(function(row) {
-			return Math.log(row[key]);
+	function get_text(dict) {
+		return Object.keys(dict).map(function(country) {
+		    var last_data = get_last_data(dict[country])
+			return last_data["FT_Infected"];
 		});
 	}
 
-	function exp_data(x) {
-		return Math.exp(x);
-	}
+	function get_last_data(row) {
+        var sorted = Object.keys(row["data"]["estimates"]["days"]).sort();
+        var last = sorted[sorted.length - 1];
+        return row["data"]["estimates"]["days"][last]
+    }
 
-	function get_text(rows) {
-		return rows.map(function(row) {
-			return row["est_active"];
-		});
-	}
+    function get_risk(row) {
+        var last_data = get_last_data(row);
+        return last_data["FT_Infected"] / row["population"]
+    }
 
-	var country_map = {
-          "AUS": "australia",
-          "CHE": "switzerland",
-          "CZE": "czech+republic",
-          "DEU": "germany",
-          "EGY": "egypt",
-          "ESP": "spain",
-          "FRA": "france",
-          "GBR": "united+kingdom",
-          "IDN": "indonesia",
-          "IND": "india",
-          "IRN": "iran",
-          "ITA": "italy",
-          "JPN": "japan",
-          "KOR": "south+korea",
-          "NLD": "netherlands",
-          "RUS": "russia",
-          "SGP": "singapore",
-          "USA": "united+states",
-          "HKG": "hong+kong",
-    };
-
-    function get_infected_per_1m(rows) {
-		return rows.map(function(row) {
-			return row["risk"] * 1000000;
-		});
-	}
-
-	function get_country(rows) {
-	    return rows.map(function(row) {
-	        return country_map[row['code']]
-	    });
-	}
-
-	function get_customdata(rows) {
-	    return rows.map(function(row) {
-	        return {
-	            "country": country_map[row['code']],
-	            "orig_risk": row['risk'],
-	            "infected_per_1m": row['risk'] * 1000000,
-	            "country_name": row['name'],
-	            "est_active": row['est_active'],
-	        }
-	    });
-	}
-
-	function get_z(rows) {
-		return rows.map(function(row) {
-			return Math.log2(row["risk"] * 1000);
+	function get_z(dict) {
+	    return Object.keys(dict).map(function(country) {
+		    risk = get_risk(dict[country])
+			return Math.log2(risk * 1000);
 		});
 	}
 
@@ -81,6 +38,23 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 		return x.toString()
 	}
 
+	function get_locations(dict) {
+		return Object.keys(dict).map(function(country) {
+			return dict[country]["iso_alpha_3"];
+		});
+	}
+
+	function get_customdata(dict) {
+	    return Object.keys(dict).map(function(country) {
+	        return {
+	            "country_to_search": country.replace(" ", "+"),
+	            "infected_per_1m": get_risk(dict[country]) * 1000000,
+	            "country_name": dict[country]['name'],
+	            "est_active": get_last_data(dict[country])['FT_Infected'],
+	        }
+	    });
+	}
+
     var tick_values = [-3, -1, 1, 3, 5];
     var tick_names = tick_values.map(value_to_labels)
 
@@ -89,14 +63,14 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 		name: "US states",
 		geojson: "/static/data/custom.geo.json",
 		featureidkey: "properties.iso_a3",
-		locations: unpack(rows, 'code'),
-        z: get_z(rows),
+		locations: get_locations(regions_data["regions"]),
+        z: get_z(regions_data["regions"]),
         zmax: 5,
         zmin: -3,
-        text: get_text(rows),
+        text: get_text(regions_data["regions"]),
 		colorscale: [[0,'rgb(255,255,0)'],[1,'rgb(255,0,0)']],
 		showscale: true,
-		customdata: get_customdata(rows),
+		customdata: get_customdata(regions_data["regions"]),
 		hovertemplate:
 		    '<b>%{customdata.country_name}</b><br><br>' +
 		    'Estimations:<br>' +
@@ -150,7 +124,7 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
             gd.on('plotly_click', d => {
                 var pt = (d.points || [])[0]
                 console.log('you clicked on '+pt.location)
-                window.open("/?selection="+pt.customdata["country"],);
+                window.open("/?selection="+pt.customdata["country_to_search"],);
             })
     })
 });
