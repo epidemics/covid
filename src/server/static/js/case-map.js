@@ -63,7 +63,7 @@ Plotly.d3.json(
     var data = [
       {
         type: "choroplethmapbox",
-        name: "US states",
+        name: "COVID-19: Active infections estimate",
         geojson:
           "https://storage.googleapis.com/static-covid/static/data/casemap-geo.json",
         featureidkey: "properties.iso_a3",
@@ -89,12 +89,6 @@ Plotly.d3.json(
             family: "DM Sans"
           }
         },
-        //hovertemplate:
-        //    "<b>%{text}</b><br><br>" +
-        //    "%{yaxis.title.text}: %{y:$,.0f}<br>" +
-        //    "%{xaxis.title.text}: %{x:.0%}<br>" +
-        //    "Number Employed: %{marker.size:,}" +
-        //    "<extra></extra>",
         colorbar: {
           y: 0,
           yanchor: "bottom",
@@ -138,7 +132,6 @@ Plotly.d3.json(
     Plotly.newPlot("mapid", data, layout).then(gd => {
       gd.on("plotly_click", d => {
         var pt = (d.points || [])[0];
-        console.log("you clicked on " + pt.location);
         window.open("/?selection=" + pt.customdata["country_to_search"]);
       });
     });
