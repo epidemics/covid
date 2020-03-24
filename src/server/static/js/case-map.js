@@ -72,6 +72,16 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 		});
 	}
 
+	function value_to_labels(v) {
+		x = Math.pow(2, v) * 1000
+		if (x >= 1000) {
+		    return (x / 1000).toString() + "k"
+		}
+		return x.toString()
+	}
+
+    var tick_values = [-3, -1, 1, 3, 5];
+    var tick_names = tick_values.map(value_to_labels)
 
 	var data = [{
 		type: "choroplethmapbox",
@@ -108,8 +118,8 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 				    color: "#B5B5B5",
 				}
 			},
-			tickvals: [-3, -1, 1, 3, 5],
-			ticktext: ["125", "500", "2k", "8k", "32k"],
+			tickvals: tick_values,
+			ticktext: tick_names,
 			tickfont: {
 			    color: "#B5B5B5",
 			}
@@ -118,7 +128,7 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 
 	var layout = {
 	    title: {
-	        text: "Estimations for number of infected people.",
+	        text: "Estimations for number of infected people",
 	        font: {
 	            color: "#E9E9E9",
 	            size: 25,
