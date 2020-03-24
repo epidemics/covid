@@ -3,4 +3,4 @@ ingress:
   externalIpName: loadbalancer
 
 web:
-  replicasCount: 2
+  replicasCount: 3
