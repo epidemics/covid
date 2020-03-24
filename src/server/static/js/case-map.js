@@ -40,6 +40,7 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
           "RUS": "russia",
           "SGP": "singapore",
           "USA": "united+states",
+          "HKG": "hong+kong",
     };
 
     function get_infected_per_1m(rows) {
