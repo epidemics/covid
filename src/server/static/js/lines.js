@@ -142,7 +142,10 @@ var layout = {
     xanchor: "right",
     y: 1,
     yanchor: "top",
-    bgcolor: "#22202888"
+    bgcolor: "#22202888",
+    font: {
+      color: '#fff'
+    }
   }
 };
 
