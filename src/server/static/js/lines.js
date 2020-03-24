@@ -162,17 +162,51 @@ var plotlyConfig = {
 
 Plotly.newPlot(plotyGraph, [], layout, plotlyConfig);
 
+// Checks if the max and traces have been loaded and preprocessed for the given
+// region; if not, loads them and does preprocessing; then caches it in the region object.
+// Finally calls then_traces_max(mitigation_traces, max_Y_val).
+function loadGleamvizTraces(regionRec, then_traces_max) {
 
-function getMaxYValueForRegion(mitigations) {
-  var highestVals = [];
-  Object.values(mitigations).forEach(mitigation => {
-    Object.values(mitigation).forEach(values => {
-      highestVals.push(Math.max(...values));
+  if (typeof regionRec.cached_gleam_traces === "undefined") {
+    // Not cached, load and preprocess
+    var traces_url = regionRec.data.infected_per_1000.traces_url;
+    d3.json(
+      `https://storage.googleapis.com/static-covid/static/${traces_url}`
+    ).then(function (mitigations_data) {
+      var highestVals = [];
+
+      // Iterate over mitigations (groups)
+      Object.values(mitigations_data).forEach(mitigation_traces => {
+        // Iterate over Plotly traces in groups
+        Object.values(mitigation_traces).forEach(trace => {
+
+          // Scale all trace Ys to percent
+          Object.keys(trace.y).forEach(i => {
+            trace.y[i] = trace.y[i] / Y_SCALE;
+          });
+          highestVals.push(Math.max(...trace.y));
+
+          // When x has length 1, extend it to a day sequence of len(y) days
+          if (trace.x.length == 1) {
+            var xStart = new Date(trace.x[0]);
+            for (let i = 1; i < trace.y.length; ++i) {
+              trace.x[i] = d3.timeDay.offset(xStart, i);
+            }
+          }
+        });
+      });
+      var max_y = Math.max(...highestVals);
+      // Cache the values in the region
+      regionRec.cached_gleam_traces = mitigations_data;
+      regionRec.cached_gleam_max_y = max_y;
+      // Callback
+      then_traces_max(mitigations_data, max_y);
     });
-  });
-  return Math.max(...highestVals);
+  } else {
+    // Callback
+    then_traces_max(regionRec.cached_gleam_traces, regionRec.cached_gleam_max_y);
+  }
 }
-
 
 function getListOfRegions(regions) {
   return Object.keys(regions).map(key => {
@@ -194,7 +228,6 @@ function setGetParam(key, value) {
     window.history.pushState({ path: newUrl }, "", newUrl);
   }
 }
-/* end from lines.js */
 
 function updateRegionInText(region) {
   var countryName = listOfRegions.find(c => c.key === region).name;
@@ -275,36 +308,12 @@ function updatePlot(opt) {
   // update the name of the region in the text below the graph
   updateRegionInText(selectedRegion);
 
-  var regionRec = linesData.regions[selectedRegion];
-  var traces_url = regionRec.data.infected_per_1000.traces_url;
-  d3.json(
-    `https://storage.googleapis.com/static-covid/static/${traces_url}`
-  ).then(function (mitigations_data) {
-    var highestVals = [];
-
-    // Iterate over mitigations (groups)
-    Object.values(mitigations_data).forEach(mitigation_traces => {
-      // Iterate over Plotly traces in groups
-      Object.values(mitigation_traces).forEach(trace => {
-
-        // Scale all trace Ys to percent
-        Object.keys(trace.y).forEach(i => {
-          trace.y[i] = trace.y[i] / Y_SCALE;
-        });
-        highestVals.push(Math.max(...trace.y));
-        // When x has length 1, extend it to a day sequence of len(y) days
-        if (trace.x.length == 1) {
-          var xStart = new Date(trace.x[0]);
-          for (let i = 1; i < trace.y.length; ++i) {
-            trace.x[i] = d3.timeDay.offset(xStart, i);
-          }
-        }
-      });
-    });
-    layout.yaxis.range = [0, Math.max(...highestVals)];
-    var traces = mitigations_data[mitigationValue];
-
+  // Load and preprocess the per-region graph data
+  loadGleamvizTraces(linesData.regions[selectedRegion], function (mitig_traces, max_val) {
+    layout.yaxis.range = [0, max_val];
     // redraw the lines on the graph
-    Plotly.newPlot(plotyGraph, traces, layout, plotlyConfig);
+    Plotly.newPlot(plotyGraph, mitig_traces[mitigationValue], layout, plotlyConfig);
   });
 }
+
+
