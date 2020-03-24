@@ -275,6 +275,11 @@ async def about(request: Request) -> Response:
     return templates.TemplateResponse("about.html", {"request": request},)
 
 
+@app.get("/containment")
+async def containment(request: Request) -> Response:
+    return templates.TemplateResponse("containment.html", {"request": request},)
+
+
 @app.get("/get_containment_measures")
 async def containment_measures(request: Request, country: str = "China") -> Response:
     """serve the main model visualization"""
