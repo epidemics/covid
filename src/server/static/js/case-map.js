@@ -61,7 +61,7 @@ Plotly.d3.json('https://storage.googleapis.com/static-covid/static/data-ttest5-v
 	var data = [{
 		type: "choroplethmapbox",
 		name: "US states",
-		geojson: "/static/data/custom.geo.json",
+		geojson: "https://storage.googleapis.com/static-covid/static/data/casemap-geo.json",
 		featureidkey: "properties.iso_a3",
 		locations: get_locations(regions_data["regions"]),
         z: get_z(regions_data["regions"]),
