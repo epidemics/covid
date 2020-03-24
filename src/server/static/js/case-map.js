@@ -128,7 +128,7 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 
 	var layout = {
 	    title: {
-	        text: "Estimations for number of infected people",
+	        text: "COVID-19: Active infections estimate (fraction of population)",
 	        font: {
 	            color: "#E9E9E9",
 	            size: 25,
