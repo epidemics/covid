@@ -24,13 +24,9 @@ title%} {% set active_page = 'case-map' -%} {% block additional_js_pre %}
     </div>
     <div class="col-12">
       <p>
-        This map is displaying our medians of estimates of the actual numbers of
-        infected on March 15th in selected countries. Size reflects number of infections, color reflects growth rate of
-        infections. </p>
-      <p> The actual estimates are
-        probability distributions. When estimating the numbers, we are using
-        multiple data sources, including government reports, air travel data,
-        and the judgement of human forecasters.
+       This map is displaying our median estimates of the fraction of the population
+        infected in selected countries (active cases).
+        We hope to add all countries soon.
       </p>
     </div>
   </div>
@@ -42,5 +38,6 @@ title%} {% set active_page = 'case-map' -%} {% block additional_js_pre %}
 </div>
 
 {% endblock %} {% block additional_js %}
-<script src="{{ url_for('static', path='/js/bubbles.js') }}"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="{{ url_for('static', path='/js/case-map.js') }}"></script>
 {% endblock %}
