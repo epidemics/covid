@@ -1,4 +1,4 @@
-# Data specification used on the website
+# JSON data export specification
 
 **Current spec version: v3 (2020-03-24)**
 
@@ -6,6 +6,12 @@
 The default channel name uset at the main site is `main` - be careful uploading to it; please test first. Channel can be an arbitrary name, use common sense. `CHANNEL` shuld be replaced by chanel name below.
 
 **URLs.** The main data file is loaded as JSON from https://stoage.googleapis.com/static-covid/static/data-CHANNEL-v3.json, e.g. https://stoage.googleapis.com/static-covid/static/data-main-v3.json
+
+**NB.** When uploading the files, make sure you set a reasonably low chache timeout - GS default is 1 hour, making updates very slow to propagate!
+
+```sh
+gsutil -m -h "Cache-Control:public, max-age=60" cp -a public-read SRC DST
+```
 
 ## Common structure
 
@@ -23,7 +29,7 @@ The regions map key is just an ID (and will likely be changed to ISO codes), so 
 
 ## Plotly traces
 
-Per-country graph data is stored as Plotly traces in separate files and loaded on demand.
+Per-country graph data is stored as [Plotly traces](https://plotly.com/javascript/reference/#scatter) in per-region files (loaded on demand and cached).
 
 ```json
     "data": {"infected_per_1000": {
