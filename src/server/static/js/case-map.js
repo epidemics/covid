@@ -66,6 +66,12 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 	    });
 	}
 
+	function get_z(rows) {
+		return rows.map(function(row) {
+			return Math.log2(row["risk"] * 1000);
+		});
+	}
+
 
 	var data = [{
 		type: "choroplethmapbox",
@@ -73,7 +79,9 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 		geojson: "/static/data/custom.geo.json",
 		featureidkey: "properties.iso_a3",
 		locations: unpack(rows, 'code'),
-        z: get_infected_per_1m(rows),
+        z: get_z(rows),
+        zmax: 5,
+        zmin: -3,
         text: get_text(rows),
 		colorscale: [[0,'rgb(255,255,0)'],[1,'rgb(255,0,0)']],
 		showscale: true,
@@ -81,7 +89,7 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 		hovertemplate:
 		    '<b>%{customdata.country_name}</b><br><br>' +
 		    'Estimations:<br>' +
-		    'Infected per 1M: <b>%{z:,.0f}</b><br>' +
+		    'Infected per 1M: <b>%{customdata.infected_per_1m:,.0f}</b><br>' +
 		    'Infected total: <b>%{customdata.est_active:,.0f}</b>' +
             '<extra></extra>',
 		//hovertemplate:
@@ -95,7 +103,15 @@ Plotly.d3.csv('https://storage.googleapis.com/static-covid/static/case-map-data.
 			yanchor: "bottom",
 			title: {
 				text: "Infected per 1M",
-				side: "right"
+				side: "right",
+				font: {
+				    color: "#B5B5B5",
+				}
+			},
+			tickvals: [-3, -1, 1, 3, 5],
+			ticktext: ["125", "500", "2k", "8k", "32k"],
+			tickfont: {
+			    color: "#B5B5B5",
 			}
 		}
 	}];
