@@ -1,135 +1,116 @@
 {% extends "base.html" %}
 {% set title = 'About Epidemic Forecasting' %}
 {% set active_page = 'about' %}
-{%- block additional_js_pre -%}
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-<style type="text/css">
-  label {
-    margin-bottom: 15spx;
-  }
-
-  @media only screen and (max-width: 991px) {
-    .btn-primary {
-      width: -webkit-fill-available;
+{% block additional_js_pre %}
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <style type="text/css">
+    @media only screen and (max-width: 991px) {
+      .btn-primary {
+        width: -webkit-fill-available;
+      }
     }
-  }
-</style>
-{% endblock %} {% block content %}
-<div class="container main">
-  <div class="row">
-    <div class="col-lg-9 col-md-12">
-      <h5>TEAM</h5>
+  </style>
+{% endblock %}
 
-      <p>
-        This project was created by a team of research scholars from the Future of
-        Humanity Institute, University of Oxford, together with a large number of volunteer
-        collaborators, after an original idea by Jan Kulveit. To contact us please
-        use the form below.
-      </p>
-      <ul>
-        <li>
-          Jan Kulveit (Senior Research scholar, Future of Humanity Institute, University of Oxford).
-        </li>
-        <li>
-          Jacob Lagerros (Research scholar, Future of Humanity Institute,
-          University of Oxford)
-        </li>
-        <li>
-          Ozzie Gooen (Research scholar, Future of Humanity Institute, University
-          of Oxford)
-        </li>
-        <li>
-          Nora Ammann (Project manager, Future of Humanity Institute, University
-          of Oxford)
-        </li>
-        <li>David Johnston (PhD, Australian National University)</li>
-        <li>Daniel Hnyk (Engineering manager, GlobalWebIndex)</li>
-        <li>Peter Hrosso (Founder &amp; tech lead, Aird Works)</li>
-        <li>Ondřej Švec (Software engineer, Google)</li>
-        <li>Jan Pipek (Data scientists, DT One)</li>
-        <li>Jan Losert (Product designer, Webflow)</li>
-        <li>Tomáš Gavenčiak (Independent researcher)</li>
-        <li>Mati Roy (Analyst, Ought)</li>
-        <li>Matej Vrzala (Web developer, Metaculus)</li>
-        <li>Jerome Ng (Engineering manager, GitLab)</li>
-      </ul>
+{% block content %}
+  <div class="container main">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h5>TEAM</h5>
+
+        <p>
+          This project was created by a team of research scholars from the Future of
+          Humanity Institute, University of Oxford, together with a large number of volunteer
+          collaborators, after an original idea by Jan Kulveit. To contact us please
+          use the form below.
+        </p>
+        <ul>
+          <li>
+            Jan Kulveit (Senior Research scholar, Future of Humanity Institute, University of Oxford).
+          </li>
+          <li>
+            Jacob Lagerros (Research scholar, Future of Humanity Institute,
+            University of Oxford)
+          </li>
+          <li>
+            Ozzie Gooen (Research scholar, Future of Humanity Institute, University
+            of Oxford)
+          </li>
+          <li>
+            Nora Ammann (Project manager, Future of Humanity Institute, University
+            of Oxford)
+          </li>
+          <li>David Johnston (PhD, Australian National University)</li>
+          <li>Daniel Hnyk (Engineering manager, GlobalWebIndex)</li>
+          <li>Peter Hrosso (Founder &amp; tech lead, Aird Works)</li>
+          <li>Ondřej Švec (Software engineer, Google)</li>
+          <li>Jan Pipek (Data scientists, DT One)</li>
+          <li>Jan Losert (Product designer, Webflow)</li>
+          <li>Tomáš Gavenčiak (Independent researcher)</li>
+          <li>Mati Roy (Analyst, Ought)</li>
+          <li>Matej Vrzala (Web developer, Metaculus)</li>
+          <li>Jerome Ng (Engineering manager, GitLab)</li>
+        </ul>
+
+        Our modelling is in part based on
+        <ul>
+          <li>
+            GLEAMviz computational tool, a publicly available software to explore realistic epidemic spreading scenarios at the global scale. W. Van den Broeck,
+            C. Gioannini, B. Gonçalves, M. Quaggiotto, V. Colizza, and A. Vespignani.
+            BMC Infectious Diseases 11, 37 (2011).
+          </li>
+          <li>
+            Seasonal transmission potential and activity peaks of the new influenza
+            A(H1N1): a Monte Carlo likelihood analysis based on human mobility. D.
+            Balcan, H. Hu, B. Gonçalves, P. Bajardi, C. Poletto, J. J. Ramasco, D. Paolotti,
+            N. Perra, M. Tizzoni, W. Van den Broeck, V. Colizza, and A. Vespignani. BMC
+            Medicine 7, 45 (2009).
+          </li>
+          <li>
+            Modeling the spatial spread of infectious diseases: The Global Epidemic
+            and Mobility computational model. D. Balcan, B. Gonçalves, H. Hu, J. J.
+            Ramasco, V. Colizza, and A. Vespignani. Journal of Computational Science
+            1, 132 (2010).
+          </li>
+        </ul>
+        <h5 class="mt-3">Active datasets</h5>
+        <ul>
+          <li><a href="https://storage.googleapis.com/static-covid/static/simulation-defs-main.zip">GLEAM simulation
+            definitions with infection estimates</a></li>
+          <li><a href="https://storage.googleapis.com/static-covid/static/data-main-v3.json">Results data</a>
+            (JSON, see the <a href="https://github.com/epidemics/covid/blob/master/docs/data-specification.md">specification</a>)</li>
+          <li><a href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=fe54f89ca9e04ac799af42b39e1efc4b">Country
+            containment measures</a></li>
+          <li><a href="https://storage.googleapis.com/static-covid/static/countries-spread.csv">Country spreads map data</a></li>
+        </ul>
+
+        <h5 class="mt-3">License of the output data </h5>
+        The original scenario's output data are licensed under CC0
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/">
+          <img src="https://licensebuttons.net/p/zero/1.0/88x31.png" alt="CC0">
+        </a>
+
+        <h1 class="title-form mt-4">CONTACT</h1>
+
+        <div class="row">
+          <form class="col-md-9" action="https://formspree.io/xoqlnedo" method="POST">
+            <div class="form-group">
+              <label for="contact-email">Your email address:</label>
+              <input id="contact-email" class="form-control" type="email" name="_replyto" />
+            </div>
+
+            <div class="form-group">
+              <label for="contact-message">Your message:</label>
+              <textarea id="contact-message" class="form-control" rows="5" name="message"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Send</button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
-
-  <div class="row">
-    <div class="col-8">
-      Our modelling is in part based on
-      <ul>
-        <li>
-           GLEAMviz computational tool, a publicly available software to explore realistic epidemic spreading scenarios at the global scale. W. Van den Broeck,
-          C. Gioannini, B. Gonçalves, M. Quaggiotto, V. Colizza, and A. Vespignani.
-          BMC Infectious Diseases 11, 37 (2011).
-        </li>
-        <li>
-            Seasonal transmission potential and activity peaks of the new influenza
-          A(H1N1): a Monte Carlo likelihood analysis based on human mobility. D.
-          Balcan, H. Hu, B. Gonçalves, P. Bajardi, C. Poletto, J. J. Ramasco, D. Paolotti,
-          N. Perra, M. Tizzoni, W. Van den Broeck, V. Colizza, and A. Vespignani. BMC
-  Medicine 7, 45 (2009).
-        </li>
-        <li>
-            Modeling the spatial spread of infectious diseases: The Global Epidemic
-          and Mobility computational model. D. Balcan, B. Gonçalves, H. Hu, J. J.
-          Ramasco, V. Colizza, and A. Vespignani. Journal of Computational Science
-          1, 132 (2010).
-        </li>
-      </ul>
-      <h5 class="mt-3">Active datasets</h5>
-      <ul>
-        <li><a href="https://storage.googleapis.com/static-covid/static/simulation-defs-main.zip">GLEAM simulation
-            definitions with infection estimates</a></li>
-        <li><a href="https://storage.googleapis.com/static-covid/static/data-main-v3.json">Results data</a>
-          (JSON, see the <a href="https://github.com/epidemics/covid/blob/master/docs/data-specification.md">specification</a>)</li>
-        <li><a href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=fe54f89ca9e04ac799af42b39e1efc4b">Country
-            containment measures</a></li>
-        <li><a href="https://storage.googleapis.com/static-covid/static/countries-spread.csv">Country spreads map data</a></li>
-      </ul>
-
-      <h5 class="mt-3">License of the output data </h5>
-        The original scenario's output data are licensed under CC0 <a href="http://creativecommons.org/publicdomain/zero/1.0/">
-          <img src="https://licensebuttons.net/p/zero/1.0/88x31.png" alt="CC0" style="'border-style': 'none'" >
-        </a>
-      </div>
-  </div>
-
-  <div>
-    <br />
-    <h1 class="title-form">CONTACT</h1>
-    <!-- modify this form HTML and place wherever you want your form -->
-
-    <form action="https://formspree.io/xoqlnedo" method="POST">
-      <label class="fill-available-width">Your email address:</label>
-      <div class="row">
-        <div class="col-lg-6">
-          <input class="fill-available-width" type="text" name="_replyto" />
-        </div>
-      </div>
-      <br />
-      <br />
-      <label class="fill-available-width">Your message:</label>
-      <div class="row">
-        <div class="col-lg-6">
-          <textarea class="fill-available-width" name="message"></textarea>
-        </div>
-      </div>
-
-      <!-- your other form fields go here -->
-      <br />
-      <br />
-
-      <button type="submit" class="btn btn-primary">
-        Send
-      </button>
-    </form>
-    <br />
-  </div>
-</div>
 {% endblock %} {% block additional_js %}
 <script src="{{ url_for('static', path='/js/lines.js') }}"></script>
 {% endblock %}
