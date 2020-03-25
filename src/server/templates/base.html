@@ -2,15 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
     <link rel="icon" href="{{ url_for('static', path='/img/favicon.ico') }}" />
 
-    <title>{% block title %} {% endblock title%}</title>
+    <title>{% block title %}Epidemic Forecasting{% endblock title%}</title>
+
+    <meta name="description" content="Researchers from the Oxford Future of Humanity Institute have created country-specific predictions of the current and future spread of the COVID-19 coronavirus pandemic using GLEAMviz epidemic modeling software and a database of mitigation and control measures in effect around the world." />
+
+    <!-- Open Graph metadata (for Facebook sharing thumbnail) -->
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="/" />
+    <meta property="og:image" content="{{ url_for('static', path='/img/thumbnail.jpg') }}" />
 
     <!-- Bootstrap core CSS -->
     <link
