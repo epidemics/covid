@@ -1,3 +1,5 @@
+/* global Plotly:false */
+
 Plotly.d3.json(
   "https://storage.googleapis.com/static-covid/static/data-ttest5-v3.json",
   function(err, regions_data) {
@@ -27,13 +29,13 @@ Plotly.d3.json(
 
     function get_z(dict) {
       return Object.keys(dict).map(function(country) {
-        risk = get_risk(dict[country]);
+        const risk = get_risk(dict[country]);
         return Math.log2(risk * 1000);
       });
     }
 
     function value_to_labels(v) {
-      x = Math.pow(2, v) * 1000;
+      const x = Math.pow(2, v) * 1000;
       if (x >= 1000) {
         return (x / 1000).toString() + "k";
       }

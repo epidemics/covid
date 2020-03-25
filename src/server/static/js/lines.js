@@ -1,8 +1,9 @@
-/* global $:false d3:false Plotly:false */
+/* global Promise:false Plotly:false d3:false */
 
 const Y_SCALE = 10; // Going from per_1000_pops to per 100 (%)
+const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
 
-function getUrlParams(data) {
+function getUrlParams() {
   var urlString = window.location.href;
   var url = new URL(urlString);
   return {
@@ -12,16 +13,16 @@ function getUrlParams(data) {
 }
 
 const { channel } = getUrlParams();
-var linesData, estimatesData, listOfRegions;
+var baseData, manualData, listOfRegions;
 let selected = {
   region: getUrlParams().region,
   mitigation: "none"
 };
 
 function updateInfectionTotals() {
-  if (typeof estimatesData === "undefined") return;
+  if (typeof baseData === "undefined") return;
 
-  const { population, data } = estimatesData.regions[selected.region];
+  const { population, data } = baseData.regions[selected.region];
   const dates = Object.keys(data.estimates.days);
   let maxDate = dates[0];
   dates.slice(1).forEach(date => {
@@ -30,22 +31,21 @@ function updateInfectionTotals() {
     }
   });
   const infections = data.estimates.days[maxDate];
-  console.log(maxDate)
-  console.log(typeof maxDate)
 
-  formatDate = (date) => {
+  const formatDate = (date) => {
 
-    var [year, month_id, day] = date.split("-")
+    const [year, month, day] = date.split("-").map(n => parseInt(n));
 
-    let month_names = ["Jan", "Feb", "Mar",
+    const monthNames = [
+      "Jan", "Feb", "Mar",
       "Apr", "May", "Jun",
       "Jul", "Aug", "Sep",
-      "Oct", "Nov", "Dec"]
+      "Oct", "Nov", "Dec"];
 
-    let month_string = month_names[month_id - 1]
+    const monthString = monthNames[month - 1];
 
-    return month_string + " " + day + ", " + year
-  }
+    return `${monthString} ${day}, ${year}`;
+  };
 
   d3.select("#infections-date").html(`(${formatDate(maxDate)})`);
   d3.select("#infections-confirmed").html(formatInfectionTotal(
@@ -54,7 +54,7 @@ function updateInfectionTotals() {
   d3.select("#infections-estimated").html(
     formatInfectionTotal(infections["FT_Infected"])
   );
-  /*  /// Temporarily swithed off - we do not have confidence intervals for non-FT estimates
+  /* Temporarily swithed off - we do not have confidence intervals for non-FT estimates
   d3.select("#infections-estimated-ci").html(
     `${formatInfectionTotal(
       infections["FT_Infected_q05"]
@@ -68,7 +68,7 @@ const formatInfectionTotal = function (number) {
   if (typeof number !== "number" || Number.isNaN(number)) {
     return "&mdash;";
   }
-  number = Math.round(number)
+  number = Math.round(number);
   if (number < 10000 && number > -10000) {
     return String(number);
   } else {
@@ -157,23 +157,23 @@ var plotlyConfig = {
 
 Plotly.newPlot(plotyGraph, [], layout, plotlyConfig);
 
-// Checks if the max and traces have been loaded and preprocessed for the given
-// region; if not, loads them and does preprocessing; then caches it in the region object.
-// Finally calls then_traces_max(mitigation_traces, max_Y_val).
-function loadGleamvizTraces(regionRec, then_traces_max) {
+// Checks if the max and traces have been loaded and preprocessed for the given region;
+// if not, loads them and does preprocessing; then caches it in the region object.
+// Finally calls thenTracesMax(mitigationTraces, max_Y_val).
+function loadGleamvizTraces(regionRec, thenTracesMax) {
 
   if (typeof regionRec.cached_gleam_traces === "undefined") {
     // Not cached, load and preprocess
-    var traces_url = regionRec.data.infected_per_1000.traces_url;
+    var tracesUrl = regionRec.data.infected_per_1000.traces_url;
     d3.json(
-      `https://storage.googleapis.com/static-covid/static/${traces_url}`
-    ).then(function (mitigations_data) {
+      `https://storage.googleapis.com/static-covid/static/${tracesUrl}`
+    ).then(function (mitigationsData) {
       var highestVals = [];
 
       // Iterate over mitigations (groups)
-      Object.values(mitigations_data).forEach(mitigation_traces => {
+      Object.values(mitigationsData).forEach(mitigationTraces => {
         // Iterate over Plotly traces in groups
-        Object.values(mitigation_traces).forEach(trace => {
+        Object.values(mitigationTraces).forEach(trace => {
 
           // Scale all trace Ys to percent
           Object.keys(trace.y).forEach(i => {
@@ -182,30 +182,31 @@ function loadGleamvizTraces(regionRec, then_traces_max) {
           highestVals.push(Math.max(...trace.y));
 
           // When x has length 1, extend it to a day sequence of len(y) days
-          if (trace.x.length == 1) {
+          if (trace.x.length === 1) {
             var xStart = new Date(trace.x[0]);
+            trace.x[0] = xStart;
             for (let i = 1; i < trace.y.length; ++i) {
               trace.x[i] = d3.timeDay.offset(xStart, i);
             }
           }
         });
       });
-      var max_y = Math.max(...highestVals);
+      var maxY = Math.max(...highestVals);
       // Cache the values in the region
-      regionRec.cached_gleam_traces = mitigations_data;
-      regionRec.cached_gleam_max_y = max_y;
+      regionRec.cached_gleam_traces = mitigationsData;
+      regionRec.cached_gleam_max_y = maxY;
       // Callback
-      then_traces_max(mitigations_data, max_y);
+      thenTracesMax(mitigationsData, maxY);
     });
   } else {
     // Callback
-    then_traces_max(regionRec.cached_gleam_traces, regionRec.cached_gleam_max_y);
+    thenTracesMax(regionRec.cached_gleam_traces, regionRec.cached_gleam_max_y);
   }
 }
 
-function getListOfRegions(regions) {
-  return Object.keys(regions).map(key => {
-    return { key, name: regions[key].name };
+function getListOfRegions() {
+  return Object.keys(baseData.regions).map(key => {
+    return { key, name: baseData.regions[key].name };
   });
 }
 
@@ -246,7 +247,6 @@ function changeRegion() {
 
 // update the graph
 function updatePlot(opt) {
-  var mitigationValue, selectedRegion;
   var mitigationIds = {
     none: "None",
     weak: "Low",
@@ -257,57 +257,61 @@ function updatePlot(opt) {
   if (typeof opt !== "undefined") {
     // assign value of the mitigation given by argument
     document.getElementById("mitigation-" + opt.mitigation).click();
-    mitigationValue = mitigationIds[opt.mitigation];
-
-    // assign value of the region given by argument
-    selectedRegion = opt.region;
-    document.getElementById("selectButton").value = selectedRegion;
-  } else {
-    // find the current value of the mitigation
-    Object.keys(mitigationIds).forEach(mitId => {
-      if (document.getElementById("mitigation-" + mitId).checked) {
-        mitigationValue = mitigationIds[mitId];
-      }
-    });
-    // find the current value of the selected region
-    selectedRegion = document.getElementById("selectButton").value;
-
-    // update the selected variable
-    selected = {
-      region: selectedRegion,
-      mitigation: mitigationValue
-    };
+    return; // click callback will re-activate the function
   }
+  // find the current value of the mitigation
+  Object.keys(mitigationIds).forEach(mitId => {
+    if (document.getElementById("mitigation-" + mitId).checked) {
+      selected.mitigation = mitigationIds[mitId];
+    }
+  });
 
   // update the name of the region in the text below the graph
-  updateRegionInText(selectedRegion);
+  updateRegionInText(selected.region);
 
+  console.error('update 2');
   // Load and preprocess the per-region graph data
-  loadGleamvizTraces(linesData.regions[selectedRegion], function (mitig_traces, max_val) {
-    layout.yaxis.range = [0, max_val];
+  loadGleamvizTraces(baseData.regions[selected.region], function (mitigTraces, maxVal) {
+    layout.yaxis.range = [0, maxVal];
     // redraw the lines on the graph
-    Plotly.newPlot(plotyGraph, mitig_traces[mitigationValue], layout, plotlyConfig);
+    AddCriticalCareTrace(mitigTraces[selected.mitigation]);
+    Plotly.newPlot(plotyGraph, mitigTraces[selected.mitigation], layout, plotlyConfig);
   });
 }
 
+function AddCriticalCareTrace(traces) {
+  const regionData = manualData.regions[selected.region];
+  if (typeof regionData !== 'object') return;
+
+  const capacity = regionData.beds_p_100k / 100 / Y_SCALE / CRITICAL_CARE_RATE;
+  if (typeof capacity !== "number" || Number.isNaN(capacity)) return;
+
+  traces.push({
+    x: d3.extent(traces[0].x),
+    y: [capacity, capacity],
+    name: "Current critical care capacity",
+    mode: "lines",
+    line: {color: "#be3a40", dash: "solid", width: 1.6},
+  });
+}
 
 // Load the basic data (estimates and graph URLs) for all generated countries
-d3.json(
-  `https://storage.googleapis.com/static-covid/static/data-${channel}-v3.json`
-).then(function (data) {
+Promise.all([`data-${channel}-v3.json`, "data-manual-estimates-v1.json"].map(
+  path => d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
+)).then(data => {
+  [baseData, manualData] = data;
 
-  linesData = data;
   // populate the dropdown menu with countries from received data
-  listOfRegions = getListOfRegions(data.regions);
+  listOfRegions = getListOfRegions();
   listOfRegions.forEach(({ key, name }) => {
     const opt = document.createElement("option");
     opt.value = key;
     opt.innerHTML = name;
+    opt.selected = (key === selected.region);
     selectButton.appendChild(opt);
   });
 
   // Reported & Estimated Infections
-  estimatesData = data;
   updateInfectionTotals();
 
   // initialize the graph
