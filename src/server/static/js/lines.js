@@ -269,7 +269,6 @@ function updatePlot(opt) {
   // update the name of the region in the text below the graph
   updateRegionInText(selected.region);
 
-  console.error('update 2');
   // Load and preprocess the per-region graph data
   loadGleamvizTraces(baseData.regions[selected.region], function (mitigTraces, maxVal) {
     layout.yaxis.range = [0, maxVal];
