@@ -51,3 +51,7 @@ async def about(request: Request) -> Response:
 @app.get("/status")
 async def status():
     return {"app_version": CONFIG.APP_VERSION}
+
+@app.get("/containment")
+async def containment(request: Request) -> Response:
+    return templates.TemplateResponse("containment.html", {"request": request},)
