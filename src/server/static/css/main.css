@@ -34,6 +34,10 @@ body {
   font-size: 0.9rem;
 }
 
+hr {
+  border-color: #323232;
+}
+
 h1 {
   font-size: 1em;
   color: #fff;
@@ -216,13 +220,19 @@ header h1:before {
 }*/
 
 .custom-footer {
-  position: static;
-  bottom: 0px;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5em 1em;
   user-select: auto;
-  opacity: 100%;
+  text-align: center;
   font-size: 0.9em;
   border-top: 1px solid #323232;
+}
+
+.custom-footer .footer-row {
+  display: inline-block;
+  margin: 0.5em auto;
+  padding: 0 1em;
 }
 
 .container-right-footer {
@@ -236,13 +246,9 @@ header h1:before {
   border-top: 1px solid #323232;
 }
 
-hr {
-  border-color: #323232;
-}
-
 .logo {
-  height: 70px;
-  margin: 15px;
+  height: 5em;
+  margin: 0.5em;
   display: inline-block;
 }
 
