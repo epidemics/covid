@@ -18,7 +18,7 @@ Researchers from the Oxford Future of Humanity Institute have created country-sp
     <!-- Open Graph metadata (for Facebook sharing thumbnail) -->
     <meta property="og:title" content="{{ title }}" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="/" />
+    <meta property="og:url" content="{{ request.url }}" />
     <meta property="og:image" content="{{ url_for('static', path='/img/thumbnail.jpg') }}" />
     <meta property="og:description" content="{{ description }}" />
 
