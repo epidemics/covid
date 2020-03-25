@@ -15,8 +15,18 @@ def test_index(client):
     assert response.status_code == 200
 
 
-def test_request_event_evaluation(client):
-    response = client.get("/request-event-evaluation")
+def test_case_map(client):
+    response = client.get("/case-map")
+    assert response.status_code == 200
+
+
+def test_about(client):
+    response = client.get("/about")
+    assert response.status_code == 200
+
+
+def test_request_calculation(client):
+    response = client.get("/request-calculation")
     assert response.status_code == 200
 
 
