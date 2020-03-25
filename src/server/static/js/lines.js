@@ -1,6 +1,7 @@
-/* global Plotly:false d3:false */
+/* global Promise:false Plotly:false d3:false */
 
 const Y_SCALE = 10; // Going from per_1000_pops to per 100 (%)
+const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
 
 function getUrlParams() {
   var urlString = window.location.href;
@@ -12,7 +13,7 @@ function getUrlParams() {
 }
 
 const { channel } = getUrlParams();
-var baseData, listOfRegions;
+var baseData, manualData, listOfRegions;
 let selected = {
   region: getUrlParams().region,
   mitigation: "none"
@@ -183,6 +184,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
           // When x has length 1, extend it to a day sequence of len(y) days
           if (trace.x.length === 1) {
             var xStart = new Date(trace.x[0]);
+            trace.x[0] = xStart;
             for (let i = 1; i < trace.y.length; ++i) {
               trace.x[i] = d3.timeDay.offset(xStart, i);
             }
@@ -245,7 +247,6 @@ function changeRegion() {
 
 // update the graph
 function updatePlot(opt) {
-  var mitigationValue, selectedRegion;
   var mitigationIds = {
     none: "None",
     weak: "Low",
@@ -256,52 +257,57 @@ function updatePlot(opt) {
   if (typeof opt !== "undefined") {
     // assign value of the mitigation given by argument
     document.getElementById("mitigation-" + opt.mitigation).click();
-    mitigationValue = mitigationIds[opt.mitigation];
-
-    // assign value of the region given by argument
-    selectedRegion = opt.region;
-    document.getElementById("selectButton").value = selectedRegion;
-  } else {
-    // find the current value of the mitigation
-    Object.keys(mitigationIds).forEach(mitId => {
-      if (document.getElementById("mitigation-" + mitId).checked) {
-        mitigationValue = mitigationIds[mitId];
-      }
-    });
-    // find the current value of the selected region
-    selectedRegion = document.getElementById("selectButton").value;
-
-    // update the selected variable
-    selected = {
-      region: selectedRegion,
-      mitigation: mitigationValue
-    };
+    return; // click callback will re-activate the function
   }
+  // find the current value of the mitigation
+  Object.keys(mitigationIds).forEach(mitId => {
+    if (document.getElementById("mitigation-" + mitId).checked) {
+      selected.mitigation = mitigationIds[mitId];
+    }
+  });
 
   // update the name of the region in the text below the graph
-  updateRegionInText(selectedRegion);
+  updateRegionInText(selected.region);
 
+  console.error('update 2');
   // Load and preprocess the per-region graph data
-  loadGleamvizTraces(baseData.regions[selectedRegion], function (mitigTraces, maxVal) {
+  loadGleamvizTraces(baseData.regions[selected.region], function (mitigTraces, maxVal) {
     layout.yaxis.range = [0, maxVal];
     // redraw the lines on the graph
-    Plotly.newPlot(plotyGraph, mitigTraces[mitigationValue], layout, plotlyConfig);
+    AddCriticalCareTrace(mitigTraces[selected.mitigation]);
+    Plotly.newPlot(plotyGraph, mitigTraces[selected.mitigation], layout, plotlyConfig);
   });
 }
 
+function AddCriticalCareTrace(traces) {
+  const regionData = manualData.regions[selected.region];
+  if (typeof regionData !== 'object') return;
+
+  const capacity = regionData.beds_p_100k / 100 / Y_SCALE / CRITICAL_CARE_RATE;
+  if (typeof capacity !== "number" || Number.isNaN(capacity)) return;
+
+  traces.push({
+    x: d3.extent(traces[0].x),
+    y: [capacity, capacity],
+    name: "Current critical care capacity",
+    mode: "lines",
+    line: {color: "#be3a40", dash: "solid", width: 1},
+  });
+}
 
 // Load the basic data (estimates and graph URLs) for all generated countries
-d3.json(
-  `https://storage.googleapis.com/static-covid/static/data-${channel}-v3.json`
-).then(baseData_ => {
+Promise.all([`data-${channel}-v3.json`, "data-manual-estimates-v1.json"].map(
+  path => d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
+)).then(data => {
+  [baseData, manualData] = data;
 
-  baseData = baseData_;
   // populate the dropdown menu with countries from received data
   listOfRegions = getListOfRegions();
   listOfRegions.forEach(({ key, name }) => {
     const opt = document.createElement("option");
     opt.value = key;
     opt.innerHTML = name;
+    opt.selected = (key === selected.region);
     selectButton.appendChild(opt);
   });
 
