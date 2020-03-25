@@ -32,15 +32,23 @@ function updateInfectionTotals() {
   });
   const infections = data.estimates.days[maxDate];
 
-  const formatDate = (date) => {
-
+  const formatDate = date => {
     const [year, month, day] = date.split("-").map(n => parseInt(n));
 
     const monthNames = [
-      "Jan", "Feb", "Mar",
-      "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep",
-      "Oct", "Nov", "Dec"];
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ];
 
     const monthString = monthNames[month - 1];
 
@@ -48,9 +56,13 @@ function updateInfectionTotals() {
   };
 
   d3.select("#infections-date").html(`(${formatDate(maxDate)})`);
-  d3.select("#infections-confirmed").html(formatInfectionTotal(
-    infections["JH_Confirmed"] - infections["JH_Recovered"] - infections["JH_Deaths"]
-  ));
+  d3.select("#infections-confirmed").html(
+    formatInfectionTotal(
+      infections["JH_Confirmed"] -
+        infections["JH_Recovered"] -
+        infections["JH_Deaths"]
+    )
+  );
   d3.select("#infections-estimated").html(
     formatInfectionTotal(infections["FT_Infected"])
   );
@@ -64,7 +76,7 @@ function updateInfectionTotals() {
   d3.select("#infections-population").html(formatInfectionTotal(population));
 }
 
-const formatInfectionTotal = function (number) {
+const formatInfectionTotal = function(number) {
   if (typeof number !== "number" || Number.isNaN(number)) {
     return "&mdash;";
   }
@@ -144,7 +156,7 @@ var layout = {
     yanchor: "top",
     bgcolor: "#22202888",
     font: {
-      color: '#fff'
+      color: "#fff"
     }
   }
 };
@@ -161,20 +173,18 @@ Plotly.newPlot(plotyGraph, [], layout, plotlyConfig);
 // if not, loads them and does preprocessing; then caches it in the region object.
 // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
 function loadGleamvizTraces(regionRec, thenTracesMax) {
-
   if (typeof regionRec.cached_gleam_traces === "undefined") {
     // Not cached, load and preprocess
     var tracesUrl = regionRec.data.infected_per_1000.traces_url;
     d3.json(
       `https://storage.googleapis.com/static-covid/static/${tracesUrl}`
-    ).then(function (mitigationsData) {
+    ).then(function(mitigationsData) {
       var highestVals = [];
 
       // Iterate over mitigations (groups)
       Object.values(mitigationsData).forEach(mitigationTraces => {
         // Iterate over Plotly traces in groups
         Object.values(mitigationTraces).forEach(trace => {
-
           // Scale all trace Ys to percent
           Object.keys(trace.y).forEach(i => {
             trace.y[i] = trace.y[i] / Y_SCALE;
@@ -244,7 +254,6 @@ function changeRegion() {
   updateInfectionTotals();
 }
 
-
 // update the graph
 function updatePlot(opt) {
   var mitigationIds = {
@@ -269,36 +278,53 @@ function updatePlot(opt) {
   // update the name of the region in the text below the graph
   updateRegionInText(selected.region);
 
-  console.error('update 2');
+  console.error("update 2");
   // Load and preprocess the per-region graph data
-  loadGleamvizTraces(baseData.regions[selected.region], function (mitigTraces, maxVal) {
+  loadGleamvizTraces(baseData.regions[selected.region], function(
+    mitigTraces,
+    maxVal
+  ) {
     layout.yaxis.range = [0, maxVal];
     // redraw the lines on the graph
     AddCriticalCareTrace(mitigTraces[selected.mitigation]);
-    Plotly.newPlot(plotyGraph, mitigTraces[selected.mitigation], layout, plotlyConfig);
+    Plotly.newPlot(
+      plotyGraph,
+      mitigTraces[selected.mitigation],
+      layout,
+      plotlyConfig
+    );
   });
 }
 
 function AddCriticalCareTrace(traces) {
   const regionData = manualData.regions[selected.region];
-  if (typeof regionData !== 'object') return;
+  if (typeof regionData !== "object") return;
 
   const capacity = regionData.beds_p_100k / 100 / Y_SCALE / CRITICAL_CARE_RATE;
   if (typeof capacity !== "number" || Number.isNaN(capacity)) return;
+    
+  // adding the line only if it doesn't exist yet
+  if (
+    traces.find(function(element) {
+      return element.name == "Hospital critical care capacity";
+    })
+  ) return;
 
   traces.push({
     x: d3.extent(traces[0].x),
     y: [capacity, capacity],
     name: "Hospital critical care capacity",
     mode: "lines",
-    line: {color: "#be3a40", dash: "solid", width: 1.6},
+    line: { color: "#be3a40", dash: "solid", width: 1.6 }
   });
 }
 
 // Load the basic data (estimates and graph URLs) for all generated countries
-Promise.all([`data-${channel}-v3.json`, "data-manual-estimates-v1.json"].map(
-  path => d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
-)).then(data => {
+Promise.all(
+  [`data-${channel}-v3.json`, "data-manual-estimates-v1.json"].map(path =>
+    d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
+  )
+).then(data => {
   [baseData, manualData] = data;
 
   // populate the dropdown menu with countries from received data
@@ -307,7 +333,7 @@ Promise.all([`data-${channel}-v3.json`, "data-manual-estimates-v1.json"].map(
     const opt = document.createElement("option");
     opt.value = key;
     opt.innerHTML = name;
-    opt.selected = (key === selected.region);
+    opt.selected = key === selected.region;
     selectButton.appendChild(opt);
   });
 
