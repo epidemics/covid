@@ -286,6 +286,13 @@ function AddCriticalCareTrace(traces) {
   const capacity = regionData.beds_p_100k / 100 / Y_SCALE / CRITICAL_CARE_RATE;
   if (typeof capacity !== "number" || Number.isNaN(capacity)) return;
 
+  // adding the line only if it doesn't exist yet
+  if (
+    traces.find(function(element) {
+      return element.name == "Hospital critical care capacity";
+    })
+  ) return;
+
   traces.push({
     x: d3.extent(traces[0].x),
     y: [capacity, capacity],
