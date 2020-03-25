@@ -1,5 +1,7 @@
-{% extends "base.html" %} {% block title %} Model {% endblock title%} {% set
-active_page = 'about' -%} {% block additional_js_pre %}
+{% extends "base.html" %}
+{% set title = 'About Epidemic Forecasting' %}
+{% set active_page = 'about' %}
+{%- block additional_js_pre -%}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <style type="text/css">

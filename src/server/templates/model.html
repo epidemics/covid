@@ -1,5 +1,7 @@
-{% extends "base.html" %} {% block title %} Models {% endblock title%} {% set
-active_page = 'models' -%} {% block additional_js_pre %}
+{% extends "base.html" %}
+{% set title = 'Medium-Term COVID-19 Forecast' %}
+{% set active_page = 'models' %}
+{%- block additional_js_pre -%}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>

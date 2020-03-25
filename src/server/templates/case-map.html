@@ -1,5 +1,7 @@
-{% extends "base.html" %} {% block title %} Covid-19 Forcasting {% endblock
-title%} {% set active_page = 'case-map' -%} {% block additional_js_pre %}
+{% extends "base.html" %}
+{% set title = 'COVID-19 Case Map' %}
+{% set active_page = 'case-map' %}
+{%- block additional_js_pre -%}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>

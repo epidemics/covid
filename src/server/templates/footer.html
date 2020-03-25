@@ -1,37 +1,41 @@
-<div
-  class="custom-footer"
-  style="
-padding-top: 0px !important;"
->
-  <!-- Footer Links -->
-  <div class="container text-center">
-    <div class="row">
-      <div class="col-12 my-auto">
-        <img
-          class="logo"
-          src="/static/img/Oxford-logo.png"
-          alt="Logo of the University of Oxford"
-        />
-        <img
-          class="logo"
-          src="/static/img/gleamviz.png"
-          alt="Logo of GleamViz"
-        />
-        <img
-          class="logo"
-          src="/static/img/australian_national_university.jpg"
-          alt="Logo of Australian National University"
-        />
-        <img
-          class="logo"
-          src="/static/img/foretold.png"
-          alt="Logo of Foretold"
-        />
-        <div class="disclaimer">
-          The above displayed data and predictions are results of estimation and modelling. As of March 17, this is a demo, and while it runs on real data it will be a few days until it is properly vetted. Please <a href="/about">contact us</a> before using our data for major decisions.
-        </div>
-      </div>
-    </div>
+<div class="custom-footer">
+  <!-- AddToAny BEGIN -->
+  <div class="footer-row a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+    <a class="a2a_button_whatsapp"></a>
+    <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script>
+  <!-- AddToAny END -->
+  <!-- Sponsor Links -->
+  <div>
+    <img
+      class="logo"
+      src="{{url_for('static', path='img/Oxford-logo.png') }}"
+      alt="Logo of the University of Oxford"
+    />
+    <img
+      class="logo"
+      src="{{url_for('static', path='img/gleamviz.png') }}"
+      alt="Logo of GleamViz"
+    />
+    <img
+      class="logo"
+      src="{{url_for('static', path='img/australian_national_university.jpg') }}"
+      alt="Logo of Australian National University"
+    />
+    <img
+      class="logo"
+      src="{{url_for('static', path='img/foretold.png') }}"
+      alt="Logo of Foretold"
+    />
+  </div>
+  <div class="footer-row disclaimer">
+    The above displayed data and predictions are results of estimation and modelling. As of March 17, this is a demo, and while it runs on real data it will be a few days until it is properly vetted. Please <a href="/about">contact us</a> before using our data for major decisions.
   </div>
 </div>
 
