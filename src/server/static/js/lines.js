@@ -291,7 +291,7 @@ function AddCriticalCareTrace(traces) {
     y: [capacity, capacity],
     name: "Current critical care capacity",
     mode: "lines",
-    line: {color: "#be3a40", dash: "solid", width: 1},
+    line: {color: "#be3a40", dash: "solid", width: 1.6},
   });
 }
 
