@@ -37,12 +37,6 @@ async def request_calculation(request: Request) -> Response:
     )
 
 
-@app.get("/thanks")
-async def result_calculations(request: Request) -> Response:
-
-    return templates.TemplateResponse("thanks.html", {"request": request,},)
-
-
 @app.get("/about")
 async def about(request: Request) -> Response:
     return templates.TemplateResponse("about.html", {"request": request},)
@@ -51,6 +45,7 @@ async def about(request: Request) -> Response:
 @app.get("/status")
 async def status():
     return {"app_version": CONFIG.APP_VERSION}
+
 
 @app.get("/containment")
 async def containment(request: Request) -> Response:
