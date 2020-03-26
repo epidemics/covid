@@ -189,6 +189,9 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
               trace.x[i] = d3.timeDay.offset(xStart, i);
             }
           }
+
+          trace["hoverlabel"] = {"namelength": -1};
+          trace["hovertemplate"] = "%{y:.2r}";
         });
       });
       var maxY = Math.max(...highestVals);
@@ -276,25 +279,22 @@ function updatePlot(opt) {
   // Load and preprocess the per-region graph data
   loadGleamvizTraces(baseData.regions[selected.region], function (mitigTraces, maxVal) {
     layout.yaxis.range = [0, maxVal];
-    // redraw the lines on the graph
     AddCriticalCareTrace(mitigTraces[selected.mitigation]);
+    // redraw the lines on the graph
     Plotly.newPlot(plotyGraph, mitigTraces[selected.mitigation], layout, plotlyConfig);
   });
 }
 
 function AddCriticalCareTrace(traces) {
+  // add the line only if it doesn't exist yet
+  const lastTrace = traces[traces.length - 1];
+  if (lastTrace && lastTrace.name === "Hospital critical care capacity") return;
+
   const regionData = manualData.regions[selected.region];
   if (typeof regionData !== 'object') return;
 
   const capacity = regionData.beds_p_100k / 100 / Y_SCALE / CRITICAL_CARE_RATE;
   if (typeof capacity !== "number" || Number.isNaN(capacity)) return;
-
-  // adding the line only if it doesn't exist yet
-  if (
-    traces.find(function(element) {
-      return element.name == "Hospital critical care capacity";
-    })
-  ) return;
 
   traces.push({
     x: d3.extent(traces[0].x),
@@ -302,6 +302,7 @@ function AddCriticalCareTrace(traces) {
     name: "Hospital critical care capacity",
     mode: "lines",
     line: {color: "#be3a40", dash: "solid", width: 1.6},
+    hoverinfo: 'y'
   });
 }
 
