@@ -299,7 +299,7 @@ function AddCriticalCareTrace(traces) {
   traces.push({
     x: d3.extent(traces[0].x),
     y: [capacity, capacity],
-    name: "Hospital critical care capacity",
+    name: "All ICU beds are needed for critical cases",
     mode: "lines",
     line: {color: "#be3a40", dash: "solid", width: 1.6},
     hoverinfo: 'y'
