@@ -207,6 +207,10 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
 function getListOfRegions() {
   return Object.keys(baseData.regions).map(key => {
     return { key, name: baseData.regions[key].name };
+  }).sort(function(a, b) {
+    if (a.name < b.name) { return -1; }
+    if (a.name > b.name) { return 1; }
+    return 0;
   });
 }
 
