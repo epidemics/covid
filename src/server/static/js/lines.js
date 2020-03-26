@@ -47,6 +47,8 @@ function updateInfectionTotals() {
     return `${monthString} ${day}, ${year}`;
   };
 
+  console.log(infections)
+
   d3.select("#infections-date").html(`(${formatDate(maxDate)})`);
   d3.select("#infections-confirmed").html(formatInfectionTotal(
     infections["JH_Confirmed"] - infections["JH_Recovered"] - infections["JH_Deaths"]
@@ -165,6 +167,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
   if (typeof regionRec.cached_gleam_traces === "undefined") {
     // Not cached, load and preprocess
     var tracesUrl = regionRec.data.infected_per_1000.traces_url;
+    console.log(tracesUrl)
     d3.json(
       `https://storage.googleapis.com/static-covid/static/${tracesUrl}`
     ).then(function (mitigationsData) {
@@ -190,11 +193,15 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
             }
           }
 
-          trace["hoverlabel"] = {"namelength": -1};
+          trace["hoverlabel"] = { "namelength": -1 };
           trace["hovertemplate"] = "%{y:.2r}";
         });
       });
       var maxY = Math.max(...highestVals);
+
+
+      console.log(mitigationsData)
+
       // Cache the values in the region
       regionRec.cached_gleam_traces = mitigationsData;
       regionRec.cached_gleam_max_y = maxY;
@@ -210,7 +217,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
 function getListOfRegions() {
   return Object.keys(baseData.regions).map(key => {
     return { key, name: baseData.regions[key].name };
-  }).sort(function(a, b) {
+  }).sort(function (a, b) {
     if (a.name < b.name) { return -1; }
     if (a.name > b.name) { return 1; }
     return 0;
@@ -296,16 +303,16 @@ function AddCriticalCareTrace(traces) {
   const capacity = regionData.beds_p_100k / 100 / Y_SCALE / CRITICAL_CARE_RATE;
   if (typeof capacity !== "number" || Number.isNaN(capacity)) return;
 
-  /* NOTE: Temporarily disabled due to possible inconsistencies and misinterpretation.
+  /* NOTE: Temporarily disabled due to possible inconsistencies and misinterpretation. */
   traces.push({
     x: d3.extent(traces[0].x),
     y: [capacity, capacity],
-    name: "Hospital critical care capacity",
+    name: "Hospital critical care capacity (approximate)",
     mode: "lines",
-    line: {color: "#be3a40", dash: "solid", width: 1.6},
+    line: { color: "#be3a40", dash: "solid", width: 1.6 },
     hoverinfo: 'y'
   });
-  */
+
 }
 
 // Load the basic data (estimates and graph URLs) for all generated countries
