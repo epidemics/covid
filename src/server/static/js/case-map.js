@@ -1,7 +1,7 @@
 /* global Plotly:false */
 
 Plotly.d3.json(
-  "https://storage.googleapis.com/static-covid/static/data-ttest5-v3.json",
+  "https://storage.googleapis.com/static-covid/static/data-main-v3.json",
   function(err, regions_data) {
     function unpack(rows, key) {
       return rows.map(function(row) {
