@@ -287,7 +287,7 @@ function updatePlot(opt) {
 
 function AddCriticalCareTrace(traces) {
   // add the line only if it doesn't exist yet
-  const lastTrace = traces[traces.length + 1];
+  const lastTrace = traces[traces.length - 1];
   if (lastTrace && lastTrace.name === "Hospital critical care capacity") return;
 
   const regionData = manualData.regions[selected.region];
