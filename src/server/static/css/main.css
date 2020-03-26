@@ -141,6 +141,10 @@ header h1:before {
   padding: 20px 0px;
 }
 
+.model-content {
+  max-width: 650px;
+}
+
 .container-wrapper {
   display: flex;
 }
@@ -276,7 +280,8 @@ label {
 }
 
 select,
-input {
+input,
+textarea {
   border-radius: 0px !important;
 }
 
