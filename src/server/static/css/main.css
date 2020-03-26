@@ -371,6 +371,8 @@ label.btn-secondary > input {
   border-width: 0px;
   min-width: 132px;
   margin-bottom: 12px;
+  padding: 0;
+  text-align: right
 }
 
 .less-visible7 {
@@ -415,7 +417,11 @@ strong {
   padding-top: 10px;
 }
 
-.mitigation-strenght > div > .btn-secondary {
+.mitigation-strength {
+  margin-left: auto;
+}
+
+.mitigation-strength > div > .btn-secondary {
   min-width: 76px;
 }
 
@@ -427,7 +433,7 @@ strong {
     margin-top: 20px;
     margin-right: 0px;
   }
-  .mitigation-strenght {
+  .mitigation-strength {
     margin-top: 8px;
   }
 }
@@ -491,6 +497,10 @@ strong {
   .main-wrapper {
     padding: 15px 15px;
   }
+  .detail-button {
+    text-align: left
+  }
+
 }
 
 .fill-available-width {
