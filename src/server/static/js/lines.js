@@ -47,7 +47,6 @@ function updateInfectionTotals() {
     return `${monthString} ${day}, ${year}`;
   };
 
-  console.log(infections)
 
   d3.select("#infections-date").html(`(${formatDate(maxDate)})`);
   d3.select("#infections-confirmed").html(formatInfectionTotal(
@@ -167,7 +166,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
   if (typeof regionRec.cached_gleam_traces === "undefined") {
     // Not cached, load and preprocess
     var tracesUrl = regionRec.data.infected_per_1000.traces_url;
-    console.log(tracesUrl)
+
     d3.json(
       `https://storage.googleapis.com/static-covid/static/${tracesUrl}`
     ).then(function (mitigationsData) {
@@ -200,7 +199,6 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
       var maxY = Math.max(...highestVals);
 
 
-      console.log(mitigationsData)
 
       // Cache the values in the region
       regionRec.cached_gleam_traces = mitigationsData;
@@ -294,8 +292,12 @@ function updatePlot(opt) {
 
 function AddCriticalCareTrace(traces) {
   // add the line only if it doesn't exist yet
+  console.log(traces)
+
+  let line_title = "Hospital critical care capacity (approximate)"
+
   const lastTrace = traces[traces.length - 1];
-  if (lastTrace && lastTrace.name === "Hospital critical care capacity") return;
+  if (lastTrace && lastTrace.name === line_title) return;
 
   const regionData = manualData.regions[selected.region];
   if (typeof regionData !== 'object') return;
@@ -307,11 +309,12 @@ function AddCriticalCareTrace(traces) {
   traces.push({
     x: d3.extent(traces[0].x),
     y: [capacity, capacity],
-    name: "Hospital critical care capacity (approximate)",
+    name: line_title,
     mode: "lines",
     line: { color: "#be3a40", dash: "solid", width: 1.6 },
     hoverinfo: 'y'
   });
+
 
 }
 
