@@ -11,3 +11,7 @@ node_modules
 # Editors
 .vscode/
 .idea/
+
+# OS files
+.DS_Store
+.DS_Store?
