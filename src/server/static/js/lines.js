@@ -191,9 +191,10 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
               trace.x[i] = d3.timeDay.offset(xStart, i);
             }
           }
-
-          trace["hoverlabel"] = { "namelength": -1 };
-          trace["hovertemplate"] = "%{y:.2r}";
+          if (trace["hoverinfo"] !== "skip") {
+            trace["hoverlabel"] = { "namelength": -1 };
+            trace["hovertemplate"] = "%{y:.2r}";
+          }
         });
       });
       var maxY = Math.max(...highestVals);
