@@ -3,6 +3,7 @@ import os
 from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.responses import RedirectResponse, Response
 
 from server.config import CONFIG
 
@@ -30,7 +31,6 @@ async def case_map(request: Request) -> Response:
 
 @app.get("/request-calculation")
 async def request_calculation(request: Request) -> Response:
-    """TODO: This view should process a form"""
     return templates.TemplateResponse(
         "request-calculation.html",
         {"request": request, "message": "Please provide data"},
@@ -45,6 +45,12 @@ async def about(request: Request) -> Response:
 @app.get("/status")
 async def status():
     return {"app_version": CONFIG.APP_VERSION}
+
+
+@app.get("/containment.", status_code=301, response_class=Response)
+async def containment_with_dot():
+    """Not sure why, but we had a lot of 404 in access log for this URL"""
+    return RedirectResponse("/containment")
 
 
 @app.get("/containment")
