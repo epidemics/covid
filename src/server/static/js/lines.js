@@ -64,14 +64,34 @@ function updateInfectionTotals() {
   */
   d3.select("#infections-population").html(formatInfectionTotal(population));
 
-  console.log($("#mitigation-none"));
-  // todo this doesn't work
   var mitigation = getMitigationId();
-  //console.log(data.mitigation_stats["None"], mitigation, data.mitigation_stats);
+  console.log(mitigation, data.mitigation_stats, data.mitigation_stats["None"]);
+  // TODO: this line below should be selected dynamically
+  // TODO: based on automatically selected mitigation, but the getMitigationId
+  // TODO: doesn't work here (returning undefined)...
+  const stats = data.mitigation_stats["None"];
 
+  var total_infected = formatStatPer1000(
+    stats.TotalInfected_per1000_q05,
+    stats.TotalInfected_per1000_q95,
+    population
+  );
+  $("#total-infected").html(total_infected);
 
-  const stats = Object.keys(data.mitigation_stats["None"]);
-  $("#sim-infected").html(stats.TotalInfected_per1000_q05);
+  var sim_infected = formatStatPer1000(
+    stats.MaxActiveInfected_per1000_q05,
+    stats.MaxActiveInfected_per1000_q95,
+    population
+  );
+  $("#sim-infected").html(sim_infected);
+}
+
+const formatStatPer1000 = function(q05, q95, population) {
+  var _q05 = formatInfectionTotal(q05 * (population / 1000));
+  var _q95 = formatInfectionTotal(q95 * (population / 1000));
+  var _q05_perc = formatInfectionTotal(q05 / 10);
+  var _q95_perc = formatInfectionTotal(q95 / 10);
+  return _q05 + '-' + _q95 + ' (' + _q05_perc + '-' + _q95_perc  + '%)';
 }
 
 const formatInfectionTotal = function (number) {
