@@ -86,9 +86,29 @@ function updateInfectionTotals() {
   $("#sim-infected").html(sim_infected);
 }
 
+function bigFormatter(value) 
+  {
+  var labelValue = Math.round(value);
+  // Nine Zeroes for Billions
+  return Math.abs(Number(labelValue)) >= 1.0e+9
+
+       ? Math.abs(Number(labelValue)) / 1.0e+9 + "B"
+       // Six Zeroes for Millions 
+       : Math.abs(Number(labelValue)) >= 1.0e+6
+
+       ? Math.abs(Number(labelValue)) / 1.0e+6 + "M"
+       // Three Zeroes for Thousands
+       : Math.abs(Number(labelValue)) >= 1.0e+3
+
+       ? Math.abs(Number(labelValue)) / 1.0e+3 + "K"
+
+       : Math.abs(Number(labelValue));
+
+   }
+
 const formatStatPer1000 = function(q05, q95, population) {
-  var _q05 = formatInfectionTotal(q05 * (population / 1000));
-  var _q95 = formatInfectionTotal(q95 * (population / 1000));
+  var _q05 = bigFormatter(q05 * (population / 1000));
+  var _q95 = bigFormatter(q95 * (population / 1000));
   var _q05_perc = formatInfectionTotal(q05 / 10);
   var _q95_perc = formatInfectionTotal(q95 / 10);
   return _q05 + '-' + _q95 + ' (' + _q05_perc + '-' + _q95_perc  + '%)';
