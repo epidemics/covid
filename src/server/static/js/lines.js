@@ -63,6 +63,15 @@ function updateInfectionTotals() {
   );
   */
   d3.select("#infections-population").html(formatInfectionTotal(population));
+
+  console.log($("#mitigation-none"));
+  // todo this doesn't work
+  var mitigation = getMitigationId();
+  //console.log(data.mitigation_stats["None"], mitigation, data.mitigation_stats);
+
+
+  const stats = Object.keys(data.mitigation_stats["None"]);
+  $("#sim-infected").html(stats.TotalInfected_per1000_q05);
 }
 
 const formatInfectionTotal = function (number) {
@@ -258,26 +267,31 @@ function changeRegion() {
 }
 
 
-// update the graph
-function updatePlot(opt) {
-  var mitigationIds = {
-    none: "None",
-    weak: "Low",
-    moderate: "Medium",
-    strong: "High"
+function getMitigationId(){
+    var mitigationIds = {
+      none: "None",
+      weak: "Low",
+      moderate: "Medium",
+      strong: "High"
   };
 
+  for (const mitId of Object.keys(mitigationIds)) {
+    var choice = document.getElementById("mitigation-" + mitId)
+    if (choice && choice.checked) {
+      return mitigationIds[mitId];
+    }
+  };
+
+}
+
+// update the graph
+function updatePlot(opt) {
   if (typeof opt !== "undefined") {
     // assign value of the mitigation given by argument
     document.getElementById("mitigation-" + opt.mitigation).click();
     return; // click callback will re-activate the function
   }
-  // find the current value of the mitigation
-  Object.keys(mitigationIds).forEach(mitId => {
-    if (document.getElementById("mitigation-" + mitId).checked) {
-      selected.mitigation = mitigationIds[mitId];
-    }
-  });
+  selected.mitigation = getMitigationId();
 
   // update the name of the region in the text below the graph
   updateRegionInText(selected.region);
@@ -292,9 +306,6 @@ function updatePlot(opt) {
 }
 
 function AddCriticalCareTrace(traces) {
-  // add the line only if it doesn't exist yet
-  console.log(traces)
-
   let line_title = "Hospital critical care capacity (approximate)"
 
   const lastTrace = traces[traces.length - 1];
