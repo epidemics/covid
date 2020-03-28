@@ -617,3 +617,9 @@ div.tooltip {
 table th, table td {
   padding: 0.1em 0.7em;
 }
+
+#regionList{
+  height: auto;
+  overflow-y: scroll;
+  text-transform: uppercase;
+}
