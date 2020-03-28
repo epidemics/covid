@@ -88,7 +88,7 @@ function updateInfectionTotals() {
 
 function bigFormatter(value) 
   {
-  var labelValue = Math.round(value);
+  var labelValue = Math.round(value.toPrecision(2));
   // Nine Zeroes for Billions
   return Math.abs(Number(labelValue)) >= 1.0e+9
 
