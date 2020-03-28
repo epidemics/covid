@@ -26,12 +26,9 @@ function getMitigationId(){
       moderate: "Medium",
       strong: "High"
   };
-  //console.log("I am here");
   for (const mitId of Object.keys(mitigationIds)) {
     var choice = document.getElementById("mitigation-" + mitId)
-    //console.log("mitId", mitId, choice);
     if (choice && choice.checked) {
-      //console.log('fired', choice);
       return mitigationIds[mitId];
     }
   };
