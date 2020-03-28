@@ -19,6 +19,22 @@ let selected = {
   mitigation: "none"
 };
 
+function getMitigationId(){
+    var mitigationIds = {
+      none: "None",
+      weak: "Low",
+      moderate: "Medium",
+      strong: "High"
+  };
+  for (const mitId of Object.keys(mitigationIds)) {
+    var choice = document.getElementById("mitigation-" + mitId)
+    if (choice && choice.checked) {
+      return mitigationIds[mitId];
+    }
+  };
+
+}
+
 function updateInfectionTotals() {
   if (typeof baseData === "undefined") return;
 
@@ -63,6 +79,54 @@ function updateInfectionTotals() {
   );
   */
   d3.select("#infections-population").html(formatInfectionTotal(population));
+}
+
+function updateStatistics () {
+  if (typeof baseData === "undefined") return;
+
+  const { population, data } = baseData.regions[selected.region];
+
+  // TODO: This doesn't seem to work for the first time the page load
+  // TODO: or region is selected, therefore the "None" is here, but would
+  // TODO: be good if it got fixed
+  var mitigation = getMitigationId() || "None"
+  const stats = data.mitigation_stats[mitigation]
+
+  var total_infected = formatStatPer1000(
+    stats.TotalInfected_per1000_q05,
+    stats.TotalInfected_per1000_q95,
+    population
+  );
+  $("#total-infected").html(total_infected);
+
+  var sim_infected = formatStatPer1000(
+    stats.MaxActiveInfected_per1000_q05,
+    stats.MaxActiveInfected_per1000_q95,
+    population
+  );
+  $("#sim-infected").html(sim_infected);
+}
+
+function bigFormatter (value) {
+  var labelValue = Math.round(value.toPrecision(2))
+  // Nine Zeroes for Billions
+  return Math.abs(Number(labelValue)) >= 1.0e+9
+    ? Math.abs(Number(labelValue)) / 1.0e+9 + 'B'
+    // Six Zeroes for Millions
+    : Math.abs(Number(labelValue)) >= 1.0e+6
+      ? Math.abs(Number(labelValue)) / 1.0e+6 + 'M'
+      // Three Zeroes for Thousands
+      : Math.abs(Number(labelValue)) >= 1.0e+3
+        ? Math.abs(Number(labelValue)) / 1.0e+3 + 'K'
+        : Math.abs(Number(labelValue))
+}
+
+const formatStatPer1000 = function(q05, q95, population) {
+  var _q05 = bigFormatter(q05 * (population / 1000));
+  var _q95 = bigFormatter(q95 * (population / 1000));
+  var _q05_perc = formatInfectionTotal(q05 / 10);
+  var _q95_perc = formatInfectionTotal(q95 / 10);
+  return _q05 + '-' + _q95 + ' (' + _q05_perc + '-' + _q95_perc  + '%)';
 }
 
 const formatInfectionTotal = function (number) {
@@ -257,30 +321,20 @@ function changeRegion() {
   updateInfectionTotals();
 }
 
-
 // update the graph
 function updatePlot(opt) {
-  var mitigationIds = {
-    none: "None",
-    weak: "Low",
-    moderate: "Medium",
-    strong: "High"
-  };
-
   if (typeof opt !== "undefined") {
     // assign value of the mitigation given by argument
     document.getElementById("mitigation-" + opt.mitigation).click();
     return; // click callback will re-activate the function
   }
-  // find the current value of the mitigation
-  Object.keys(mitigationIds).forEach(mitId => {
-    if (document.getElementById("mitigation-" + mitId).checked) {
-      selected.mitigation = mitigationIds[mitId];
-    }
-  });
+  selected.mitigation = getMitigationId()
 
   // update the name of the region in the text below the graph
-  updateRegionInText(selected.region);
+  updateRegionInText(selected.region)
+
+  // update the summary statistics per selected mitigation strength
+  updateStatistics()
 
   // Load and preprocess the per-region graph data
   loadGleamvizTraces(baseData.regions[selected.region], function (mitigTraces, maxVal) {
@@ -292,9 +346,6 @@ function updatePlot(opt) {
 }
 
 function AddCriticalCareTrace(traces) {
-  // add the line only if it doesn't exist yet
-  console.log(traces)
-
   let line_title = "Hospital critical care capacity (approximate)"
 
   const lastTrace = traces[traces.length - 1];
