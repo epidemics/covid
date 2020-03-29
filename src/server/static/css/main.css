@@ -425,6 +425,10 @@ strong {
   min-width: 76px;
 }
 
+.alert-warning > p {
+  margin-bottom: 0px;
+}
+
 @media only screen and (max-width: 991px) {
   .title {
     text-align: center;
@@ -500,7 +504,10 @@ strong {
   .detail-button {
     text-align: left
   }
-
+  .alert-warning > p {
+    margin-bottom: 0px;
+    font-size: 0.75rem
+  }
 }
 
 .fill-available-width {
