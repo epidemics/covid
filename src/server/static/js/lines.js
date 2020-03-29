@@ -99,12 +99,35 @@ function updateStatistics() {
   );
   $("#total-infected").html(total_infected);
 
+  var total_dead = formatStatisticsLine(
+    stats.TotalInfected_per1000_q05 / 50,  // !
+    stats.TotalInfected_per1000_q95 / 50,  // !
+    population
+  );
+  $("#total-deaths").html(total_dead);  
+
   var sim_infected = formatStatisticsLine(
     stats.MaxActiveInfected_per1000_q05,
     stats.MaxActiveInfected_per1000_q95,
     population
   );
   $("#sim-infected").html(sim_infected);
+
+  // TODO: Update with real numbers
+  var sim_beds_needed = formatStatisticsLine(
+    stats.MaxActiveInfected_per1000_q05 / 5,  // !
+    stats.MaxActiveInfected_per1000_q95 / 5,  // !
+    population  // TODO: Beds number needed
+  );
+  $("#beds-needed").html(sim_beds_needed);
+
+  // TODO: Update with real numbers
+  var sim_icu_beds_needed = formatStatisticsLine(
+    stats.MaxActiveInfected_per1000_q05 / 20,  // !
+    stats.MaxActiveInfected_per1000_q95 / 20,  // !
+    population  // TODO: ICU beds number needed
+  );
+  $("#icu-beds-needed").html(sim_icu_beds_needed);
 }
 
 const formatBigInteger = function (value) {
@@ -122,14 +145,17 @@ const formatBigInteger = function (value) {
 }
 
 const formatStatisticsLine = function (q05, q95, population) {
+  // q05, q95 are per thousand
+  // population is absolute number
   var _q05 = formatBigInteger(q05 * (population / 1000));
   var _q95 = formatBigInteger(q95 * (population / 1000));
   var _q05_perc = formatPercentNumber(q05 / 10);
   var _q95_perc = formatPercentNumber(q95 / 10);
-  return formatRange(_q05, _q95) + ' (' + formatRange(_q05_perc, _q95_perc) + '%)';
+  return formatRange(_q05, _q95) + ' (' + formatRange(_q05_perc, _q95_perc) + '%)'; 
 }
 
 const formatRange = function (lower, upper) {
+  // Range only if the numbers differ
   if (lower == upper) {
     return "~" + lower;
   } else {
