@@ -1,6 +1,6 @@
 /* global Promise:false Plotly:false d3:false */
 
-const Y_SCALE = 10; // Going from per_1000_pops to per 100 (%)
+const Y_SCALE = 1000; // Going from per_1000_pops to per 100 (%)
 const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
 
 function getUrlParams() {
@@ -127,6 +127,7 @@ var layout = {
     ticklen: 8,
     tickwidth: 1,
     tickcolor: "#fff",
+    tickformat: ".1%",
     showline: true,
     linecolor: "#fff",
     linewidth: 1,
@@ -159,19 +160,37 @@ var plotlyConfig = {
 
 Plotly.newPlot(plotlyGraph, [], layout, plotlyConfig);
 
+function addCurrentTraces(cb){
+  // Load the basic data (estimates and graph URLs) for all generated countries
+  Promise.all([`data-${channel}-v3.json`, "data-manual-estimates-v1.json"].map(
+    path => d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
+  )).then(data => {
+    let [baseData, manualData] = data;
+
+    let regionData = baseData.regions[selected.region];
+    // Load and preprocess the per-region graph data
+    loadGleamvizTraces(regionData, function (mitigTraces, maxVal) {
+      let traces = mitigTraces[selected.mitigation]
+      cb(traces);
+    });
+  });
+}
+
 // Checks if the max and traces have been loaded and preprocessed for the given region;
 // if not, loads them and does preprocessing; then caches it in the region object.
 // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
-function loadGleamvizTraces(regionRec, thenTracesMax) {
+function loadGleamvizTraces(regionData, thenTracesMax) {
 
-  if (typeof regionRec.cached_gleam_traces === "undefined") {
+  if (typeof regionData.cached_gleam_traces === "undefined") {
     // Not cached, load and preprocess
-    var tracesUrl = regionRec.data.infected_per_1000.traces_url;
+    var tracesUrl = regionData.data.infected_per_1000.traces_url;
 
     d3.json(
       `https://storage.googleapis.com/static-covid/static/${tracesUrl}`
     ).then(function (mitigationsData) {
       var highestVals = [];
+
+      console.log("mdata",mitigationsData)
 
       // Iterate over mitigations (groups)
       Object.values(mitigationsData).forEach(mitigationTraces => {
@@ -194,23 +213,21 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
           }
           if (trace["hoverinfo"] !== "skip") {
             trace["hoverlabel"] = { "namelength": -1 };
-            trace["hovertemplate"] = "%{y:.2r}";
+            trace["hovertemplate"] = "%{y:.2%}";
           }
         });
       });
       var maxY = Math.max(...highestVals);
 
-
-
       // Cache the values in the region
-      regionRec.cached_gleam_traces = mitigationsData;
-      regionRec.cached_gleam_max_y = maxY;
+      regionData.cached_gleam_traces = mitigationsData;
+      regionData.cached_gleam_max_y = maxY;
       // Callback
       thenTracesMax(mitigationsData, maxY);
     });
   } else {
     // Callback
-    thenTracesMax(regionRec.cached_gleam_traces, regionRec.cached_gleam_max_y);
+    thenTracesMax(regionData.cached_gleam_traces, regionData.cached_gleam_max_y);
   }
 }
 
@@ -286,25 +303,25 @@ function updatePlot(opt) {
   updateRegionInText(selected.region);
 
   let regionData = baseData.regions[selected.region];
-  addHistoricalData(plotlyGraph, regionData.population);
+
 
   // Load and preprocess the per-region graph data
   loadGleamvizTraces(regionData, function (mitigTraces, maxVal) {
-    AddCriticalCareTrace(mitigTraces[selected.mitigation]);
+    let traces = mitigTraces[selected.mitigation]
+
     // redraw the lines on the graph
-    Plotly.relayout(plotlyGraph, {'yaxis.range': [0,maxVal]});
-    Plotly.addTraces(plotlyGraph, mitigTraces[selected.mitigation]);
+    Plotly.addTraces(plotlyGraph, traces);
+    addCriticalCareTrace(plotlyGraph, d3.extent(traces[0].x));
+
+    addHistoricalCases(plotlyGraph, regionData.population);
+
+    Plotly.relayout(plotlyGraph, {'yaxis.range': [0, maxVal], 'xaxis.range': d3.extent(traces[0].x)});
   });
 }
 
-function AddCriticalCareTrace(traces) {
+function addCriticalCareTrace(target, range) {
   // add the line only if it doesn't exist yet
-  console.log(traces)
-
   let line_title = "Hospital critical care capacity (approximate)"
-
-  const lastTrace = traces[traces.length - 1];
-  if (lastTrace && lastTrace.name === line_title) return;
 
   const regionData = manualData.regions[selected.region];
   if (typeof regionData !== 'object') return;
@@ -312,9 +329,11 @@ function AddCriticalCareTrace(traces) {
   const capacity = regionData.beds_p_100k / 100 / Y_SCALE / CRITICAL_CARE_RATE;
   if (typeof capacity !== "number" || Number.isNaN(capacity)) return;
 
+  console.log(range)
+
   /* NOTE: Temporarily disabled due to possible inconsistencies and misinterpretation. */
-  traces.push({
-    x: d3.extent(traces[0].x),
+  Plotly.addTraces(target, {
+    x: range,
     y: [capacity, capacity],
     name: line_title,
     mode: "lines",

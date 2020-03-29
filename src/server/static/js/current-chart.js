@@ -3,7 +3,7 @@
 var currentGraph = document.getElementById("current_viz");
 
 // graph layout
-var layout = {
+var currentLayout = {
   height: 600,
   //margin: { t: 0 },
   paper_bgcolor: "#222028",
@@ -29,7 +29,7 @@ var layout = {
     tickcolor: "#fff"
   },
   yaxis: {
-    title: "Active infections",
+    title: "Symptomatic patients",
     titlefont: {
       family: "DM Sans, sans-serif",
       size: 18,
@@ -55,7 +55,8 @@ var layout = {
     zerolinewidth: 1,
     type: 'log',
   },
-  showlegend: true,
+  showlegend: false,
+  barmode: "overlay",
   legend: {
     x: 1,
     xanchor: "right",
@@ -68,19 +69,12 @@ var layout = {
   }
 };
 
-var plotlyConfig = {
+var currentConfig = {
   displaylogo: false,
   responsive: true,
   scrollZoom: false
 };
 
-
-
-Plotly.newPlot(currentGraph, [], layout, plotlyConfig);
-addHistoricalData(currentGraph, 1);
-Plotly.relayout(currentGraph, {
-  'xaxis.range': [moment("February 1 2020").toDate(), moment().toDate()]
-});
 
 
 // coefficent of variation
@@ -99,80 +93,204 @@ function applyVariance(mean, vars, sigma){
   return val;
 }
 
-function addHistoricalData(plotlyGraph, pop){
+
+//TODO
+function makeCached(retrieveFn){
+  // let cache = null;
+  
+  return function(key, cb){
+    // if(cache !== null && cache.key === key){
+    //   cb(cache.value);
+    // }
+
+    retrieveFn(key, (value) => {
+      // cache = {key, value};
+      cb(value);
+    })
+  }
+}
+
+let retriveHistorical = makeCached((key, cb) => d3.json(`/static/test_${key}.json`).then(cb));
+
+function makeErrorTrace({color, fillcolor, name}, data){
+  // error bars
+  let errorTrace = {
+    y: [],
+    x: [],
+    mode: "lines",
+    line: {color: "transparent"},
+    fillcolor: fillcolor, 
+    fill: "tozerox", 
+    type: "scatter",
+    showlegend: false,
+    hoverinfo: 'skip'
+  }
+
+  var f = d3.format(".2s");
+  // estimation
+  let meanTrace = {
+    mode: "lines",
+    x: [],
+    y: [],
+    line: {color: color},
+    type: "scatter",
+    name: name,
+    hoverinfo: 'text',
+    text: data.map(({low, high}) => `${name}: ${f(low)}-${f(high)}`)
+  }
+
+  data.forEach(({date,high,mean}) => {
+    errorTrace.y.push(high)
+    errorTrace.x.push(date)
+
+    meanTrace.y.push(mean)
+    meanTrace.x.push(date)
+  })
+
+  for (let i = data.length - 1; i >= 0; i--) {
+    let {date,low} = data[i];
+    errorTrace.y.push(low)
+    errorTrace.x.push(date)
+  }
+
+  return [meanTrace, errorTrace];
+}
+
+function addHistoricalCases(target, pop, cb){
   let cfr = 0.016;
-  let cfr_cv = 0.5; // coefficent of variance (relative sd) of cfr
+  let cfr_cv = 0.69; // coefficent of variance (relative sd) of cfr
 
   let incubation_period = 5;
-  let onset_to_death = 10;
+  let onset_to_death = 9;
 
-  d3.json(
-    `/static/test_italy.json`
-  ).then(function ({confirmed, deaths, dates}) {
+  retriveHistorical('italy', ({confirmed, deaths, dates}) => {
     // var highestVals = [];
 
+    console.log(deaths);
 
-    dates = dates.map((date) => moment(date).subtract(incubation_period + onset_to_death, 'days').toDate());
+    let cv = 3;
+    let retrodicted = [];
+    deaths.forEach((v, i) => {
+      if(v < 1){
+        return;
+      }
 
-    // error bars
-    let errors = {
-      y: deaths.map((v) => applyVariance(v/cfr/pop, [cfr_cv, 3/Math.sqrt(v)], 1)),
-      x: dates,
-      mode: "lines",
-      line: {color: "transparent"},
-      fillcolor: "rgba(255,255,255,0.2)", 
-      fill: "tozerox", 
+      let mean = (v/cfr)/pop;
+      let low = applyVariance(mean, [cfr_cv, cv/Math.sqrt(v)], -1);
+      let high = applyVariance(mean, [cfr_cv, cv/Math.sqrt(v)], 1);
+
+      retrodicted.push({
+        date: moment(dates[i]).subtract(onset_to_death, 'days').toDate(), 
+        low: low,
+        mean: mean,
+        high: high
+      })
+    })
+
+    let symtomaticTraces = makeErrorTrace({color: "white", fillcolor: "rgba(255,255,255,0.3)", name: "Symptomatic (est.)"}, retrodicted)
+
+    let reported = [];
+    for(let i = 0; i < dates.length; i++){
+      reported.push({
+        date: dates[i],
+        confirmed: confirmed[i] / pop,
+        deaths: deaths[i] / pop
+      })
+    }
+
+    let reportedConfirmed = {
+      mode: "markers",
+      x: [],
+      y: [],
+      line: {color: "#fff"},
       type: "scatter",
-      name: "Estimated error",
-      showlegend: false,
-      hoverinfo: 'skip'
+      name: "Confirmed",
+      marker: {size: 3},
+      hovertemplate: 'Confirmed: %{y:.3s}',
     }
 
-    let max = errors.y[errors.y.length - 1];
-
-    console.log(errors.y.slice(0));
-    console.log(max);
-
-    for(let i = deaths.length-1; i >= 0; i--){
-      let v = deaths[i];
-      errors.y.push(applyVariance(v/cfr/pop, [cfr_cv, 10/Math.sqrt(v)],-1));
-      errors.x.push(dates[i]);
-    }
-
-    var f = d3.format(".2s");
-    let text = deaths.map((v, i) => {
-      let low = applyVariance(v/cfr/pop, [1/2, 10/Math.sqrt(1+v)],-1);
-      let high = applyVariance(v/cfr/pop, [1/2, 10/Math.sqrt(1+v)],1);
-      return `Estimated: ${f(low)}-${f(high)}`;
-    });
+    let lastConfirmed = null;
+    reported.forEach(({date, confirmed, deaths}) => {
+      if(lastConfirmed !== confirmed){
+        reportedConfirmed.x.push(date);
+        reportedConfirmed.y.push(confirmed);
+        lastConfirmed = confirmed
+      }
+    })
 
     let data = [
-      {
-        mode: "markers",
-        x: dates,
-        y: confirmed.map((v) => v/pop),
-        line: {color: "#fff"},
-        type: "scatter",
-        name: "Confirmed",
-        marker: {size: 3},
-        hovertemplate: 'Confirmed: %{y:.3s}',
-      },
-      {
-        mode: "lines",
-        x: dates,
-        y: deaths.map((death) => death/cfr/pop),
-        line: {color: "#fff"},
-        type: "scatter",
-        name: "Estimated",
-        hoverinfo: 'text',
-        text: text
-      },
-      errors
+      reportedConfirmed,
+      ...symtomaticTraces
     ];
 
-    console.log("range", [10, errors.y]);
-
     // redraw the lines on the graph
-    Plotly.addTraces(plotlyGraph, data);
+    Plotly.addTraces(target, data);
+
+    if(cb){
+      cb(retrodicted, reported);
+    }
   });
 }
+
+$(function(){
+  let pop = 60.48 * 1000 * 1000;
+  Plotly.newPlot(currentGraph, [], currentLayout, currentConfig);
+  addHistoricalCases(currentGraph, pop, function(retrodicted, reported){
+    // function mkDeltaTrace(name, other) {
+    //   return {
+    //     x: [],
+    //     y: [],
+    //     name: `Δ ${name}`,
+    //     histfunc: "sum", 
+    //     marker: {
+    //       color: "rgba(255, 100, 102, 0.7)", 
+    //       line: {
+    //         color: "rgba(255, 100, 102, 1)", 
+    //         width: 1
+    //       }
+    //     },
+    //     autobinx: false,
+    //     xbins:{size: "D1"},
+    //     hovertemplate: "+%{y}",
+    //     opacity: 0.5, 
+    //     type: "histogram",
+    //     ...other
+    //   }
+    // }
+
+    // let predictedDeltas = mkDeltaTrace("Predicted");
+    // for(let i = 1; i < retrodicted.length; i++){
+    //   let delta = retrodicted[i].mean - retrodicted[i-1].mean;
+    //   predictedDeltas.x.push(retrodicted[i].date);
+    //   predictedDeltas.y.push(delta);
+    // }
+
+
+    // let confirmedDeltas = mkDeltaTrace("Confirmed");
+    // let deathsDeltas = mkDeltaTrace("Deaths");
+    // for(let i = 1; i < reported.length; i++){
+    //   let {date, confirmed, deaths} = reported[i];
+      
+    //   confirmedDeltas.x.push(date);
+    //   confirmedDeltas.y.push(confirmed - reported[i-1].confirmed);
+
+    //   deathsDeltas.x.push(date);
+    //   deathsDeltas.y.push(deaths - reported[i-1].deaths);
+    // }
+
+    // Plotly.addTraces(currentGraph, [predictedDeltas, deathsDeltas, confirmedDeltas]);
+
+    let startDate = retrodicted[0].date;
+    let endDate = moment().toDate();
+
+    Plotly.relayout(currentGraph, {
+      'xaxis.range': [startDate, endDate],
+    });
+  });
+
+  addCurrentTraces(function (traces) {
+    // redraw the lines on the graph
+    Plotly.addTraces(currentGraph, traces);
+    //addCriticalCareTrace(currentGraph, d3.extent(traces[0].x));
+  })
+})
