@@ -378,6 +378,7 @@ function AddCriticalCareTrace(traces) {
   if (typeof capacity !== "number" || Number.isNaN(capacity)) return;
 
   /* NOTE: Temporarily disabled due to possible inconsistencies and misinterpretation. */
+  /*
   traces.push({
     x: d3.extent(traces[0].x),
     y: [capacity, capacity],
@@ -386,7 +387,7 @@ function AddCriticalCareTrace(traces) {
     line: { color: "#be3a40", dash: "solid", width: 1.6 },
     hoverinfo: 'y'
   });
-
+  */
 
 }
 
