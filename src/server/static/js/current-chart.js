@@ -150,7 +150,7 @@ function addHistoricalData(plotlyGraph, pop){
       {
         mode: "markers",
         x: dates,
-        y: confirmed,
+        y: confirmed.map((v) => v/pop),
         line: {color: "#fff"},
         type: "scatter",
         name: "Confirmed",
