@@ -65,11 +65,11 @@ function updateInfectionTotals() {
 
 
   d3.select("#infections-date").html(`(${formatDate(maxDate)})`);
-  d3.select("#infections-confirmed").html(formatInfectionTotal(
+  d3.select("#infections-confirmed").html(formatAbsoluteInteger(
     infections["JH_Confirmed"] - infections["JH_Recovered"] - infections["JH_Deaths"]
   ));
   d3.select("#infections-estimated").html(
-    formatInfectionTotal(infections["FT_Infected"])
+    formatAbsoluteInteger(infections["FT_Infected"])
   );
   /* Temporarily swithed off - we do not have confidence intervals for non-FT estimates
   d3.select("#infections-estimated-ci").html(
@@ -78,7 +78,7 @@ function updateInfectionTotals() {
     )} - ${formatInfectionTotal(infections["FT_Infected_q95"])}`
   );
   */
-  d3.select("#infections-population").html(formatInfectionTotal(population));
+  d3.select("#infections-population").html(formatAbsoluteInteger(population));
 }
 
 function updateStatistics() {
@@ -92,14 +92,14 @@ function updateStatistics() {
   var mitigation = getMitigationId() || "None"
   const stats = data.mitigation_stats[mitigation]
 
-  var total_infected = formatStatPer1000(
+  var total_infected = formatStatisticsLine(
     stats.TotalInfected_per1000_q05,
     stats.TotalInfected_per1000_q95,
     population
   );
   $("#total-infected").html(total_infected);
 
-  var sim_infected = formatStatPer1000(
+  var sim_infected = formatStatisticsLine(
     stats.MaxActiveInfected_per1000_q05,
     stats.MaxActiveInfected_per1000_q95,
     population
@@ -107,7 +107,7 @@ function updateStatistics() {
   $("#sim-infected").html(sim_infected);
 }
 
-function bigFormatter(value) {
+const formatBigInteger = function (value) {
   var labelValue = Math.round(value.toPrecision(2))
   // Nine Zeroes for Billions
   return Math.abs(Number(labelValue)) >= 1.0e+9
@@ -121,15 +121,35 @@ function bigFormatter(value) {
         : Math.abs(Number(labelValue))
 }
 
-const formatStatPer1000 = function (q05, q95, population) {
-  var _q05 = bigFormatter(q05 * (population / 1000));
-  var _q95 = bigFormatter(q95 * (population / 1000));
-  var _q05_perc = formatInfectionTotal(q05 / 10);
-  var _q95_perc = formatInfectionTotal(q95 / 10);
-  return _q05 + '-' + _q95 + ' (' + _q05_perc + '-' + _q95_perc + '%)';
+const formatStatisticsLine = function (q05, q95, population) {
+  var _q05 = formatBigInteger(q05 * (population / 1000));
+  var _q95 = formatBigInteger(q95 * (population / 1000));
+  var _q05_perc = formatPercentNumber(q05 / 10);
+  var _q95_perc = formatPercentNumber(q95 / 10);
+  return formatRange(_q05, _q95) + ' (' + formatRange(_q05_perc, _q95_perc) + '%)';
 }
 
-const formatInfectionTotal = function (number) {
+const formatRange = function (lower, upper) {
+  if (lower == upper) {
+    return "~" + lower;
+  } else {
+    return lower + "-" + upper;
+  }
+}
+
+const formatPercentNumber = function (number) {
+  // One decimal places for numbers < 10 %.
+  // Two decimal places for numbers < 0.1 %.
+  if (Math.abs(number) >= 10) {
+    return String(Math.round(number));
+  } else if (Math.abs(number) >= 0.1) {
+    return String(Math.round(number * 10) / 10);
+  } else {
+    return String(Math.round(number * 100) / 100);
+  }
+}
+
+const formatAbsoluteInteger = function (number) {
   if (typeof number !== "number" || Number.isNaN(number)) {
     return "&mdash;";
   }
