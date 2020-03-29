@@ -132,5 +132,7 @@
 </div>
 {% endblock %} {% block additional_js %}
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="{{ url_for('static', path='/js/current-chart.js') }}"></script>
 <script src="{{ url_for('static', path='/js/lines.js') }}"></script>
 {% endblock %}

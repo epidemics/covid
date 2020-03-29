@@ -81,7 +81,7 @@ const formatInfectionTotal = function (number) {
 var selectButton = document.getElementById("selectButton");
 
 // graph
-var plotyGraph = document.getElementById("my_dataviz");
+var plotlyGraph = document.getElementById("my_dataviz");
 
 // graph layout
 var layout = {
@@ -156,7 +156,8 @@ var plotlyConfig = {
   scrollZoom: false
 };
 
-Plotly.newPlot(plotyGraph, [], layout, plotlyConfig);
+
+Plotly.newPlot(plotlyGraph, [], layout, plotlyConfig);
 
 // Checks if the max and traces have been loaded and preprocessed for the given region;
 // if not, loads them and does preprocessing; then caches it in the region object.
@@ -260,6 +261,8 @@ function changeRegion() {
 
 // update the graph
 function updatePlot(opt) {
+  Plotly.react(plotlyGraph, [], layout);
+
   var mitigationIds = {
     none: "None",
     weak: "Low",
@@ -282,12 +285,15 @@ function updatePlot(opt) {
   // update the name of the region in the text below the graph
   updateRegionInText(selected.region);
 
+  let regionData = baseData.regions[selected.region];
+  addHistoricalData(plotlyGraph, regionData.population);
+
   // Load and preprocess the per-region graph data
-  loadGleamvizTraces(baseData.regions[selected.region], function (mitigTraces, maxVal) {
-    layout.yaxis.range = [0, maxVal];
+  loadGleamvizTraces(regionData, function (mitigTraces, maxVal) {
     AddCriticalCareTrace(mitigTraces[selected.mitigation]);
     // redraw the lines on the graph
-    Plotly.newPlot(plotyGraph, mitigTraces[selected.mitigation], layout, plotlyConfig);
+    Plotly.relayout(plotlyGraph, {'yaxis.range': [0,maxVal]});
+    Plotly.addTraces(plotlyGraph, mitigTraces[selected.mitigation]);
   });
 }
 
@@ -315,8 +321,6 @@ function AddCriticalCareTrace(traces) {
     line: { color: "#be3a40", dash: "solid", width: 1.6 },
     hoverinfo: 'y'
   });
-
-
 }
 
 // Load the basic data (estimates and graph URLs) for all generated countries
