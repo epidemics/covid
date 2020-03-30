@@ -6,12 +6,13 @@ const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
 const SELECTION_PARAM = "selection";
 const MITIGATION_PARAM = "mitigation";
 const CHANNEL_PARAM = "channel";
+const LOCATION_FALLBACK = "united kingdom";
 
 function getUrlParams() {
   let urlString = window.location.href;
   let url = new URL(urlString);
   return {
-    region: url.searchParams.get(SELECTION_PARAM) || "united kingdom",
+    region: url.searchParams.get(SELECTION_PARAM) || guessLocation({fallback: LOCATION_FALLBACK}),
     channel: url.searchParams.get(CHANNEL_PARAM) || "main",
     mitigation: url.searchParams.get(MITIGATION_PARAM) || "none"
   };
@@ -398,20 +399,13 @@ jQuery($regionDropdown).on("shown.bs.dropdown", () => {
 function addRegionDropdown(region_key, name){
   const link = document.createElement("a");
 
-  let url = getRegionUrl(region_key);
-
   link.innerHTML = name;
-  link.href = url;
+  link.href = getRegionUrl(region_key);
   link.addEventListener("click", evt => {
     evt.preventDefault();
 
-    // change url
-    if (history.pushState) {
-      window.history.pushState({ path: url }, "", url);
-    }
-
     // change the region
-    changeRegion(region_key);
+    changeRegion(region_key, true);
   })
 
   let item = {key: region_key, name, dropdownEntry: link};
@@ -509,7 +503,7 @@ $regionFilter.addEventListener("keydown", evt => {
 
   // on enter we select the currently highlighted entry
   if (evt.key === "Enter") {
-    changeRegion(regionList[focusedRegionIdx].key);
+    changeRegion(regionList[focusedRegionIdx].key, true);
     $($regionDropdown).dropdown('toggle')
   }
 
@@ -531,9 +525,20 @@ $regionFilter.addEventListener("keydown", evt => {
 $regionDropdownLabel.innerHTML = selected.region;
 
 // change the displayed region
-function changeRegion(newRegion) {
+function changeRegion(newRegion, pushState) {
+  if(!(newRegion in baseData.regions)){
+    newRegion = LOCATION_FALLBACK;
+    pushState = false;
+  }
+
   // update the global state
   selected.region = newRegion;
+
+  // change url
+  if (history.pushState && pushState) {
+    let path = getRegionUrl(newRegion)
+    window.history.pushState({ path }, "", path);
+  }
 
   // set the main label
   $regionDropdownLabel.innerHTML = regionDict[selected.region].name;
@@ -559,5 +564,5 @@ Promise.all([`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"
   reorderDropdown();
   restyleDropdownElements();
 
-  changeRegion(selected.region)
+  changeRegion(selected.region, false)
 });
