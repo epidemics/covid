@@ -1,5 +1,18 @@
 <h5>Region</h5>
-<select id="selectButton" class="form-control medium col-md-4" onchange="changeRegion()"> </select>
+<div class="dropdown" id="regionDropdown">
+  <button class="btn btn-primary dropdown-toggle medium" type="button" aria-haspopup="true" data-toggle="dropdown">
+    <span id="regionDropdownLabel">...</span>
+    <span class="caret"></span>
+  </button>
+  <div class="dropdown-menu">
+    <div class="px-3 py-2">
+      <input class="form-control" id="regionFilter" type="text" placeholder="Filter..." autofocus="autofocus">
+    </div>
+    <div id="regionList">
+
+    </div>
+  </div>
+</div>
 <hr />
 <h5>Active Infections <span id="infections-date"></span></h5>
 <div class="row mitigation-strenght">
@@ -60,29 +73,29 @@
 </div>
 <hr />
 <h5>Global mitigation strength</h5>
-<div class="btn-group-toggle" data-toggle="buttons">
+<div class="btn-group-toggle" id="mitigation" data-toggle="buttons">
   <div class="row mitigation-strenght">
     <div class="col-sm-auto col-xm-12">
       <label class="btn btn-secondary active beta-0">
-        <input type="radio" name="mitigation" id="mitigation-none" autocomplete="off" onclick="updatePlot()" />
+        <input type="radio" name="mitigation" id="mitigation-none" autocomplete="off" value="none" />
         None
       </label>
     </div>
     <div class="col-sm-auto col-xm-12">
       <label class="btn btn-secondary active beta-05">
-        <input type="radio" name="mitigation" id="mitigation-weak" autocomplete="off" onclick="updatePlot()" />
+        <input type="radio" name="mitigation" id="mitigation-weak" autocomplete="off"  value="weak"  />
         Weak
       </label>
     </div>
     <div class="col-sm-auto col-xm-12">
       <label class="btn btn-secondary active beta-04">
-        <input type="radio" name="mitigation" id="mitigation-moderate" autocomplete="off" onclick="updatePlot()" />
+        <input type="radio" name="mitigation" id="mitigation-moderate" autocomplete="off"  value="moderate" />
         Moderate
       </label>
     </div>
     <div class="col-sm-auto col-xm-12">
       <label class="btn btn-secondary active beta-03">
-        <input type="radio" name="mitigation" id="mitigation-strong" autocomplete="off" onclick="updatePlot()" />
+        <input type="radio" name="mitigation" id="mitigation-strong" autocomplete="off"  value="strong"/>
         Strong
       </label>
     </div>

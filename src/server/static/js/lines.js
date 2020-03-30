@@ -3,21 +3,22 @@
 const Y_SCALE = 10; // Going from per_1000_pops to per 100 (%)
 const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
 
+const SELECTION_PARAM = "selection";
+const MITIGATION_PARAM = "mitigation";
+const CHANNEL_PARAM = "mitigation";
+
 function getUrlParams() {
-  var urlString = window.location.href;
-  var url = new URL(urlString);
+  let urlString = window.location.href;
+  let url = new URL(urlString);
   return {
-    region: url.searchParams.get("selection") || "united kingdom",
-    channel: url.searchParams.get("channel") || "main"
+    region: url.searchParams.get(SELECTION_PARAM) || "united kingdom",
+    channel: url.searchParams.get(CHANNEL_PARAM) || "main",
+    mitigation: url.searchParams.get(MITIGATION_PARAM) || "none"
   };
 }
 
-const { channel } = getUrlParams();
-var baseData, manualData, listOfRegions;
-let selected = {
-  region: getUrlParams().region,
-  mitigation: "none"
-};
+let baseData, manualData;
+let selected = getUrlParams();
 
 function getMitigationId() {
   var mitigationIds = {
@@ -26,13 +27,8 @@ function getMitigationId() {
     moderate: "Medium",
     strong: "High"
   };
-  for (const mitId of Object.keys(mitigationIds)) {
-    var choice = document.getElementById("mitigation-" + mitId)
-    if (choice && choice.checked) {
-      return mitigationIds[mitId];
-    }
-  };
 
+  return mitigationIds[selected.mitigation]
 }
 
 function updateInfectionTotals() {
@@ -63,7 +59,6 @@ function updateInfectionTotals() {
     return `${monthString} ${day}, ${year}`;
   };
 
-
   d3.select("#infections-date").html(`(${formatDate(maxDate)})`);
   d3.select("#infections-confirmed").html(formatAbsoluteInteger(
     infections["JH_Confirmed"] - infections["JH_Recovered"] - infections["JH_Deaths"]
@@ -86,10 +81,7 @@ function updateStatistics() {
 
   const { population, data } = baseData.regions[selected.region];
 
-  // TODO: This doesn't seem to work for the first time the page load
-  // TODO: or region is selected, therefore the "None" is here, but would
-  // TODO: be good if it got fixed
-  var mitigation = getMitigationId() || "None"
+  var mitigation = getMitigationId();
   const stats = data.mitigation_stats[mitigation]
 
   var total_infected = formatStatisticsLine(
@@ -160,9 +152,6 @@ const formatAbsoluteInteger = function (number) {
     return number.toLocaleString();
   }
 };
-
-// dropdown of countries
-var selectButton = document.getElementById("selectButton");
 
 // graph
 var plotyGraph = document.getElementById("my_dataviz");
@@ -297,58 +286,20 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
   }
 }
 
-function getListOfRegions() {
-  return Object.keys(baseData.regions).map(key => {
-    return { key, name: baseData.regions[key].name };
-  }).sort(function (a, b) {
-    if (a.name < b.name) { return -1; }
-    if (a.name > b.name) { return 1; }
-    return 0;
+document.querySelectorAll("#mitigation input[type=radio]").forEach(elem => {
+  if (elem.value === selected.mitigation) {
+    elem.checked = true;
+  }
+
+  elem.addEventListener("click", () => {
+    selected.mitigation = elem.value;
+    updatePlot();
   });
-}
-
-function setGetParam(key, value) {
-  if (history.pushState) {
-    var params = new URLSearchParams(window.location.search);
-    params.set(key, value);
-    var newUrl =
-      window.location.protocol +
-      "//" +
-      window.location.host +
-      window.location.pathname +
-      "?" +
-      params.toString();
-    window.history.pushState({ path: newUrl }, "", newUrl);
-  }
-}
-
-function updateRegionInText(region) {
-  var countryName = listOfRegions.find(c => c.key === region).name;
-  var regionSpans = jQuery(".selected-region");
-  for (let i = 0; i < regionSpans.length; i++) {
-    regionSpans[i].innerHTML = countryName;
-  }
-}
-
-// triggered by change of region in the drop down menu
-function changeRegion() {
-  // recover the option that has been chosen
-  selected.region = selectButton.value;
-  // change url param
-  setGetParam("selection", selected.region);
-  // update the graph
-  updatePlot();
-  updateInfectionTotals();
-}
+});
 
 // update the graph
-function updatePlot(opt) {
-  if (typeof opt !== "undefined") {
-    // assign value of the mitigation given by argument
-    document.getElementById("mitigation-" + opt.mitigation).click();
-    return; // click callback will re-activate the function
-  }
-  selected.mitigation = getMitigationId()
+function updatePlot() {
+  let mitigationId = getMitigationId();
 
   // update the name of the region in the text below the graph
   updateRegionInText(selected.region)
@@ -359,9 +310,9 @@ function updatePlot(opt) {
   // Load and preprocess the per-region graph data
   loadGleamvizTraces(baseData.regions[selected.region], function (mitigTraces, maxVal) {
     layout.yaxis.range = [0, maxVal];
-    AddCriticalCareTrace(mitigTraces[selected.mitigation]);
+    AddCriticalCareTrace(mitigTraces[mitigationId]);
     // redraw the lines on the graph
-    Plotly.newPlot(plotyGraph, mitigTraces[selected.mitigation], layout, plotlyConfig);
+    Plotly.newPlot(plotyGraph, mitigTraces[mitigationId], layout, plotlyConfig);
   });
 }
 
@@ -388,28 +339,225 @@ function AddCriticalCareTrace(traces) {
     hoverinfo: 'y'
   });
   */
+}
 
+function updateRegionInText(region) {
+  var countryName = regionDict[region].name;
+  jQuery(".selected-region").html(countryName);
+}
+
+function setGetParamUrl(key, value){
+  var params = new URLSearchParams(window.location.search);
+  params.set(key, value);
+  var url =
+    window.location.protocol +
+    "//" +
+    window.location.host +
+    window.location.pathname +
+    "?" +
+    params.toString();
+
+  return url;
+}
+
+function getRegionUrl(region){
+  return setGetParamUrl(SELECTION_PARAM, region);
+}
+
+let $regionList = document.getElementById("regionList");
+let $regionDropdownLabel = document.getElementById("regionDropdownLabel");
+let $regionFilter = document.getElementById("regionFilter");
+let $regionDropdown = document.getElementById("regionDropdown")
+
+// contains all the regions for the purpose of the dropdown menu
+let regionList = [];
+let regionDict = {};
+
+// the offset in the regionList of the currently focused region
+let focusedRegionIdx = 0;
+let filterQuery = "";
+
+// listen for dropdown trigger
+jQuery($regionDropdown).on("show.bs.dropdown", () => {
+  // clear the fitler value
+  $regionFilter.value = "";
+  $($regionList).css("max-height", $(window).height() * 0.5);
+})
+
+jQuery($regionDropdown).on("shown.bs.dropdown", () => {
+  if(filterQuery !== ""){
+    filterQuery = "";
+    reorderDropdown();
+  }
+
+  // and focus the filter field
+  $regionFilter.focus();
+})
+
+// make the dropdown entry
+function addRegionDropdown(region_key, name){
+  const link = document.createElement("a");
+
+  let url = getRegionUrl(region_key);
+
+  link.innerHTML = name;
+  link.href = url;
+  link.addEventListener("click", evt => {
+    evt.preventDefault();
+
+    // change url
+    if (history.pushState) {
+      window.history.pushState({ path: url }, "", url);
+    }
+
+    // change the region
+    changeRegion(region_key);
+  })
+
+  let item = {key: region_key, name, dropdownEntry: link};
+
+  // add it to the dict and list
+  regionDict[region_key] = item;
+  regionList.push(item);
+}
+
+// the dropdown items are restorted depending on a search query
+function reorderDropdown(){
+  // we score each region item with how good the region name matches the query
+  regionList.forEach(region => {
+    region.score = string_score(region.name, filterQuery)
+  });
+
+  // then we sort the list
+  regionList.sort((a, b) => {
+    // first by score
+    if (a.score < b.score) {
+      return 1;
+    }
+    if (a.score > b.score) {
+      return -1;
+    }
+    // then alphabetically
+    if (a.name > b.name){
+      return 1;
+    }
+    if (a.name < b.name){
+      return -1;
+    }
+    return 0;
+  })
+
+  let bestScore = regionList[0].score;
+  for(let i = 0; i < regionList.length; i++){
+    let {score, dropdownEntry} = regionList[i];
+
+    // re-add the entry, this sorts the dom elements
+    $regionList.appendChild(dropdownEntry);
+
+    // if we have good matches we only want to show those
+    if(score < bestScore/1000){
+      // correct the focus offset so it does not so something silly
+      if(focusedRegionIdx >= i){
+        focusedRegionIdx = i-1;
+      }
+
+      $regionList.removeChild(dropdownEntry);
+      continue;
+    }
+  }
+}
+
+// update the look of the of the dropdown entries
+function restyleDropdownElements() {
+  regionList.forEach(({key, dropdownEntry}, index) => {
+    className = "dropdown-item";
+
+    // TODO maybe differentiate visually between 'current' and 'focused'
+    if(key === selected.region){
+      className += " active";
+    }
+
+    if(index === focusedRegionIdx){
+      className += " active"; 
+
+      // TODO something like this:
+      // dropdownEntry.scrollIntoView(false);
+    }
+
+    dropdownEntry.className = className;
+  })
+}
+
+$regionFilter.addEventListener("keyup", () => { 
+  if(filterQuery === $regionFilter.value){
+    // dont do anything if the query didnt change
+    return;
+  }
+
+  filterQuery = $regionFilter.value;
+  if(filterQuery !== ""){
+    // focus the first element in the list
+    focusedRegionIdx = 0;
+  }
+
+  reorderDropdown();
+  restyleDropdownElements();
+})
+
+// listen on regionFilter events
+$regionFilter.addEventListener("keydown", evt => {
+
+  // on enter we select the currently highlighted entry
+  if (evt.key === "Enter") {
+    changeRegion(regionList[focusedRegionIdx].key);
+    $($regionDropdown).dropdown('toggle')
+  }
+
+  else if (evt.key === "ArrowUp") {
+    focusedRegionIdx = Math.max(focusedRegionIdx - 1, 0);
+
+    restyleDropdownElements();
+  }
+  
+  else if (evt.key === "ArrowDown") {
+    focusedRegionIdx = Math.min(focusedRegionIdx + 1, regionList.length - 1);
+
+    restyleDropdownElements();
+  }
+})
+
+// populate the region dropdown label
+// FIXME: this is kind of a hack and only looks nonsilly because the label is allcapsed
+$regionDropdownLabel.innerHTML = selected.region;
+
+// change the displayed region
+function changeRegion(newRegion) {
+  // update the global state
+  selected.region = newRegion;
+
+  // set the main label
+  $regionDropdownLabel.innerHTML = regionDict[selected.region].name;
+
+  // update the graph
+  restyleDropdownElements();
+  updatePlot();
+  updateInfectionTotals();
 }
 
 // Load the basic data (estimates and graph URLs) for all generated countries
-Promise.all([`data-${channel}-v3.json`, "data-manual-estimates-v1.json"].map(
+Promise.all([`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"].map(
   path => d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
 )).then(data => {
   [baseData, manualData] = data;
 
   // populate the dropdown menu with countries from received data
-  listOfRegions = getListOfRegions();
-  listOfRegions.forEach(({ key, name }) => {
-    const opt = document.createElement("option");
-    opt.value = key;
-    opt.innerHTML = name;
-    opt.selected = (key === selected.region);
-    selectButton.appendChild(opt);
-  });
+  let listOfRegions = Object.keys(baseData.regions);
+  listOfRegions.forEach((key) => 
+    addRegionDropdown(key, baseData.regions[key].name)
+  );
 
-  // Reported & Estimated Infections
-  updateInfectionTotals();
+  reorderDropdown();
+  restyleDropdownElements();
 
-  // initialize the graph
-  updatePlot(selected);
+  changeRegion(selected.region)
 });
