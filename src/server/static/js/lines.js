@@ -234,7 +234,13 @@ var layout = {
 var plotlyConfig = {
   displaylogo: false,
   responsive: false,
-  scrollZoom: false
+  scrollZoom: false,
+  modeBarButtonsToAdd: [{
+    name: 'custom download button',
+    icon: Plotly.Icons.camera,
+    click: (gd) => saveImage(gd, {name: selected.region, scale: 2, format: "png", filter: "invert(1)", background: "black"})
+  }],
+  modeBarButtonsToRemove: ['toImage']
 };
 
 function makePlotlyReactive() {
