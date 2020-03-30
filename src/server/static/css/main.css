@@ -173,8 +173,13 @@ header h1:before {
   font-weight: 600;
 }
 
-.infections-confirmed {
+.infections-estimated {
   color: #D93333;
+}
+
+span.infections-confirmed {
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
 }
 
 .active-infections-block {
