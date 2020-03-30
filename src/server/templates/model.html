@@ -35,106 +35,137 @@
 </style>
 {% endblock %} {% block content %}
 
-
+<!-- Pro bono consulting alert-->
+<!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <p class="text-center">
+    We're offering pro bono consulting services and custom forecasts for decision-makers. Please reach out <a
+      href="http://epidemicforecasting.org/request-calculation" class="alert-link">here</a>. </p>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div> -->
 
 <!-- Main model graph -->
 <div class="main-wrapper">
   <div class="row">
-    <div class="col">
-    </div>
-    <div class="col-xs-12 col-sm-10 col-md-9 col-lg-8 col-xl-6">
-      <!-- Pro bono consulting alert-->
-      <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <p class="text-center">
-          We're offering pro bono consulting services and custom forecasts for decision-makers. Please reach out <a
-            href="http://epidemicforecasting.org/request-calculation" class="alert-link">here</a>. </p>
+    <div class="central-column">
+      <div class="pro-bono-banner alert alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
+        <p>
+          We're offering pro bono consulting services and custom forecasts for decision-makers. Please reach out 
+          <a href="http://epidemicforecasting.org/request-calculation" class="alert-link">here</a>. 
+        </p>
       </div>
       {% include "lines.html" %}
-      <p>
-        Under this scenario, we estimate:
-        <ul>
-          <li>The maximum number of simultaneously infected people will be <span id="sim-infected"></span></li>
-          <li>The total number of people infected will be <span id="total-infected"></span></li>
-        </ul>
-      </p>
-      <p>
-        The impact on <span class="selected-region"></span> is simulated using an epidemiological model based on
-        global, real-world data on human population and travel patterns, displayed as an <a
-          href="https://en.wikipedia.org/wiki/Epidemic_curve">an epidemic curve</a>.
-      </p>
-      <p>
-        We want to emphasise that real outcomes depend on human actions. The mitigation strength is our choice. Even
-        given some mitigation level, the outcome is still uncertain, and depends on:
-        <ul>
-          <li>
-            the seasonality of the virus and its response to changing weather conditions
-          </li>
-          <li>
-            the mitigation decisions made by <i>other countries</i>
-          </li>
-          <li>
-            technological progress in testing, contact tracing and vaccines
-          </li>
+      <div class="model-explanation">
+        <h5 class="mitigation-strength-heading">How the Model Works</h5>
+        <p>
+          The impact on <span class="selected-region"></span> is simulated using an epidemiological model based on
+          global, real-world data on human population and travel patterns, displayed as an <a
+            href="https://en.wikipedia.org/wiki/Epidemic_curve">an epidemic curve</a>.
+        </p>
+        <p>
+          We want to emphasise that real outcomes depend on human actions. The mitigation strength is our choice. Even
+          given some mitigation level, the outcome is still uncertain, and depends on:
+          <ul>
+            <li>
+              the seasonality of the virus and its response to changing weather conditions
+            </li>
+            <li>
+              the mitigation decisions made by <i>other countries</i>
+            </li>
+            <li>
+              technological progress in testing, contact tracing and vaccines
+            </li>
 
+          </ul>
+          For now we are capturing the international response in a single parameter determining the rate of spread of
+          SARS-CoV-2, but we are building <a
+            href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e">a database of
+            containment and mitigation efforts</a> and working to integrate them into the model.
+        </p>
+        <p><em>If you&#39;re a decision-maker thinking about how various measures can impact COVID-19 outcomes, please
+            reach out <a href="http://epidemicforecasting.org/request-calculation">here</a>.</em></p>
+        <hr />
+        <p id="case-count-explanation"><strong> Active Infections Estimate </strong></p>
+        <p>
+          This counts number of people currently infected with COVID-19 (including those have not yet shown symptoms or are not yet infectious, but excluding those who have recovered or died).
+        </p>
+        <p>
+          This estimate is an extrapolation by our group of expert forecasters and statistical models.
+        </p>
+        <p id="mitigation-measures-explanation"><strong> Mitigation Measures </strong></p>
+        <p>
+          We're modelling mitigation measures via their impact on effective transmission rate, since the same mitigation strength can be often achieved in multiple ways. For example, something roughly in the range of "weak mitigation" can be achieved either by closing schools and banning large gatherings (alone) or by compulsory wear of masks and widely adopted voluntary social distancing (alone).
+        </p>
+        <p>
+          The available mitigation levels are:
+        </p>
+        <ul>
+          <li>
+            Do nothing
+          </li>
+          <li>
+            Decrease of effective transmission rate by 20%
+          </li>
+          <li>
+            Decrease of effective transmission rate by 50%
+          </li>
+          <li>
+            Decrease of effective transmission rate by 80%
+          </li>
         </ul>
-        For now we are capturing the international response in a single parameter determining the rate of spread of
-        SARS-CoV-2, but we are building <a
-          href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=aa8e0c75520a479ea48f56cb4c289b7e">a database of
-          containment and mitigation efforts</a> and working to integrate them into the model.
-      </p>
-      <p><em>If you&#39;re a decision-maker thinking about how various measures can impact COVID-19 outcomes, please
-          reach out <a href="http://epidemicforecasting.org/request-calculation">here</a>.</em></p>
-      <hr />
-      <h5>How the model works</h5>
-      <p><strong> Human forecasting</strong></p>
-      <p>
-        We are trying to augment data on confirmed cases by estimating the true
-        number of infections in selected countries. This gets around issues of
-        testing capacity and under-reporting in official statistics. This is
-        done using a combination of statistical modelling and human forecasting.
-      </p>
-      <p><strong>Computational modelling</strong></p>
-      <p>
-        The results are used as an input to advanced epidemic modelling
-        software, called
-        <a href="http://www.gleamviz.org/" target="_blank">GLEaM</a>,
-        running on high-performance computers.
-      </p>
-      <p>The global development of COVID-19 is simulated using:</p>
-      <ul>
-        <li>
-          an airline booking dataset covering 3,800 commercial airports in about
-          230 countries
-        </li>
-        <li>
-          a commuting database covering over five million commuting connections
-          within 40 countries
-        </li>
-        <li>multiple levels of global mitigation measures (currently captured as changes in the β of our model) </li>
-        <li>
-          multiple models of SARS-CoV-2, capturing uncertainty about seasonality
-          and transmissibility
-        </li>
-      </ul>
-      <p>
-        The results are displayed as a pack of trajectories, representing the
-        uncertainty inherent in our model — and the difference in trajectory
-        caused by the response of us as a society.
-      </p>
-      <p><strong> Database of containment measures</strong></p>
-      <p>
-        We are tracking the effectiveness of containments measures in a
-        <a href="http://epidemicforecasting.org/containment"
-          target="_blank">public
-          database</a>
-        with hundreds of entries. As more data becomes available on their
-        effectiveness we will integrate them into the simulation.
-      </p>
+        <p>
+          For comparison, in Wuhan the estimated reproduction number was ~3.5 before mitigation measures, and ~0.32 after implementation of all measures [...ref...]. This would correspond to a mitigation strength of ~90% — stronger than our "Strong" setting.
+        </p>
+        <p><strong> Human forecasting</strong></p>
+        <p>
+          We are trying to augment data on confirmed cases by estimating the true
+          number of infections in selected countries. This gets around issues of
+          testing capacity and under-reporting in official statistics. This is
+          done using a combination of statistical modelling and human forecasting.
+        </p>
+        <p><strong>Computational modelling</strong></p>
+        <p>
+          The results are used as an input to advanced epidemic modelling
+          software, called
+          <a href="http://www.gleamviz.org/" target="_blank">GLEaM</a>,
+          running on high-performance computers.
+        </p>
+        <p>The global development of COVID-19 is simulated using:</p>
+        <ul>
+          <li>
+            an airline booking dataset covering 3,800 commercial airports in about
+            230 countries
+          </li>
+          <li>
+            a commuting database covering over five million commuting connections
+            within 40 countries
+          </li>
+          <li>multiple levels of global mitigation measures (currently captured as changes in the β of our model) </li>
+          <li>
+            multiple models of SARS-CoV-2, capturing uncertainty about seasonality
+            and transmissibility
+          </li>
+        </ul>
+        <p>
+          The results are displayed as a pack of trajectories, representing the
+          uncertainty inherent in our model — and the difference in trajectory
+          caused by the response of us as a society.
+        </p>
+        <p><strong> Database of containment measures</strong></p>
+        <p>
+          We are tracking the effectiveness of containments measures in a
+          <a href="http://epidemicforecasting.org/containment"
+            target="_blank">public
+            database</a>
+          with hundreds of entries. As more data becomes available on their
+          effectiveness we will integrate them into the simulation.
+        </p>
+      </div>
     </div>
-    <div class="col"></div>
   </div>
 </div>
 {% endblock %} {% block additional_js %}

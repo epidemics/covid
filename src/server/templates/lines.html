@@ -1,105 +1,89 @@
-<h5>Region</h5>
-<div class="dropdown" id="regionDropdown">
-  <button class="btn btn-primary dropdown-toggle medium" type="button" aria-haspopup="true" data-toggle="dropdown">
-    <span id="regionDropdownLabel">...</span>
-    <span class="caret"></span>
-  </button>
-  <div class="dropdown-menu">
-    <div class="px-3 py-2">
-      <input class="form-control" id="regionFilter" type="text" placeholder="Filter..." autofocus="autofocus">
-    </div>
-    <div id="regionList">
-
+<div class="top-row">
+  <div class="dropdown" id="regionDropdown">
+    <button class="btn btn-primary dropdown-toggle medium dropdown-caret-styling region-dropdown" type="button" aria-haspopup="true" data-toggle="dropdown">
+      <span class="region-dropdown-label" id="regionDropdownLabel">...</span>
+      <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu">
+      <div class="px-3 py-2">
+        <input class="form-control" id="regionFilter" type="text" placeholder="Filter..." autofocus="autofocus">
+      </div>
+      <div id="regionList">
+  
+      </div>
     </div>
   </div>
+  <div class="active-infections-block">
+    <span class="number-subheader" id="infections-date"></span>
+    <span class="active-infections">Active Infections: 
+      <span class="infections-confirmed" id="infections-estimated">&mdash;</span>
+      <!-- TODO: Insert official case count into tooltip -->
+      <a href="#case-count-explanation">
+        <span class="question-tooltip">
+          <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+            <path d="M0 0h24v24H0z" fill="none"/><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
+          </svg>
+        </span>
+      </a>
+    </span>  
+  </div>
+  
+  <div class="population-block">
+    <span class="number-subheader">Population</span>
+    <span class="infections-population" id="infections-population">&mdash;</span>
+  </div>
+  
 </div>
 <hr />
-<h5>Active Infections <span id="infections-date"></span></h5>
-<div class="row mitigation-strenght">
-  <div class="col-sm-auto col-xm-12">
-    <table id="country-estimates">
-      <thead>
-        <th>Confirmed</th>
-        <th>Estimated</th>
-        <!--<th>90% CI</th>-->
-        <th>Population</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td id="infections-confirmed">&mdash;</td>
-          <td id="infections-estimated">&mdash;</td>
-          <!--<td id="infections-estimated-ci">&mdash;</td>-->
-          <td id="infections-population">&mdash;</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="col-sm-auto col-xm-12 mitigation-strength">
-    <button id="showInfections" onclick="showExplanation('showInfections','hideInfections','explanationInfections')"
-      class="detail-button less-visible7">
-      More detail <svg class="bi bi-chevron-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
-        xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd"
-          d="M1.646 4.646a.5.5 0 01.708 0L8 10.293l5.646-5.647a.5.5 0 01.708.708l-6 6a.5.5 0 01-.708 0l-6-6a.5.5 0 010-.708z"
-          clip-rule="evenodd" />
+<h5 class="mitigation-strength-heading">
+  Explore the Global Mitigation Strength: 
+  <a href="#mitigation-measures-explanation">
+    <span class="question-tooltip">
+      <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+        <path d="M0 0h24v24H0z" fill="none"/><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
       </svg>
-    </button>
-    <button id="hideInfections" onclick="hideExplanation('showInfections','hideInfections','explanationInfections')"
-      class="detail-button less-visible7" style="display: none;">
-      Less detail <svg class="bi bi-chevron-up" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
-        xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd"
-          d="M7.646 4.646a.5.5 0 01.708 0l6 6a.5.5 0 01-.708.708L8 5.707l-5.646 5.647a.5.5 0 01-.708-.708l6-6z"
-          clip-rule="evenodd" />
-      </svg>
-    </button>
-  </div>
-
-</div>
-<!-- Toggleable explanation-->
-<div id="explanationInfections" class="row less-visible8" style="display: none;">
-  <div class="col-12">
-    <br>
-    This counts number of people currently infected with COVID-19 (including those have not yet shown symptoms or are
-    not
-    yet infectious, but excluding those who have recovered or died).
-    <br><br>
-    <ul>
-      <li><strong>Confirmed:</strong> The official count as reported by John Hopkins Coronavirus Resource Center.</li>
-      <li><strong>Estimated:</strong> The true count, as estimated by our group of expert forecasters and statistical
-        models (trying to correct for limited testing and misreporting).</li>
-    </ul>
-  </div>
-</div>
-<hr />
-<h5>Global mitigation strength</h5>
-<div class="btn-group-toggle" id="mitigation" data-toggle="buttons">
-  <div class="row mitigation-strenght">
-    <div class="col-sm-auto col-xm-12">
+    </span>
+  </a>
+</h5>
+<div class="mitigation-strength" id="mitigation" data-toggle="buttons">
+  <div class="mitigation-strength-buttons">
+    <div class="mitigation-strength-button">
       <label class="btn btn-secondary active beta-0">
         <input type="radio" name="mitigation" id="mitigation-none" autocomplete="off" value="none" />
-        None
+        0%
+        <div class="mitigation-strength-explanation">
+          Every person infects on average 2.8 other people. 
+        </div>
       </label>
     </div>
-    <div class="col-sm-auto col-xm-12">
+    <div class="mitigation-strength-button">
       <label class="btn btn-secondary active beta-05">
-        <input type="radio" name="mitigation" id="mitigation-weak" autocomplete="off"  value="weak"  />
-        Weak
+        <input type="radio" name="mitigation" id="mitigation-weak" autocomplete="off" value="weak" />
+        20%
+        <div class="mitigation-strength-explanation">
+          Every person infects on average 2 other people (a 25% reduction in infection rate)
+        </div>
       </label>
     </div>
-    <div class="col-sm-auto col-xm-12">
+    <div class="mitigation-strength-button">
       <label class="btn btn-secondary active beta-04">
-        <input type="radio" name="mitigation" id="mitigation-moderate" autocomplete="off"  value="moderate" />
-        Moderate
+        <input type="radio" name="mitigation" id="mitigation-moderate" autocomplete="off" value="moderate" />
+        50%
+        <div class="mitigation-strength-explanation">
+          Every person infects on average 1.6 other people (a 50% reduction in infection rate)
+        </div>
       </label>
     </div>
-    <div class="col-sm-auto col-xm-12">
+    <div class="mitigation-strength-button">
       <label class="btn btn-secondary active beta-03">
-        <input type="radio" name="mitigation" id="mitigation-strong" autocomplete="off"  value="strong"/>
-        Strong
+        <input type="radio" name="mitigation" id="mitigation-strong" autocomplete="off" value="strong" />
+        80%
+        <div class="mitigation-strength-explanation">
+          Every person infects on average 0.8 other people (a 75% reduction in infection rate)
+        </div>
       </label>
     </div>
-    <div class="col-sm-auto col-xm-12 mitigation-strength">
+    <!-- <div class="col-sm-auto col-xm-12 mitigation-strength">
       <button id="showMitigation" onclick="showExplanation('showMitigation','hideMitigation','explanationMitigation')"
         class="detail-button less-visible7">
         More detail <svg class="bi bi-chevron-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
@@ -118,13 +102,33 @@
             clip-rule="evenodd" />
         </svg>
       </button>
-    </div>
+    </div> -->
 
+    <!-- Create a div where the graph will take place -->
+  </div>
+  
+  <div class="graph-column">
+    <div id="my_dataviz"></div>  
+    <div class="projections-row">
+      <div class="total-infected">
+        <span class="number-subheader">
+          Total Infected by 2021
+        </span>
+        <span class="total-infected-number" id="total-infected"></span>
+      </div>
+      <div class="sim-infected">
+        <span class="number-subheader sim-infected-subheader">
+          Peak Active Infections
+        </span>
+        <span class="sim-infected-number" id="sim-infected"></span>
+      </div>
+    </div>
   </div>
 </div>
+<hr />
 
 <!-- Toggleable explanation -->
-<div id="explanationMitigation" class="row less-visible8" style="display: none;">
+<!-- <div id="explanationMitigation" class="row less-visible8" style="display: none;">
   <div class="col-12">
     We're modelling mitigation measures via their impact on effective transmission rate, since the same mitigation
     strength can be often achieved in multiple ways. For example, something roughly in the range of "weak mitigation"
@@ -142,15 +146,14 @@
       implementation of all measures [...ref...]. This would correspond to a mitigation strength of ~90% — stronger than
       our &quot;Strong&quot; setting.</p>
   </div>
-</div>
+</div> -->
 
-<p><i>Choose the aggregate effect on COVID-19 transmission rate, of all mitigation measures implemented globally (not
+<!-- <p><i>Choose the aggregate effect on COVID-19 transmission rate, of all mitigation measures implemented globally (not
     just in <span class="selected-region"></span>).</i>
-</p>
+</p> -->
 
 
-<!-- Create a div where the graph will take place -->
-<div id="my_dataviz"></div>
+
 
 <!-- Script for the behaviour of the toggleable explanation-->
 <script>
