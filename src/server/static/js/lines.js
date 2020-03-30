@@ -64,7 +64,7 @@ function updateInfectionTotals() {
   };
 
 
-  d3.select("#infections-date").html(`(${formatDate(maxDate)})`);
+  d3.select("#infections-date").html(`${formatDate(maxDate)}`);
   d3.select("#infections-confirmed").html(formatInfectionTotal(
     infections["JH_Confirmed"] - infections["JH_Recovered"] - infections["JH_Deaths"]
   ));
@@ -391,4 +391,8 @@ Promise.all([`data-${channel}-v3.json`, "data-manual-estimates-v1.json"].map(
 
   // initialize the graph
   updatePlot(selected);
+
+  // initialize the select picker
+  $('.region-selector').selectpicker()
+  $('[data-toggle="tooltip"]').tooltip()
 });
