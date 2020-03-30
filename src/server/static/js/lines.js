@@ -13,7 +13,7 @@ function getUrlParams() {
 }
 
 const { channel } = getUrlParams();
-var baseData, manualData, listOfRegions;
+var baseData, manualData, containmentData, listOfRegions;
 let selected = {
   region: getUrlParams().region,
   mitigation: "none"
@@ -190,8 +190,6 @@ function loadGleamvizTraces(regionData, thenTracesMax) {
     ).then(function (mitigationsData) {
       var highestVals = [];
 
-      console.log("mdata",mitigationsData)
-
       // Iterate over mitigations (groups)
       Object.values(mitigationsData).forEach(mitigationTraces => {
         // Iterate over Plotly traces in groups
@@ -303,7 +301,7 @@ function updatePlot(opt) {
   updateRegionInText(selected.region);
 
   let regionData = baseData.regions[selected.region];
-
+  updateCurrentGraph(regionData, containmentData[regionData.iso_alpha_3]);
 
   // Load and preprocess the per-region graph data
   loadGleamvizTraces(regionData, function (mitigTraces, maxVal) {
@@ -313,7 +311,7 @@ function updatePlot(opt) {
     Plotly.addTraces(plotlyGraph, traces);
     addCriticalCareTrace(plotlyGraph, d3.extent(traces[0].x));
 
-    addHistoricalCases(plotlyGraph, regionData.population);
+    addHistoricalCases(plotlyGraph, regionData);
 
     Plotly.relayout(plotlyGraph, {'yaxis.range': [0, maxVal], 'xaxis.range': d3.extent(traces[0].x)});
   });
@@ -343,10 +341,10 @@ function addCriticalCareTrace(target, range) {
 }
 
 // Load the basic data (estimates and graph URLs) for all generated countries
-Promise.all([`data-${channel}-v3.json`, "data-manual-estimates-v1.json"].map(
+Promise.all([`data-${channel}-v3.json`, "data-manual-estimates-v1.json", `data-${channel}-containments.json`].map(
   path => d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
 )).then(data => {
-  [baseData, manualData] = data;
+  [baseData, manualData, containmentData] = data;
 
   // populate the dropdown menu with countries from received data
   listOfRegions = getListOfRegions();

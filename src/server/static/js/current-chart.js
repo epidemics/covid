@@ -4,13 +4,14 @@ var currentGraph = document.getElementById("current_viz");
 
 // graph layout
 var currentLayout = {
-  height: 600,
+  height: 800,
   //margin: { t: 0 },
   paper_bgcolor: "#222028",
   plot_bgcolor: "#222028",
+  hovermode: "closest",
   xaxis: {
     type: "date",
-    title: "Date",
+    title: {},
     titlefont: {
       family: "DM Sans, sans-serif",
       size: 18,
@@ -26,7 +27,10 @@ var currentLayout = {
     dtick: 0.0,
     ticklen: 8,
     tickwidth: 1,
-    tickcolor: "#fff"
+    tickcolor: "#fff",
+    showlabel: false,
+    showline: true,
+    autorange: "reversed"
   },
   yaxis: {
     title: "Symptomatic patients",
@@ -54,6 +58,16 @@ var currentLayout = {
     zerolinecolor: "#fff",
     zerolinewidth: 1,
     type: 'log',
+    domain: [0.2,1]
+  },
+  yaxis2: {
+    domain: [0,0.1],
+    tickfont: {
+      family: "DM Sans, sans-serif",
+      size: 14,
+      color: "white"
+    },
+    automargin: true // FIXME
   },
   showlegend: false,
   barmode: "overlay",
@@ -66,7 +80,8 @@ var currentLayout = {
     font: {
       color: '#fff'
     }
-  }
+  },
+  grid: {rows: 2, columns: 1, pattern: 'independent'}
 };
 
 var currentConfig = {
@@ -74,8 +89,6 @@ var currentConfig = {
   responsive: true,
   scrollZoom: false
 };
-
-
 
 // coefficent of variation
 function relativeVariance(value, mean){
@@ -110,7 +123,7 @@ function makeCached(retrieveFn){
   }
 }
 
-let retriveHistorical = makeCached((key, cb) => d3.json(`/static/test_${key}.json`).then(cb));
+let retriveHistorical = makeCached((key, cb) => d3.json(`/static/historical_${key}.json`).then(cb));
 
 function makeErrorTrace({color, fillcolor, name}, data){
   // error bars
@@ -156,86 +169,89 @@ function makeErrorTrace({color, fillcolor, name}, data){
   return [meanTrace, errorTrace];
 }
 
-function addHistoricalCases(target, pop, cb){
+const incubation_period = 5;
+const onset_to_death = 9;
+
+function addHistoricalCases(target, regionData, cb){
   let cfr = 0.016;
   let cfr_cv = 0.69; // coefficent of variance (relative sd) of cfr
+  let pop = regionData.population;
 
-  let incubation_period = 5;
-  let onset_to_death = 9;
+  // retriveHistorical('italy', ({confirmed, deaths, dates}) => {
+  //   // var highestVals = [];
 
-  retriveHistorical('italy', ({confirmed, deaths, dates}) => {
-    // var highestVals = [];
+  let timeseries = regionData.data.estimates.days;
 
-    console.log(deaths);
+  let cv = 3;
+  let retrodicted = [];
+  let reported = [];
+  Object.keys(timeseries).forEach((date) => {
+    let {JH_Deaths: deaths, JH_Infected: confirmed} = timeseries[date];
 
-    let cv = 3;
-    let retrodicted = [];
-    deaths.forEach((v, i) => {
-      if(v < 1){
-        return;
-      }
+    if(deaths < 1){
+      return;
+    }
 
-      let mean = (v/cfr)/pop;
-      let low = applyVariance(mean, [cfr_cv, cv/Math.sqrt(v)], -1);
-      let high = applyVariance(mean, [cfr_cv, cv/Math.sqrt(v)], 1);
+    let mean = (deaths/cfr)/pop;
+    let low = applyVariance(mean, [cfr_cv, cv/Math.sqrt(deaths)], -1);
+    let high = applyVariance(mean, [cfr_cv, cv/Math.sqrt(deaths)], 1);
 
-      retrodicted.push({
-        date: moment(dates[i]).subtract(onset_to_death, 'days').toDate(), 
-        low: low,
-        mean: mean,
-        high: high
-      })
+    retrodicted.push({
+      date: moment(date).subtract(onset_to_death, 'days').toDate(), 
+      low: low,
+      mean: mean,
+      high: high
     })
 
-    let symtomaticTraces = makeErrorTrace({color: "white", fillcolor: "rgba(255,255,255,0.3)", name: "Symptomatic (est.)"}, retrodicted)
-
-    let reported = [];
-    for(let i = 0; i < dates.length; i++){
-      reported.push({
-        date: dates[i],
-        confirmed: confirmed[i] / pop,
-        deaths: deaths[i] / pop
-      })
-    }
-
-    let reportedConfirmed = {
-      mode: "markers",
-      x: [],
-      y: [],
-      line: {color: "#fff"},
-      type: "scatter",
-      name: "Confirmed",
-      marker: {size: 3},
-      hovertemplate: 'Confirmed: %{y:.3s}',
-    }
-
-    let lastConfirmed = null;
-    reported.forEach(({date, confirmed, deaths}) => {
-      if(lastConfirmed !== confirmed){
-        reportedConfirmed.x.push(date);
-        reportedConfirmed.y.push(confirmed);
-        lastConfirmed = confirmed
-      }
+    reported.push({
+      date: date,
+      confirmed: confirmed / pop,
+      deaths: deaths / pop
     })
+  })
 
-    let data = [
-      reportedConfirmed,
-      ...symtomaticTraces
-    ];
+  let symtomaticTraces = makeErrorTrace({color: "white", fillcolor: "rgba(255,255,255,0.3)", name: "Symptomatic (est.)"}, retrodicted)
 
-    // redraw the lines on the graph
-    Plotly.addTraces(target, data);
+  let reportedConfirmed = {
+    mode: "markers",
+    x: [],
+    y: [],
+    line: {color: "#fff"},
+    type: "scatter",
+    name: "Confirmed",
+    marker: {size: 3},
+    hovertemplate: 'Confirmed: %{y:.3s}',
+  }
 
-    if(cb){
-      cb(retrodicted, reported);
+  let lastConfirmed = null;
+  reported.forEach(({date, confirmed, deaths}) => {
+    if(lastConfirmed !== confirmed){
+      reportedConfirmed.x.push(date);
+      reportedConfirmed.y.push(confirmed);
+      lastConfirmed = confirmed
     }
-  });
+  })
+
+  let data = [
+    reportedConfirmed,
+    ...symtomaticTraces
+  ];
+
+  // redraw the lines on the graph
+  Plotly.addTraces(target, data);
+
+  if(cb){
+    cb(retrodicted, reported);
+  }
 }
 
-$(function(){
-  let pop = 60.48 * 1000 * 1000;
-  Plotly.newPlot(currentGraph, [], currentLayout, currentConfig);
-  addHistoricalCases(currentGraph, pop, function(retrodicted, reported){
+Plotly.newPlot(currentGraph, [], currentLayout, currentConfig);
+
+
+function updateCurrentGraph(regionData, measureData){
+  Plotly.react(currentGraph, [], currentLayout, currentConfig);
+
+  addHistoricalCases(currentGraph, regionData, function(retrodicted, reported){
     // function mkDeltaTrace(name, other) {
     //   return {
     //     x: [],
@@ -293,4 +309,100 @@ $(function(){
     Plotly.addTraces(currentGraph, traces);
     //addCriticalCareTrace(currentGraph, d3.extent(traces[0].x));
   })
-})
+
+  let measures = []
+  measureData.forEach((measure) => {
+    let {date_start, date_end, keywords} = measure;
+    if(keywords === null || date_end === null){
+      console.log('skipped measure:', measure)
+      return;
+    }
+
+    keywords.forEach((type) => {
+      measures.push({date_start, date_end, type});
+    })
+  })
+
+  let measuresTraces = {
+    base: [],
+    x: [],
+    y: [],
+    yaxis: "y2",
+    type: 'bar',
+    orientation: 'h',
+    marker: {color: "rgba(255,255,255,0.2)"},
+    hoverinfo: "y",
+    id: "measures"
+  };
+
+  measures.forEach(({date_start, date_end, type}) => {
+    measuresTraces.base.push(moment(date_start).valueOf());
+    measuresTraces.x.push(moment(date_end).valueOf()-moment(date_start).valueOf());
+    measuresTraces.y.push(type);
+  })
+
+  // let measuresTraces = []
+  // measures.forEach(({start, type}) => {
+  //   start = moment(start);
+  //   let end = moment(start).add(10,"days");
+  //   console.log(start, end, type)
+
+  //   //measuresTraces.push();
+
+  //   measuresTraces.push({
+  //     base: start.valueOf(),
+  //     x: end.valueOf()-start.valueOf(),
+  //     y: type,
+  //     yaxis: "y2",
+  //     type: 'bar',
+  //     orientation: 'h',
+  //     marker: {color: "rgba(255,255,255,0.3)"},
+  //     hoverinfo: "y"
+  //   });
+  // })
+
+  Plotly.addTraces(currentGraph, measuresTraces)
+
+  currentGraph.on('plotly_unhover', function(){
+    Plotly.relayout(currentGraph, {
+      'shapes': []
+    })
+  });
+
+  currentGraph.on('plotly_hover', function (evt){
+    let point = evt.points[0];
+    if(point.data.id !== "measures"){
+      return;
+    }
+
+    let measureShapes = [];
+    let measure = measures[point.pointIndex];
+    let {date_end, date_start} = measure;
+    measureShapes.push({
+      type: 'line',
+      yref: "paper",
+      x0: moment(date_start).valueOf(),
+      y0: 0,
+      x1: moment(date_start).valueOf(),
+      y1: 1,
+      line: {color: "white"},
+      opacity: 0.5
+    })
+
+    measureShapes.push({
+      type: 'rect',
+      yref: "paper",
+      x0: moment(date_start).add(incubation_period, 'days').toDate(),
+      y0: 0.2,
+      x1: moment(date_end).add(incubation_period, 'days').toDate(),
+      y1: 1,
+      fillcolor: "white",
+      line: {color: "transparent"},
+      opacity: 0.1
+    })
+
+    Plotly.relayout(currentGraph, {
+      'shapes': measureShapes
+    })
+  });
+}
