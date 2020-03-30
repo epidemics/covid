@@ -16,7 +16,7 @@
   <div class="active-infections-block">
     <span class="number-subheader" id="infections-date"></span>
     <span class="active-infections">Active Infections: 
-      <span class="infections-confirmed" id="infections-estimated">&mdash;</span>
+      <span class="infections-estimated" id="infections-estimated">&mdash;</span>
       <!-- TODO: Insert official case count into tooltip -->
       <a href="#case-count-explanation">
         <span class="question-tooltip">
@@ -26,6 +26,7 @@
         </span>
       </a>
     </span>  
+    <span class="infections-confirmed"> Confirmed Infections: <span id="infections-confirmed">&mdash;</span></span>
   </div>
   
   <div class="population-block">
@@ -61,7 +62,7 @@
         <input type="radio" name="mitigation" id="mitigation-weak" autocomplete="off" value="weak" />
         20%
         <div class="mitigation-strength-explanation">
-          Every person infects on average 2 other people (a 25% reduction in infection rate)
+          Every person infects on average 2 other people (a 20% reduction in infection rate)
         </div>
       </label>
     </div>
@@ -79,7 +80,7 @@
         <input type="radio" name="mitigation" id="mitigation-strong" autocomplete="off" value="strong" />
         80%
         <div class="mitigation-strength-explanation">
-          Every person infects on average 0.8 other people (a 75% reduction in infection rate)
+          Every person infects on average 0.8 other people (a 80% reduction in infection rate)
         </div>
       </label>
     </div>
