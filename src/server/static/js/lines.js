@@ -6,13 +6,13 @@ const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
 const SELECTION_PARAM = "selection";
 const MITIGATION_PARAM = "mitigation";
 const CHANNEL_PARAM = "channel";
-const LOCATION_FALLBACK = "united kingdom";
+const REGION_FALLBACK = "united kingdom";
 
 function getUrlParams() {
   let urlString = window.location.href;
   let url = new URL(urlString);
   return {
-    region: url.searchParams.get(SELECTION_PARAM) || guessLocation({fallback: LOCATION_FALLBACK}),
+    region: url.searchParams.get(SELECTION_PARAM) || guessRegion({fallback: REGION_FALLBACK}),
     channel: url.searchParams.get(CHANNEL_PARAM) || "main",
     mitigation: url.searchParams.get(MITIGATION_PARAM) || "none"
   };
@@ -527,7 +527,7 @@ $regionDropdownLabel.innerHTML = selected.region;
 // change the displayed region
 function changeRegion(newRegion, pushState) {
   if(!(newRegion in baseData.regions)){
-    newRegion = LOCATION_FALLBACK;
+    newRegion = REGION_FALLBACK;
     pushState = false;
   }
 

@@ -1,4 +1,4 @@
-function guessLocation(fallback){
+function guessRegion(fallback){
   let tzName;
   try{
     tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
