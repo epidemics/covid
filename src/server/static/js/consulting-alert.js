@@ -6,6 +6,7 @@ function controlConsultingAlert(storage){
   let DISMISSAL_DURATION = {days: 1};
 
   let $alert = document.getElementById(ALERT_ID);
+  let alertId = $alert.dataset.id;
 
   function shouldDisplay(){
     if(!storage){
@@ -17,12 +18,12 @@ function controlConsultingAlert(storage){
       return true;
     }
 
-    let dismissed, date;
+    let dismissed;
     try{
       dismissed = JSON.parse(raw);
-      date = moment(dismissed.date);
+      dismissed.date = moment(dismissed.date);
 
-      if(!date.isValid()){
+      if(!dismissed.date.isValid()){
         throw new Error();
       }
     }catch{
@@ -30,22 +31,21 @@ function controlConsultingAlert(storage){
       storage.removeItem(KEY);
       return true;
     }
-      
+
     // display if the alert has a different id or the maximal
     // date has not yet been exceded 
-    return id !== $alert.dataset.id 
-        || date.add(DISMISSAL_DURATION).isBefore(moment());
+    return dismissed.id !== alertId
+        || dismissed.date.add(DISMISSAL_DURATION).isBefore(moment());
   }
   
   if(shouldDisplay()){
     $($alert).removeClass('d-none').on("closed.bs.alert", () => {
       let dismissed = {
         date: moment().toISOString(),
-        id: $alert.dataset.id
+        id: alertId
       }
 
       storage.setItem(KEY, JSON.stringify(dismissed));
-      console.log(dismissed);
     })
   }
 }
