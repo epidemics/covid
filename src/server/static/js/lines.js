@@ -19,12 +19,12 @@ let selected = {
   mitigation: "none"
 };
 
-function getMitigationId() {
-  var mitigationIds = {
-    none: "None",
-    weak: "Low",
-    moderate: "Medium",
-    strong: "High"
+function getMitigationId(){
+    var mitigationIds = {
+      none: "None",
+      weak: "Low",
+      moderate: "Medium",
+      strong: "High"
   };
   for (const mitId of Object.keys(mitigationIds)) {
     var choice = document.getElementById("mitigation-" + mitId)
@@ -81,7 +81,7 @@ function updateInfectionTotals() {
   d3.select("#infections-population").html(formatInfectionTotal(population));
 }
 
-function updateStatistics() {
+function updateStatistics () {
   if (typeof baseData === "undefined") return;
 
   const { population, data } = baseData.regions[selected.region];
@@ -107,7 +107,7 @@ function updateStatistics() {
   $("#sim-infected").html(sim_infected);
 }
 
-function bigFormatter(value) {
+function bigFormatter (value) {
   var labelValue = Math.round(value.toPrecision(2))
   // Nine Zeroes for Billions
   return Math.abs(Number(labelValue)) >= 1.0e+9
@@ -121,12 +121,12 @@ function bigFormatter(value) {
         : Math.abs(Number(labelValue))
 }
 
-const formatStatPer1000 = function (q05, q95, population) {
+const formatStatPer1000 = function(q05, q95, population) {
   var _q05 = bigFormatter(q05 * (population / 1000));
   var _q95 = bigFormatter(q95 * (population / 1000));
   var _q05_perc = formatInfectionTotal(q05 / 10);
   var _q95_perc = formatInfectionTotal(q95 / 10);
-  return _q05 + '-' + _q95 + ' (' + _q05_perc + '-' + _q95_perc + '%)';
+  return _q05 + '-' + _q95 + ' (' + _q05_perc + '-' + _q95_perc  + '%)';
 }
 
 const formatInfectionTotal = function (number) {
