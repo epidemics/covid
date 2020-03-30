@@ -146,17 +146,20 @@ header h1:before {
   width: inherit !important;
 }
 
-.region-selector .dropdown-toggle {
+.region-dropdown-label {
   font-size: 48px;
-  border-radius: 0px;
-  padding-left: 24px;
   font-weight: 600;
+  text-transform: none;
 }
 
-.region-selector .dropdown-toggle:after {
-  margin-left: .6em;
-  margin-right: .3em;
-  border-width: .2em;
+.region-dropdown {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.dropdown-caret-styling:after {
+  margin-left: 16px;
+  vertical-align: .4em;
 }
 
 .top-row {
@@ -360,6 +363,12 @@ header h1:before {
   }
   .sim-infected-subheader {
     text-align: left;
+  }
+  .region-dropdown-label {
+    font-size: 28px;
+  }
+  .dropdown-caret-styling:after {
+    vertical-align: .2em;
   }
 }
 
