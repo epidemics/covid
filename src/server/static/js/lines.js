@@ -231,14 +231,48 @@ var layout = {
   }
 };
 
+const DOWNLOAD_PLOT_SCALE = 1;
+let getDownloadPlotTitle = () => {
+  let regions = baseData.regions;
+
+  if(!(selected.region in regions)){
+    return "COVID-19 Forecast";
+  }
+
+  return `COVID-19 Forecast for ${regions[selected.region].name}`;
+}
 var plotlyConfig = {
   displaylogo: false,
   responsive: false,
   scrollZoom: false,
   modeBarButtonsToAdd: [{
-    name: 'custom download button',
+    name: 'Download plot',
     icon: Plotly.Icons.camera,
-    click: (gd) => saveImage(gd, {name: selected.region, scale: 2, format: "png", filter: "invert(1)", background: "black"})
+    click: (gd) => saveImage(gd, {name: selected.region, scale: DOWNLOAD_PLOT_SCALE, format: "png", background: "black", compose: ($canvas, plot, width, height) => {
+      $canvas.width = width;
+      $canvas.height = height;
+      ctx = $canvas.getContext("2d");
+
+      ctx.filter = "invert(1)";
+      ctx.drawImage(plot, 0, 0);
+
+      const LINE_SPACING = .15;
+
+      let y = 0;
+      function drawCenteredText(text, size){
+        y += (1 + LINE_SPACING) * size;
+        ctx.font = `${Math.round(size)}px "DM Sans"`;
+        let x = (width - ctx.measureText(text).width)/2;
+        ctx.fillText(text, x, y);
+        y += LINE_SPACING * size;
+      }
+
+      ctx.fillStyle = "white";
+      drawCenteredText(getDownloadPlotTitle(), 20 * DOWNLOAD_PLOT_SCALE);
+
+      ctx.fillStyle = "light gray";
+      drawCenteredText("by epidemicforecasting.org", 12 * DOWNLOAD_PLOT_SCALE);
+    }})
   }],
   modeBarButtonsToRemove: ['toImage']
 };

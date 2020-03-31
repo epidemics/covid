@@ -1,12 +1,21 @@
+
 var saveImage = (function(){
   let $offscreenElem = null;
   let $canvas = null;
-  let ctx = null;
+  const VECTOR_EFFECT_REGEX = /vector-effect: non-scaling-stroke;/g;
   return function saveImage(plotlyElement, opts){
     let scale = opts.scale || 1;
     let format = opts.format || "png";
     let name = opts.name || "plot";
     let background = opts.background || "black";
+    let compose = opts.compose || function($canvas, plot, width, height){
+      $canvas.width = width;
+      $canvas.height = height;
+      ctx = $canvas.getContext("2d");
+
+      ctx.filter = "invert(1)";
+      ctx.drawImage(plot, 0, 0);
+    };
     
     let {width, height} = plotlyElement._fullLayout;
 
@@ -15,29 +24,23 @@ var saveImage = (function(){
     if($offscreenElem === null){
       $offscreenElem = document.createElement("div")
       $offscreenElem.id = "plot_image_download_container";
-      // $offscreenElem.style.position = "fixed";
-      // $offscreenElem.style.left = "-99999px";
+      $offscreenElem.style.position = "fixed";
+      $offscreenElem.style.left = "-99999px";
       document.body.appendChild($offscreenElem)
 
       $canvas = document.createElement('canvas');
-      document.body.appendChild($canvas);
-      ctx = $canvas.getContext("2d");
+      // document.body.appendChild($canvas);
     }
 
-    Plotly.newPlot($offscreenElem, plotlyElement.data, layout, plotlyElement.config);
+    Plotly.newPlot($offscreenElem, plotlyElement.data, layout, plotlyElement.config).then(() => {
+      let svg = Plotly.Snapshot.toSVG($offscreenElem, "svg", scale);
 
-    $offscreenElem.on("plotly_afterplot", () => {
-      let svg = Plotly.Snapshot.toSVG($offscreenElem);
-      $canvas.width = width * scale;
-      $canvas.height = height * scale;
-
-      console.log(btoa(svg));
-
+      // fixes the lines becoming thin
+      svg = svg.replace(VECTOR_EFFECT_REGEX,"");     
       var img = new window.Image();
 
       img.onload = function() {
-        ctx.filter = "invert(1)";
-        ctx.drawImage(img, 0, 0, width * scale, height * scale);
+        compose($canvas, img, width * scale, height * scale);
 
         let dataUrl = $canvas.toDataURL('image/'+format)
 
@@ -47,11 +50,12 @@ var saveImage = (function(){
       };
 
       img.onerror = function(err) {
-          // FIXME todo
+        // TODO better error handling, for now try to fallback to Plotly code
+        Plotly.downloadImage($offscreenElem, opts);
       };
 
       img.src = 'data:image/svg+xml;base64,' + btoa(svg);
-    })
+    });
   }
 })();
 
