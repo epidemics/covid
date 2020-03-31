@@ -233,7 +233,7 @@ var plotlyConfig = {
   scrollZoom: false
 };
 
-Plotly.newPlot(plotyGraph, [], layout, plotlyConfig);
+Plotly.newPlot(plotlyGraph, [], layout, plotlyConfig);
 
 // Checks if the max and traces have been loaded and preprocessed for the given region;
 // if not, loads them and does preprocessing; then caches it in the region object.
@@ -273,7 +273,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
           }
           if (trace["hoverinfo"] !== "skip") {
             trace["hoverlabel"] = { "namelength": -1 };
-            trace["hovertemplate"] = "%{text:.3s}, %{y:.2%}";
+            trace["hovertemplate"] = "%{text:.3s}<br />%{y:.2%}";
           }
         });
       });
@@ -319,7 +319,7 @@ function updatePlot() {
     layout.yaxis.range = [0, maxVal];
     AddCriticalCareTrace(mitigTraces[mitigationId]);
     // redraw the lines on the graph
-    Plotly.newPlot(plotyGraph, mitigTraces[mitigationId], layout, plotlyConfig);
+    Plotly.newPlot(plotlyGraph, mitigTraces[mitigationId], layout, plotlyConfig);
   });
 }
 
