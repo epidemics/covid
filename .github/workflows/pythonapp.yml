@@ -20,7 +20,6 @@ jobs:
     name: gsutil-test
     runs-on: ubuntu-latest
     steps:
-      - name: Authenticate on GCS
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
@@ -28,6 +27,7 @@ jobs:
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
       - run: gcloud auth configure-docker
 
-      - run: gsutil ls 
+      - name: Gsutil ls
+        run: gsutil ls 
 
 
