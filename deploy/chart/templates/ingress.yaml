@@ -11,6 +11,10 @@ metadata:
   annotations:
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.externalIpName }}
 spec:
+  tls:
+  - hosts:
+    - {{ .Values.ingress.tlsDomainName }}
+    secretName: cert-epidemics
   rules:
   -  http:
         paths:
