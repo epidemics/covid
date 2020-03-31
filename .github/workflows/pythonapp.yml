@@ -44,7 +44,7 @@ jobs:
         poetry run pytest tests
 
   setup-build-publish-deploy:
-    if: contains(github.ref, 'staging') || contains(github.ref, 'master')
+    if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master'
     name: Build, Publish, Deploy
     runs-on: ubuntu-latest
     steps:
@@ -93,7 +93,7 @@ jobs:
         sed -i -e "s/^appVersion: .*$/appVersion: ${{ github.sha }}/g" deploy/chart/Chart.yaml
 
     - name: Helm deploy [STAGING]
-      if: contains(github.ref, 'staging')
+      if: github.ref == 'refs/heads/staging'
       uses: hahow/install-helm-chart-action@v1.0.0
       with:
         gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
@@ -112,7 +112,7 @@ jobs:
 
     # TODO: violates DRY, simplify with the above
     - name: Helm deploy [PRODUCTION (master branch)]
-      if: contains(github.ref, 'master')
+      if: github.ref == 'refs/heads/master'
       uses: hahow/install-helm-chart-action@v1.0.0
       with:
         gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
