@@ -160,6 +160,7 @@ var plotyGraph = document.getElementById("my_dataviz");
 // graph layout
 var layout = {
   height: 600,
+  width: 600,
   //margin: { t: 0 },
   paper_bgcolor: "#222028",
   plot_bgcolor: "#222028",
@@ -226,11 +227,25 @@ var layout = {
 
 var plotlyConfig = {
   displaylogo: false,
-  responsive: true,
+  responsive: false,
   scrollZoom: false
 };
 
-Plotly.newPlot(plotyGraph, [], layout, plotlyConfig);
+function adjustPlotlyChart() {
+  d3.select(".js-plotly-plot .plotly .svg-container")
+    .attr("style", null);
+  d3.selectAll(".js-plotly-plot .plotly .main-svg")
+    .attr("height", null)
+    .attr("width", null)
+    .attr("viewBox", `0 0 ${layout.height} ${layout.width}`);
+  console.log('adjusted')
+}
+
+function setPlotlyTraces(traces = []) {
+  Plotly.newPlot(plotyGraph, traces, layout, plotlyConfig).then(adjustPlotlyChart);
+}
+
+setPlotlyTraces()
 
 // Checks if the max and traces have been loaded and preprocessed for the given region;
 // if not, loads them and does preprocessing; then caches it in the region object.
@@ -313,7 +328,7 @@ function updatePlot() {
     layout.yaxis.range = [0, maxVal];
     AddCriticalCareTrace(mitigTraces[mitigationId]);
     // redraw the lines on the graph
-    Plotly.newPlot(plotyGraph, mitigTraces[mitigationId], layout, plotlyConfig);
+    setPlotlyTraces(mitigTraces[mitigationId]);
   });
 }
 
@@ -472,7 +487,7 @@ function restyleDropdownElements() {
     }
 
     if(index === focusedRegionIdx){
-      className += " active"; 
+      className += " active";
 
       // TODO something like this:
       // dropdownEntry.scrollIntoView(false);
@@ -482,7 +497,7 @@ function restyleDropdownElements() {
   })
 }
 
-$regionFilter.addEventListener("keyup", () => { 
+$regionFilter.addEventListener("keyup", () => {
   if(filterQuery === $regionFilter.value){
     // dont do anything if the query didnt change
     return;
@@ -512,7 +527,7 @@ $regionFilter.addEventListener("keydown", evt => {
 
     restyleDropdownElements();
   }
-  
+
   else if (evt.key === "ArrowDown") {
     focusedRegionIdx = Math.min(focusedRegionIdx + 1, regionList.length - 1);
 
@@ -557,7 +572,7 @@ Promise.all([`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"
 
   // populate the dropdown menu with countries from received data
   let listOfRegions = Object.keys(baseData.regions);
-  listOfRegions.forEach((key) => 
+  listOfRegions.forEach((key) =>
     addRegionDropdown(key, baseData.regions[key].name)
   );
 
