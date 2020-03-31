@@ -5,7 +5,7 @@ const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
 
 const SELECTION_PARAM = "selection";
 const MITIGATION_PARAM = "mitigation";
-const CHANNEL_PARAM = "mitigation";
+const CHANNEL_PARAM = "channel";
 
 function getUrlParams() {
   let urlString = window.location.href;
