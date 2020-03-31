@@ -60,7 +60,8 @@ function updateInfectionTotals() {
     return `${monthString} ${day}, ${year}`;
   };
 
-  d3.select("#infections-date").html(`(${formatDate(maxDate)})`);
+
+  d3.select("#infections-date").html(`${formatDate(maxDate)}`);
   d3.select("#infections-confirmed").html(formatAbsoluteInteger(
     infections["JH_Confirmed"] - infections["JH_Recovered"] - infections["JH_Deaths"]
   ));
@@ -564,5 +565,9 @@ Promise.all([`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"
   reorderDropdown();
   restyleDropdownElements();
 
-  changeRegion(selected.region, false)
+  // initialize the graph
+  changeRegion(selected.region);
+
+  // initialize the select picker
+  $('[data-toggle="tooltip"]').tooltip()
 });

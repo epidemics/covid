@@ -6,7 +6,7 @@
 a,
 a:focus,
 a:hover {
-  color: #df925c;
+  color: #ef6c00;
 }
 
 /* Custom default button */
@@ -129,7 +129,261 @@ header h1:before {
 }
 
 .navbar {
-  padding: 0;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.central-column {
+  max-width: 1200px;
+  width: 100vw;
+  padding: 64px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.region-selector {
+  width: inherit !important;
+}
+
+.region-dropdown-label {
+  font-size: 48px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.region-dropdown {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.dropdown-caret-styling:after {
+  margin-left: 16px;
+  vertical-align: .4em;
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.active-infections {
+  display: block;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.infections-estimated {
+  color: #D93333;
+}
+
+span.infections-confirmed {
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
+}
+
+.active-infections-block {
+  margin-left: 32px;
+}
+
+.number-subheader {
+  position: relative;
+  display: block;
+  margin-bottom: -4px;
+  font-weight: 300;
+  /* margin-bottom: -4px; */
+}
+
+.population-block {
+  margin-left: 32px;
+  /* justify-self: end; */
+}
+
+.infections-population {
+  font-size: 22px;
+}
+
+.question-tooltip {
+  font-size: 12px;
+  vertical-align: text-top;
+  text-align: center;
+  width: 18px;
+  height: 18px;
+  fill: white;
+}
+
+.tooltip-inner {
+  max-width: 350px;
+  /* If max-width does not work, try using width instead */
+  width: 350px; 
+}
+
+.mitigation-strength-button {
+  height: 100px;
+  display: flex;
+  align-items: center;
+}
+
+.mitigation-strength-button .active {
+  border-left: 3px solid white !important;
+}
+
+.mitigation-strength-button btn {
+  background-color: transparent;
+}
+
+.mitigation-strength-button .btn-secondary {
+  background-color: transparent !important;
+  color: white !important;
+  border: none;
+  text-align: left;
+  border-left: 3px solid transparent;
+}
+
+.mitigation-strength-explanation.footnote {
+  font-size: 11px;
+  background-color: transparent !important;
+  color: rgba(255,255,255,0.6) !important;
+  border: none;
+  text-align: left;
+  border-left: 5px solid transparent;
+  padding: 11px 20px;
+}
+
+.mitigation-strength-explanation {
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: none;
+  color: rgba(255,255,255,0.4);
+  margin-top: 8px;
+}
+
+.active .mitigation-strength-explanation {
+  color: rgba(255,255,255,0.9);
+}
+
+
+.mitigation-strength-buttons {
+  width: 400px;
+  margin-right: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+#my_dataviz {
+  width: 100%;
+}
+
+.mitigation-strength-heading {
+  font-size: 24px;
+}
+
+.graph-column {
+  width: 100%;
+}
+
+.projections-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.total-infected-number {
+  font-size: 24px;
+  color: #ef6c00;
+}
+
+.sim-infected-number {
+  font-size: 24px;
+  color: #ef6c00;
+}
+
+.sim-infected-subheader {
+  text-align: right;
+}
+
+.model-explanation {
+  font-size: 20px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 64px;
+}
+
+.pro-bono-banner {
+  font-size: 22px;
+  padding: 16px;
+  margin-bottom: 32px;
+  border: 1px solid white;
+}
+
+.pro-bono-banner p:last-child {
+  margin-bottom: 0px;
+}
+
+.alert-dismissible .close {
+  padding: .25rem .5rem;
+}
+
+@media only screen and (max-width: 991px) {
+  .central-column {
+    padding: 24px;
+  }
+  .top-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .region-selector {
+    width: 100% !important;
+  }
+  .active-infections-block {
+    margin-top: 16px;
+    margin-left: 0px;
+  }
+  .population-block {
+    margin-top: 16px;
+    margin-left: 0px;
+  }
+  .mitigation-strength {
+    flex-direction: column;
+  }
+  .mitigation-strength-buttons {
+    flex-direction: row;
+    width: 100%;
+    border: none;
+  }
+  .mitigation-strength-explanation {
+    display: none;
+  }
+  .mitigation-strength-button {
+    width: 25%;
+  }
+  .mitigation-strength-button .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+  .mitigation-strength-button .active {
+    background-color: white !important;
+    color: rgba(0,0,0,0.9) !important;
+    font-weight: 600;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .projections-row {
+    flex-direction: column;
+  }
+  .sim-infected-subheader {
+    text-align: left;
+  }
+  .region-dropdown-label {
+    font-size: 28px;
+  }
+  .dropdown-caret-styling:after {
+    vertical-align: .2em;
+  }
 }
 
 .main {
@@ -246,6 +500,10 @@ header h1:before {
   border-top: 1px solid #323232;
 }
 
+.home a {
+  color: white
+}
+
 .logo {
   height: 5em;
   margin: 0.5em;
@@ -267,12 +525,6 @@ label {
 .btn-secondary {
   padding: 11px 20px;
   border-radius: 0px;
-}
-
-.btn-secondary.active,
-.submit {
-  background-color: white !important;
-  color: black !important;
 }
 
 select,
@@ -419,6 +671,7 @@ strong {
 
 .mitigation-strength {
   margin-left: auto;
+  display: flex;
 }
 
 .mitigation-strength > div > .btn-secondary {
@@ -471,9 +724,7 @@ strong {
   .navbar ul {
     padding: 0;
   }
-  .navbar {
-    padding: 10px 0;
-  }
+
   .nav-masthead .nav-link {
     border-bottom: 0.1rem solid transparent;
   }
