@@ -8,6 +8,11 @@ const MITIGATION_PARAM = "mitigation";
 const CHANNEL_PARAM = "channel";
 const REGION_FALLBACK = "united kingdom";
 
+// Set starting chart size based on screen size
+const CHART_HEIGHT_RATIO = Math.max(0.5, Math.min(1, window.innerHeight / window.innerWidth));
+const CHART_WIDTH = Math.max(500, Math.min(1000, window.innerWidth * 0.6));
+const CHART_HEIGHT = Math.round(CHART_WIDTH * CHART_HEIGHT_RATIO);
+
 function getUrlParams() {
   let urlString = window.location.href;
   let url = new URL(urlString);
@@ -159,8 +164,8 @@ var plotyGraph = document.getElementById("my_dataviz");
 
 // graph layout
 var layout = {
-  height: 600,
-  width: 600,
+  width: CHART_WIDTH,
+  height: CHART_HEIGHT,
   //margin: { t: 0 },
   paper_bgcolor: "#222028",
   plot_bgcolor: "#222028",
@@ -231,21 +236,22 @@ var plotlyConfig = {
   scrollZoom: false
 };
 
-function adjustPlotlyChart() {
+function makePlotlyReactive() {
+  d3.select("#my_dataviz")
+    .style('padding-bottom', `${CHART_HEIGHT / CHART_WIDTH * 100}%`);
   d3.select(".js-plotly-plot .plotly .svg-container")
     .attr("style", null);
   d3.selectAll(".js-plotly-plot .plotly .main-svg")
     .attr("height", null)
     .attr("width", null)
-    .attr("viewBox", `0 0 ${layout.height} ${layout.width}`);
-  console.log('adjusted')
+    .attr("viewBox", `0 0 ${layout.width} ${layout.height}`);
 }
 
 function setPlotlyTraces(traces = []) {
-  Plotly.newPlot(plotyGraph, traces, layout, plotlyConfig).then(adjustPlotlyChart);
+  return Plotly.react(plotyGraph, traces, layout, plotlyConfig).then(makePlotlyReactive);
 }
 
-setPlotlyTraces()
+setPlotlyTraces();
 
 // Checks if the max and traces have been loaded and preprocessed for the given region;
 // if not, loads them and does preprocessing; then caches it in the region object.
