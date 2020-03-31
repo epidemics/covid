@@ -231,7 +231,7 @@ var layout = {
   }
 };
 
-const DOWNLOAD_PLOT_SCALE = 1;
+const DOWNLOAD_PLOT_SCALE = 2;
 let getDownloadPlotTitle = () => {
   let regions = baseData.regions;
 
@@ -248,7 +248,7 @@ var plotlyConfig = {
   modeBarButtonsToAdd: [{
     name: 'Download plot',
     icon: Plotly.Icons.camera,
-    click: (gd) => saveImage(gd, {name: selected.region, scale: DOWNLOAD_PLOT_SCALE, format: "png", background: "black", compose: ($canvas, plot, width, height) => {
+    click: (gd) => window.saveImage(gd, {name: selected.region, scale: DOWNLOAD_PLOT_SCALE, width: 800, height: 600, format: "png", background: "black", compose: ($canvas, plot, width, height) => {
       $canvas.width = width;
       $canvas.height = height;
       ctx = $canvas.getContext("2d");
