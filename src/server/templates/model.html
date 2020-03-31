@@ -131,7 +131,7 @@
         <p>
           The results are used as an input to advanced epidemic modelling
           software, called
-          <a href="http://www.gleamviz.org/" target="_blank">GLEaM</a>,
+          <a href="http://www.gleamviz.org/" target="_blank">GLEAMviz</a>,
           running on high-performance computers.
         </p>
         <p>The global development of COVID-19 is simulated using:</p>
@@ -169,7 +169,10 @@
   </div>
 </div>
 {% endblock %} {% block additional_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="{{ url_for('static', path='/js/consulting-alert.js') }}"></script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="{{ url_for('static', path='/js/tz_lookup.js') }}"></script>
 <script src="{{ url_for('static', path='/js/lines.js') }}"></script>
 <script src="{{ url_for('static', path='/js/string_score.js') }}"></script>
 {% endblock %}
