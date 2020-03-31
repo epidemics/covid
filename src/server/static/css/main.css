@@ -169,7 +169,6 @@ header h1:before {
 }
 
 
-
 .active-infections {
   display: block;
   font-size: 24px;
@@ -241,6 +240,16 @@ span.infections-confirmed {
   border: none;
   text-align: left;
   border-left: 3px solid transparent;
+}
+
+.mitigation-strength-explanation.footnote {
+  font-size: 11px;
+  background-color: transparent !important;
+  color: rgba(255,255,255,0.6) !important;
+  border: none;
+  text-align: left;
+  border-left: 5px solid transparent;
+  padding: 11px 20px;
 }
 
 .mitigation-strength-explanation {
