@@ -26,8 +26,8 @@ jobs:
           version: '270.0.0'
           service_account_email: ${{ secrets.SA_EMAIL }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-      - run: gcloud auth configure-docker
-
-      - run: gsutil ls 
+      - run: |
+             gcloud auth configure-docker
+             gsutil ls 
 
 
