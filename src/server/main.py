@@ -9,8 +9,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from server.config import CONFIG
 
 
-STATIC_URL = "https://storage.googleapis.com/static-covid/static/staging"
-# STATIC_URL = "https://storage.googleapis.com/static-covid/static/production"
+STATIC_URL = os.getenv("STATIC_URL", "/static")
 SERVER_ROOT = os.path.dirname(__file__)
 
 app = FastAPI()
@@ -22,38 +21,31 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 
 
+def get_context(request: Request, **kwargs):
+    return {"request": request, "STATIC_URL": STATIC_URL, **kwargs}
+
+
 @app.get("/")
 async def model(request: Request) -> Response:
     """serve the main model visualization"""
-    return templates.TemplateResponse(
-        "model.html", {"request": request, "STATIC_URL": STATIC_URL}
-    )
+    return templates.TemplateResponse("model.html", get_context(request),)
 
 
 @app.get("/case-map")
 async def case_map(request: Request) -> Response:
-    return templates.TemplateResponse(
-        "case-map.html", {"request": request, "STATIC_URL": STATIC_URL},
-    )
+    return templates.TemplateResponse("case-map.html", get_context(request),)
 
 
 @app.get("/request-calculation")
 async def request_calculation(request: Request) -> Response:
     return templates.TemplateResponse(
-        "request-calculation.html",
-        {
-            "request": request,
-            "message": "Please provide data",
-            "STATIC_URL": STATIC_URL,
-        },
+        "request-calculation.html", get_context(request, message="Please provide data"),
     )
 
 
 @app.get("/about")
 async def about(request: Request) -> Response:
-    return templates.TemplateResponse(
-        "about.html", {"request": request, "STATIC_URL": STATIC_URL},
-    )
+    return templates.TemplateResponse("about.html", get_context(request),)
 
 
 @app.get("/status")
@@ -69,6 +61,4 @@ async def containment_with_dot():
 
 @app.get("/containment")
 async def containment(request: Request) -> Response:
-    return templates.TemplateResponse(
-        "containment.html", {"request": request, "STATIC_URL": STATIC_URL},
-    )
+    return templates.TemplateResponse("containment.html", get_context(request),)
