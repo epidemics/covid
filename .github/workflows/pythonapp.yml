@@ -28,5 +28,6 @@ jobs:
       - run: |
              gcloud auth configure-docker
              gsutil ls -p 657183051434
+             ls
 
 
