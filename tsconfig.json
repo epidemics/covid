@@ -9,7 +9,6 @@
     "moduleResolution": "node",
     "allowJs": true,
     "sourceMap": true,
-    "allowSyntheticDefaultImports": true
   },
   "include": ["./src/scripts/**/*"],
   "exclude": ["node_modules"]
