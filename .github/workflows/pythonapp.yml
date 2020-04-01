@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+
     - name: Black Code Formatter
       uses: lgeiger/black-action@v1.0.1
       with:
@@ -33,6 +34,9 @@ jobs:
       - run: |
              gcloud auth configure-docker
              #gsutil ls -p 657183051434
-             ls
+             
+      - name: Upload
+        run: |
+             gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read src/server/static/ gs://static-covid/static/staging/mj-test/
 
 
