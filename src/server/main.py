@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.responses import RedirectResponse, Response
+from fastapi.middleware.gzip import GZipMiddleware
 
 from server.config import CONFIG
 
@@ -14,6 +15,7 @@ app = FastAPI()
 app.mount(
     "/static", StaticFiles(directory=os.path.join(SERVER_ROOT, "static")), name="static"
 )
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 

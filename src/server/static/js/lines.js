@@ -1,6 +1,6 @@
 /* global Promise:false Plotly:false d3:false */
 
-const Y_SCALE = 10; // Going from per_1000_pops to per 100 (%)
+const GLEAMVIZ_TRACE_SCALE = 1000; // it gives infections per 1000
 const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
 
 const SELECTION_PARAM = "selection";
@@ -65,7 +65,8 @@ function updateInfectionTotals() {
     return `${monthString} ${day}, ${year}`;
   };
 
-  d3.select("#infections-date").html(`(${formatDate(maxDate)})`);
+
+  d3.select("#infections-date").html(`${formatDate(maxDate)}`);
   d3.select("#infections-confirmed").html(formatAbsoluteInteger(
     infections["JH_Confirmed"] - infections["JH_Recovered"] - infections["JH_Deaths"]
   ));
@@ -160,7 +161,7 @@ const formatAbsoluteInteger = function (number) {
 };
 
 // graph
-var plotyGraph = document.getElementById("my_dataviz");
+var plotlyGraph = document.getElementById("my_dataviz");
 
 // graph layout
 var layout = {
@@ -187,7 +188,8 @@ var layout = {
     dtick: 0.0,
     ticklen: 8,
     tickwidth: 1,
-    tickcolor: "#fff"
+    tickcolor: "#fff",
+    rangeselector:{visible: true}
   },
   yaxis: {
     title: "Active infections (% of population)",
@@ -206,6 +208,7 @@ var layout = {
     dtick: 0.0,
     ticklen: 8,
     tickwidth: 1,
+    tickformat: ".1%",
     tickcolor: "#fff",
     showline: true,
     linecolor: "#fff",
@@ -272,9 +275,12 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
         // Iterate over Plotly traces in groups
         Object.values(mitigationTraces).forEach(trace => {
 
+          trace.text = [];
+
           // Scale all trace Ys to percent
           Object.keys(trace.y).forEach(i => {
-            trace.y[i] = trace.y[i] / Y_SCALE;
+            trace.y[i] = trace.y[i] / GLEAMVIZ_TRACE_SCALE;
+            trace.text.push(trace.y[i] * regionRec.population)
           });
           highestVals.push(Math.max(...trace.y));
 
@@ -288,7 +294,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
           }
           if (trace["hoverinfo"] !== "skip") {
             trace["hoverlabel"] = { "namelength": -1 };
-            trace["hovertemplate"] = "%{y:.2r}";
+            trace["hovertemplate"] = "%{text:.3s}<br />%{y:.2%}";
           }
         });
       });
@@ -347,7 +353,7 @@ function AddCriticalCareTrace(traces) {
   const regionData = manualData.regions[selected.region];
   if (typeof regionData !== 'object') return;
 
-  const capacity = regionData.beds_p_100k / 100 / Y_SCALE / CRITICAL_CARE_RATE;
+  const capacity = regionData.beds_p_100k / 100000 / CRITICAL_CARE_RATE;
   if (typeof capacity !== "number" || Number.isNaN(capacity)) return;
 
   /* NOTE: Temporarily disabled due to possible inconsistencies and misinterpretation. */
@@ -585,5 +591,9 @@ Promise.all([`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"
   reorderDropdown();
   restyleDropdownElements();
 
-  changeRegion(selected.region, false)
+  // initialize the graph
+  changeRegion(selected.region);
+
+  // initialize the select picker
+  $('[data-toggle="tooltip"]').tooltip()
 });

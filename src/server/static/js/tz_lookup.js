@@ -148,7 +148,7 @@ var tzLookup = {
 	"Indian\/Christmas":"Christmas Island",
 	"Asia\/Nicosia":"Cyprus",
 	"Asia\/Famagusta":"Cyprus",
-	"Europe\/Prague":"Czechia",
+	"Europe\/Prague":"Czech Republic", // ugly fix for 322, was Czechia
 	"Europe\/Berlin":"Germany",
 	"Europe\/Busingen":"Germany",
 	"Africa\/Djibouti":"Djibouti",
