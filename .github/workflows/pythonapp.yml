@@ -20,15 +20,19 @@ jobs:
     name: gsutil-test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout
+        uses: actions/checkout@master
+
+
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
           service_account_email: ${{ secrets.SA_EMAIL }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
         run: |
              gcloud auth configure-docker
-             gsutil ls -p 657183051434
+             #gsutil ls -p 657183051434
              ls
 
 
