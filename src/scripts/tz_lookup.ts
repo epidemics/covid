@@ -1,15 +1,13 @@
-
-
-export function guessRegion(fallback){
+export function guessRegion(fallback) {
   let tzName;
-  try{
+  try {
     tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  }catch{
+  } catch {
     return fallback;
   }
 
   let tz = tzLookup[tzName];
-  if(tz === undefined){
+  if (tz === undefined) {
     return fallback;
   }
 
