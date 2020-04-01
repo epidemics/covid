@@ -113,6 +113,13 @@ Researchers from the Oxford Future of Humanity Institute have created country-sp
       crossorigin="anonymous"
     />
 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.51.1/plotly.min.js"></script>
+
+    <script src="{{ url_for('static', path='bundle.js') }}"></script>
+
     {% block additional_js %} {% endblock %}
   </body>
 </html>

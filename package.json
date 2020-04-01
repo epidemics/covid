@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "lint": "prettier --check \"{src/server/static/**, src/server/templates/**}\""
+    "lint": "prettier --check \"{src/scripts/**, src/server/**, src/server/static/css/**}\""
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,17 @@
   },
   "homepage": "https://github.com/epidemics/covid#readme",
   "devDependencies": {
-    "prettier": "^1.19.1"
+    "prettier": "^1.19.1",
+    "@types/bootstrap": "^4.3.2",
+    "@types/d3-time": "^1.0.10",
+    "@types/jquery": "^3.3.34",
+    "@types/moment": "^2.13.0",
+    "@types/plotly.js": "^1.50.1",
+    "@types/popper.js": "^1.11.0",
+    "object.values": "^1.1.1",
+    "ts-loader": "^6.2.2",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
   }
 }

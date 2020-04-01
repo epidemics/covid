@@ -1,5 +1,7 @@
 
-window.saveImage = (function(){
+import Plotly from "plotly.js"
+
+export const saveImage = (function(){
   let $offscreenElem = null;
   let $canvas = null;
   const VECTOR_EFFECT_REGEX = /vector-effect: non-scaling-stroke;/g;
@@ -27,6 +29,8 @@ window.saveImage = (function(){
     /// pushed as "download" in HTML5 capable browsers
     link.href = canvas.toDataURL();
 
+    let fireEvent = (link as any).fireEvent;
+
     /// create a "fake" click-event to trigger the download
     if (document.createEvent) {
 
@@ -37,8 +41,8 @@ window.saveImage = (function(){
 
       link.dispatchEvent(event);
 
-    } else if (link.fireEvent) {
-      link.fireEvent("onclick");
+    } else if (fireEvent) {
+      fireEvent("onclick");
     }
 
     document.body.removeChild(link);
@@ -52,7 +56,7 @@ window.saveImage = (function(){
     let compose = opts.compose || function($canvas, plot, width, height){
       $canvas.width = width;
       $canvas.height = height;
-      ctx = $canvas.getContext("2d");
+      let ctx = $canvas.getContext("2d");
 
       ctx.filter = "invert(1)";
       ctx.drawImage(plot, 0, 0);

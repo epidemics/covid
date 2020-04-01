@@ -19,7 +19,7 @@
  *    string_score('Hello World', 'he');       //=> 0.5931818181818181
  *    string_score('Hello World', 'Hello');    //=> 0.7318181818181818
  */
-function string_score(string, word, fuzziness) {
+export function string_score(string: string, word: string, fuzziness?: number) {
     'use strict';
   
     // If the string is equal to the word, perfect match.
