@@ -1,12 +1,18 @@
 /* global Promise:false Plotly:false d3:false */
 
-const Y_SCALE = 10; // Going from per_1000_pops to per 100 (%)
+const GLEAMVIZ_TRACE_SCALE = 1000; // it gives infections per 1000
 const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
 
 const SELECTION_PARAM = "selection";
 const MITIGATION_PARAM = "mitigation";
 const CHANNEL_PARAM = "channel";
 const REGION_FALLBACK = "united kingdom";
+
+// Set starting chart size based on screen size
+const CHART_CONTAINER = document.getElementById("my_dataviz");
+const CHART_HEIGHT_RATIO = Math.max(0.5, Math.min(1, window.innerHeight / CHART_CONTAINER.clientWidth * 0.7));
+const CHART_WIDTH = Math.max(500, Math.min(1000, window.innerWidth * 0.5));
+const CHART_HEIGHT = Math.round(CHART_WIDTH * CHART_HEIGHT_RATIO);
 
 function getUrlParams() {
   let urlString = window.location.href;
@@ -155,12 +161,10 @@ const formatAbsoluteInteger = function (number) {
   }
 };
 
-// graph
-var plotyGraph = document.getElementById("my_dataviz");
-
 // graph layout
 var layout = {
-  height: 600,
+  width: CHART_WIDTH,
+  height: CHART_HEIGHT,
   //margin: { t: 0 },
   paper_bgcolor: "#222028",
   plot_bgcolor: "#222028",
@@ -182,7 +186,8 @@ var layout = {
     dtick: 0.0,
     ticklen: 8,
     tickwidth: 1,
-    tickcolor: "#fff"
+    tickcolor: "#fff",
+    rangeselector:{visible: true}
   },
   yaxis: {
     title: "Active infections (% of population)",
@@ -201,6 +206,7 @@ var layout = {
     dtick: 0.0,
     ticklen: 8,
     tickwidth: 1,
+    tickformat: ".1%",
     tickcolor: "#fff",
     showline: true,
     linecolor: "#fff",
@@ -225,13 +231,68 @@ var layout = {
   }
 };
 
+const DOWNLOAD_PLOT_SCALE = 2;
+let getDownloadPlotTitle = () => {
+  let regions = baseData.regions;
+
+  if(!(selected.region in regions)){
+    return "COVID-19 Forecast";
+  }
+
+  return `COVID-19 Forecast for ${regions[selected.region].name}`;
+}
 var plotlyConfig = {
   displaylogo: false,
-  responsive: true,
-  scrollZoom: false
+  responsive: false,
+  scrollZoom: false,
+  modeBarButtonsToAdd: [{
+    name: 'Download plot',
+    icon: Plotly.Icons.camera,
+    click: (gd) => window.saveImage(gd, {name: selected.region, scale: DOWNLOAD_PLOT_SCALE, width: 800, height: 600, format: "png", background: "black", compose: ($canvas, plot, width, height) => {
+      $canvas.width = width;
+      $canvas.height = height;
+      ctx = $canvas.getContext("2d");
+
+      ctx.filter = "invert(1)";
+      ctx.drawImage(plot, 0, 0);
+
+      const LINE_SPACING = .15;
+
+      let y = 0;
+      function drawCenteredText(text, size){
+        y += (1 + LINE_SPACING) * size;
+        ctx.font = `${Math.round(size)}px "DM Sans"`;
+        let x = (width - ctx.measureText(text).width)/2;
+        ctx.fillText(text, x, y);
+        y += LINE_SPACING * size;
+      }
+
+      ctx.fillStyle = "white";
+      drawCenteredText(getDownloadPlotTitle(), 20 * DOWNLOAD_PLOT_SCALE);
+
+      ctx.fillStyle = "light gray";
+      drawCenteredText("by epidemicforecasting.org", 12 * DOWNLOAD_PLOT_SCALE);
+    }})
+  }],
+  modeBarButtonsToRemove: ['toImage']
 };
 
-Plotly.newPlot(plotyGraph, [], layout, plotlyConfig);
+function makePlotlyReactive() {
+  d3.select("#my_dataviz")
+    .style('padding-bottom', `${CHART_HEIGHT / CHART_WIDTH * 100}%`);
+  d3.select(".js-plotly-plot .plotly .svg-container")
+    .attr("style", null);
+  d3.selectAll(".js-plotly-plot .plotly .main-svg")
+    .attr("height", null)
+    .attr("width", null)
+    .attr("viewBox", `0 0 ${layout.width} ${layout.height}`);
+}
+
+function renderChart(traces = []) {
+  return Plotly
+    .react(CHART_CONTAINER, traces, layout, plotlyConfig)
+    .then(makePlotlyReactive);
+}
 
 // Checks if the max and traces have been loaded and preprocessed for the given region;
 // if not, loads them and does preprocessing; then caches it in the region object.
@@ -252,9 +313,12 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
         // Iterate over Plotly traces in groups
         Object.values(mitigationTraces).forEach(trace => {
 
+          trace.text = [];
+
           // Scale all trace Ys to percent
           Object.keys(trace.y).forEach(i => {
-            trace.y[i] = trace.y[i] / Y_SCALE;
+            trace.y[i] = trace.y[i] / GLEAMVIZ_TRACE_SCALE;
+            trace.text.push(trace.y[i] * regionRec.population)
           });
           highestVals.push(Math.max(...trace.y));
 
@@ -268,7 +332,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
           }
           if (trace["hoverinfo"] !== "skip") {
             trace["hoverlabel"] = { "namelength": -1 };
-            trace["hovertemplate"] = "%{y:.2r}";
+            trace["hovertemplate"] = "%{text:.3s}<br />%{y:.2%}";
           }
         });
       });
@@ -314,7 +378,7 @@ function updatePlot() {
     layout.yaxis.range = [0, maxVal];
     AddCriticalCareTrace(mitigTraces[mitigationId]);
     // redraw the lines on the graph
-    Plotly.newPlot(plotyGraph, mitigTraces[mitigationId], layout, plotlyConfig);
+    renderChart(mitigTraces[mitigationId]);
   });
 }
 
@@ -327,7 +391,7 @@ function AddCriticalCareTrace(traces) {
   const regionData = manualData.regions[selected.region];
   if (typeof regionData !== 'object') return;
 
-  const capacity = regionData.beds_p_100k / 100 / Y_SCALE / CRITICAL_CARE_RATE;
+  const capacity = regionData.beds_p_100k / 100000 / CRITICAL_CARE_RATE;
   if (typeof capacity !== "number" || Number.isNaN(capacity)) return;
 
   /* NOTE: Temporarily disabled due to possible inconsistencies and misinterpretation. */
@@ -473,7 +537,7 @@ function restyleDropdownElements() {
     }
 
     if(index === focusedRegionIdx){
-      className += " active"; 
+      className += " active";
 
       // TODO something like this:
       // dropdownEntry.scrollIntoView(false);
@@ -483,7 +547,7 @@ function restyleDropdownElements() {
   })
 }
 
-$regionFilter.addEventListener("keyup", () => { 
+$regionFilter.addEventListener("keyup", () => {
   if(filterQuery === $regionFilter.value){
     // dont do anything if the query didnt change
     return;
@@ -513,7 +577,7 @@ $regionFilter.addEventListener("keydown", evt => {
 
     restyleDropdownElements();
   }
-  
+
   else if (evt.key === "ArrowDown") {
     focusedRegionIdx = Math.min(focusedRegionIdx + 1, regionList.length - 1);
 
@@ -558,7 +622,7 @@ Promise.all([`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"
 
   // populate the dropdown menu with countries from received data
   let listOfRegions = Object.keys(baseData.regions);
-  listOfRegions.forEach((key) => 
+  listOfRegions.forEach((key) =>
     addRegionDropdown(key, baseData.regions[key].name)
   );
 
