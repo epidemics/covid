@@ -22,12 +22,12 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Google Cloud Platform
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
           service_account_email: ${{ secrets.SA_EMAIL }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-      - run: |
+        run: |
              gcloud auth configure-docker
              gsutil ls -p 657183051434
              ls
