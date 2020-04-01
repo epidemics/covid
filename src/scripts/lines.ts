@@ -21,7 +21,9 @@ function getUrlParams() {
   let urlString = window.location.href;
   let url = new URL(urlString);
   return {
-    region: url.searchParams.get(SELECTION_PARAM) || guessRegion({fallback: REGION_FALLBACK}),
+    region:
+      url.searchParams.get(SELECTION_PARAM) ||
+      guessRegion({ fallback: REGION_FALLBACK }),
     channel: url.searchParams.get(CHANNEL_PARAM) || "main",
     mitigation: url.searchParams.get(MITIGATION_PARAM) || "none"
   };
@@ -38,7 +40,7 @@ function getMitigationId() {
     strong: "High"
   };
 
-  return mitigationIds[selected.mitigation]
+  return mitigationIds[selected.mitigation];
 }
 
 function updateInfectionTotals() {
@@ -54,15 +56,23 @@ function updateInfectionTotals() {
   });
   const infections = data.estimates.days[maxDate];
 
-  const formatDate = (date) => {
-
+  const formatDate = date => {
     const [year, month, day] = date.split("-").map(n => parseInt(n));
 
     const monthNames = [
-      "Jan", "Feb", "Mar",
-      "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep",
-      "Oct", "Nov", "Dec"];
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ];
 
     const monthString = monthNames[month - 1];
 
@@ -70,9 +80,13 @@ function updateInfectionTotals() {
   };
 
   d3.select("#infections-date").html(`${formatDate(maxDate)}`);
-  d3.select("#infections-confirmed").html(formatAbsoluteInteger(
-    infections["JH_Confirmed"] - infections["JH_Recovered"] - infections["JH_Deaths"]
-  ));
+  d3.select("#infections-confirmed").html(
+    formatAbsoluteInteger(
+      infections["JH_Confirmed"] -
+        infections["JH_Recovered"] -
+        infections["JH_Deaths"]
+    )
+  );
   d3.select("#infections-estimated").html(
     formatAbsoluteInteger(infections["FT_Infected"])
   );
@@ -92,7 +106,7 @@ function updateStatistics() {
   const { population, data } = baseData.regions[selected.region];
 
   var mitigation = getMitigationId();
-  const stats = data.mitigation_stats[mitigation]
+  const stats = data.mitigation_stats[mitigation];
 
   var total_infected = formatStatisticsLine(
     stats.TotalInfected_per1000_q05,
@@ -109,37 +123,39 @@ function updateStatistics() {
   $("#sim-infected").html(sim_infected);
 }
 
-const formatBigInteger = function (value) {
-  var labelValue = Math.round(value.toPrecision(2))
+const formatBigInteger = function(value) {
+  var labelValue = Math.round(value.toPrecision(2));
   // Nine Zeroes for Billions
-  return Math.abs(Number(labelValue)) >= 1.0e+9
-    ? Math.abs(Number(labelValue)) / 1.0e+9 + 'B'
-    // Six Zeroes for Millions
-    : Math.abs(Number(labelValue)) >= 1.0e+6
-      ? Math.abs(Number(labelValue)) / 1.0e+6 + 'M'
-      // Three Zeroes for Thousands
-      : Math.abs(Number(labelValue)) >= 1.0e+3
-        ? Math.abs(Number(labelValue)) / 1.0e+3 + 'K'
-        : Math.abs(Number(labelValue))
-}
+  return Math.abs(Number(labelValue)) >= 1.0e9
+    ? Math.abs(Number(labelValue)) / 1.0e9 + "B"
+    : // Six Zeroes for Millions
+    Math.abs(Number(labelValue)) >= 1.0e6
+    ? Math.abs(Number(labelValue)) / 1.0e6 + "M"
+    : // Three Zeroes for Thousands
+    Math.abs(Number(labelValue)) >= 1.0e3
+    ? Math.abs(Number(labelValue)) / 1.0e3 + "K"
+    : Math.abs(Number(labelValue));
+};
 
-const formatStatisticsLine = function (q05, q95, population) {
+const formatStatisticsLine = function(q05, q95, population) {
   var _q05 = formatBigInteger(q05 * (population / 1000));
   var _q95 = formatBigInteger(q95 * (population / 1000));
   var _q05_perc = formatPercentNumber(q05 / 10);
   var _q95_perc = formatPercentNumber(q95 / 10);
-  return formatRange(_q05, _q95) + ' (' + formatRange(_q05_perc, _q95_perc) + '%)';
-}
+  return (
+    formatRange(_q05, _q95) + " (" + formatRange(_q05_perc, _q95_perc) + "%)"
+  );
+};
 
-const formatRange = function (lower, upper) {
+const formatRange = function(lower, upper) {
   if (lower == upper) {
     return "~" + lower;
   } else {
     return lower + "-" + upper;
   }
-}
+};
 
-const formatPercentNumber = function (number) {
+const formatPercentNumber = function(number) {
   // One decimal places for numbers < 10 %.
   // Two decimal places for numbers < 0.1 %.
   if (Math.abs(number) >= 10) {
@@ -149,9 +165,9 @@ const formatPercentNumber = function (number) {
   } else {
     return String(Math.round(number * 100) / 100);
   }
-}
+};
 
-const formatAbsoluteInteger = function (number) {
+const formatAbsoluteInteger = function(number) {
   if (typeof number !== "number" || isNaN(number)) {
     return "&mdash;";
   }
@@ -189,7 +205,7 @@ var layout: Partial<Plotly.Layout> = {
     ticklen: 8,
     tickwidth: 1,
     tickcolor: "#fff",
-    rangeselector:{visible: true}
+    rangeselector: { visible: true }
   },
   yaxis: {
     title: "Active infections (% of population)",
@@ -228,7 +244,7 @@ var layout: Partial<Plotly.Layout> = {
     yanchor: "top",
     bgcolor: "#22202888",
     font: {
-      color: '#fff'
+      color: "#fff"
     }
   }
 };
@@ -300,93 +316,94 @@ function renderChart(traces = []) {
 // if not, loads them and does preprocessing; then caches it in the region object.
 // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
 function loadGleamvizTraces(regionRec, thenTracesMax) {
-
   if (typeof regionRec.cached_gleam_traces === "undefined") {
     // Not cached, load and preprocess
     var tracesUrl = regionRec.data.infected_per_1000.traces_url;
 
-    Plotly.d3.json(
-      `https://storage.googleapis.com/static-covid/static/${tracesUrl}`
-    ).get(function (_, mitigationsData) {
-      var highestVals = [];
+    Plotly.d3
+      .json(`https://storage.googleapis.com/static-covid/static/${tracesUrl}`)
+      .get(function(_, mitigationsData) {
+        var highestVals = [];
 
-      // Iterate over mitigations (groups)
-      Object.values(mitigationsData).forEach(mitigationTraces => {
-        // Iterate over Plotly traces in groups
-        Object.values(mitigationTraces).forEach(trace => {
+        // Iterate over mitigations (groups)
+        Object.values(mitigationsData).forEach(mitigationTraces => {
+          // Iterate over Plotly traces in groups
+          Object.values(mitigationTraces).forEach(trace => {
+            trace.text = [];
 
-          trace.text = [];
+            // Scale all trace Ys to percent
+            Object.keys(trace.y).forEach(i => {
+              trace.y[i] = trace.y[i] / GLEAMVIZ_TRACE_SCALE;
+              let number = Math.round(trace.y[i] * regionRec.population);
+  
+              // we want to show SI number, but it has to be integer
+              let precision = 3;
+              if(number < Math.pow(10,precision)){
+                // for small numbers just use the decimal formatting
+                trace.text.push(d3.format("d")(number))
+              }else{
+                // otherwise use the SI formatting
+                trace.text.push(d3.format(`.${precision}s`)(number))
+              }
+            });
+            highestVals.push(Math.max(...trace.y));
 
-          // Scale all trace Ys to percent
-          Object.keys(trace.y).forEach(i => {
-            trace.y[i] = trace.y[i] / GLEAMVIZ_TRACE_SCALE;
-            let number = Math.round(trace.y[i] * regionRec.population);
-
-            // we want to show SI number, but it has to be integer
-            let precision = 3;
-            if(number < Math.pow(10,precision)){
-              // for small numbers just use the decimal formatting
-              trace.text.push(d3.format("d")(number))
-            }else{
-              // otherwise use the SI formatting
-              trace.text.push(d3.format(`.${precision}s`)(number))
+            // When x has length 1, extend it to a day sequence of len(y) days
+            if (trace.x.length === 1) {
+              var xStart = new Date(trace.x[0]);
+              trace.x[0] = xStart;
+              for (let i = 1; i < trace.y.length; ++i) {
+                trace.x[i] = (d3 as any).timeDay.offset(xStart, i);
+              }
+            }
+            if (trace["hoverinfo"] !== "skip") {
+              trace["hoverlabel"] = { namelength: -1 };
+              trace["hovertemplate"] = "%{text}<br />%{y:.2%}";
             }
           });
-          highestVals.push(Math.max(...trace.y));
-
-          // When x has length 1, extend it to a day sequence of len(y) days
-          if (trace.x.length === 1) {
-            var xStart = new Date(trace.x[0]);
-            trace.x[0] = xStart;
-            for (let i = 1; i < trace.y.length; ++i) {
-              trace.x[i] = (d3 as any).timeDay.offset(xStart, i);
-            }
-          }
-          if (trace["hoverinfo"] !== "skip") {
-            trace["hoverlabel"] = { "namelength": -1 };
-            trace["hovertemplate"] = "%{text}<br />%{y:.2%}";
-          }
         });
+        var maxY = Math.max(...highestVals);
+
+        // Cache the values in the region
+        regionRec.cached_gleam_traces = mitigationsData;
+        regionRec.cached_gleam_max_y = maxY;
+        // Callback
+        thenTracesMax(mitigationsData, maxY);
       });
-      var maxY = Math.max(...highestVals);
-
-
-
-      // Cache the values in the region
-      regionRec.cached_gleam_traces = mitigationsData;
-      regionRec.cached_gleam_max_y = maxY;
-      // Callback
-      thenTracesMax(mitigationsData, maxY);
-    });
   } else {
     // Callback
     thenTracesMax(regionRec.cached_gleam_traces, regionRec.cached_gleam_max_y);
   }
 }
 
-document.querySelectorAll("#mitigation input[type=radio]").forEach((elem: HTMLInputElement) => {
-  if (elem.value === selected.mitigation) {
-    elem.checked = true;
-  }
+document
+  .querySelectorAll("#mitigation input[type=radio]")
+  .forEach((elem: HTMLInputElement) => {
+    if (elem.value === selected.mitigation) {
+      elem.checked = true;
+    }
 
-  elem.addEventListener("click", () => {
-    selected.mitigation = elem.value;
-    updatePlot();
+    elem.addEventListener("click", () => {
+      selected.mitigation = elem.value;
+      updatePlot();
+    });
   });
-});
 
 // update the graph
 function updatePlot() {
   let mitigationId = getMitigationId();
 
   // update the name of the region in the text below the graph
-  updateRegionInText(selected.region)
+  updateRegionInText(selected.region);
 
   // update the summary statistics per selected mitigation strength
-  updateStatistics()
+  updateStatistics();
 
   // Load and preprocess the per-region graph data
-  loadGleamvizTraces(baseData.regions[selected.region], function (mitigTraces, maxVal) {
+  loadGleamvizTraces(baseData.regions[selected.region], function(
+    mitigTraces,
+    maxVal
+  ) {
     layout.yaxis.range = [0, maxVal];
     AddCriticalCareTrace(mitigTraces[mitigationId]);
     // redraw the lines on the graph
@@ -395,13 +412,13 @@ function updatePlot() {
 }
 
 function AddCriticalCareTrace(traces) {
-  let line_title = "Hospital critical care capacity (approximate)"
+  let line_title = "Hospital critical care capacity (approximate)";
 
   const lastTrace = traces[traces.length - 1];
   if (lastTrace && lastTrace.name === line_title) return;
 
   const regionData = manualData.regions[selected.region];
-  if (typeof regionData !== 'object') return;
+  if (typeof regionData !== "object") return;
 
   const capacity = regionData.beds_p_100k / 100000 / CRITICAL_CARE_RATE;
   if (typeof capacity !== "number" || isNaN(capacity)) return;
@@ -424,7 +441,7 @@ function updateRegionInText(region) {
   jQuery(".selected-region").html(countryName);
 }
 
-function setGetParamUrl(key, value){
+function setGetParamUrl(key, value) {
   var params = new URLSearchParams(window.location.search);
   params.set(key, value);
   var url =
@@ -438,14 +455,16 @@ function setGetParamUrl(key, value){
   return url;
 }
 
-function getRegionUrl(region){
+function getRegionUrl(region) {
   return setGetParamUrl(SELECTION_PARAM, region);
 }
 
 let $regionList = document.getElementById("regionList");
 let $regionDropdownLabel = document.getElementById("regionDropdownLabel");
 let $regionFilter = document.getElementById("regionFilter") as HTMLInputElement;
-let $regionDropdown = document.getElementById("regionDropdown") as HTMLButtonElement;
+let $regionDropdown = document.getElementById(
+  "regionDropdown"
+) as HTMLButtonElement;
 
 // contains all the regions for the purpose of the dropdown menu
 let regionList = [];
@@ -460,20 +479,20 @@ jQuery($regionDropdown).on("show.bs.dropdown", () => {
   // clear the fitler value
   $regionFilter.value = "";
   $($regionList).css("max-height", $(window).height() * 0.5);
-})
+});
 
 jQuery($regionDropdown).on("shown.bs.dropdown", () => {
-  if(filterQuery !== ""){
+  if (filterQuery !== "") {
     filterQuery = "";
     reorderDropdown();
   }
 
   // and focus the filter field
   $regionFilter.focus();
-})
+});
 
 // make the dropdown entry
-function addRegionDropdown(region_key, name){
+function addRegionDropdown(region_key, name) {
   const link = document.createElement("a");
 
   link.innerHTML = name;
@@ -483,9 +502,9 @@ function addRegionDropdown(region_key, name){
 
     // change the region
     changeRegion(region_key, true);
-  })
+  });
 
-  let item = {key: region_key, name, dropdownEntry: link};
+  let item = { key: region_key, name, dropdownEntry: link };
 
   // add it to the dict and list
   regionDict[region_key] = item;
@@ -493,10 +512,10 @@ function addRegionDropdown(region_key, name){
 }
 
 // the dropdown items are restorted depending on a search query
-function reorderDropdown(){
+function reorderDropdown() {
   // we score each region item with how good the region name matches the query
   regionList.forEach(region => {
-    region.score = string_score(region.name, filterQuery)
+    region.score = string_score(region.name, filterQuery);
   });
 
   // then we sort the list
@@ -509,27 +528,27 @@ function reorderDropdown(){
       return -1;
     }
     // then alphabetically
-    if (a.name > b.name){
+    if (a.name > b.name) {
       return 1;
     }
-    if (a.name < b.name){
+    if (a.name < b.name) {
       return -1;
     }
     return 0;
-  })
+  });
 
   let bestScore = regionList[0].score;
-  for(let i = 0; i < regionList.length; i++){
-    let {score, dropdownEntry} = regionList[i];
+  for (let i = 0; i < regionList.length; i++) {
+    let { score, dropdownEntry } = regionList[i];
 
     // re-add the entry, this sorts the dom elements
     $regionList.appendChild(dropdownEntry);
 
     // if we have good matches we only want to show those
-    if(score < bestScore/1000){
+    if (score < bestScore / 1000) {
       // correct the focus offset so it does not so something silly
-      if(focusedRegionIdx >= i){
-        focusedRegionIdx = i-1;
+      if (focusedRegionIdx >= i) {
+        focusedRegionIdx = i - 1;
       }
 
       $regionList.removeChild(dropdownEntry);
@@ -540,15 +559,15 @@ function reorderDropdown(){
 
 // update the look of the of the dropdown entries
 function restyleDropdownElements() {
-  regionList.forEach(({key, dropdownEntry}, index) => {
+  regionList.forEach(({ key, dropdownEntry }, index) => {
     let className = "dropdown-item";
 
     // TODO maybe differentiate visually between 'current' and 'focused'
-    if(key === selected.region){
+    if (key === selected.region) {
       className += " active";
     }
 
-    if(index === focusedRegionIdx){
+    if (index === focusedRegionIdx) {
       className += " active";
 
       // TODO something like this:
@@ -556,46 +575,41 @@ function restyleDropdownElements() {
     }
 
     dropdownEntry.className = className;
-  })
+  });
 }
 
 $regionFilter.addEventListener("keyup", () => {
-  if(filterQuery === $regionFilter.value){
+  if (filterQuery === $regionFilter.value) {
     // dont do anything if the query didnt change
     return;
   }
 
   filterQuery = $regionFilter.value;
-  if(filterQuery !== ""){
+  if (filterQuery !== "") {
     // focus the first element in the list
     focusedRegionIdx = 0;
   }
 
   reorderDropdown();
   restyleDropdownElements();
-})
+});
 
 // listen on regionFilter events
 $regionFilter.addEventListener("keydown", evt => {
-
   // on enter we select the currently highlighted entry
   if (evt.key === "Enter") {
     changeRegion(regionList[focusedRegionIdx].key, true);
-    $($regionDropdown).dropdown('toggle')
-  }
-
-  else if (evt.key === "ArrowUp") {
+    $($regionDropdown).dropdown("toggle");
+  } else if (evt.key === "ArrowUp") {
     focusedRegionIdx = Math.max(focusedRegionIdx - 1, 0);
 
     restyleDropdownElements();
-  }
-
-  else if (evt.key === "ArrowDown") {
+  } else if (evt.key === "ArrowDown") {
     focusedRegionIdx = Math.min(focusedRegionIdx + 1, regionList.length - 1);
 
     restyleDropdownElements();
   }
-})
+});
 
 // populate the region dropdown label
 // FIXME: this is kind of a hack and only looks nonsilly because the label is allcapsed
@@ -603,7 +617,7 @@ $regionDropdownLabel.innerHTML = selected.region;
 
 // change the displayed region
 function changeRegion(newRegion, pushState) {
-  if(!(newRegion in baseData.regions)){
+  if (!(newRegion in baseData.regions)) {
     newRegion = REGION_FALLBACK;
     pushState = false;
   }
@@ -613,7 +627,7 @@ function changeRegion(newRegion, pushState) {
 
   // change url
   if (history.pushState && pushState) {
-    let path = getRegionUrl(newRegion)
+    let path = getRegionUrl(newRegion);
     window.history.pushState({ path }, "", path);
   }
 
@@ -626,19 +640,20 @@ function changeRegion(newRegion, pushState) {
   updateInfectionTotals();
 }
 
-let sources = [`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"];
-
-
-
 // Load the basic data (estimates and graph URLs) for all generated countries
-Promise.all([`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"].map(
-  path => d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
-)).then(data => {
+Promise.all(
+  [
+    `data-${selected.channel}-v3.json`,
+    "data-manual-estimates-v1.json"
+  ].map(path =>
+    d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
+  )
+).then(data => {
   [baseData, manualData] = data;
 
   // populate the dropdown menu with countries from received data
   let listOfRegions = Object.keys(baseData.regions);
-  listOfRegions.forEach((key) =>
+  listOfRegions.forEach(key =>
     addRegionDropdown(key, baseData.regions[key].name)
   );
 
@@ -649,5 +664,5 @@ Promise.all([`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"
   changeRegion(selected.region, false);
 
   // initialize the select picker
-  $('[data-toggle="tooltip"]').tooltip()
+  $('[data-toggle="tooltip"]').tooltip();
 });

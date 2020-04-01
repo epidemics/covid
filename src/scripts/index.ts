@@ -1,8 +1,7 @@
+import "object.values";
 
-import 'object.values';
+import "./case-map";
 
-import './case-map';
+import "./lines";
 
-import './lines';
-
-import './consulting-alert';
+import "./consulting-alert";

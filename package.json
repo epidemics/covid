@@ -7,7 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "lint": "prettier --check \"{src/scripts/**, src/server/**, src/server/static/css/**}\""
+    "lint": "prettier --check \"{src/scripts/**, src/server/**, src/server/templates/**}\"",
+    "apply-lint": "prettier --write \"{src/scripts/**, src/server/**, src/server/templates/**}\""
   },
   "repository": {
     "type": "git",
