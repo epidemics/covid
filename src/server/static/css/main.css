@@ -881,3 +881,7 @@ table th, table td {
   overflow-y: scroll;
   text-transform: uppercase;
 }
+
+#consultingAlert .close:hover{
+  color: white;
+}
