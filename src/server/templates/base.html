@@ -10,7 +10,7 @@ Researchers from the Oxford Future of Humanity Institute have created country-sp
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <link rel="icon" href="{{ url_for('static', path='/img/favicon.ico') }}" />
+    <link rel="icon" href="{{STATIC_URL}}/img/favicon.ico" />
 
     <title>{{ title }}</title>
     <meta name="description" content="{{ description }}" />
@@ -19,7 +19,7 @@ Researchers from the Oxford Future of Humanity Institute have created country-sp
     <meta property="og:title" content="{{ title }}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ request.url }}" />
-    <meta property="og:image" content="{{ url_for('static', path='/img/thumbnail.jpg') }}" />
+    <meta property="og:image" content="{{STATIC_URL}}/img/thumbnail.jpg" />
     <meta property="og:description" content="{{ description }}" />
 
     <!-- Google Tag Manager -->
@@ -45,7 +45,7 @@ Researchers from the Oxford Future of Humanity Institute have created country-sp
     />
 
     <!-- Custom styles for this template -->
-    <link href="{{ url_for('static', path='/css/main.css') }}" rel="stylesheet" />
+    <link href="{{STATIC_URL}}/css/main.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->

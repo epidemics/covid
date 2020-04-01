@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+
     - name: Black Code Formatter
       uses: lgeiger/black-action@v1.0.1
       with:
@@ -43,6 +44,42 @@ jobs:
         poetry install
         poetry run pytest tests
 
+  gsutil-upload-staging:
+    if: github.ref == 'refs/heads/staging'
+    name: Upload static Staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '270.0.0'
+          service_account_email: ${{ secrets.SA_EMAIL }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - name: Upload
+        run: |
+             gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read src/server/static/* gs://static-covid/static/staging/
+
+  gsutil-upload-production:
+    if: github.ref == 'refs/heads/master'
+    name: Upload static Production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '270.0.0'
+          service_account_email: ${{ secrets.SA_EMAIL }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - name: Upload
+        run: |
+             gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read src/server/static/* gs://static-covid/static/production/
+
   setup-build-publish-deploy:
     if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master'
     name: Build, Publish, Deploy
@@ -62,7 +99,6 @@ jobs:
     # Configure docker to use the gcloud command-line tool as a credential helper
     - run: |
         gcloud auth configure-docker
-
     # Build the Docker image
     - name: Build
       run: |
@@ -85,7 +121,6 @@ jobs:
 
         wget -q -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
         chmod +x sops
-
         ./sops -d ./deploy/chart/secrets.yaml > secrets.yaml.dec
 
     - name: Export app version
@@ -128,3 +163,5 @@ jobs:
           --values secrets.yaml.dec
           --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           --debug
+    
+

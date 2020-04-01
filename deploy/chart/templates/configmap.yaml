@@ -4,4 +4,4 @@ metadata:
   name: {{ .Chart.Name }}
 data:
   APP_VERSION: {{ .Chart.AppVersion | quote }}
-  ENABLE_NOTION: {{ .Values.env.enableNotion | quote }}
+  STATIC_URL: {{ .Values.env.staticUrl | quote }}

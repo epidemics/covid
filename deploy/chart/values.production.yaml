@@ -4,3 +4,6 @@ ingress:
 
 web:
   replicasCount: 3
+
+env:
+  staticUrl: "https://storage.googleapis.com/static-covid/static/production"

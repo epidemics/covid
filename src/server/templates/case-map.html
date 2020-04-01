@@ -41,5 +41,5 @@
 
 {% endblock %} {% block additional_js %}
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script src="{{ url_for('static', path='/js/case-map.js') }}"></script>
+<script src="{{STATIC_URL}}/js/case-map.js"></script>
 {% endblock %}
