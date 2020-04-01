@@ -17,13 +17,40 @@ jobs:
       with:
         args: "src/ tests/ --check"
 
-  gsutil-test:
-    name: gsutil-test
+  pretify-js:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cloning the repository
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - name: Prettify the JS Code
+      uses: creyD/prettier_action@v2.0
+      with:
+        prettier_options: 'prettier --check "{src/server/static/**, src/server/templates/**}"'
+        branch: ${{ github.head_ref }}
+
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-python@master
+      with:
+        python-version: 3.8
+    - run: |
+        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+        source $HOME/.poetry/env
+        poetry install
+        poetry run pytest tests
+
+  gsutil-upload-staging:
+    if: github.ref == 'refs/heads/staging'
+    name: Upload static Staging
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@master
-
 
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
@@ -33,10 +60,114 @@ jobs:
 
       - run: |
              gcloud auth configure-docker
-             #gsutil ls -p 657183051434
              
       - name: Upload
         run: |
-             gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read src/server/static/ gs://static-covid/static/staging/mj-test/
+             gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read src/server/static/* gs://static-covid/static/staging/
 
+  gsutil-upload-production:
+    if: github.ref == 'refs/heads/master'
+    name: Upload static Production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '270.0.0'
+          service_account_email: ${{ secrets.SA_EMAIL }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - run: |
+             gcloud auth configure-docker
+             
+      - name: Upload
+        run: |
+             gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read src/server/static/* gs://static-covid/static/production/
+
+  setup-build-publish-deploy:
+    if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master'
+    name: Build, Publish, Deploy
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@master
+
+    # Setup gcloud CLI
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.SA_EMAIL }}
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+    # Configure docker to use the gcloud command-line tool as a credential helper
+    - run: |
+        gcloud auth configure-docker
+    # Build the Docker image
+    - name: Build
+      run: |
+        docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA --target production .
+
+    # Push the Docker image to Google Container Registry
+    - name: Publish
+      run: |
+        docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+
+    # decrypt secrets
+    # TODO: could be different for staging and production
+    - name: Decrypt secrets
+      env:
+        JSON_KEY: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      run: |
+        echo "${JSON_KEY}" > key.json
+        export GOOGLE_APPLICATION_CREDENTIALS=key.json
+        gcloud auth activate-service-account --key-file key.json
+
+        wget -q -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
+        chmod +x sops
+        ./sops -d ./deploy/chart/secrets.yaml > secrets.yaml.dec
+
+    - name: Export app version
+      run: |
+        sed -i -e "s/^appVersion: .*$/appVersion: ${{ github.sha }}/g" deploy/chart/Chart.yaml
+
+    - name: Helm deploy [STAGING]
+      if: github.ref == 'refs/heads/staging'
+      uses: hahow/install-helm-chart-action@v1.0.0
+      with:
+        gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        gcloud_project_id: ${{ secrets.GKE_PROJECT }}
+        cluster_name: epidemics
+        cluster_region: us-west1-c
+        release_namespace: staging
+        release_name: covid
+        chart_name: ./deploy/chart
+        helm_upgrade_args: |
+          --values ./deploy/chart/values.yaml
+          --values ./deploy/chart/values.staging.yaml
+          --values secrets.yaml.dec
+          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          --debug
+
+    # TODO: violates DRY, simplify with the above
+    - name: Helm deploy [PRODUCTION (master branch)]
+      if: github.ref == 'refs/heads/master'
+      uses: hahow/install-helm-chart-action@v1.0.0
+      with:
+        gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        gcloud_project_id: ${{ secrets.GKE_PROJECT }}
+        cluster_name: epidemics
+        cluster_region: us-west1-c
+        release_namespace: production
+        release_name: covid
+        chart_name: ./deploy/chart
+        helm_upgrade_args: |
+          --values ./deploy/chart/values.yaml
+          --values ./deploy/chart/values.production.yaml
+          --values secrets.yaml.dec
+          --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          --debug
+    
 
