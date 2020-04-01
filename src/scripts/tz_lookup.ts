@@ -1,4 +1,6 @@
-function guessRegion(fallback){
+
+
+export function guessRegion(fallback){
   let tzName;
   try{
     tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;

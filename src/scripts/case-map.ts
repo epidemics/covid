@@ -30,7 +30,7 @@ Plotly.d3.json(
     function get_z(dict) {
       return Object.keys(dict).map(function(country) {
         const risk = get_risk(dict[country]);
-        return Math.log2(risk * 1000);
+        return Math.log(risk * 1000) / Math.log(2);
       });
     }
 
@@ -62,7 +62,7 @@ Plotly.d3.json(
     var tick_values = [-3, -1, 1, 3, 5];
     var tick_names = tick_values.map(value_to_labels);
 
-    var data = [
+    let data: Array<Partial<Plotly.PlotData>> = [
       {
         type: "choroplethmapbox",
         name: "COVID-19: Active infections estimate",
@@ -109,7 +109,7 @@ Plotly.d3.json(
             family: "DM Sans"
           }
         }
-      }
+      } as any
     ];
 
     var layout = {
@@ -133,7 +133,7 @@ Plotly.d3.json(
 
     Plotly.newPlot("mapid", data, layout).then(gd => {
       gd.on("plotly_click", d => {
-        var pt = (d.points || [])[0];
+        let pt = (d.points || [])[0] as any;
         window.open("/?selection=" + pt.customdata["country_to_search"]);
       });
     });

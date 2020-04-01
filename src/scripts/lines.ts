@@ -1,4 +1,7 @@
-/* global Promise:false Plotly:false d3:false */
+import { guessRegion } from "./tz_lookup";
+import Plotly from "plotly.js";
+import * as d3 from "d3";
+import { string_score } from "./string_score";
 
 const GLEAMVIZ_TRACE_SCALE = 1000; // it gives infections per 1000
 const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
@@ -65,7 +68,6 @@ function updateInfectionTotals() {
 
     return `${monthString} ${day}, ${year}`;
   };
-
 
   d3.select("#infections-date").html(`${formatDate(maxDate)}`);
   d3.select("#infections-confirmed").html(formatAbsoluteInteger(
@@ -150,7 +152,7 @@ const formatPercentNumber = function (number) {
 }
 
 const formatAbsoluteInteger = function (number) {
-  if (typeof number !== "number" || Number.isNaN(number)) {
+  if (typeof number !== "number" || isNaN(number)) {
     return "&mdash;";
   }
   number = Math.round(number);
@@ -162,7 +164,7 @@ const formatAbsoluteInteger = function (number) {
 };
 
 // graph layout
-var layout = {
+var layout: Partial<Plotly.Layout> = {
   width: CHART_WIDTH,
   height: CHART_HEIGHT,
   //margin: { t: 0 },
@@ -251,7 +253,7 @@ var plotlyConfig = {
     click: (gd) => window.saveImage(gd, {name: selected.region, scale: DOWNLOAD_PLOT_SCALE, width: 800, height: 600, format: "png", background: "black", compose: ($canvas, plot, width, height) => {
       $canvas.width = width;
       $canvas.height = height;
-      ctx = $canvas.getContext("2d");
+      let ctx = $canvas.getContext("2d");
 
       ctx.filter = "invert(1)";
       ctx.drawImage(plot, 0, 0);
@@ -303,9 +305,9 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
     // Not cached, load and preprocess
     var tracesUrl = regionRec.data.infected_per_1000.traces_url;
 
-    d3.json(
+    Plotly.d3.json(
       `https://storage.googleapis.com/static-covid/static/${tracesUrl}`
-    ).then(function (mitigationsData) {
+    ).get(function (_, mitigationsData) {
       var highestVals = [];
 
       // Iterate over mitigations (groups)
@@ -337,7 +339,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
             var xStart = new Date(trace.x[0]);
             trace.x[0] = xStart;
             for (let i = 1; i < trace.y.length; ++i) {
-              trace.x[i] = d3.timeDay.offset(xStart, i);
+              trace.x[i] = (d3 as any).timeDay.offset(xStart, i);
             }
           }
           if (trace["hoverinfo"] !== "skip") {
@@ -362,7 +364,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
   }
 }
 
-document.querySelectorAll("#mitigation input[type=radio]").forEach(elem => {
+document.querySelectorAll("#mitigation input[type=radio]").forEach((elem: HTMLInputElement) => {
   if (elem.value === selected.mitigation) {
     elem.checked = true;
   }
@@ -402,7 +404,7 @@ function AddCriticalCareTrace(traces) {
   if (typeof regionData !== 'object') return;
 
   const capacity = regionData.beds_p_100k / 100000 / CRITICAL_CARE_RATE;
-  if (typeof capacity !== "number" || Number.isNaN(capacity)) return;
+  if (typeof capacity !== "number" || isNaN(capacity)) return;
 
   /* NOTE: Temporarily disabled due to possible inconsistencies and misinterpretation. */
   /*
@@ -442,8 +444,8 @@ function getRegionUrl(region){
 
 let $regionList = document.getElementById("regionList");
 let $regionDropdownLabel = document.getElementById("regionDropdownLabel");
-let $regionFilter = document.getElementById("regionFilter");
-let $regionDropdown = document.getElementById("regionDropdown")
+let $regionFilter = document.getElementById("regionFilter") as HTMLInputElement;
+let $regionDropdown = document.getElementById("regionDropdown") as HTMLButtonElement;
 
 // contains all the regions for the purpose of the dropdown menu
 let regionList = [];
@@ -539,7 +541,7 @@ function reorderDropdown(){
 // update the look of the of the dropdown entries
 function restyleDropdownElements() {
   regionList.forEach(({key, dropdownEntry}, index) => {
-    className = "dropdown-item";
+    let className = "dropdown-item";
 
     // TODO maybe differentiate visually between 'current' and 'focused'
     if(key === selected.region){
@@ -624,6 +626,10 @@ function changeRegion(newRegion, pushState) {
   updateInfectionTotals();
 }
 
+let sources = [`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"];
+
+
+
 // Load the basic data (estimates and graph URLs) for all generated countries
 Promise.all([`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"].map(
   path => d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
@@ -640,7 +646,7 @@ Promise.all([`data-${selected.channel}-v3.json`, "data-manual-estimates-v1.json"
   restyleDropdownElements();
 
   // initialize the graph
-  changeRegion(selected.region);
+  changeRegion(selected.region, false);
 
   // initialize the select picker
   $('[data-toggle="tooltip"]').tooltip()

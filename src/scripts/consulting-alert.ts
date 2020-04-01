@@ -1,4 +1,7 @@
 
+
+import moment from 'moment';
+
 // control the consulting alert, using a Storage object
 function controlConsultingAlert(storage){
   let KEY = "consulting_dismissed";
@@ -50,4 +53,4 @@ function controlConsultingAlert(storage){
   }
 }
 
-controlConsultingAlert(window.sessionStorage)
+controlConsultingAlert(window.sessionStorage);
