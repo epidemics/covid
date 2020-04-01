@@ -9,8 +9,9 @@ const CHANNEL_PARAM = "channel";
 const REGION_FALLBACK = "united kingdom";
 
 // Set starting chart size based on screen size
-const CHART_HEIGHT_RATIO = Math.max(0.5, Math.min(1, window.innerHeight / window.innerWidth));
-const CHART_WIDTH = Math.max(500, Math.min(1000, window.innerWidth * 0.6));
+const CHART_CONTAINER = document.getElementById("my_dataviz");
+const CHART_HEIGHT_RATIO = Math.max(0.5, Math.min(1, window.innerHeight / CHART_CONTAINER.clientWidth * 0.7));
+const CHART_WIDTH = Math.max(500, Math.min(1000, window.innerWidth * 0.5));
 const CHART_HEIGHT = Math.round(CHART_WIDTH * CHART_HEIGHT_RATIO);
 
 function getUrlParams() {
@@ -160,9 +161,6 @@ const formatAbsoluteInteger = function (number) {
   }
 };
 
-// graph
-var plotlyGraph = document.getElementById("my_dataviz");
-
 // graph layout
 var layout = {
   width: CHART_WIDTH,
@@ -250,11 +248,11 @@ function makePlotlyReactive() {
     .attr("viewBox", `0 0 ${layout.width} ${layout.height}`);
 }
 
-function setPlotlyTraces(traces = []) {
-  return Plotly.react(plotyGraph, traces, layout, plotlyConfig).then(makePlotlyReactive);
+function renderChart(traces = []) {
+  return Plotly
+    .react(CHART_CONTAINER, traces, layout, plotlyConfig)
+    .then(makePlotlyReactive);
 }
-
-setPlotlyTraces();
 
 // Checks if the max and traces have been loaded and preprocessed for the given region;
 // if not, loads them and does preprocessing; then caches it in the region object.
@@ -340,7 +338,7 @@ function updatePlot() {
     layout.yaxis.range = [0, maxVal];
     AddCriticalCareTrace(mitigTraces[mitigationId]);
     // redraw the lines on the graph
-    setPlotlyTraces(mitigTraces[mitigationId]);
+    renderChart(mitigTraces[mitigationId]);
   });
 }
 
