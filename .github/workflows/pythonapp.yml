@@ -20,6 +20,8 @@ jobs:
     name: gsutil-test
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@master
+      - name: Google Cloud Platform
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
