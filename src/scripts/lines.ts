@@ -123,27 +123,15 @@ function updateStatistics() {
   $("#sim-infected").html(sim_infected);
 }
 
-const formatBigInteger = function(value) {
-  var labelValue = Math.round(value.toPrecision(2));
-  // Nine Zeroes for Billions
-  return Math.abs(Number(labelValue)) >= 1.0e9
-    ? Math.abs(Number(labelValue)) / 1.0e9 + "B"
-    : // Six Zeroes for Millions
-    Math.abs(Number(labelValue)) >= 1.0e6
-    ? Math.abs(Number(labelValue)) / 1.0e6 + "M"
-    : // Three Zeroes for Thousands
-    Math.abs(Number(labelValue)) >= 1.0e3
-    ? Math.abs(Number(labelValue)) / 1.0e3 + "K"
-    : Math.abs(Number(labelValue));
-};
+const formatBigInteger = d3.format(".2s");
 
 const formatStatisticsLine = function(q05, q95, population) {
   var _q05 = formatBigInteger(q05 * (population / 1000));
   var _q95 = formatBigInteger(q95 * (population / 1000));
-  var _q05_perc = formatPercentNumber(q05 / 10);
-  var _q95_perc = formatPercentNumber(q95 / 10);
+  var _q05_perc = formatPercentNumber(q05 / 1000);
+  var _q95_perc = formatPercentNumber(q95 / 1000);
   return (
-    formatRange(_q05, _q95) + " (" + formatRange(_q05_perc, _q95_perc) + "%)"
+    formatRange(_q05, _q95) + " (" + formatRange(_q05_perc, _q95_perc) + ")"
   );
 };
 
@@ -155,17 +143,7 @@ const formatRange = function(lower, upper) {
   }
 };
 
-const formatPercentNumber = function(number) {
-  // One decimal places for numbers < 10 %.
-  // Two decimal places for numbers < 0.1 %.
-  if (Math.abs(number) >= 10) {
-    return String(Math.round(number));
-  } else if (Math.abs(number) >= 0.1) {
-    return String(Math.round(number * 10) / 10);
-  } else {
-    return String(Math.round(number * 100) / 100);
-  }
-};
+const formatPercentNumber = d3.format(".2p");
 
 const formatAbsoluteInteger = function(number) {
   if (typeof number !== "number" || isNaN(number)) {
@@ -316,64 +294,63 @@ function renderChart(traces = []) {
 // if not, loads them and does preprocessing; then caches it in the region object.
 // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
 function loadGleamvizTraces(regionRec, thenTracesMax) {
-  if (typeof regionRec.cached_gleam_traces === "undefined") {
-    // Not cached, load and preprocess
-    var tracesUrl = regionRec.data.infected_per_1000.traces_url;
-
-    Plotly.d3
-      .json(`https://storage.googleapis.com/static-covid/static/${tracesUrl}`)
-      .get(function(_, mitigationsData) {
-        var highestVals = [];
-
-        // Iterate over mitigations (groups)
-        Object.values(mitigationsData).forEach(mitigationTraces => {
-          // Iterate over Plotly traces in groups
-          Object.values(mitigationTraces).forEach(trace => {
-            trace.text = [];
-
-            // Scale all trace Ys to percent
-            Object.keys(trace.y).forEach(i => {
-              trace.y[i] = trace.y[i] / GLEAMVIZ_TRACE_SCALE;
-              let number = Math.round(trace.y[i] * regionRec.population);
-  
-              // we want to show SI number, but it has to be integer
-              let precision = 3;
-              if(number < Math.pow(10,precision)){
-                // for small numbers just use the decimal formatting
-                trace.text.push(d3.format("d")(number))
-              }else{
-                // otherwise use the SI formatting
-                trace.text.push(d3.format(`.${precision}s`)(number))
-              }
-            });
-            highestVals.push(Math.max(...trace.y));
-
-            // When x has length 1, extend it to a day sequence of len(y) days
-            if (trace.x.length === 1) {
-              var xStart = new Date(trace.x[0]);
-              trace.x[0] = xStart;
-              for (let i = 1; i < trace.y.length; ++i) {
-                trace.x[i] = (d3 as any).timeDay.offset(xStart, i);
-              }
-            }
-            if (trace["hoverinfo"] !== "skip") {
-              trace["hoverlabel"] = { namelength: -1 };
-              trace["hovertemplate"] = "%{text}<br />%{y:.2%}";
-            }
-          });
-        });
-        var maxY = Math.max(...highestVals);
-
-        // Cache the values in the region
-        regionRec.cached_gleam_traces = mitigationsData;
-        regionRec.cached_gleam_max_y = maxY;
-        // Callback
-        thenTracesMax(mitigationsData, maxY);
-      });
-  } else {
-    // Callback
+  if (typeof regionRec.cached_gleam_traces !== "undefined") {
     thenTracesMax(regionRec.cached_gleam_traces, regionRec.cached_gleam_max_y);
   }
+  
+  // Not cached, load and preprocess
+  var tracesUrl = regionRec.data.infected_per_1000.traces_url;
+
+  Plotly.d3.json(`https://storage.googleapis.com/static-covid/static/${tracesUrl}`, function(error, mitigationsData) {
+    // TODO error handling
+
+    var highestVals = [];
+
+    // Iterate over mitigations (groups)
+    Object.values(mitigationsData).forEach(mitigationTraces => {
+      // Iterate over Plotly traces in groups
+      Object.values(mitigationTraces).forEach(trace => {
+        trace.text = [];
+
+        // Scale all trace Ys to percent
+        Object.keys(trace.y).forEach(i => {
+          trace.y[i] = trace.y[i] / GLEAMVIZ_TRACE_SCALE;
+          let number = Math.round(trace.y[i] * regionRec.population);
+
+          // we want to show SI number, but it has to be integer
+          let precision = 3;
+          if(number < Math.pow(10,precision)){
+            // for small numbers just use the decimal formatting
+            trace.text.push(d3.format("d")(number))
+          }else{
+            // otherwise use the SI formatting
+            trace.text.push(d3.format(`.${precision}s`)(number))
+          }
+        });
+        highestVals.push(Math.max(...trace.y));
+
+        // When x has length 1, extend it to a day sequence of len(y) days
+        if (trace.x.length === 1) {
+          var xStart = new Date(trace.x[0]);
+          trace.x[0] = xStart;
+          for (let i = 1; i < trace.y.length; ++i) {
+            trace.x[i] = (d3 as any).timeDay.offset(xStart, i);
+          }
+        }
+        if (trace["hoverinfo"] !== "skip") {
+          trace["hoverlabel"] = { namelength: -1 };
+          trace["hovertemplate"] = "%{text}<br />%{y:.2%}";
+        }
+      });
+    });
+    var maxY = Math.max(...highestVals);
+
+    // Cache the values in the region
+    regionRec.cached_gleam_traces = mitigationsData;
+    regionRec.cached_gleam_max_y = maxY;
+    // Callback
+    thenTracesMax(mitigationsData, maxY);
+  });
 }
 
 document
