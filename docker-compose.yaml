@@ -12,7 +12,17 @@ services:
     working_dir: /usr/app/src/server
     entrypoint:
       - uvicorn
+      - --use-colors
       - main:app
       - --host
       - 0.0.0.0
       - --reload
+
+  webpack:
+    build:
+      context: ./
+      dockerfile: webpack.Dockerfile
+    volumes: 
+      - ./src/:/usr/app/src/
+    working_dir: /usr/app
+    entrypoint: yarn run webpack
