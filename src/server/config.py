@@ -31,9 +31,8 @@ class BaseConfig:
 @dataclass(init=False)
 class Config(BaseConfig):
     APP_VERSION: str = "000000"
-    ENABLE_NOTION: bool = False
 
-    NOTION_TOKEN: str = "xxx"
-
+    # comma separated string of addresses
+    ALLOWED_HOSTS: str = "127.0.0.1"
 
 CONFIG = Config()
