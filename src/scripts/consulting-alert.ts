@@ -1,4 +1,4 @@
-import moment from "moment";
+import * as moment from "moment";
 
 // control the consulting alert, using a Storage object
 function controlConsultingAlert(storage) {

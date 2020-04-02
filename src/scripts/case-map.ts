@@ -1,4 +1,4 @@
-import Plotly from "plotly.js";
+import * as Plotly from "plotly.js";
 
 const MAP_ID = "mapid";
 
