@@ -18,11 +18,11 @@ services:
       - 0.0.0.0
       - --reload
 
-  webpack:
+  webpack-watcher:
     build:
       context: ./
-      dockerfile: webpack.Dockerfile
+      dockerfile: webpack-watcher.Dockerfile
     volumes: 
       - ./src/:/usr/app/src/
     working_dir: /usr/app
-    entrypoint: yarn run webpack
+    entrypoint: yarn run dev

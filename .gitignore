@@ -19,3 +19,4 @@ node_modules
 src/static/bundle.js
 src/static/bundle.js.map
 out/
+yarn-error.log
