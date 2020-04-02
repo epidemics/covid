@@ -8,7 +8,8 @@
   },
   "scripts": {
     "lint": "prettier --check \"{src/scripts/**, src/server/**, src/server/templates/**}\"",
-    "apply-lint": "prettier --write \"{src/scripts/**, src/server/**, src/server/templates/**}\""
+    "apply-lint": "prettier --write \"{src/scripts/**, src/server/**, src/server/templates/**}\"",
+    "webpack": "webpack --color --mode development --watch"
   },
   "repository": {
     "type": "git",
