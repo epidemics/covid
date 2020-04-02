@@ -318,7 +318,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
           // Scale all trace Ys to percent
           Object.keys(trace.y).forEach(i => {
             trace.y[i] = trace.y[i] / GLEAMVIZ_TRACE_SCALE;
-            trace.text.push(trace.y[i] * regionRec.population)
+            trace.text.push(Math.round(trace.y[i] * regionRec.population))
           });
           highestVals.push(Math.max(...trace.y));
 
