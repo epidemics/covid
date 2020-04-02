@@ -318,7 +318,17 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
           // Scale all trace Ys to percent
           Object.keys(trace.y).forEach(i => {
             trace.y[i] = trace.y[i] / GLEAMVIZ_TRACE_SCALE;
-            trace.text.push(Math.round(trace.y[i] * regionRec.population))
+            let number = Math.round(trace.y[i] * regionRec.population);
+
+            // we want to show SI number, but it has to be integer
+            let precision = 3;
+            if(number < Math.pow(10,precision)){
+              // for small numbers just use the decimal formatting
+              trace.text.push(d3.format("d")(number))
+            }else{
+              // otherwise use the SI formatting
+              trace.text.push(d3.format(`.${precision}s`)(number))
+            }
           });
           highestVals.push(Math.max(...trace.y));
 
@@ -332,7 +342,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
           }
           if (trace["hoverinfo"] !== "skip") {
             trace["hoverlabel"] = { "namelength": -1 };
-            trace["hovertemplate"] = "%{text:.3s}<br />%{y:.2%}";
+            trace["hovertemplate"] = "%{text}<br />%{y:.2%}";
           }
         });
       });
