@@ -23,10 +23,9 @@
   "homepage": "https://github.com/epidemics/covid#readme",
   "devDependencies": {
     "@types/bootstrap": "^4.3.2",
-    "@types/d3-time": "^1.0.10",
     "@types/jquery": "^3.3.34",
     "@types/moment": "^2.13.0",
-    "@types/popper.js": "^1.11.0",
+    "@types/plotly.js": "^1.50.1",
     "object.values": "^1.1.1",
     "prettier": "^1.19.1",
     "ts-loader": "^6.2.2",
@@ -35,6 +34,6 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
-    "@types/plotly.js": "^1.50.1"
+    "@types/d3": "^5.7.2"
   }
 }

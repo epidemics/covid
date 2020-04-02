@@ -1,5 +1,5 @@
 
-import Plotly from "plotly.js"
+import * as Plotly from "plotly.js"
 
 export const saveImage = (function(){
   let $offscreenElem = null;

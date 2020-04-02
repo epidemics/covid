@@ -1,7 +1,8 @@
 import { guessRegion } from "./tz_lookup";
-import Plotly from "plotly.js";
 import * as d3 from "d3";
+import * as Plotly from "plotly.js";
 import { string_score } from "./string_score";
+import { saveImage } from "./custom-plotly-image-saver";
 
 const GLEAMVIZ_TRACE_SCALE = 1000; // it gives infections per 1000
 const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
@@ -237,39 +238,43 @@ let getDownloadPlotTitle = () => {
 
   return `COVID-19 Forecast for ${regions[selected.region].name}`;
 }
-var plotlyConfig = {
+
+let customToImage: Plotly.ModeBarButton = {
+  name: 'Download plot',
+  title: '',
+  icon: Plotly.Icons.camera,
+  click: (gd) => saveImage(gd, {name: selected.region, scale: DOWNLOAD_PLOT_SCALE, width: 800, height: 600, format: "png", background: "black", compose: ($canvas, plot, width, height) => {
+    $canvas.width = width;
+    $canvas.height = height;
+    let ctx = $canvas.getContext("2d");
+
+    ctx.filter = "invert(1)";
+    ctx.drawImage(plot, 0, 0);
+
+    const LINE_SPACING = .15;
+
+    let y = 0;
+    function drawCenteredText(text, size){
+      y += (1 + LINE_SPACING) * size;
+      ctx.font = `${Math.round(size)}px "DM Sans"`;
+      let x = (width - ctx.measureText(text).width)/2;
+      ctx.fillText(text, x, y);
+      y += LINE_SPACING * size;
+    }
+
+    ctx.fillStyle = "white";
+    drawCenteredText(getDownloadPlotTitle(), 20 * DOWNLOAD_PLOT_SCALE);
+
+    ctx.fillStyle = "light gray";
+    drawCenteredText("by epidemicforecasting.org", 12 * DOWNLOAD_PLOT_SCALE);
+  }})
+};
+
+var plotlyConfig: Partial<Plotly.Config> = {
   displaylogo: false,
   responsive: false,
   scrollZoom: false,
-  modeBarButtonsToAdd: [{
-    name: 'Download plot',
-    icon: Plotly.Icons.camera,
-    click: (gd) => window.saveImage(gd, {name: selected.region, scale: DOWNLOAD_PLOT_SCALE, width: 800, height: 600, format: "png", background: "black", compose: ($canvas, plot, width, height) => {
-      $canvas.width = width;
-      $canvas.height = height;
-      let ctx = $canvas.getContext("2d");
-
-      ctx.filter = "invert(1)";
-      ctx.drawImage(plot, 0, 0);
-
-      const LINE_SPACING = .15;
-
-      let y = 0;
-      function drawCenteredText(text, size){
-        y += (1 + LINE_SPACING) * size;
-        ctx.font = `${Math.round(size)}px "DM Sans"`;
-        let x = (width - ctx.measureText(text).width)/2;
-        ctx.fillText(text, x, y);
-        y += LINE_SPACING * size;
-      }
-
-      ctx.fillStyle = "white";
-      drawCenteredText(getDownloadPlotTitle(), 20 * DOWNLOAD_PLOT_SCALE);
-
-      ctx.fillStyle = "light gray";
-      drawCenteredText("by epidemicforecasting.org", 12 * DOWNLOAD_PLOT_SCALE);
-    }})
-  }],
+  modeBarButtonsToAdd: [customToImage],
   modeBarButtonsToRemove: ['toImage']
 };
 
@@ -301,7 +306,9 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
   // Not cached, load and preprocess
   var tracesUrl = regionRec.data.infected_per_1000.traces_url;
 
-  Plotly.d3.json(`https://storage.googleapis.com/static-covid/static/${tracesUrl}`, function(error, mitigationsData) {
+  console.log(d3.version, Plotly.d3.version);
+
+  d3.json(`https://storage.googleapis.com/static-covid/static/${tracesUrl}`).then((mitigationsData) => {
     // TODO error handling
 
     var highestVals = [];
@@ -334,7 +341,7 @@ function loadGleamvizTraces(regionRec, thenTracesMax) {
           var xStart = new Date(trace.x[0]);
           trace.x[0] = xStart;
           for (let i = 1; i < trace.y.length; ++i) {
-            trace.x[i] = (d3 as any).timeDay.offset(xStart, i);
+            trace.x[i] = d3.timeDay.offset(xStart, i);
           }
         }
         if (trace["hoverinfo"] !== "skip") {
