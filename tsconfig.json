@@ -9,6 +9,6 @@
     "allowJs": true,
     "sourceMap": true,
   },
-  "include": ["./src/scripts/**/*"],
+  "include": ["src/frontend/**/*"],
   "exclude": ["node_modules"]
 }

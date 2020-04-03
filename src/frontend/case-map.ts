@@ -140,9 +140,12 @@ function makeMap(regions_data) {
 }
 
 let caseMap = document.getElementById(MAP_ID);
-if(caseMap !== null){
-  Plotly.d3.json("https://storage.googleapis.com/static-covid/static/data-main-v3.json", (err, data) => {
-    // TODO error handling
-    makeMap(data)
-  });
+if (caseMap !== null) {
+  Plotly.d3.json(
+    "https://storage.googleapis.com/static-covid/static/data-main-v3.json",
+    (err, data) => {
+      // TODO error handling
+      makeMap(data);
+    }
+  );
 }

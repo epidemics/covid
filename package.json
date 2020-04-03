@@ -7,8 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "lint": "prettier --check \"{src/scripts/**, src/server/**, src/server/templates/**}\"",
-    "apply-lint": "prettier --write \"{src/scripts/**, src/server/**, src/server/templates/**}\"",
+    "lint": "prettier --check \"{src/frontend/**, src/server/**, src/server/templates/**}\"",
+    "apply-lint": "prettier --write \"{src/frontend/**, src/server/**, src/server/templates/**}\"",
     "dev": "webpack --color --mode development --watch",
     "build": "webpack --mode production",
     "build-testing": "webpack --mode development"

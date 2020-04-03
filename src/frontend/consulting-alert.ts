@@ -55,6 +55,6 @@ function controlConsultingAlert($alert: HTMLElement, storage: Storage) {
 }
 
 let $alert = document.getElementById(ALERT_ID);
-if($alert){
+if ($alert) {
   controlConsultingAlert($alert, window.sessionStorage);
 }

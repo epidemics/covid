@@ -12,9 +12,12 @@ const MITIGATION_PARAM = "mitigation";
 const CHANNEL_PARAM = "channel";
 const REGION_FALLBACK = "united kingdom";
 
-function controlModelVisualization($container: HTMLElement){
+function controlModelVisualization($container: HTMLElement) {
   // Set starting chart size based on screen size
-  const CHART_HEIGHT_RATIO = Math.max(0.5, Math.min(1, window.innerHeight / $container.clientWidth * 0.7));
+  const CHART_HEIGHT_RATIO = Math.max(
+    0.5,
+    Math.min(1, (window.innerHeight / $container.clientWidth) * 0.7)
+  );
   const CHART_WIDTH = Math.max(500, Math.min(1000, window.innerWidth * 0.5));
   const CHART_HEIGHT = Math.round(CHART_WIDTH * CHART_HEIGHT_RATIO);
 
@@ -232,42 +235,54 @@ function controlModelVisualization($container: HTMLElement){
   let getDownloadPlotTitle = () => {
     let regions = baseData.regions;
 
-    if(!(selected.region in regions)){
+    if (!(selected.region in regions)) {
       return "COVID-19 Forecast";
     }
 
     return `COVID-19 Forecast for ${regions[selected.region].name}`;
-  }
+  };
 
   let customToImage: Plotly.ModeBarButton = {
-    name: 'Download plot',
-    title: '',
+    name: "Download plot",
+    title: "",
     icon: Plotly.Icons.camera,
-    click: (gd) => saveImage(gd, {name: selected.region, scale: DOWNLOAD_PLOT_SCALE, width: 800, height: 600, format: "png", background: "black", compose: ($canvas, plot, width, height) => {
-      $canvas.width = width;
-      $canvas.height = height;
-      let ctx = $canvas.getContext("2d");
+    click: gd =>
+      saveImage(gd, {
+        name: selected.region,
+        scale: DOWNLOAD_PLOT_SCALE,
+        width: 800,
+        height: 600,
+        format: "png",
+        background: "black",
+        compose: ($canvas, plot, width, height) => {
+          $canvas.width = width;
+          $canvas.height = height;
+          let ctx = $canvas.getContext("2d");
 
-      ctx.filter = "invert(1)";
-      ctx.drawImage(plot, 0, 0);
+          ctx.filter = "invert(1)";
+          ctx.drawImage(plot, 0, 0);
 
-      const LINE_SPACING = .15;
+          const LINE_SPACING = 0.15;
 
-      let y = 0;
-      function drawCenteredText(text, size){
-        y += (1 + LINE_SPACING) * size;
-        ctx.font = `${Math.round(size)}px "DM Sans"`;
-        let x = (width - ctx.measureText(text).width)/2;
-        ctx.fillText(text, x, y);
-        y += LINE_SPACING * size;
-      }
+          let y = 0;
+          function drawCenteredText(text, size) {
+            y += (1 + LINE_SPACING) * size;
+            ctx.font = `${Math.round(size)}px "DM Sans"`;
+            let x = (width - ctx.measureText(text).width) / 2;
+            ctx.fillText(text, x, y);
+            y += LINE_SPACING * size;
+          }
 
-      ctx.fillStyle = "white";
-      drawCenteredText(getDownloadPlotTitle(), 20 * DOWNLOAD_PLOT_SCALE);
+          ctx.fillStyle = "white";
+          drawCenteredText(getDownloadPlotTitle(), 20 * DOWNLOAD_PLOT_SCALE);
 
-      ctx.fillStyle = "light gray";
-      drawCenteredText("by epidemicforecasting.org", 12 * DOWNLOAD_PLOT_SCALE);
-    }})
+          ctx.fillStyle = "light gray";
+          drawCenteredText(
+            "by epidemicforecasting.org",
+            12 * DOWNLOAD_PLOT_SCALE
+          );
+        }
+      })
   };
 
   var plotlyConfig: Partial<Plotly.Config> = {
@@ -275,14 +290,15 @@ function controlModelVisualization($container: HTMLElement){
     responsive: false,
     scrollZoom: false,
     modeBarButtonsToAdd: [customToImage],
-    modeBarButtonsToRemove: ['toImage']
+    modeBarButtonsToRemove: ["toImage"]
   };
 
   function makePlotlyReactive() {
-    d3.select("#my_dataviz")
-      .style('padding-bottom', `${CHART_HEIGHT / CHART_WIDTH * 100}%`);
-    d3.select(".js-plotly-plot .plotly .svg-container")
-      .attr("style", null);
+    d3.select("#my_dataviz").style(
+      "padding-bottom",
+      `${(CHART_HEIGHT / CHART_WIDTH) * 100}%`
+    );
+    d3.select(".js-plotly-plot .plotly .svg-container").attr("style", null);
     d3.selectAll(".js-plotly-plot .plotly .main-svg")
       .attr("height", null)
       .attr("width", null)
@@ -290,9 +306,9 @@ function controlModelVisualization($container: HTMLElement){
   }
 
   function renderChart(traces = []) {
-    return Plotly
-      .react($container, traces, layout, plotlyConfig)
-      .then(makePlotlyReactive);
+    return Plotly.react($container, traces, layout, plotlyConfig).then(
+      makePlotlyReactive
+    );
   }
 
   // Checks if the max and traces have been loaded and preprocessed for the given region;
@@ -300,13 +316,18 @@ function controlModelVisualization($container: HTMLElement){
   // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
   function loadGleamvizTraces(regionRec, thenTracesMax) {
     if (typeof regionRec.cached_gleam_traces !== "undefined") {
-      thenTracesMax(regionRec.cached_gleam_traces, regionRec.cached_gleam_max_y);
+      thenTracesMax(
+        regionRec.cached_gleam_traces,
+        regionRec.cached_gleam_max_y
+      );
     }
-    
+
     // Not cached, load and preprocess
     var tracesUrl = regionRec.data.infected_per_1000.traces_url;
 
-    d3.json(`https://storage.googleapis.com/static-covid/static/${tracesUrl}`).then((mitigationsData) => {
+    d3.json(
+      `https://storage.googleapis.com/static-covid/static/${tracesUrl}`
+    ).then(mitigationsData => {
       // TODO error handling
 
       var highestVals = [];
@@ -324,12 +345,12 @@ function controlModelVisualization($container: HTMLElement){
 
             // we want to show SI number, but it has to be integer
             let precision = 3;
-            if(number < Math.pow(10,precision)){
+            if (number < Math.pow(10, precision)) {
               // for small numbers just use the decimal formatting
-              trace.text.push(d3.format("d")(number))
-            }else{
+              trace.text.push(d3.format("d")(number));
+            } else {
               // otherwise use the SI formatting
-              trace.text.push(d3.format(`.${precision}s`)(number))
+              trace.text.push(d3.format(`.${precision}s`)(number));
             }
           });
           highestVals.push(Math.max(...trace.y));
@@ -358,7 +379,8 @@ function controlModelVisualization($container: HTMLElement){
     });
   }
 
-  $("#mitigation input[type=radio]").each((_index: number, elem: HTMLInputElement): void | false => {
+  $("#mitigation input[type=radio]").each(
+    (_index: number, elem: HTMLInputElement): void | false => {
       if (elem.value === selected.mitigation) {
         elem.checked = true;
       }
@@ -367,7 +389,8 @@ function controlModelVisualization($container: HTMLElement){
         selected.mitigation = elem.value;
         updatePlot();
       });
-    });
+    }
+  );
 
   // update the graph
   function updatePlot() {
@@ -441,7 +464,9 @@ function controlModelVisualization($container: HTMLElement){
 
   let $regionList = document.getElementById("regionList");
   let $regionDropdownLabel = document.getElementById("regionDropdownLabel");
-  let $regionFilter = document.getElementById("regionFilter") as HTMLInputElement;
+  let $regionFilter = document.getElementById(
+    "regionFilter"
+  ) as HTMLInputElement;
   let $regionDropdown = document.getElementById(
     "regionDropdown"
   ) as HTMLButtonElement;
@@ -649,6 +674,6 @@ function controlModelVisualization($container: HTMLElement){
 }
 
 let $container = document.getElementById("my_dataviz");
-if($container){
-  controlModelVisualization($container)
+if ($container) {
+  controlModelVisualization($container);
 }

@@ -1,7 +1,6 @@
+import * as Plotly from "plotly.js";
 
-import * as Plotly from "plotly.js"
-
-export const saveImage = (function(){
+export const saveImage = (function() {
   let $offscreenElem = null;
   let $canvas = null;
   const VECTOR_EFFECT_REGEX = /vector-effect: non-scaling-stroke;/g;
@@ -9,15 +8,15 @@ export const saveImage = (function(){
   // adapted form https://stackoverflow.com/questions/20830309/download-file-using-an-ajax-request
   function download(canvas, filename, type) {
     //for IE
-    if (canvas.msToBlob && window.navigator.msSaveBlob) { 
+    if (canvas.msToBlob && window.navigator.msSaveBlob) {
       var blob = canvas.msToBlob(type);
       window.navigator.msSaveBlob(blob, filename);
       return;
     }
 
     /// create an "off-screen" anchor tag
-    var link = document.createElement('a'),
-        event;
+    var link = document.createElement("a"),
+      event;
 
     document.body.appendChild(link);
 
@@ -33,14 +32,26 @@ export const saveImage = (function(){
 
     /// create a "fake" click-event to trigger the download
     if (document.createEvent) {
-
       event = document.createEvent("MouseEvents");
-      event.initMouseEvent("click", true, true, window,
-                        0, 0, 0, 0, 0, false, false, false,
-                        false, 0, null);
+      event.initMouseEvent(
+        "click",
+        true,
+        true,
+        window,
+        0,
+        0,
+        0,
+        0,
+        0,
+        false,
+        false,
+        false,
+        false,
+        0,
+        null
+      );
 
       link.dispatchEvent(event);
-
     } else if (fireEvent) {
       fireEvent("onclick");
     }
@@ -48,46 +59,58 @@ export const saveImage = (function(){
     document.body.removeChild(link);
   }
 
-  return function saveImage(plotlyElement, opts){
+  return function saveImage(plotlyElement, opts) {
     let scale = opts.scale || 1;
     let format = opts.format || "png";
     let name = opts.name || "plot";
     let background = opts.background || "black";
-    let compose = opts.compose || function($canvas, plot, width, height){
-      $canvas.width = width;
-      $canvas.height = height;
-      let ctx = $canvas.getContext("2d");
+    let compose =
+      opts.compose ||
+      function($canvas, plot, width, height) {
+        $canvas.width = width;
+        $canvas.height = height;
+        let ctx = $canvas.getContext("2d");
 
-      ctx.filter = "invert(1)";
-      ctx.drawImage(plot, 0, 0);
-    };
+        ctx.filter = "invert(1)";
+        ctx.drawImage(plot, 0, 0);
+      };
     let width = opts.width || plotlyElement._fullLayout.width;
     let height = opts.height || plotlyElement._fullLayout.height;
 
-    let layout = Object.assign({}, plotlyElement.layout, {paper_bgcolor: background, plot_bgcolor: background, width, height});
+    let layout = Object.assign({}, plotlyElement.layout, {
+      paper_bgcolor: background,
+      plot_bgcolor: background,
+      width,
+      height
+    });
 
-    if($offscreenElem === null){
-      $offscreenElem = document.createElement("div")
+    if ($offscreenElem === null) {
+      $offscreenElem = document.createElement("div");
       $offscreenElem.id = "plot_image_download_container";
       $offscreenElem.style.position = "fixed";
       $offscreenElem.style.left = "-99999px";
-      document.body.appendChild($offscreenElem)
+      document.body.appendChild($offscreenElem);
 
-      $canvas = document.createElement('canvas');
+      $canvas = document.createElement("canvas");
       // document.body.appendChild($canvas);
     }
 
-    Plotly.newPlot($offscreenElem, plotlyElement.data, layout, plotlyElement.config).then(() => {
+    Plotly.newPlot(
+      $offscreenElem,
+      plotlyElement.data,
+      layout,
+      plotlyElement.config
+    ).then(() => {
       let svg = Plotly.Snapshot.toSVG($offscreenElem, "svg", scale);
 
       // fixes the lines becoming thin
-      svg = svg.replace(VECTOR_EFFECT_REGEX,"");     
+      svg = svg.replace(VECTOR_EFFECT_REGEX, "");
       var img = new window.Image();
 
       img.onload = function() {
         compose($canvas, img, width * scale, height * scale);
 
-        download($canvas, `${name}.${format}`, format)
+        download($canvas, `${name}.${format}`, format);
 
         Plotly.purge($offscreenElem);
       };
@@ -97,7 +120,7 @@ export const saveImage = (function(){
         Plotly.downloadImage($offscreenElem, opts);
       };
 
-      img.src = 'data:image/svg+xml;base64,' + btoa(svg);
+      img.src = "data:image/svg+xml;base64," + btoa(svg);
     });
-  }
+  };
 })();
