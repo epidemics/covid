@@ -5,4 +5,3 @@ metadata:
 data:
   APP_VERSION: {{ .Chart.AppVersion | quote }}
   STATIC_URL: {{ .Values.env.staticUrl | quote }}
-  ALLOWED_HOSTS: {{ .Values.ingress.tlsDomainName | quote }}

@@ -1,7 +1,6 @@
 ingress:
   # reserved in GCP, note the differences between loadbalanceR and loadbalance-staging (no R)
   externalIpName: loadbalancer
-  tlsDomainName: epidemicforecasting.org
 
 web:
   replicasCount: 3
