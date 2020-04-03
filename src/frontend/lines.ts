@@ -12,14 +12,10 @@ const MITIGATION_PARAM = "mitigation";
 const CHANNEL_PARAM = "channel";
 const REGION_FALLBACK = "united kingdom";
 
-function controlModelVisualization($container: HTMLElement) {
-  // Set starting chart size based on screen size
-  const CHART_HEIGHT_RATIO = Math.max(
-    0.5,
-    Math.min(1, (window.innerHeight / $container.clientWidth) * 0.7)
-  );
-  const CHART_WIDTH = Math.max(500, Math.min(1000, window.innerWidth * 0.5));
-  const CHART_HEIGHT = Math.round(CHART_WIDTH * CHART_HEIGHT_RATIO);
+const MAX_CHART_WIDTH_RATIO = 2;
+const MAX_CHART_HEIGHT_RATIO = 1;
+
+function controlModelVisualization($container: HTMLElement){
 
   function getUrlParams() {
     let urlString = window.location.href;
@@ -163,8 +159,7 @@ function controlModelVisualization($container: HTMLElement) {
 
   // graph layout
   var layout: Partial<Plotly.Layout> = {
-    width: CHART_WIDTH,
-    height: CHART_HEIGHT,
+    ...calculateChartSize(),
     //margin: { t: 0 },
     paper_bgcolor: "#222028",
     plot_bgcolor: "#222028",
@@ -293,22 +288,25 @@ function controlModelVisualization($container: HTMLElement) {
     modeBarButtonsToRemove: ["toImage"]
   };
 
-  function makePlotlyReactive() {
-    d3.select("#my_dataviz").style(
-      "padding-bottom",
-      `${(CHART_HEIGHT / CHART_WIDTH) * 100}%`
-    );
-    d3.select(".js-plotly-plot .plotly .svg-container").attr("style", null);
-    d3.selectAll(".js-plotly-plot .plotly .main-svg")
-      .attr("height", null)
-      .attr("width", null)
-      .attr("viewBox", `0 0 ${layout.width} ${layout.height}`);
+  function renderChart(traces = []) {
+    return Plotly.react($container, traces, layout, plotlyConfig)
   }
 
-  function renderChart(traces = []) {
-    return Plotly.react($container, traces, layout, plotlyConfig).then(
-      makePlotlyReactive
-    );
+  window.addEventListener('resize', () => {
+    const size = calculateChartSize();
+    Object.assign(layout, size);
+    Plotly.relayout($container, size);
+  });
+
+  function calculateChartSize() {
+    const idealWidth = $container.clientWidth;
+    const idealHeight = window.innerHeight * 0.7;
+    const maxWidth = idealHeight * MAX_CHART_WIDTH_RATIO;
+    const maxHeight = idealWidth * MAX_CHART_HEIGHT_RATIO;
+    return {
+      width: Math.min(idealWidth, maxWidth),
+      height: Math.min(idealHeight, maxHeight)
+    };
   }
 
   // Checks if the max and traces have been loaded and preprocessed for the given region;
