@@ -35,4 +35,5 @@ class Config(BaseConfig):
     # comma separated string of addresses
     ALLOWED_HOSTS: str = "127.0.0.1"
 
+
 CONFIG = Config()
