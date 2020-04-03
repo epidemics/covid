@@ -1,10 +1,11 @@
 ingress:
   # reserved in GCP, note that I forgot `r` at the end
   externalIpName: loadbalance-staging
+  tlsDomainName: staging.epidemicforecasting.org
+
 
 web:
   replicasCount: 2
 
 env:
   staticUrl: "https://storage.googleapis.com/static-covid/static/staging"
-

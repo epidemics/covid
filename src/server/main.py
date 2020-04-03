@@ -6,7 +6,9 @@ from fastapi.templating import Jinja2Templates
 from starlette.responses import RedirectResponse, Response
 from fastapi.middleware.gzip import GZipMiddleware
 
+
 from server.config import CONFIG
+from server.proxy_middleware import ProxyHeadersMiddleware
 
 
 STATIC_URL = os.getenv("STATIC_URL", "/static")
@@ -16,7 +18,9 @@ app = FastAPI()
 app.mount(
     "/static", StaticFiles(directory=os.path.join(SERVER_ROOT, "static")), name="static"
 )
-app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=CONFIG.ALLOWED_HOSTS)
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 templates = Jinja2Templates(directory=os.path.join(SERVER_ROOT, "templates"))
 
