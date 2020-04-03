@@ -1,4 +1,4 @@
-import "object.values";
+import "core-js/features/object/values";
 
 import "./case-map";
 
