@@ -358,9 +358,7 @@ function controlModelVisualization($container: HTMLElement){
     });
   }
 
-  document
-    .querySelectorAll("#mitigation input[type=radio]")
-    .forEach((elem: HTMLInputElement) => {
+  $("#mitigation input[type=radio]").each((_index: number, elem: HTMLInputElement): void | false => {
       if (elem.value === selected.mitigation) {
         elem.checked = true;
       }
