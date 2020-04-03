@@ -14,7 +14,9 @@ SERVER_ROOT = os.path.dirname(__file__)
 
 app = FastAPI()
 app.mount(
-    "/static", StaticFiles(directory=os.path.join(SERVER_ROOT, "static")), name="static"
+    "/static",
+    StaticFiles(directory=os.path.join(SERVER_ROOT, "../static")),
+    name="static",
 )
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 

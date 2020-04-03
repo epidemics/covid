@@ -7,7 +7,11 @@
     "test": "tests"
   },
   "scripts": {
-    "lint": "prettier --check \"{src/server/static/**, src/server/templates/**}\""
+    "lint": "prettier --check \"{src/frontend/**, src/server/**, src/server/templates/**}\"",
+    "apply-lint": "prettier --write \"{src/frontend/**, src/server/**, src/server/templates/**}\"",
+    "dev": "webpack --color --mode development --watch",
+    "build": "webpack --mode production",
+    "build-testing": "webpack --mode development"
   },
   "repository": {
     "type": "git",
@@ -20,6 +24,19 @@
   },
   "homepage": "https://github.com/epidemics/covid#readme",
   "devDependencies": {
-    "prettier": "^1.19.1"
+    "@types/bootstrap": "^4.3.2",
+    "@types/d3": "^5.7.2",
+    "@types/jquery": "^3.3.34",
+    "@types/moment": "^2.13.0",
+    "@types/plotly.js": "^1.50.1",
+    "prettier": "^1.19.1",
+    "ts-loader": "^6.2.2",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "@types/d3": "^5.7.2",
+    "core-js": "^3.6.4"
   }
 }

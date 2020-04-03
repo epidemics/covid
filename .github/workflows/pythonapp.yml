@@ -27,7 +27,7 @@ jobs:
     - name: Prettify the JS Code
       uses: creyD/prettier_action@v2.0
       with:
-        prettier_options: 'prettier --check "{src/server/static/**, src/server/templates/**}"'
+        prettier_options: 'prettier --check "{src/frontend/**, src/server/**, src/server/templates/**}"'
         branch: ${{ github.head_ref }}
 
   tests:
@@ -44,13 +44,18 @@ jobs:
         poetry install
         poetry run pytest tests
 
-  gsutil-upload-staging:
-    if: github.ref == 'refs/heads/staging'
-    name: Upload static Staging
+  gsutil-upload:
+    if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master'
+    name: Upload static
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@master
+
+      - name: Run webpack
+        run: |
+          yarn install
+          yarn run build
 
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
@@ -58,27 +63,15 @@ jobs:
           service_account_email: ${{ secrets.SA_EMAIL }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
-      - name: Upload
+      - name: Upload to staging
+        if: github.ref == 'refs/heads/staging'
         run: |
-             gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read src/server/static/* gs://static-covid/static/staging/
+             gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read src/static/* gs://static-covid/static/staging/
 
-  gsutil-upload-production:
-    if: github.ref == 'refs/heads/master'
-    name: Upload static Production
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@master
-
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-        with:
-          version: '270.0.0'
-          service_account_email: ${{ secrets.SA_EMAIL }}
-          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-
-      - name: Upload
+      - name: Upload to production
+        if: github.ref == 'refs/heads/master'
         run: |
-             gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read src/server/static/* gs://static-covid/static/production/
+            gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read src/static/* gs://static-covid/static/production/
 
   setup-build-publish-deploy:
     if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master'
@@ -99,6 +92,7 @@ jobs:
     # Configure docker to use the gcloud command-line tool as a credential helper
     - run: |
         gcloud auth configure-docker
+
     # Build the Docker image
     - name: Build
       run: |

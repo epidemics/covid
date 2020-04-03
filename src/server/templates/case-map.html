@@ -2,9 +2,6 @@
 {% set title = 'COVID-19 Case Map' %}
 {% set active_page = 'case-map' %}
 {%- block additional_js_pre -%}
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
   crossorigin="" />
@@ -39,7 +36,7 @@
   <div class="row"></div>
 </div>
 
-{% endblock %} {% block additional_js %}
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script src="{{STATIC_URL}}/js/case-map.js"></script>
+{% endblock %} 
+{% block additional_js %}
+<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 {% endblock %}

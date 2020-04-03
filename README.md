@@ -61,7 +61,7 @@ npm test
 To automatically lint your files run
 
 ```
-prettier --write "{src/server/static/**, src/server/templates/**}"
+prettier --write "{src/frontend/**, src/server/**, src/server/templates/**}"
 ```
 
 ## Development flow
