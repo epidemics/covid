@@ -1,12 +1,11 @@
 import * as moment from "moment";
 
-// control the consulting alert, using a Storage object
-function controlConsultingAlert(storage) {
-  let KEY = "consulting_dismissed";
-  let ALERT_ID = "consultingAlert";
-  let DISMISSAL_DURATION = { days: 1 };
+const KEY = "consulting_dismissed";
+const DISMISSAL_DURATION = { days: 1 };
+const ALERT_ID = "consultingAlert";
 
-  let $alert = document.getElementById(ALERT_ID);
+// control the consulting alert, using a Storage object
+function controlConsultingAlert($alert: HTMLElement, storage: Storage) {
   let alertId = $alert.dataset.id;
 
   function shouldDisplay() {
@@ -55,4 +54,7 @@ function controlConsultingAlert(storage) {
   }
 }
 
-controlConsultingAlert(window.sessionStorage);
+let $alert = document.getElementById(ALERT_ID);
+if($alert){
+  controlConsultingAlert($alert, window.sessionStorage);
+}
