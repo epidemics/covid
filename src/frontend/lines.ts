@@ -14,6 +14,7 @@ const REGION_FALLBACK = "united kingdom";
 
 const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;
+const MIN_CHART_SIZE = 500;
 
 function controlModelVisualization($container: HTMLElement){
 
@@ -288,26 +289,45 @@ function controlModelVisualization($container: HTMLElement){
     modeBarButtonsToRemove: ["toImage"]
   };
 
-  function renderChart(traces = []) {
-    return Plotly.react($container, traces, layout, plotlyConfig)
-  }
-
-  window.addEventListener('resize', () => {
-    const size = calculateChartSize();
-    Object.assign(layout, size);
-    Plotly.relayout($container, size);
-  });
-
   function calculateChartSize() {
     const idealWidth = $container.clientWidth;
     const idealHeight = window.innerHeight * 0.7;
     const maxWidth = idealHeight * MAX_CHART_WIDTH_RATIO;
     const maxHeight = idealWidth * MAX_CHART_HEIGHT_RATIO;
     return {
-      width: Math.min(idealWidth, maxWidth),
-      height: Math.min(idealHeight, maxHeight)
+      width: Math.max(Math.min(idealWidth, maxWidth), MIN_CHART_SIZE),
+      height: Math.max(Math.min(idealHeight, maxHeight), MIN_CHART_SIZE)
     };
   }
+
+  function makePlotlyResponsive() {
+    d3.select("#my_dataviz")
+      .style('padding-bottom', `${layout.height / layout.width * 100}%`);
+    d3.select(".js-plotly-plot .plotly .svg-container")
+      .attr("style", null);
+    d3.selectAll(".js-plotly-plot .plotly .main-svg")
+      .attr("height", null)
+      .attr("width", null)
+      .attr("viewBox", `0 0 ${layout.width} ${layout.height}`);
+  }
+
+
+  function renderChart(traces) {
+    Plotly.react($container, traces, layout, plotlyConfig)
+      .then(makePlotlyResponsive);
+  }
+
+  renderChart();
+  $container.on('plotly_restyle', makePlotlyResponsive);
+  $container.on('plotly_relayout', makePlotlyResponsive);
+
+  window.addEventListener('resize', () => {
+    const size = calculateChartSize();
+    if (size.width !== layout.width || size.height !== layout.height) {
+      Object.assign(layout, size);
+      Plotly.relayout($container, size);
+    }
+  });
 
   // Checks if the max and traces have been loaded and preprocessed for the given region;
   // if not, loads them and does preprocessing; then caches it in the region object.
