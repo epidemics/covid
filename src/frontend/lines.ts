@@ -312,13 +312,16 @@ function controlModelVisualization($container: HTMLElement){
   }
 
 
-  function renderChart(traces) {
+  function renderChart(traces = []) {
     Plotly.react($container, traces, layout, plotlyConfig)
       .then(makePlotlyResponsive);
   }
 
   renderChart();
+  // `on` is not part of the HTMLElement interface, but Plotly adds it
+  // @ts-ignore
   $container.on('plotly_restyle', makePlotlyResponsive);
+  // @ts-ignore
   $container.on('plotly_relayout', makePlotlyResponsive);
 
   window.addEventListener('resize', () => {
