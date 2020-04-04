@@ -30,7 +30,7 @@ function controlModelVisualization($container: HTMLElement){
     };
   }
 
-  let baseData, manualData;
+  let baseData;
   let selected = getUrlParams();
 
   function getMitigationId() {
@@ -439,24 +439,6 @@ function controlModelVisualization($container: HTMLElement){
 
     const lastTrace = traces[traces.length - 1];
     if (lastTrace && lastTrace.name === line_title) return;
-
-    const regionData = manualData.regions[selected.region];
-    if (typeof regionData !== "object") return;
-
-    const capacity = regionData.beds_p_100k / 100000 / CRITICAL_CARE_RATE;
-    if (typeof capacity !== "number" || isNaN(capacity)) return;
-
-    /* NOTE: Temporarily disabled due to possible inconsistencies and misinterpretation. */
-    /*
-    traces.push({
-      x: d3.extent(traces[0].x),
-      y: [capacity, capacity],
-      name: line_title,
-      mode: "lines",
-      line: { color: "#be3a40", dash: "solid", width: 1.6 },
-      hoverinfo: 'y'
-    });
-    */
   }
 
   function updateRegionInText(region) {
@@ -669,12 +651,11 @@ function controlModelVisualization($container: HTMLElement){
   Promise.all(
     [
       `data-${selected.channel}-v3.json`,
-      "data-manual-estimates-v1.json"
     ].map(path =>
       d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
     )
   ).then(data => {
-    [baseData, manualData] = data;
+    [baseData] = data;
 
     // populate the dropdown menu with countries from received data
     let listOfRegions = Object.keys(baseData.regions);
