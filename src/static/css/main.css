@@ -847,24 +847,6 @@ div.tooltip {
   position: relative;
 }
 
-/*
-@media only screen and (max-width: 767px) {
-  .legend {
-    margin-top: 111%;
-  } */
-
-@media only screen and (min-width: 768px) and (max-width: 991px) {
-  .legend {
-    min-height: 526px;
-  }
-}
-
-@media only screen and (max-width: 767px) {
-  .legend {
-    margin-top: 20px;
-    margin-bottom: 18px;
-  }
-}
 
 /*
 * General
