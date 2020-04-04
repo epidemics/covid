@@ -19,5 +19,10 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'src/static'),
   },
-  externals: {jQuery: "jQuery", d3: "d3", "plotly.js": "Plotly", "moment": "moment"}
+  externals: {
+    jQuery: "jQuery", 
+    d3: "d3", 
+    "plotly.js": "Plotly", 
+    "moment": "moment"
+  }
 };

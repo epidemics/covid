@@ -49,13 +49,13 @@ poetry run pytest tests
 
 install the needed packages locally with
 ```
-npm i
+yarn install
 ```
 
 Then run the linting tests with
 
 ```
-npm test
+yarn test
 ```
 
 To automatically lint your files run
