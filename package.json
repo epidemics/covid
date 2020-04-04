@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "lint": "prettier --check \"frontend/**\" \"server/**\" \"static/css/**\"",
-    "apply-lint": "prettier --write \"frontend/**\" \"server/**\" \"static/css/**\"",
+    "apply-lint": "prettier --write \"frontend/**\" \"server/*\" \"static/css/**\"",
     "build": "ts-node --skip-project build.ts",
     "build-dev": "env NODE_ENV=development ts-node --skip-project build.ts",
     "dev": "nodemon"
@@ -56,5 +56,8 @@
       "webpack.config.ts"
     ],
     "ext": "ts,tsc,html"
+  },
+  "prettier": {
+    "htmlWhitespaceSensitivity": "ignore"
   }
 }

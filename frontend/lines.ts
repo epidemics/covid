@@ -16,8 +16,7 @@ const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;
 const MIN_CHART_SIZE = 500;
 
-function controlModelVisualization($container: HTMLElement){
-
+function controlModelVisualization($container: HTMLElement) {
   function getUrlParams() {
     let urlString = window.location.href;
     let url = new URL(urlString);
@@ -162,7 +161,7 @@ function controlModelVisualization($container: HTMLElement){
   var layout: Partial<Plotly.Layout> = {
     ...calculateChartSize(),
     //margin: { t: 0 },
-    margin: {r: 20},
+    margin: { r: 20 },
     paper_bgcolor: "#222028",
     plot_bgcolor: "#222028",
     xaxis: {
@@ -302,28 +301,27 @@ function controlModelVisualization($container: HTMLElement){
   }
 
   function makePlotlyResponsive() {
-    d3.select(".js-plotly-plot .plotly .svg-container")
-      .attr("style", null);
+    d3.select(".js-plotly-plot .plotly .svg-container").attr("style", null);
     d3.selectAll(".js-plotly-plot .plotly .main-svg")
       .attr("height", null)
       .attr("width", null)
       .attr("viewBox", `0 0 ${layout.width} ${layout.height}`);
   }
 
-
   function renderChart(traces = []) {
-    Plotly.react($container, traces, layout, plotlyConfig)
-      .then(makePlotlyResponsive);
+    Plotly.react($container, traces, layout, plotlyConfig).then(
+      makePlotlyResponsive
+    );
   }
 
   renderChart();
   // `on` is not part of the HTMLElement interface, but Plotly adds it
   // @ts-ignore
-  $container.on('plotly_restyle', makePlotlyResponsive);
+  $container.on("plotly_restyle", makePlotlyResponsive);
   // @ts-ignore
-  $container.on('plotly_relayout', makePlotlyResponsive);
+  $container.on("plotly_relayout", makePlotlyResponsive);
 
-  window.addEventListener('resize', () => {
+  window.addEventListener("resize", () => {
     const size = calculateChartSize();
     if (size.width !== layout.width || size.height !== layout.height) {
       Object.assign(layout, size);
