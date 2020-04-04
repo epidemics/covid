@@ -6,17 +6,6 @@ env:
   IMAGE_NAME: covid
 
 jobs:
-  checks:
-    name: checks
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-
-    - name: Black Code Formatter
-      uses: lgeiger/black-action@v1.0.1
-      with:
-        args: "src/ tests/ --check"
-
   pretify-js:
     runs-on: ubuntu-latest
     steps:
@@ -27,22 +16,8 @@ jobs:
     - name: Prettify the JS Code
       uses: creyD/prettier_action@v2.0
       with:
-        prettier_options: 'prettier --check "{src/frontend/**, src/server/**, src/server/templates/**}"'
+        prettier_options: 'prettier --check "frontend/**"" "server/**"" "static/css/**""'
         branch: ${{ github.head_ref }}
-
-  tests:
-    name: tests
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - uses: actions/setup-python@master
-      with:
-        python-version: 3.8
-    - run: |
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-        source $HOME/.poetry/env
-        poetry install
-        poetry run pytest tests
 
   gsutil-upload:
     if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master'
