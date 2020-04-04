@@ -1,23 +1,24 @@
-const path = require('path');
+import {Configuration} from "webpack";
+import * as path from 'path';
 
-module.exports = {
+let config: Configuration = {
   entry: './src/frontend/index.ts',
   devtool: "source-map",
   module: {
     rules: [
       {
-        test: /\.ts$/,
+        test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
-    extensions: [ '.ts', '.js' ],
+    extensions: [ '.ts', '.tsx', '.js' ],
   },
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'src/static'),
+    path: path.resolve(__dirname, 'dist/'),
   },
   externals: {
     jQuery: "jQuery", 
@@ -26,3 +27,5 @@ module.exports = {
     "moment": "moment"
   }
 };
+
+export default config;

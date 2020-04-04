@@ -7,4 +7,5 @@ web:
 
 env:
   staticUrl: "https://storage.googleapis.com/static-covid/static/staging"
+  nodeEnv: "production"
 

@@ -12,10 +12,9 @@
   "scripts": {
     "lint": "prettier --check \"{src/frontend/**, src/server/**, src/server/templates/**}\"",
     "apply-lint": "prettier --write \"{src/frontend/**, src/server/**, src/server/templates/**}\"",
-    "dev": "webpack --color --mode development --watch",
-    "build": "webpack --mode production",
-    "build-testing": "webpack --mode development",
-    "serve": "yarn nodemon"
+    "build": "ts-node --skip-project build.ts",
+    "build-dev": "env NODE_ENV=development ts-node --skip-project build.ts",
+    "dev": "nodemon"
   },
   "repository": {
     "type": "git",
@@ -26,34 +25,36 @@
     "url": "https://github.com/epidemics/covid/issues"
   },
   "homepage": "https://github.com/epidemics/covid#readme",
-  "dependencies": {
+  "devDependencies": {
     "@types/bootstrap": "^4.3.2",
     "@types/compression": "^1.7.0",
     "@types/d3": "^5.7.2",
-    "@types/express": "^4.17.4",
     "@types/jquery": "^3.3.34",
     "@types/moment": "^2.13.0",
     "@types/plotly.js": "^1.50.1",
-    "compression": "^1.7.4",
     "core-js": "^3.6.4",
-    "express.js": "^1.0.0",
-    "nodemon": "^2.0.2",
-    "nunjucks": "^3.2.1",
     "prettier": "^1.19.1",
     "ts-loader": "^6.2.2",
-    "ts-node": "^8.8.1",
+    "webpack-dev-middleware": "^3.7.2",
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "@types/express": "^4.17.4",
+    "compression": "^1.7.4",
+    "nunjucks": "^3.2.1",
     "typescript": "^3.8.3",
+    "ts-node": "^8.8.1",
     "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "@types/webpack": "^4.41.10"
   },
   "nodemonConfig": {
-    "exec": "yarn ts-node --skip-project src/server/main.ts",
+    "exec": "ts-node --skip-project src/server/server.ts",
     "watch": [
-      "src/server"
+      "src/server",
+      "package.json",
+      "webpack.config.ts"
     ],
     "ext": "ts,tsc,html"
-  },
-  "devDependencies": {
-    "webpack-dev-middleware": "^3.7.2"
   }
 }
