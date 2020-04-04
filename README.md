@@ -61,7 +61,7 @@ yarn test
 To automatically lint your files run
 
 ```
-prettier --write "{frontend/**, server/**, server/templates/**}"
+prettier --write "frontend/**" "server/*" "static/css/**"
 ```
 
 ## Development flow

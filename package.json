@@ -10,7 +10,7 @@
     "Mathijs Henquet <mathijs.henquet@gmail.com>"
   ],
   "scripts": {
-    "lint": "prettier --check \"frontend/**\" \"server/**\" \"static/css/**\"",
+    "lint": "prettier --check \"frontend/**\" \"server/*\" \"static/css/**\"",
     "apply-lint": "prettier --write \"frontend/**\" \"server/*\" \"static/css/**\"",
     "build": "ts-node --skip-project build.ts",
     "build-dev": "env NODE_ENV=development ts-node --skip-project build.ts",
