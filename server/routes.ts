@@ -48,9 +48,9 @@ router.get("/about", (req, res) =>
   res.render("about.html")
 );
 
-router.get("/status", (req, res) => {
-  return {"app_version": APP_VERSION}
-});
+router.get("/status", (req, res) => 
+  res.json({"app_version": APP_VERSION, "NODE_ENV": env.NODE_ENV || "none"})
+);
 
 // Not sure why, but we had a lot of 404 in access log for this URL
 router.get("/containment.", (req, res) =>

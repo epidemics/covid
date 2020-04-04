@@ -6,7 +6,7 @@ import * as nunjucks from "nunjucks";
 import * as webpack from "webpack";
 import * as webpackDev from "webpack-dev-middleware";
 
-import webpackConfig from "../../webpack.config";
+import webpackConfig from "../webpack.config";
 import { router, navigation_bar } from "./routes";
 
 let app = express()
@@ -53,5 +53,5 @@ app.use(router);
 
 // finally serve
 app.listen(8000, function(){
-  console.log("Server started")
+  console.log("Server started "+app.get('env'))
 })

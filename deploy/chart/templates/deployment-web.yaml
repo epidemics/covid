@@ -34,7 +34,6 @@ spec:
           # TODO: solve via entrypoint
           ports:
           - containerPort: 8000
-          workingDir: "/usr/app/src/server"
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}

@@ -27,7 +27,7 @@ and visit http://localhost:8000 (main `server`).
 
 4. Start up the `fastapi` server:
 
-        $ cd src/server
+        $ cd server
         $ uvicorn main:app --reload
 
 ## Getting inside the container
@@ -61,7 +61,7 @@ yarn test
 To automatically lint your files run
 
 ```
-prettier --write "{src/frontend/**, src/server/**, src/server/templates/**}"
+prettier --write "{frontend/**, server/**, server/templates/**}"
 ```
 
 ## Development flow
