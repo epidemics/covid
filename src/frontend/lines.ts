@@ -301,8 +301,6 @@ function controlModelVisualization($container: HTMLElement){
   }
 
   function makePlotlyResponsive() {
-    d3.select("#my_dataviz")
-      .style('padding-bottom', `${layout.height / layout.width * 100}%`);
     d3.select(".js-plotly-plot .plotly .svg-container")
       .attr("style", null);
     d3.selectAll(".js-plotly-plot .plotly .main-svg")
