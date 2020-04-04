@@ -32,11 +32,6 @@ spec:
           image: {{ .Values.imageName }}
           imagePullPolicy: Always
           # TODO: solve via entrypoint
-          command:
-          - uvicorn
-          - main:app
-          - --host
-          - 0.0.0.0
           ports:
           - containerPort: 8000
           workingDir: "/usr/app/src/server"

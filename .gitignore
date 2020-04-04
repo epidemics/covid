@@ -16,7 +16,5 @@ node_modules
 .DS_Store
 .DS_Store?
 
-src/static/bundle.js
-src/static/bundle.js.map
-out/
+dist/
 yarn-error.log
