@@ -8,6 +8,6 @@
     "allowJs": true,
     "sourceMap": true,
   },
-  "include": ["src/frontend/**/*"],
+  "include": ["frontend/**/*"],
   "exclude": ["node_modules"]
 }

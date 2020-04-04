@@ -10,8 +10,8 @@
     "Mathijs Henquet <mathijs.henquet@gmail.com>"
   ],
   "scripts": {
-    "lint": "prettier --check \"{src/frontend/**, src/server/**, src/server/templates/**}\"",
-    "apply-lint": "prettier --write \"{src/frontend/**, src/server/**, src/server/templates/**}\"",
+    "lint": "prettier --check \"frontend/**\" \"server/**\" \"static/css/**\"",
+    "apply-lint": "prettier --write \"frontend/**\" \"server/**\" \"static/css/**\"",
     "build": "ts-node --skip-project build.ts",
     "build-dev": "env NODE_ENV=development ts-node --skip-project build.ts",
     "dev": "nodemon"
@@ -49,9 +49,9 @@
     "@types/webpack": "^4.41.10"
   },
   "nodemonConfig": {
-    "exec": "ts-node --skip-project src/server/server.ts",
+    "exec": "ts-node --skip-project server/server.ts",
     "watch": [
-      "src/server",
+      "server",
       "package.json",
       "webpack.config.ts"
     ],

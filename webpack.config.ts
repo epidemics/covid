@@ -2,7 +2,7 @@ import {Configuration} from "webpack";
 import * as path from 'path';
 
 let config: Configuration = {
-  entry: './src/frontend/index.ts',
+  entry: './frontend/index.ts',
   devtool: "source-map",
   module: {
     rules: [
