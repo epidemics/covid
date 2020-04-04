@@ -273,10 +273,6 @@ span.infections-confirmed {
   justify-content: space-evenly;
 }
 
-#my_dataviz {
-  width: 100%;
-}
-
 .mitigation-strength-heading {
   font-size: 24px;
 }
@@ -752,6 +748,11 @@ strong {
   .main-wrapper {
     padding: 15px 15px;
   }
+
+  #my_dataviz{
+    margin: 0 -24px;
+  }
+
   .detail-button {
     text-align: left
   }
@@ -832,9 +833,6 @@ div.tooltip {
 }
 
 #my_dataviz {
-  width: 100%;
-  height: 0;
-  padding-bottom: 100%;
   vertical-align: top;
   overflow: hidden;
 }

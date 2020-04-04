@@ -162,6 +162,7 @@ function controlModelVisualization($container: HTMLElement){
   var layout: Partial<Plotly.Layout> = {
     ...calculateChartSize(),
     //margin: { t: 0 },
+    margin: {r: 20},
     paper_bgcolor: "#222028",
     plot_bgcolor: "#222028",
     xaxis: {
@@ -189,7 +190,7 @@ function controlModelVisualization($container: HTMLElement){
       title: "Active infections (% of population)",
       titlefont: {
         family: "DM Sans, sans-serif",
-        size: 18,
+        size: 16,
         color: "white"
       },
       tickfont: {
@@ -211,8 +212,8 @@ function controlModelVisualization($container: HTMLElement){
       zeroline: true,
       zerolinecolor: "#fff",
       zerolinewidth: 1,
-
-      range: [0, 1]
+      // this way the axis does not change width on data load
+      range: [0, 0.099]
     },
     showlegend: true,
     legend: {
@@ -301,8 +302,6 @@ function controlModelVisualization($container: HTMLElement){
   }
 
   function makePlotlyResponsive() {
-    d3.select("#my_dataviz")
-      .style('padding-bottom', `${layout.height / layout.width * 100}%`);
     d3.select(".js-plotly-plot .plotly .svg-container")
       .attr("style", null);
     d3.selectAll(".js-plotly-plot .plotly .main-svg")
