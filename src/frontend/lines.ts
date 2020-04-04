@@ -12,14 +12,11 @@ const MITIGATION_PARAM = "mitigation";
 const CHANNEL_PARAM = "channel";
 const REGION_FALLBACK = "united kingdom";
 
-function controlModelVisualization($container: HTMLElement) {
-  // Set starting chart size based on screen size
-  const CHART_HEIGHT_RATIO = Math.max(
-    0.5,
-    Math.min(1, (window.innerHeight / $container.clientWidth) * 0.7)
-  );
-  const CHART_WIDTH = Math.max(500, Math.min(1000, window.innerWidth * 0.5));
-  const CHART_HEIGHT = Math.round(CHART_WIDTH * CHART_HEIGHT_RATIO);
+const MAX_CHART_WIDTH_RATIO = 2;
+const MAX_CHART_HEIGHT_RATIO = 1;
+const MIN_CHART_SIZE = 500;
+
+function controlModelVisualization($container: HTMLElement){
 
   function getUrlParams() {
     let urlString = window.location.href;
@@ -163,9 +160,9 @@ function controlModelVisualization($container: HTMLElement) {
 
   // graph layout
   var layout: Partial<Plotly.Layout> = {
-    width: CHART_WIDTH,
-    height: CHART_HEIGHT,
+    ...calculateChartSize(),
     //margin: { t: 0 },
+    margin: {r: 20},
     paper_bgcolor: "#222028",
     plot_bgcolor: "#222028",
     xaxis: {
@@ -193,7 +190,7 @@ function controlModelVisualization($container: HTMLElement) {
       title: "Active infections (% of population)",
       titlefont: {
         family: "DM Sans, sans-serif",
-        size: 18,
+        size: 16,
         color: "white"
       },
       tickfont: {
@@ -215,8 +212,8 @@ function controlModelVisualization($container: HTMLElement) {
       zeroline: true,
       zerolinecolor: "#fff",
       zerolinewidth: 1,
-
-      range: [0, 1]
+      // this way the axis does not change width on data load
+      range: [0, 0.099]
     },
     showlegend: true,
     legend: {
@@ -293,23 +290,46 @@ function controlModelVisualization($container: HTMLElement) {
     modeBarButtonsToRemove: ["toImage"]
   };
 
-  function makePlotlyReactive() {
-    d3.select("#my_dataviz").style(
-      "padding-bottom",
-      `${(CHART_HEIGHT / CHART_WIDTH) * 100}%`
-    );
-    d3.select(".js-plotly-plot .plotly .svg-container").attr("style", null);
+  function calculateChartSize() {
+    const idealWidth = $container.clientWidth;
+    const idealHeight = window.innerHeight * 0.7;
+    const maxWidth = idealHeight * MAX_CHART_WIDTH_RATIO;
+    const maxHeight = idealWidth * MAX_CHART_HEIGHT_RATIO;
+    return {
+      width: Math.max(Math.min(idealWidth, maxWidth), MIN_CHART_SIZE),
+      height: Math.max(Math.min(idealHeight, maxHeight), MIN_CHART_SIZE)
+    };
+  }
+
+  function makePlotlyResponsive() {
+    d3.select(".js-plotly-plot .plotly .svg-container")
+      .attr("style", null);
     d3.selectAll(".js-plotly-plot .plotly .main-svg")
       .attr("height", null)
       .attr("width", null)
       .attr("viewBox", `0 0 ${layout.width} ${layout.height}`);
   }
 
+
   function renderChart(traces = []) {
-    return Plotly.react($container, traces, layout, plotlyConfig).then(
-      makePlotlyReactive
-    );
+    Plotly.react($container, traces, layout, plotlyConfig)
+      .then(makePlotlyResponsive);
   }
+
+  renderChart();
+  // `on` is not part of the HTMLElement interface, but Plotly adds it
+  // @ts-ignore
+  $container.on('plotly_restyle', makePlotlyResponsive);
+  // @ts-ignore
+  $container.on('plotly_relayout', makePlotlyResponsive);
+
+  window.addEventListener('resize', () => {
+    const size = calculateChartSize();
+    if (size.width !== layout.width || size.height !== layout.height) {
+      Object.assign(layout, size);
+      Plotly.relayout($container, size);
+    }
+  });
 
   // Checks if the max and traces have been loaded and preprocessed for the given region;
   // if not, loads them and does preprocessing; then caches it in the region object.
