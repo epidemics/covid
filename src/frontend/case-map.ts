@@ -67,7 +67,7 @@ function makeMap(regions_data) {
       type: "choroplethmapbox",
       name: "COVID-19: Active infections estimate",
       geojson:
-        "https://storage.googleapis.com/static-covid/static/casemap-geo.json",
+        "/static/static_casemap-geo.json",
       featureidkey: "properties.iso_a3",
       locations: get_locations(regions_data["regions"]),
       z: get_z(regions_data["regions"]),
