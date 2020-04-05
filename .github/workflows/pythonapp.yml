@@ -19,9 +19,10 @@ jobs:
         yarn run build
 
     - name: Lint
-      run: yarn run lint
+      run: yarn run lint-check
 
-    - name: 
+    - name: Tests
+      run: yarn run test
 
   gsutil-upload:
     if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master'

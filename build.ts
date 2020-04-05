@@ -2,7 +2,7 @@
 import webpackConfig from './webpack.config';
 import { execSync } from 'child_process';
 import { resolve } from 'path';
-import * as webpack from 'webpack';
+import webpack from 'webpack';
 
 let dist = resolve(__dirname, "./dist");
 

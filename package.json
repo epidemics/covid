@@ -10,8 +10,9 @@
     "Mathijs Henquet <mathijs.henquet@gmail.com>"
   ],
   "scripts": {
-    "lint": "prettier --check \"frontend/**\" \"server/*\" \"static/css/**\"",
-    "apply-lint": "prettier --write \"frontend/**\" \"server/*\" \"static/css/**\"",
+    "lint": "yarn run lint-check",
+    "lint-write": "prettier --write \"frontend/**\" \"server/*\" \"static/css/**\"",
+    "lint-check": "prettier --check \"frontend/**\" \"server/*\" \"static/css/**\"",
     "build": "env NODE_ENV=production ts-node build.ts",
     "build-dev": "env NODE_ENV=development ts-node build.ts",
     "serve": "ts-node server/server.ts",
@@ -29,7 +30,6 @@
   "homepage": "https://github.com/epidemics/covid#readme",
   "devDependencies": {
     "@types/bootstrap": "^4.3.2",
-    "@types/chai": "^4.2.11",
     "@types/compression": "^1.7.0",
     "@types/d3": "^5.7.2",
     "@types/jquery": "^3.3.34",
@@ -39,7 +39,6 @@
     "@types/plotly.js": "^1.50.1",
     "@types/supertest": "^2.0.8",
     "@types/webpack-dev-middleware": "^3.7.0",
-    "chai": "^4.2.0",
     "core-js": "^3.6.4",
     "jest": "^25.2.7",
     "mocha": "^7.1.1",
