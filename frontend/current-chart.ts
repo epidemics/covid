@@ -231,8 +231,8 @@ function addHistoricalCases(target, regionData, cb){
 
   let reportedConfirmed: Plotly.Data = {
     mode: "markers",
-    x: [],
-    y: [],
+    x: reportedXs,
+    y: reportedYs,
     line: {color: "#fff"},
     type: "scatter",
     name: "Confirmed",

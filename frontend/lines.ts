@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import * as Plotly from "plotly.js";
 import { string_score } from "./string_score";
 import { saveImage } from "./custom-plotly-image-saver";
+import { updateCurrentGraph } from "./current-chart";
 
 const GLEAMVIZ_TRACE_SCALE = 1000; // it gives infections per 1000
 const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
@@ -30,6 +31,7 @@ function controlModelVisualization($container: HTMLElement) {
   }
 
   let baseData;
+  let measureData;
   let selected = getUrlParams();
 
   function getMitigationId() {
@@ -344,8 +346,8 @@ function controlModelVisualization($container: HTMLElement) {
   }
 
   function makePlotlyResponsive() {
-    d3.select(".js-plotly-plot .plotly .svg-container").attr("style", null);
-    d3.selectAll(".js-plotly-plot .plotly .main-svg")
+    d3.select("#my_dataviz .js-plotly-plot .plotly .svg-container").attr("style", null);
+    d3.selectAll("#my_dataviz .js-plotly-plot .plotly .main-svg")
       .attr("height", null)
       .attr("width", null)
       .attr("viewBox", `0 0 ${layout.width} ${layout.height}`);
@@ -494,6 +496,11 @@ function controlModelVisualization($container: HTMLElement) {
 
     // update the summary statistics per selected mitigation strength
     updateStatistics();
+
+    let regionData = baseData.regions[selected.region];
+    let measures = measureData[regionData.iso_alpha_3];
+
+    updateCurrentGraph(regionData, measures);
 
     // Load and preprocess the per-region graph data
     loadGleamvizTraces(
@@ -722,13 +729,17 @@ function controlModelVisualization($container: HTMLElement) {
     updateInfectionTotals();
   }
 
+  let sources = [
+    `data-${selected.channel}-v3.json`,
+    `data-${selected.channel}-containments.json`  
+  ]
+
   // Load the basic data (estimates and graph URLs) for all generated countries
-  Promise.all(
-    [`data-${selected.channel}-v3.json`].map(path =>
+  Promise.all(sources.map(path =>
       d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
     )
   ).then(data => {
-    [baseData] = data;
+    [baseData, measureData] = data;
 
     // populate the dropdown menu with countries from received data
     let listOfRegions = Object.keys(baseData.regions);
