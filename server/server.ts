@@ -1,7 +1,11 @@
-import * as express from "express";
+import { env } from "process";
+import { execSync } from "child_process";
 import * as path from "path";
+
+import * as express from "express";
 import * as compression from "compression";
 import * as nunjucks from "nunjucks";
+import * as morgan from "morgan";
 
 import * as webpack from "webpack";
 import * as webpackDev from "webpack-dev-middleware";
@@ -9,10 +13,15 @@ import * as webpackDev from "webpack-dev-middleware";
 import webpackConfig from "../webpack.config";
 import { router, navigation_bar } from "./routes";
 
+const PORT = process.env.PORT || 8000;
+
 let app = express();
 
 // set up compression, threshold default is 1 kb
 app.use(compression());
+
+// set up logging
+app.use(morgan(app.get('env') === "development" ? "dev" : "short"));
 
 // set up nunjucks as templating engine
 nunjucks.configure(path.join(__dirname, "templates"), {
@@ -48,7 +57,18 @@ if (app.get("env") === "development") {
 app.locals.navigation_bar = navigation_bar;
 app.use(router);
 
+// status route
+const APP_NAME: string = `${env.npm_package_name} ${env.npm_package_version}`;
+const GIT_COMMIT = execSync("git rev-parse HEAD").toString().trim();
+app.get("/status", (req, res) =>
+  res.json({ 
+    app: APP_NAME, 
+    env: app.get("env"), 
+    git: GIT_COMMIT
+  })
+);
+
 // finally serve
-app.listen(8000, function() {
-  console.log("Server started " + app.get("env"));
+app.listen(PORT, function() {
+  console.log(`Running ${APP_NAME} on *:${PORT} with mode ${app.get('env')}`);
 });
