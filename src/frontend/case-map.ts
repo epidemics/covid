@@ -30,7 +30,16 @@ function makeMap(regions_data) {
   function get_z(dict) {
     return Object.keys(dict).map(function(country) {
       const risk = get_risk(dict[country]);
-      return Math.log(risk * 1000) / Math.log(2);
+      var z = Math.log(risk * 1000) / Math.log(2);
+        //if (z == -Infinity) {
+        //    console.log(country)
+        //    console.log("FT_Infected:")
+        //    console.log(get_last_data(dict[country])["FT_Infected"])
+        //    console.log("population:")
+        //    console.log(dict[country]["population"])
+        //}
+      //console.log(z)
+      return z;
     });
   }
 
@@ -59,8 +68,12 @@ function makeMap(regions_data) {
     });
   }
 
-  var tick_values = [-3, -1, 1, 3, 5];
+  var tick_values = [-3, -1, 1, 3, 5, 7, 9, 11];
   var tick_names = tick_values.map(value_to_labels);
+
+  var z_data = get_z(regions_data["regions"]);
+  var z_max = Math.max(...z_data.filter(x => !isNaN(x)), 2); // z_max is at least 2
+  var z_min = -3.5
 
   let data: Array<Partial<Plotly.PlotData>> = [
     {
@@ -70,9 +83,9 @@ function makeMap(regions_data) {
         "https://storage.googleapis.com/static-covid/static/casemap-geo.json",
       featureidkey: "properties.iso_a3",
       locations: get_locations(regions_data["regions"]),
-      z: get_z(regions_data["regions"]),
-      zmax: 5,
-      zmin: -3,
+      z: z_data,
+      zmax: z_max,
+      zmin: z_min,
       text: get_text(regions_data["regions"]),
       colorscale: [
         [0, "rgb(255,255,0)"],
