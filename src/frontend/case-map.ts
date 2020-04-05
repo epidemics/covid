@@ -59,8 +59,12 @@ function makeMap(regions_data) {
     });
   }
 
-  var tick_values = [-3, -1, 1, 3, 5];
+  var tick_values = [-3, -1, 1, 3, 5, 7, 9];
   var tick_names = tick_values.map(value_to_labels);
+
+  var z_data = get_z(regions_data["regions"]);
+  var z_max = Math.max(...z_data.filter(x => !isNaN(x)), 2); // z_max is at least 2
+  var z_min = -3.5
 
   let data: Array<Partial<Plotly.PlotData>> = [
     {
@@ -70,13 +74,14 @@ function makeMap(regions_data) {
         "https://storage.googleapis.com/static-covid/static/casemap-geo.json",
       featureidkey: "properties.iso_a3",
       locations: get_locations(regions_data["regions"]),
-      z: get_z(regions_data["regions"]),
-      zmax: 5,
-      zmin: -3,
+      z: z_data,
+      zmax: z_max,
+      zmin: z_min,
       text: get_text(regions_data["regions"]),
       colorscale: [
         [0, "rgb(255,255,0)"],
-        [1, "rgb(255,0,0)"]
+        [0.9, "rgb(255,0,0)"],
+        [1, "rgb(200,0,0)"]
       ],
       showscale: true,
       customdata: get_customdata(regions_data["regions"]),
