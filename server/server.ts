@@ -59,12 +59,11 @@ app.use(router);
 
 // status route
 const APP_NAME: string = `${env.npm_package_name} ${env.npm_package_version}`;
-const GIT_COMMIT = execSync("git rev-parse HEAD").toString().trim();
-app.get("/status", (req, res) =>
+app.get("/status", (_req, res) =>
   res.json({ 
     app: APP_NAME, 
     env: app.get("env"), 
-    git: GIT_COMMIT
+    version: process.env.APP_VERSION
   })
 );
 
