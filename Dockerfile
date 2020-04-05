@@ -10,5 +10,6 @@ COPY ./yarn.lock ./
 RUN yarn install
 
 COPY ./webpack.config.ts ./tsconfig.json ./
+COPY ./server/ ./server
 
 ENTRYPOINT yarn run serve

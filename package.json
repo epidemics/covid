@@ -14,6 +14,7 @@
     "apply-lint": "prettier --write \"frontend/**\" \"server/*\" \"static/css/**\"",
     "build": "ts-node --skip-project build.ts",
     "build-dev": "env NODE_ENV=development ts-node --skip-project build.ts",
+    "serve": "ts-node --skip-project server/server.ts",
     "dev": "nodemon"
   },
   "repository": {
@@ -35,7 +36,6 @@
     "core-js": "^3.6.4",
     "prettier": "^1.19.1",
     "ts-loader": "^6.2.2",
-    "webpack-dev-middleware": "^3.7.2",
     "nodemon": "^2.0.2"
   },
   "dependencies": {
@@ -46,10 +46,11 @@
     "typescript": "^3.8.3",
     "ts-node": "^8.8.1",
     "webpack": "^4.42.1",
-    "@types/webpack": "^4.41.10"
+    "@types/webpack": "^4.41.10",
+    "webpack-dev-middleware": "^3.7.2"
   },
   "nodemonConfig": {
-    "exec": "ts-node --skip-project server/server.ts",
+    "exec": "yarn serve",
     "watch": [
       "server",
       "package.json",
