@@ -80,7 +80,8 @@ function makeMap(regions_data) {
       text: get_text(regions_data["regions"]),
       colorscale: [
         [0, "rgb(255,255,0)"],
-        [1, "rgb(255,0,0)"]
+        [0.9, "rgb(255,0,0)"],
+        [1, "rgb(200,0,0)"]
       ],
       showscale: true,
       customdata: get_customdata(regions_data["regions"]),
