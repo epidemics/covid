@@ -1,73 +1,44 @@
 ![covid](https://github.com/epidemics/covid/workflows/covid/badge.svg)
 
-# covid-19 visualizer
+# COVID-19 visualizer
+
+Frontend for http://epidemicforecasting.org/
 
 ![Screenshot of local app](./covid_local_app.png)
 
 ## Architecture
-* `webserver` - a webserver using `fastapi` to render templates.
+* `server` - a express.js webserver using nunjucks for templating
+* `frontend` - client-side code, written in typescript and bundled by webpack.
+* `static` - static resources
 
 # Development
 ## Using docker (the easiest)
 Run
 ```
-docker-compose up  # possibly with --build
+docker-compose up 
 ```
-and visit http://localhost:8000 (main `server`).
+and visit http://localhost:8000.
 
-## Using conda
-1. [Install Miniconda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html#) (e.g., [for Windows](https://conda.io/projects/conda/en/latest/user-guide/install/windows.html)).
-2. [Install Poetry](https://python-poetry.org/docs/#installation).
-3. Open a terminal, move to (`cd`) the root of the cloned repository, and run:
-
-        $ conda create -n covid python=3.8  # creates a new conda environment with python 3.8
-        $ conda activate covid  # activates the conda environment
-        $ poetry install  # installs the project's dependencies
-        $ poetry shell
-
-4. Start up the `fastapi` server:
-
-        $ cd server
-        $ uvicorn main:app --reload
-
-## Getting inside the container
+## Local installation
+Requiers `nodejs` and `yarn`. Run
 ```
-$ docker-compose run --entrypoint bash server
+yarn install // install dependencies
+yarn run dev // start the dev server
 ```
 
-can be used to e.g. install deps:
-```
-$ docker-compose run --entrypoint poetry server add pyarrow
-```
+and visit http://localhost:8000.
 
-## tests
+## Tests and linting
 ```
-poetry run pytest tests
-```
-
-## linting
-
-install the needed packages locally with
-```
-yarn install
-```
-
-Then run the linting tests with
-
-```
-yarn test
-```
-
-To automatically lint your files run
-
-```
-prettier --write "frontend/**" "server/*" "static/css/**"
+yarn run lint-check // linting - just checking)
+yarn run lint-write // linting - updating in place
+yarn run test // run tests
 ```
 
 ## Development flow
 It's the author responsibility to do the merge, ideally after having it reviewed. That is:
 
-1. do your PR
+1. run `yarn run lint-write` and do your PR
 2. ask for review relevant reviewers
 3. as soon as you get :heavy_check_mark: , you can merge
 4. if you don't get :heavy_check_mark: before you go to sleep, you can merge anyway (after manual "testing"). It's of course fine to wait for a review when you don't feel confident merging it without one.

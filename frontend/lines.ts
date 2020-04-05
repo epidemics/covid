@@ -647,9 +647,7 @@ function controlModelVisualization($container: HTMLElement) {
 
   // Load the basic data (estimates and graph URLs) for all generated countries
   Promise.all(
-    [
-      `data-${selected.channel}-v3.json`,
-    ].map(path =>
+    [`data-${selected.channel}-v3.json`].map(path =>
       d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
     )
   ).then(data => {
