@@ -1,4 +1,3 @@
-
 import * as moment from "moment";
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
@@ -12,12 +11,6 @@ let layout: Partial<Plotly.Layout> = {
   hovermode: "closest",
   xaxis: {
     type: "date",
-    title: {},
-    titlefont: {
-      family: "DM Sans, sans-serif",
-      size: 18,
-      color: "white"
-    },
     ticks: "outside",
     tickfont: {
       family: "DM Sans, sans-serif",
@@ -36,7 +29,7 @@ let layout: Partial<Plotly.Layout> = {
     title: "Symptomatic patients",
     titlefont: {
       family: "DM Sans, sans-serif",
-      size: 18,
+      size: 16,
       color: "white"
     },
     tickfont: {
@@ -57,11 +50,11 @@ let layout: Partial<Plotly.Layout> = {
     zeroline: true,
     zerolinecolor: "#fff",
     zerolinewidth: 1,
-    type: 'log',
-    domain: [0.2,1]
+    type: "log",
+    domain: [0, 1]
   },
   yaxis2: {
-    domain: [0,0.1],
+    domain: [0, 0],
     tickfont: {
       family: "DM Sans, sans-serif",
       size: 14,
@@ -78,10 +71,10 @@ let layout: Partial<Plotly.Layout> = {
     yanchor: "top",
     bgcolor: "#22202888",
     font: {
-      color: '#fff'
+      color: "#fff"
     }
   },
-  grid: {rows: 2, columns: 1, pattern: 'independent'}
+  grid: { rows: 2, columns: 1, pattern: "independent" }
 };
 
 let config = {
@@ -91,58 +84,39 @@ let config = {
 };
 
 // coefficent of variation
-function relativeVariance(value, mean){
-  let relativeSD = (value-mean)/mean;
+function relativeVariance(value, mean) {
+  let relativeSD = (value - mean) / mean;
   return relativeSD * relativeSD;
 }
 
-function applyVariance(mean, vars, sigma){
+function applyVariance(mean, vars, sigma) {
   let totalVar = 0;
-  vars.forEach((v) => {
+  vars.forEach(v => {
     totalVar += v * v;
-  })
+  });
 
   let val = mean * Math.exp(sigma * Math.sqrt(totalVar));
   return val;
 }
 
-
-//TODO
-function makeCached(retrieveFn){
-  // let cache = null;
-  
-  return function(key, cb){
-    // if(cache !== null && cache.key === key){
-    //   cb(cache.value);
-    // }
-
-    retrieveFn(key, (value) => {
-      // cache = {key, value};
-      cb(value);
-    })
-  }
-}
-
-let retriveHistorical = makeCached((key, cb) => d3.json(`/static/historical_${key}.json`).then(cb));
-
-function makeErrorTrace({color, fillcolor, name}, data): Array<Plotly.Data> {
+function makeErrorTrace({ color, fillcolor, name }, data): Array<Plotly.Data> {
   let errorXs = [];
   let errorYs = [];
   let meanYs = [];
   let meanXs = [];
 
-  data.forEach(({date,high,mean}) => {
-    errorYs.push(high)
-    errorXs.push(date)
+  data.forEach(({ date, high, mean }) => {
+    errorYs.push(high);
+    errorXs.push(date);
 
-    meanYs.push(mean)
-    meanXs.push(date)
-  })
+    meanYs.push(mean);
+    meanXs.push(date);
+  });
 
   for (let i = data.length - 1; i >= 0; i--) {
-    let {date,low} = data[i];
-    errorYs.push(low)
-    errorXs.push(date)
+    let { date, low } = data[i];
+    errorYs.push(low);
+    errorXs.push(date);
   }
 
   // error bars
@@ -150,13 +124,13 @@ function makeErrorTrace({color, fillcolor, name}, data): Array<Plotly.Data> {
     y: errorYs,
     x: errorXs,
     mode: "lines",
-    line: {color: "transparent"},
-    fillcolor: fillcolor, 
-    fill: "tozerox", 
+    line: { color: "transparent" },
+    fillcolor: fillcolor,
+    fill: "tozerox",
     type: "scatter",
     showlegend: false,
-    hoverinfo: 'skip'
-  }
+    hoverinfo: "skip"
+  };
 
   let f = d3.format(".2s");
   // estimation
@@ -164,12 +138,12 @@ function makeErrorTrace({color, fillcolor, name}, data): Array<Plotly.Data> {
     mode: "lines",
     x: meanXs,
     y: meanYs,
-    line: {color: color},
+    line: { color: color },
     type: "scatter",
     name: name,
-    hoverinfo: 'text',
-    text: data.map(({low, high}) => `${name}: ${f(low)}-${f(high)}`)
-  }
+    hoverinfo: "text",
+    text: data.map(({ low, high }) => `${name}: ${f(low)}-${f(high)}`)
+  };
 
   return [meanTrace, errorTrace];
 }
@@ -177,7 +151,7 @@ function makeErrorTrace({color, fillcolor, name}, data): Array<Plotly.Data> {
 const incubation_period = 5;
 const onset_to_death = 9;
 
-function addHistoricalCases(target, regionData, cb){
+function addHistoricalCases(target, regionData, cb) {
   let cfr = 0.016;
   let cfr_cv = 0.69; // coefficent of variance (relative sd) of cfr
   let pop = regionData.population;
@@ -190,55 +164,63 @@ function addHistoricalCases(target, regionData, cb){
   let cv = 3;
   let retrodicted = [];
   let reported = [];
-  Object.keys(timeseries).forEach((date) => {
-    let {JH_Deaths: deaths, JH_Infected: confirmed} = timeseries[date];
+  Object.keys(timeseries).forEach(date => {
+    let { JH_Deaths: deaths, JH_Infected: confirmed } = timeseries[date];
 
-    if(deaths < 1){
+    if (deaths < 1) {
       return;
     }
 
-    let mean = (deaths/cfr)/pop;
-    let low = applyVariance(mean, [cfr_cv, cv/Math.sqrt(deaths)], -1);
-    let high = applyVariance(mean, [cfr_cv, cv/Math.sqrt(deaths)], 1);
+    let mean = deaths / cfr / pop;
+    let low = applyVariance(mean, [cfr_cv, cv / Math.sqrt(deaths)], -1);
+    let high = applyVariance(mean, [cfr_cv, cv / Math.sqrt(deaths)], 1);
 
     retrodicted.push({
-      date: moment(date).subtract(onset_to_death, 'days').toDate(), 
+      date: moment(date)
+        .subtract(onset_to_death, "days")
+        .toDate(),
       low: low,
       mean: mean,
       high: high
-    })
+    });
 
     reported.push({
       date: date,
       confirmed: confirmed / pop,
       deaths: deaths / pop
-    })
-  })
+    });
+  });
 
-  let symtomaticTraces = makeErrorTrace({color: "white", fillcolor: "rgba(255,255,255,0.3)", name: "Symptomatic (est.)"}, retrodicted)
-
+  let symtomaticTraces = makeErrorTrace(
+    {
+      color: "white",
+      fillcolor: "rgba(255,255,255,0.3)",
+      name: "Symptomatic (est.)"
+    },
+    retrodicted
+  );
 
   let reportedXs = [];
   let reportedYs = [];
   let lastConfirmed = null;
-  reported.forEach(({date, confirmed, deaths}) => {
-    if(lastConfirmed !== confirmed){
+  reported.forEach(({ date, confirmed, deaths }) => {
+    if (lastConfirmed !== confirmed) {
       reportedXs.push(date);
       reportedYs.push(confirmed);
-      lastConfirmed = confirmed
+      lastConfirmed = confirmed;
     }
-  })
+  });
 
   let reportedConfirmed: Plotly.Data = {
     mode: "markers",
     x: reportedXs,
     y: reportedYs,
-    line: {color: "#fff"},
+    line: { color: "#fff" },
     type: "scatter",
     name: "Confirmed",
-    marker: {size: 3},
-    hovertemplate: 'Confirmed: %{y:.3s}',
-  }
+    marker: { size: 3 },
+    hovertemplate: "Confirmed: %{y:.3s}"
+  };
 
   let data: Array<Partial<Plotly.Data>> = [
     reportedConfirmed,
@@ -248,45 +230,128 @@ function addHistoricalCases(target, regionData, cb){
   // redraw the lines on the graph
   Plotly.addTraces(target, data);
 
-  if(cb){
+  if (cb) {
     cb(retrodicted, reported);
   }
 }
 
 // graph
-let $container: HTMLElement | undefined = document.getElementById("current_viz");
-if($container){
+let $container: HTMLElement | undefined = document.getElementById(
+  "current_viz"
+);
+if ($container) {
   init($container);
 }
 
-function init($container){
+function init($container) {
   Plotly.newPlot($container, [], layout, config);
 }
 
-export function updateCurrentGraph(regionData, measureData){
-  if(!$container)
-    return;
+type MeasureParser = (v: any) => { intensity: number; label: string } | null;
+
+interface Measure {
+  name: string;
+  parser: MeasureParser;
+}
+
+let measureTypes: { [key: string]: Measure } = {};
+let measureKeys = Array<string>();
+
+function registerMeasure(key: string, name: string, parser: MeasureParser) {
+  measureTypes[key] = { name, parser };
+  measureKeys.push(key);
+}
+
+registerMeasure("mask-wearing", "Mask usage", percent => {
+  if (percent <= 0.05) {
+    return null;
+  }
+
+  return { intensity: percent, label: d3.format(".2p")(percent) };
+});
+
+registerMeasure("curfew", "Curfew", v => {
+  if (v === "none") {
+    return null;
+  }
+
+  if (v === "general") {
+    return { intensity: 0.5, label: "General curfew" };
+  } else if (v === "strict") {
+    return { intensity: 1, label: "Strict curfew" };
+  }
+});
+
+registerMeasure("isolation", "Isolation", v => {
+  if (v === "none") {
+    return null;
+  }
+
+  if (v === "cases") {
+    return { intensity: 0.5, label: "Symptomatic" };
+  } else if (v === "contacts") {
+    return { intensity: 1, label: "Contacts and symptomatic" };
+  }
+});
+
+registerMeasure("gatherings", "Gatherings", count => {
+  if (count == 0) {
+    return null;
+  }
+
+  let intensity: number;
+  if (count >= 1000) {
+    intensity = 0.1;
+  } else if (count >= 500) {
+    intensity = 0.25;
+  } else if (count >= 100) {
+    intensity = 0.5;
+  } else if (count >= 10) {
+    intensity = 0.75;
+  } else {
+    intensity = 1;
+  }
+
+  return { intensity, label: `No more than ${count}` };
+});
+
+registerMeasure("schools", "Schools", v => {
+  if (v < 1) return null;
+
+  return { intensity: v / 3, label: "" };
+});
+
+registerMeasure("social", "Social", v => {
+  if (v === "none") return null;
+
+  if (v === "stay-at-home") return { intensity: 1, label: "Stay at home" };
+
+  if (v === "distancing") return { intensity: 0.5, label: "Distancing" };
+});
+
+export function updateCurrentGraph(regionData, measureData) {
+  if (!$container) return;
 
   Plotly.react($container, [], layout, config);
 
-  addHistoricalCases($container, regionData, function(retrodicted, reported){
+  addHistoricalCases($container, regionData, function(retrodicted, reported) {
     // function mkDeltaTrace(name, other) {
     //   return {
     //     x: [],
     //     y: [],
     //     name: `Δ ${name}`,
-    //     histfunc: "sum", 
+    //     histfunc: "sum",
     //     marker: {
-    //       color: "rgba(255, 100, 102, 0.7)", 
+    //       color: "rgba(255, 100, 102, 0.7)",
     //       line: {
-    //         color: "rgba(255, 100, 102, 1)", 
+    //         color: "rgba(255, 100, 102, 1)",
     //         width: 1
     //       }
     //     },
     //     autobinx: false,
     //     xbins:{size: "D1"},
     //     hovertemplate: "+%{y}",
-    //     opacity: 0.5, 
+    //     opacity: 0.5,
     //     type: "histogram",
     //     ...other
     //   }
@@ -299,12 +364,11 @@ export function updateCurrentGraph(regionData, measureData){
     //   predictedDeltas.y.push(delta);
     // }
 
-
     // let confirmedDeltas = mkDeltaTrace("Confirmed");
     // let deathsDeltas = mkDeltaTrace("Deaths");
     // for(let i = 1; i < reported.length; i++){
     //   let {date, confirmed, deaths} = reported[i];
-      
+
     //   confirmedDeltas.x.push(date);
     //   confirmedDeltas.y.push(confirmed - reported[i-1].confirmed);
 
@@ -318,7 +382,7 @@ export function updateCurrentGraph(regionData, measureData){
     let endDate = moment().toDate();
 
     Plotly.relayout($container, {
-      'xaxis.range': [startDate, endDate],
+      "xaxis.range": [startDate, endDate]
     });
   });
 
@@ -328,36 +392,63 @@ export function updateCurrentGraph(regionData, measureData){
   //   //addCriticalCareTrace(currentGraph, d3.extent(traces[0].x));
   // })
 
-  let measures = []
-  measureData.forEach((measure) => {
-    let {date_start, date_end, keywords} = measure;
-    if(keywords === null || date_end === null){
-      console.log('skipped measure:', measure)
-      return;
-    }
+  type MeasureItem = {
+    start: string;
+    end: string;
+    label: string;
+    intensity: number;
+    name: string;
+  };
 
-    keywords.forEach((type) => {
-      measures.push({date_start, date_end, type});
-    })
-  })
+  let mcats = 0;
+  let measures: Array<MeasureItem> = [];
+  measureKeys.forEach(key => {
+    let { name, parser } = measureTypes[key];
+    let data = measureData[key];
+
+    let item: Partial<MeasureItem> | null = null;
+    data.forEach(({ date, value }) => {
+      if (item) {
+        item.end = date;
+        measures.push(item as MeasureItem);
+      }
+
+      if ((item = parser(value))) {
+        item.name = name;
+        item.start = date;
+      }
+    });
+
+    if (item) {
+      item.end = "2021-01-01";
+      measures.push(item as MeasureItem);
+      mcats += 1;
+    }
+  });
+
+  console.log(measures);
 
   let measuresTraces = {
     base: [],
     x: [],
     y: [],
+    hoverinfo: "text",
+    textposition: "inside",
+    text: [],
     yaxis: "y2",
-    type: 'bar',
-    orientation: 'h',
-    marker: {color: "rgba(255,255,255,0.2)"},
-    hoverinfo: "y",
+    type: "bar",
+    orientation: "h",
+    marker: { color: [] },
     id: "measures"
   };
 
-  measures.forEach(({date_start, date_end, type}) => {
-    measuresTraces.base.push(moment(date_start).valueOf());
-    measuresTraces.x.push(moment(date_end).valueOf()-moment(date_start).valueOf());
-    measuresTraces.y.push(type);
-  })
+  measures.forEach(({ name, label, start, end, intensity }) => {
+    measuresTraces.base.push(moment(end).valueOf());
+    measuresTraces.x.push(moment(start).valueOf() - moment(end).valueOf());
+    measuresTraces.text.push(label);
+    measuresTraces.y.push(name);
+    measuresTraces.marker.color.push(`rgba(255, 255, 255, ${intensity})`);
+  });
 
   // let measuresTraces = []
   // measures.forEach(({start, type}) => {
@@ -379,50 +470,60 @@ export function updateCurrentGraph(regionData, measureData){
   //   });
   // })
 
-  Plotly.addTraces($container, measuresTraces as Plotly.Data)
+  let mwidth = 0.05 * mcats;
+
+  Plotly.relayout($container, {
+    "yaxis.domain": [mwidth + 0.1, 1],
+    "yaxis2.domain": [0, mwidth]
+  } as any);
+  Plotly.addTraces($container, measuresTraces as Plotly.Data);
 
   // @ts-ignore
-  $container.on('plotly_unhover', function(){
+  $container.on("plotly_unhover", function() {
     Plotly.relayout($container, {
-      'shapes': []
-    })
+      shapes: []
+    });
   });
 
   // @ts-ignore
-  $container.on('plotly_hover', function (evt){
+  $container.on("plotly_hover", function(evt) {
     let point = evt.points[0];
-    if(point.data.id !== "measures"){
+    if (point.data.id !== "measures") {
       return;
     }
 
     let measureShapes = [];
     let measure = measures[point.pointIndex];
-    let {date_end, date_start} = measure;
+    let { start, end } = measure;
     measureShapes.push({
-      type: 'line',
+      type: "line",
       yref: "paper",
-      x0: moment(date_start).valueOf(),
+      x0: moment(start).valueOf(),
       y0: 0,
-      x1: moment(date_start).valueOf(),
+      x1: moment(start).valueOf(),
       y1: 1,
-      line: {color: "white"},
+      line: { color: "white" },
       opacity: 0.5
-    })
+    });
 
     measureShapes.push({
-      type: 'rect',
+      type: "rect",
       yref: "paper",
-      x0: moment(date_start).add(incubation_period, 'days').toDate(),
+      x0: moment(start)
+        .add(incubation_period, "days")
+        .toDate(),
       y0: 0.2,
-      x1: moment(date_end).add(incubation_period, 'days').toDate(),
+      x1: moment(end)
+        .add(incubation_period, "days")
+        .toDate(),
       y1: 1,
       fillcolor: "white",
-      line: {color: "transparent"},
+      line: { color: "transparent" },
       opacity: 0.1
-    })
+    });
 
     Plotly.relayout($container, {
-      'shapes': measureShapes
-    })
+      shapes: measureShapes
+    });
   });
 }

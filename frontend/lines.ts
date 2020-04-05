@@ -346,7 +346,10 @@ function controlModelVisualization($container: HTMLElement) {
   }
 
   function makePlotlyResponsive() {
-    d3.select("#my_dataviz .js-plotly-plot .plotly .svg-container").attr("style", null);
+    d3.select("#my_dataviz .js-plotly-plot .plotly .svg-container").attr(
+      "style",
+      null
+    );
     d3.selectAll("#my_dataviz .js-plotly-plot .plotly .main-svg")
       .attr("height", null)
       .attr("width", null)
@@ -371,6 +374,8 @@ function controlModelVisualization($container: HTMLElement) {
     const size = calculateChartSize();
     if (size.width !== layout.width || size.height !== layout.height) {
       Object.assign(layout, size);
+      console.log($container);
+
       Plotly.relayout($container, size);
     }
   });
@@ -731,11 +736,12 @@ function controlModelVisualization($container: HTMLElement) {
 
   let sources = [
     `data-${selected.channel}-v3.json`,
-    `data-${selected.channel}-containments.json`  
-  ]
+    `data-testing-containments.json`
+  ];
 
   // Load the basic data (estimates and graph URLs) for all generated countries
-  Promise.all(sources.map(path =>
+  Promise.all(
+    sources.map(path =>
       d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
     )
   ).then(data => {
