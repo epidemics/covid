@@ -1,7 +1,6 @@
-import { env } from "process";
-import { Express, Router } from "express";
 
-const APP_VERSION = env.npm_package_version;
+import { Router } from "express";
+
 
 type NavBarEntry = { path: string; id: string; caption: string };
 
@@ -45,10 +44,6 @@ router.get("/request-calculation", (req, res) =>
 );
 
 router.get("/about", (req, res) => res.render("about.html"));
-
-router.get("/status", (req, res) =>
-  res.json({ app_version: APP_VERSION, NODE_ENV: env.NODE_ENV || "none" })
-);
 
 // Not sure why, but we had a lot of 404 in access log for this URL
 router.get("/containment.", (req, res) => res.redirect("/containment"));
