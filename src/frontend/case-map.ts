@@ -59,7 +59,7 @@ function makeMap(regions_data) {
     });
   }
 
-  var tick_values = [-3, -1, 1, 3, 5, 7, 9, 11];
+  var tick_values = [-3, -1, 1, 3, 5, 7, 9];
   var tick_names = tick_values.map(value_to_labels);
 
   var z_data = get_z(regions_data["regions"]);
