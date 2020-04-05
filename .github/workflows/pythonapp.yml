@@ -6,47 +6,52 @@ env:
   IMAGE_NAME: covid
 
 jobs:
-  pretify-js:
+  check:
     runs-on: ubuntu-latest
+    name: Checks
     steps:
-    - name: Cloning the repository
-      uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
-    - name: Prettify the JS Code
-      uses: creyD/prettier_action@v2.0
-      with:
-        prettier_options: '--check "frontend/** "server/*" "static/css/**"'
-        branch: ${{ github.head_ref }}
+    - name: Checkout
+      uses: actions/checkout@master
+      
+    - name: Build
+      run: |
+        yarn install
+        yarn run build
+
+    - name: Lint
+      run: yarn run lint
+
+    - name: 
 
   gsutil-upload:
     if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master'
     name: Upload static
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
+    - name: Checkout
+      uses: actions/checkout@master
 
-      - name: Run webpack
-        run: |
-          yarn install
-          yarn run build
+    - name: Build
+      run: |
+        yarn install
+        yarn run build
 
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-        with:
-          version: '270.0.0'
-          service_account_email: ${{ secrets.SA_EMAIL }}
-          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      name: Setup Google Cloud Platform
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.SA_EMAIL }}
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
-      - name: Upload to staging
-        if: github.ref == 'refs/heads/staging'
-        run: |
-             gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read dist/* gs://static-covid/static/staging/
+    - name: Upload to staging
+      if: github.ref == 'refs/heads/staging'
+      run: |
+            gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read dist/* gs://static-covid/static/staging/
 
-      - name: Upload to production
-        if: github.ref == 'refs/heads/master'
-        run: |
-            gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read dist/* gs://static-covid/static/production/
+    - name: Upload to production
+      if: github.ref == 'refs/heads/master'
+      run: |
+          gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read dist/* gs://static-covid/static/production/
 
   setup-build-publish-deploy:
     if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master'
