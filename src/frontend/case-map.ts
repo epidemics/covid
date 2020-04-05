@@ -30,16 +30,7 @@ function makeMap(regions_data) {
   function get_z(dict) {
     return Object.keys(dict).map(function(country) {
       const risk = get_risk(dict[country]);
-      var z = Math.log(risk * 1000) / Math.log(2);
-        //if (z == -Infinity) {
-        //    console.log(country)
-        //    console.log("FT_Infected:")
-        //    console.log(get_last_data(dict[country])["FT_Infected"])
-        //    console.log("population:")
-        //    console.log(dict[country]["population"])
-        //}
-      //console.log(z)
-      return z;
+      return Math.log(risk * 1000) / Math.log(2);
     });
   }
 
