@@ -29,6 +29,6 @@ describe('server', () => {
     })
 
     after(done => {
-        server.close(done);
+        process.exit();
     })
 })
