@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "module": "es6",
+    "target": "es5",
+    "lib": ["DOM", "DOM.Iterable", "ES2015", "ES2018.Promise", "ES2017.Object"],
+    "moduleResolution": "node",
+    "allowJs": true,
+    "sourceMap": true,
+  },
+  "include": ["frontend/**/*"],
+  "exclude": ["node_modules"]
+}

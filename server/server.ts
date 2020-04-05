@@ -2,20 +2,20 @@ import { env } from "process";
 import { execSync } from "child_process";
 import * as path from "path";
 
-import * as express from "express";
-import * as compression from "compression";
-import * as nunjucks from "nunjucks";
-import * as morgan from "morgan";
+import express from "express";
+import compression from "compression";
+import nunjucks from "nunjucks";
+import morgan from "morgan";
 
-import * as webpack from "webpack";
-import * as webpackDev from "webpack-dev-middleware";
+import webpack from "webpack";
+import webpackDev from "webpack-dev-middleware";
 
 import webpackConfig from "../webpack.config";
 import { router, navigation_bar } from "./routes";
 
 const PORT = process.env.PORT || 8000;
 
-let app = express();
+export let app = express();
 
 // set up compression, threshold default is 1 kb
 app.use(compression());
@@ -68,6 +68,6 @@ app.get("/status", (_req, res) =>
 );
 
 // finally serve
-app.listen(PORT, function() {
+export let server = app.listen(PORT, function() {
   console.log(`Running ${APP_NAME} on *:${PORT} with mode ${app.get('env')}`);
 });
