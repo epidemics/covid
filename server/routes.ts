@@ -1,6 +1,4 @@
-
 import { Router } from "express";
-
 
 type NavBarEntry = { path: string; id: string; caption: string };
 
