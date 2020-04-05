@@ -21,7 +21,7 @@ export let app = express();
 app.use(compression());
 
 // set up logging
-app.use(morgan(app.get('env') === "development" ? "dev" : "short"));
+app.use(morgan(app.get("env") === "development" ? "dev" : "short"));
 
 // set up nunjucks as templating engine
 nunjucks.configure(path.join(__dirname, "templates"), {
@@ -60,14 +60,14 @@ app.use(router);
 // status route
 const APP_NAME: string = `${env.npm_package_name} ${env.npm_package_version}`;
 app.get("/status", (_req, res) =>
-  res.json({ 
-    app: APP_NAME, 
-    env: app.get("env"), 
+  res.json({
+    app: APP_NAME,
+    env: app.get("env"),
     version: process.env.APP_VERSION
   })
 );
 
 // finally serve
 export let server = app.listen(PORT, function() {
-  console.log(`Running ${APP_NAME} on *:${PORT} with mode ${app.get('env')}`);
+  console.log(`Running ${APP_NAME} on *:${PORT} with mode ${app.get("env")}`);
 });
