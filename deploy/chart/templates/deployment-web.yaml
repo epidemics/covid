@@ -31,7 +31,6 @@ spec:
         - name: {{ .Release.Name }}-web-server
           image: {{ .Values.imageName }}
           imagePullPolicy: Always
-          # TODO: solve via entrypoint
           ports:
           - containerPort: 8000
           envFrom:
