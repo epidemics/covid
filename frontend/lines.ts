@@ -33,7 +33,7 @@ function controlModelVisualization($container: HTMLElement) {
   let selected = getUrlParams();
 
   function getMitigationId() {
-    var mitigationIds = {
+    let mitigationIds = {
       none: "None",
       weak: "Low",
       moderate: "Medium",
@@ -105,17 +105,17 @@ function controlModelVisualization($container: HTMLElement) {
 
     const { population, data } = baseData.regions[selected.region];
 
-    var mitigation = getMitigationId();
+    let mitigation = getMitigationId();
     const stats = data.mitigation_stats[mitigation];
 
-    var total_infected = formatStatisticsLine(
+    let total_infected = formatStatisticsLine(
       stats.TotalInfected_per1000_q05,
       stats.TotalInfected_per1000_q95,
       population
     );
     $("#total-infected").html(total_infected);
 
-    var sim_infected = formatStatisticsLine(
+    let sim_infected = formatStatisticsLine(
       stats.MaxActiveInfected_per1000_q05,
       stats.MaxActiveInfected_per1000_q95,
       population
@@ -126,10 +126,10 @@ function controlModelVisualization($container: HTMLElement) {
   const formatBigInteger = d3.format(".2s");
 
   const formatStatisticsLine = function(q05, q95, population) {
-    var _q05 = formatBigInteger(q05 * (population / 1000));
-    var _q95 = formatBigInteger(q95 * (population / 1000));
-    var _q05_perc = formatPercentNumber(q05 / 1000);
-    var _q95_perc = formatPercentNumber(q95 / 1000);
+    let _q05 = formatBigInteger(q05 * (population / 1000));
+    let _q95 = formatBigInteger(q95 * (population / 1000));
+    let _q05_perc = formatPercentNumber(q05 / 1000);
+    let _q95_perc = formatPercentNumber(q95 / 1000);
     return (
       formatRange(_q05, _q95) + " (" + formatRange(_q05_perc, _q95_perc) + ")"
     );
@@ -158,7 +158,7 @@ function controlModelVisualization($container: HTMLElement) {
   };
 
   // graph layout
-  var layout: Partial<Plotly.Layout> = {
+  let layout: Partial<Plotly.Layout> = {
     ...calculateChartSize(),
     //margin: { t: 0 },
     margin: { r: 20 },
@@ -281,7 +281,7 @@ function controlModelVisualization($container: HTMLElement) {
       })
   };
 
-  var plotlyConfig: Partial<Plotly.Config> = {
+  let plotlyConfig: Partial<Plotly.Config> = {
     displaylogo: false,
     responsive: false,
     scrollZoom: false,
@@ -341,14 +341,14 @@ function controlModelVisualization($container: HTMLElement) {
     }
 
     // Not cached, load and preprocess
-    var tracesUrl = regionRec.data.infected_per_1000.traces_url;
+    let tracesUrl = regionRec.data.infected_per_1000.traces_url;
 
     d3.json(
       `https://storage.googleapis.com/static-covid/static/${tracesUrl}`
     ).then(mitigationsData => {
       // TODO error handling
 
-      var highestVals = [];
+      let highestVals = [];
 
       // Iterate over mitigations (groups)
       Object.values(mitigationsData).forEach(mitigationTraces => {
@@ -375,7 +375,7 @@ function controlModelVisualization($container: HTMLElement) {
 
           // When x has length 1, extend it to a day sequence of len(y) days
           if (trace.x.length === 1) {
-            var xStart = new Date(trace.x[0]);
+            let xStart = new Date(trace.x[0]);
             trace.x[0] = xStart;
             for (let i = 1; i < trace.y.length; ++i) {
               trace.x[i] = d3.timeDay.offset(xStart, i);
@@ -387,7 +387,7 @@ function controlModelVisualization($container: HTMLElement) {
           }
         });
       });
-      var maxY = Math.max(...highestVals);
+      let maxY = Math.max(...highestVals);
 
       // Cache the values in the region
       regionRec.cached_gleam_traces = mitigationsData;
@@ -440,14 +440,14 @@ function controlModelVisualization($container: HTMLElement) {
   }
 
   function updateRegionInText(region) {
-    var countryName = regionDict[region].name;
+    let countryName = regionDict[region].name;
     jQuery(".selected-region").html(countryName);
   }
 
   function setGetParamUrl(key, value) {
-    var params = new URLSearchParams(window.location.search);
+    let params = new URLSearchParams(window.location.search);
     params.set(key, value);
-    var url =
+    let url =
       window.location.protocol +
       "//" +
       window.location.host +

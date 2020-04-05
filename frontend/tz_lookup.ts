@@ -14,7 +14,7 @@ export function guessRegion(fallback) {
   return tz.toLowerCase();
 }
 
-var tzLookup = {
+let tzLookup = {
   "Europe/Andorra": "Andorra",
   "Asia/Dubai": "United Arab Emirates",
   "Asia/Kabul": "Afghanistan",
