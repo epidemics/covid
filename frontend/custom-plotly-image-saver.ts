@@ -9,13 +9,13 @@ export const saveImage = (function() {
   function download(canvas, filename, type) {
     //for IE
     if (canvas.msToBlob && window.navigator.msSaveBlob) {
-      var blob = canvas.msToBlob(type);
+      let blob = canvas.msToBlob(type);
       window.navigator.msSaveBlob(blob, filename);
       return;
     }
 
     /// create an "off-screen" anchor tag
-    var link = document.createElement("a"),
+    let link = document.createElement("a"),
       event;
 
     document.body.appendChild(link);
@@ -105,7 +105,7 @@ export const saveImage = (function() {
 
       // fixes the lines becoming thin
       svg = svg.replace(VECTOR_EFFECT_REGEX, "");
-      var img = new window.Image();
+      let img = new window.Image();
 
       img.onload = function() {
         compose($canvas, img, width * scale, height * scale);

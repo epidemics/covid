@@ -2,27 +2,10 @@ version: "3"
 
 services:
   server:
-    build:
-      context: ./
-    image: coron
+    image: node:13-slim
+    volumes: 
+      - ./:/usr/app/
+    working_dir: /usr/app
     ports:
       - 8000:8000
-    volumes:
-      - ./src/:/usr/app/src/
-    working_dir: /usr/app/src/server
-    entrypoint:
-      - uvicorn
-      - --use-colors
-      - main:app
-      - --host
-      - 0.0.0.0
-      - --reload
-
-  webpack-watcher:
-    build:
-      context: ./
-      dockerfile: webpack-watcher.Dockerfile
-    volumes: 
-      - ./src/:/usr/app/src/
-    working_dir: /usr/app
-    entrypoint: yarn run dev
+    entrypoint: bash -c "yarn install && yarn run dev"

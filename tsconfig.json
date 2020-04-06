@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
-    "outDir": "./out/",
     "noImplicitAny": false,
-    "module": "es6",
-    "target": "es5",
-    "lib": ["DOM", "DOM.Iterable", "ES2015", "ES2018.Promise", "ES2017.Object"],
+    "module": "commonjs",
     "moduleResolution": "node",
-    "allowJs": true,
-    "sourceMap": true,
+    "target": "es6",
+    "lib": ["ES2015"],
+    "esModuleInterop": true
   },
-  "include": ["src/frontend/**/*"],
+  "include": ["server/**/*", "tests/**/*"],
   "exclude": ["node_modules"]
 }

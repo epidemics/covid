@@ -1,21 +1,14 @@
-FROM python:3.8-slim as production
-ENV PYTHONUNBUFFERED 1
+FROM node:13-slim
 
 WORKDIR /usr/app
 
-COPY get-poetry.py pyproject.toml poetry.lock ./
-RUN \
-  python get-poetry.py --yes && \
-  rm get-poetry.py && \
-  pip install --no-cache-dir --upgrade pip
+ENV NODE_ENV production
 
-# TODO: split into multiple Dockerfiles and add proper entrypoints
-COPY ./src ./src/
+COPY ./package.json ./yarn.lock ./
 
-RUN . "$HOME/.poetry/env" && \
-    poetry config virtualenvs.create false && \
-    poetry install --no-dev
+RUN yarn install
 
-FROM production as development
-ENV PATH="/root/.poetry/bin:${PATH}"
-RUN poetry install
+COPY ./webpack.config.ts ./tsconfig.json ./
+COPY ./server/ ./server
+
+ENTRYPOINT yarn run serve

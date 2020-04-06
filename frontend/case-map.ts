@@ -11,19 +11,19 @@ function makeMap(regions_data) {
 
   function get_text(dict) {
     return Object.keys(dict).map(function(country) {
-      var last_data = get_last_data(dict[country]);
+      let last_data = get_last_data(dict[country]);
       return last_data["FT_Infected"];
     });
   }
 
   function get_last_data(row) {
-    var sorted = Object.keys(row["data"]["estimates"]["days"]).sort();
-    var last = sorted[sorted.length - 1];
+    let sorted = Object.keys(row["data"]["estimates"]["days"]).sort();
+    let last = sorted[sorted.length - 1];
     return row["data"]["estimates"]["days"][last];
   }
 
   function get_risk(row) {
-    var last_data = get_last_data(row);
+    let last_data = get_last_data(row);
     return last_data["FT_Infected"] / row["population"];
   }
 
@@ -59,12 +59,12 @@ function makeMap(regions_data) {
     });
   }
 
-  var tick_values = [-3, -1, 1, 3, 5, 7, 9];
-  var tick_names = tick_values.map(value_to_labels);
+  let tick_values = [-3, -1, 1, 3, 5, 7, 9];
+  let tick_names = tick_values.map(value_to_labels);
 
   var z_data = get_z(regions_data["regions"]);
   var z_max = Math.max(...z_data.filter(x => !isNaN(x)), 2); // z_max is at least 2
-  var z_min = -3.5
+  var z_min = -3.5;
 
   let data: Array<Partial<Plotly.PlotData>> = [
     {
@@ -117,7 +117,7 @@ function makeMap(regions_data) {
     } as any
   ];
 
-  var layout = {
+  let layout = {
     title: {
       text: "COVID-19: Active infections estimate (fraction of population)",
       font: {

@@ -30,7 +30,7 @@ export function string_score(string: string, word: string, fuzziness?: number) {
     return 0;
   }
 
-  var runningScore = 0,
+  let runningScore = 0,
     charScore,
     finalScore,
     lString = string.toLowerCase(),

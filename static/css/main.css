@@ -159,7 +159,7 @@ header h1:before {
 
 .dropdown-caret-styling:after {
   margin-left: 16px;
-  vertical-align: .4em;
+  vertical-align: 0.4em;
 }
 
 .top-row {
@@ -168,7 +168,6 @@ header h1:before {
   align-items: center;
 }
 
-
 .active-infections {
   display: block;
   font-size: 24px;
@@ -176,12 +175,12 @@ header h1:before {
 }
 
 .infections-estimated {
-  color: #D93333;
+  color: #d93333;
 }
 
 span.infections-confirmed {
   font-weight: 500;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .active-infections-block {
@@ -245,7 +244,7 @@ span.infections-confirmed {
 .mitigation-strength-explanation.footnote {
   font-size: 11px;
   background-color: transparent !important;
-  color: rgba(255,255,255,0.6) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
   border: none;
   text-align: left;
   border-left: 5px solid transparent;
@@ -256,14 +255,13 @@ span.infections-confirmed {
   font-size: 14px;
   font-weight: 400;
   text-transform: none;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255, 255, 255, 0.4);
   margin-top: 8px;
 }
 
 .active .mitigation-strength-explanation {
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.9);
 }
-
 
 .mitigation-strength-buttons {
   width: 400px;
@@ -286,7 +284,8 @@ span.infections-confirmed {
   justify-content: space-between;
 }
 
-.total-infected-number, .sim-infected-number {
+.total-infected-number,
+.sim-infected-number {
   font-size: 24px;
   color: #ef6c00;
 }
@@ -315,7 +314,7 @@ span.infections-confirmed {
 }
 
 .alert-dismissible .close {
-  padding: .25rem .5rem;
+  padding: 0.25rem 0.5rem;
 }
 
 @media only screen and (max-width: 991px) {
@@ -357,7 +356,7 @@ span.infections-confirmed {
   }
   .mitigation-strength-button .active {
     background-color: white !important;
-    color: rgba(0,0,0,0.9) !important;
+    color: rgba(0, 0, 0, 0.9) !important;
     font-weight: 600;
   }
 }
@@ -373,7 +372,7 @@ span.infections-confirmed {
     font-size: 28px;
   }
   .dropdown-caret-styling:after {
-    vertical-align: .2em;
+    vertical-align: 0.2em;
   }
 }
 
@@ -494,7 +493,7 @@ span.infections-confirmed {
 }
 
 .home a {
-  color: white
+  color: white;
 }
 
 .logo {
@@ -617,7 +616,7 @@ label.btn-secondary > input {
   min-width: 132px;
   margin-bottom: 12px;
   padding: 0;
-  text-align: right
+  text-align: right;
 }
 
 .less-visible7 {
@@ -736,16 +735,16 @@ strong {
     padding: 15px 15px;
   }
 
-  #my_dataviz{
+  #my_dataviz {
     margin: 0 -24px;
   }
 
   .detail-button {
-    text-align: left
+    text-align: left;
   }
   .alert-warning > p {
     margin-bottom: 0px;
-    font-size: 0.75rem
+    font-size: 0.75rem;
   }
 }
 
@@ -832,7 +831,6 @@ div.tooltip {
   position: relative;
 }
 
-
 /*
 * General
 */
@@ -840,16 +838,17 @@ div.tooltip {
   text-decoration: underline;
 }
 
-table th, table td {
+table th,
+table td {
   padding: 0.1em 0.7em;
 }
 
-#regionList{
+#regionList {
   height: auto;
   overflow-y: scroll;
   text-transform: uppercase;
 }
 
-#consultingAlert .close:hover{
+#consultingAlert .close:hover {
   color: white;
 }

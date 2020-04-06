@@ -1,12 +1,3 @@
-{% set navigation_bar = 
-  [ 
-    ('/','models', 'Models'), 
-    ('/case-map', 'case-map', 'Case map'),
-    ('/containments/', 'mitigation', 'Mitigation'),
-    ('/request-calculation/', 'request-model', 'Request model'), 
-    ('/about/', 'about', 'About') 
-  ] 
--%} 
 {% set active_page = active_page|default('index') -%}
 
 <header>
@@ -20,13 +11,13 @@
 
     <div class="collapse navbar-collapse pull-right nav-masthead justify-content-end" id="navbarText">
       <ul>
-        {% for href, id, caption in navigation_bar %}
+        {% for item in navigation_bar %}
           <li>
             <a
-              class="nav-link {% if id == active_page %}active{% endif %}"
-              href="{{ href|e }}"
-              id="{{id|e }}"
-              >{{ caption|e }}
+              class="nav-link {% if item.id == active_page %}active{% endif %}"
+              href="{{ item.path|e }}"
+              id="{{item.id|e }}"
+              >{{ item.caption|e }}
             </a>
           </li>
         {% endfor %}
