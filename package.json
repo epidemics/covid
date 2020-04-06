@@ -64,7 +64,8 @@
     "watch": [
       "server",
       "package.json",
-      "webpack.config.ts"
+      "webpack.config.ts",
+      "frontend/tsconfig.json"
     ],
     "ext": "ts,tsc,html"
   }
