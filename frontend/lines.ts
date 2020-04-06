@@ -1,9 +1,9 @@
 import { guessRegion } from "./tz_lookup";
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
-import { string_score } from "./string_score";
 import { saveImage } from "./custom-plotly-image-saver";
 import { updateCurrentGraph } from "./current-chart";
+import { RegionDropdown } from "./region-dropdown";
 
 const GLEAMVIZ_TRACE_SCALE = 1000; // it gives infections per 1000
 const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
@@ -29,6 +29,11 @@ function controlModelVisualization($container: HTMLElement) {
       mitigation: url.searchParams.get(MITIGATION_PARAM) || "none"
     };
   }
+
+  let dropdown = new RegionDropdown(
+    document.getElementById("regionDropdown"),
+    key => changeRegion(key, true)
+  );
 
   let baseData;
   let measureData;
@@ -529,7 +534,7 @@ function controlModelVisualization($container: HTMLElement) {
   // }
 
   function updateRegionInText(region) {
-    let countryName = regionDict[region].name;
+    let countryName = baseData.regions[region].name;
     jQuery(".selected-region").html(countryName);
   }
 
@@ -551,164 +556,6 @@ function controlModelVisualization($container: HTMLElement) {
     return setGetParamUrl(SELECTION_PARAM, region);
   }
 
-  let $regionList = document.getElementById("regionList");
-  let $regionDropdownLabel = document.getElementById("regionDropdownLabel");
-  let $regionFilter = document.getElementById(
-    "regionFilter"
-  ) as HTMLInputElement;
-  let $regionDropdown = document.getElementById(
-    "regionDropdown"
-  ) as HTMLButtonElement;
-
-  // contains all the regions for the purpose of the dropdown menu
-  let regionList = [];
-  let regionDict = {};
-
-  // the offset in the regionList of the currently focused region
-  let focusedRegionIdx = 0;
-  let filterQuery = "";
-
-  // listen for dropdown trigger
-  jQuery($regionDropdown).on("show.bs.dropdown", () => {
-    // clear the fitler value
-    $regionFilter.value = "";
-    $($regionList).css("max-height", $(window).height() * 0.5);
-  });
-
-  jQuery($regionDropdown).on("shown.bs.dropdown", () => {
-    if (filterQuery !== "") {
-      filterQuery = "";
-      reorderDropdown();
-    }
-
-    // and focus the filter field
-    $regionFilter.focus();
-  });
-
-  // make the dropdown entry
-  function addRegionDropdown(region_key, name) {
-    const link = document.createElement("a");
-
-    link.innerHTML = name;
-    link.href = getRegionUrl(region_key);
-    link.addEventListener("click", evt => {
-      evt.preventDefault();
-
-      // change the region
-      changeRegion(region_key, true);
-    });
-
-    let item = { key: region_key, name, dropdownEntry: link };
-
-    // add it to the dict and list
-    regionDict[region_key] = item;
-    regionList.push(item);
-  }
-
-  // the dropdown items are restorted depending on a search query
-  function reorderDropdown() {
-    // we score each region item with how good the region name matches the query
-    regionList.forEach(region => {
-      region.score = string_score(region.name, filterQuery);
-    });
-
-    // then we sort the list
-    regionList.sort((a, b) => {
-      // first by score
-      if (a.score < b.score) {
-        return 1;
-      }
-      if (a.score > b.score) {
-        return -1;
-      }
-      // then alphabetically
-      if (a.name > b.name) {
-        return 1;
-      }
-      if (a.name < b.name) {
-        return -1;
-      }
-      return 0;
-    });
-
-    let bestScore = regionList[0].score;
-    for (let i = 0; i < regionList.length; i++) {
-      let { score, dropdownEntry } = regionList[i];
-
-      // re-add the entry, this sorts the dom elements
-      $regionList.appendChild(dropdownEntry);
-
-      // if we have good matches we only want to show those
-      if (score < bestScore / 1000) {
-        // correct the focus offset so it does not so something silly
-        if (focusedRegionIdx >= i) {
-          focusedRegionIdx = i - 1;
-        }
-
-        $regionList.removeChild(dropdownEntry);
-        continue;
-      }
-    }
-  }
-
-  // update the look of the of the dropdown entries
-  function restyleDropdownElements() {
-    regionList.forEach(({ key, dropdownEntry }, index) => {
-      let className = "dropdown-item";
-
-      // TODO maybe differentiate visually between 'current' and 'focused'
-      if (key === selected.region) {
-        className += " active";
-      }
-
-      if (index === focusedRegionIdx) {
-        className += " active";
-
-        // TODO something like this:
-        // dropdownEntry.scrollIntoView(false);
-      }
-
-      dropdownEntry.className = className;
-    });
-  }
-
-  $regionFilter.addEventListener("keyup", () => {
-    if (filterQuery === $regionFilter.value) {
-      // dont do anything if the query didnt change
-      return;
-    }
-
-    filterQuery = $regionFilter.value;
-    if (filterQuery !== "") {
-      // focus the first element in the list
-      focusedRegionIdx = 0;
-    }
-
-    reorderDropdown();
-    restyleDropdownElements();
-  });
-
-  // listen on regionFilter events
-  $regionFilter.addEventListener("keydown", evt => {
-    // on enter we select the currently highlighted entry
-    if (evt.key === "Enter") {
-      changeRegion(regionList[focusedRegionIdx].key, true);
-      $($regionDropdown).dropdown("toggle");
-    } else if (evt.key === "ArrowUp") {
-      focusedRegionIdx = Math.max(focusedRegionIdx - 1, 0);
-
-      restyleDropdownElements();
-    } else if (evt.key === "ArrowDown") {
-      focusedRegionIdx = Math.min(focusedRegionIdx + 1, regionList.length - 1);
-
-      restyleDropdownElements();
-    }
-  });
-
-  // populate the region dropdown label
-  // FIXME: this is kind of a hack and only looks nonsilly because the label is allcapsed
-  $regionDropdownLabel.innerHTML = selected.region;
-
   // change the displayed region
   function changeRegion(newRegion, pushState) {
     if (!(newRegion in baseData.regions)) {
@@ -725,11 +572,10 @@ function controlModelVisualization($container: HTMLElement) {
       window.history.pushState({ path }, "", path);
     }
 
-    // set the main label
-    $regionDropdownLabel.innerHTML = regionDict[selected.region].name;
+    // update the dropdown
+    dropdown.update(newRegion, baseData.regions[selected.region].name);
 
     // update the graph
-    restyleDropdownElements();
     updatePlot();
     updateInfectionTotals();
   }
@@ -750,11 +596,15 @@ function controlModelVisualization($container: HTMLElement) {
     // populate the dropdown menu with countries from received data
     let listOfRegions = Object.keys(baseData.regions);
     listOfRegions.forEach(key =>
-      addRegionDropdown(key, baseData.regions[key].name)
+      dropdown.addRegionDropdown(
+        key,
+        getRegionUrl(key),
+        baseData.regions[key].name
+      )
     );
 
-    reorderDropdown();
-    restyleDropdownElements();
+    dropdown.reorderDropdown();
+    dropdown.restyleDropdownElements();
 
     // initialize the graph
     changeRegion(selected.region, false);

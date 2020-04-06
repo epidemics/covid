@@ -1,5 +1,6 @@
-{% extends "base.html" %} {% set title = 'Countermeasures' %} {%- block
-additional_js_pre -%}
+{% from "snippets/region-dropdown.html" import region_dropdown %} {% extends
+"base.html" %} {% set title = 'Countermeasures' %} {%- block additional_js_pre
+-%}
 <style type="text/css">
   @media only screen and (min-width: 992px) and (max-width: 1199px) {
     .legend {
@@ -29,7 +30,6 @@ additional_js_pre -%}
 } */
 </style>
 {% endblock %} {% block content %}
-
 <!-- Pro bono consulting alert-->
 <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
   <p class="text-center">
@@ -40,85 +40,63 @@ additional_js_pre -%}
   </button>
 </div> -->
 
-<!-- Main model graph -->
-<div class="main-wrapper">
-  <div class="row">
-    <div class="central-column">
-      <div class="top-row">
-        <div class="dropdown" id="regionDropdown">
-          <button
-            class="btn btn-primary dropdown-toggle medium dropdown-caret-styling region-dropdown"
-            type="button"
-            aria-haspopup="true"
-            data-toggle="dropdown"
-          >
-            <span class="region-dropdown-label" id="regionDropdownLabel"
-              >...</span
+<div class="top-row">
+  <!-- Main model graph -->
+  <div class="main-wrapper">
+    <div class="row">
+      <div class="central-column">
+        <div class="top-row">
+          {{ region_dropdown("regionDropdown") }}
+          <div class="active-infections-block">
+            <span class="number-subheader" id="infections-date"></span>
+            <span class="active-infections"
+              >Active Infections:
+              <span class="infections-estimated" id="infections-estimated"
+                >&mdash;</span
+              >
+              <!-- TODO: Insert official case count into tooltip -->
+              <a href="#case-count-explanation">
+                <span class="question-tooltip">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    width="18"
+                  >
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"
+                    />
+                  </svg>
+                </span>
+              </a>
+            </span>
+            <span class="infections-confirmed">
+              Confirmed Infections:
+              <span id="infections-confirmed">&mdash;</span></span
             >
-            <span class="caret"></span>
-          </button>
-          <div class="dropdown-menu">
-            <div class="px-3 py-2">
-              <input
-                class="form-control"
-                id="regionFilter"
-                type="text"
-                placeholder="Filter..."
-                autofocus="autofocus"
-              />
-            </div>
-            <div id="regionList"></div>
           </div>
-        </div>
-        <div class="active-infections-block">
-          <span class="number-subheader" id="infections-date"></span>
-          <span class="active-infections"
-            >Active Infections:
-            <span class="infections-estimated" id="infections-estimated"
+
+          <div class="population-block">
+            <span class="number-subheader">Population</span>
+            <span class="infections-population" id="infections-population"
               >&mdash;</span
             >
-            <!-- TODO: Insert official case count into tooltip -->
-            <a href="#case-count-explanation">
-              <span class="question-tooltip">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  width="18"
-                >
-                  <path d="M0 0h24v24H0z" fill="none" />
-                  <path
-                    d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"
-                  />
-                </svg>
-              </span>
-            </a>
-          </span>
-          <span class="infections-confirmed">
-            Confirmed Infections:
-            <span id="infections-confirmed">&mdash;</span></span
-          >
+          </div>
         </div>
 
-        <div class="population-block">
-          <span class="number-subheader">Population</span>
-          <span class="infections-population" id="infections-population"
-            >&mdash;</span
-          >
+        <hr />
+
+        <div id="current_viz" />
+
+        <hr />
+
+        <div class="model-explanation">
+          <h5 class="mitigation-strength-heading">Explain measures (TODO)</h5>
+          <p>The impact on <span class="selected-region"></span></p>
         </div>
-      </div>
-
-      <hr />
-
-      <div id="current_viz" />
-
-      <hr />
-
-      <div class="model-explanation">
-        <h5 class="mitigation-strength-heading">Explain measures (TODO)</h5>
-        <p>The impact on <span class="selected-region"></span></p>
       </div>
     </div>
   </div>
+  {% endblock %} {% block additional_js %} {% endblock %}
 </div>
-{% endblock %} {% block additional_js %} {% endblock %}
