@@ -35,6 +35,10 @@ yarn run lint-write // linting - updating in place
 yarn run test // run tests
 ```
 
+There is a git hook for running the linter on pre-commit in `/hooks`.
+This can be configured to run every time (for this repository only) 
+by running `git config core.hooksPath hooks`.
+
 ## Development flow
 It's the author responsibility to do the merge, ideally after having it reviewed. That is:
 
