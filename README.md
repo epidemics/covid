@@ -20,7 +20,7 @@ docker-compose up
 and visit http://localhost:8000.
 
 ## Local installation
-Requiers `nodejs` and `yarn`. Run
+Requires `nodejs` and `yarn`. Run
 ```
 yarn install // install dependencies
 yarn run dev // start the dev server
