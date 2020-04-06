@@ -11,7 +11,7 @@ let config: Configuration = {
         use: {
           loader: 'ts-loader',
           options: {
-            configFile: "tsconfig.frontend.json"
+            configFile: "frontend/tsconfig.json"
           } 
         },
         exclude: /node_modules/,
