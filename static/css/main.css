@@ -284,7 +284,8 @@ span.infections-confirmed {
   justify-content: space-between;
 }
 
-.total-infected-number, .sim-infected-number {
+.total-infected-number,
+.sim-infected-number {
   font-size: 24px;
   color: #ef6c00;
 }

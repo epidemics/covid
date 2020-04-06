@@ -64,7 +64,7 @@ function makeMap(regions_data) {
 
   var z_data = get_z(regions_data["regions"]);
   var z_max = Math.max(...z_data.filter(x => !isNaN(x)), 2); // z_max is at least 2
-  var z_min = -3.5
+  var z_min = -3.5;
 
   let data: Array<Partial<Plotly.PlotData>> = [
     {
