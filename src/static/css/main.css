@@ -193,7 +193,7 @@ span.infections-confirmed {
   display: block;
   margin-bottom: -4px;
   font-weight: 300;
-  /* margin-bottom: -4px; */
+  font-size: 14px;
 }
 
 .population-block {
@@ -202,7 +202,7 @@ span.infections-confirmed {
 }
 
 .infections-population {
-  font-size: 22px;
+  font-size: 24px;
 }
 
 .question-tooltip {
@@ -221,7 +221,6 @@ span.infections-confirmed {
 }
 
 .mitigation-strength-button {
-  height: 100px;
   display: flex;
   align-items: center;
 }
@@ -240,6 +239,7 @@ span.infections-confirmed {
   border: none;
   text-align: left;
   border-left: 3px solid transparent;
+  font-size: 14px;
 }
 
 .mitigation-strength-explanation.footnote {
@@ -253,7 +253,7 @@ span.infections-confirmed {
 }
 
 .mitigation-strength-explanation {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   text-transform: none;
   color: rgba(255,255,255,0.4);
@@ -286,12 +286,7 @@ span.infections-confirmed {
   justify-content: space-between;
 }
 
-.total-infected-number {
-  font-size: 24px;
-  color: #ef6c00;
-}
-
-.sim-infected-number {
+.total-infected-number, .sim-infected-number {
   font-size: 24px;
   color: #ef6c00;
 }
@@ -301,7 +296,7 @@ span.infections-confirmed {
 }
 
 .model-explanation {
-  font-size: 20px;
+  font-size: 16px;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
@@ -309,7 +304,7 @@ span.infections-confirmed {
 }
 
 .pro-bono-banner {
-  font-size: 22px;
+  font-size: 20px;
   padding: 16px;
   margin-bottom: 32px;
   border: 1px solid white;
@@ -385,6 +380,7 @@ span.infections-confirmed {
 .main {
   margin: 20px auto;
   padding-bottom: 5em;
+  font-size: 16px;
 }
 
 .main-wrapper {
@@ -475,7 +471,7 @@ span.infections-confirmed {
   padding: 0.5em 1em;
   user-select: auto;
   text-align: center;
-  font-size: 0.9em;
+  font-size: 11px;
   border-top: 1px solid #323232;
 }
 
@@ -483,6 +479,7 @@ span.infections-confirmed {
   display: inline-block;
   margin: 0.5em auto;
   padding: 0 1em;
+  max-width: 800px;
 }
 
 .container-right-footer {
@@ -633,16 +630,6 @@ label.btn-secondary > input {
   color: white;
   mix-blend-mode: normal;
   opacity: 0.8;
-}
-
-.credits {
-  font-size: 13px;
-  margin-top: -10px;
-}
-
-.fa-caret-down,
-.fa-caret-up {
-  margin-left: 4px;
 }
 
 /*
