@@ -9,26 +9,6 @@ function makeMap(regions_data) {
     });
   }
 
-  function _get_text(dict) {
-    return Object.keys(dict).map(function(country) {
-      var last_data = get_last_data(dict[country]);
-      var risk = last_data["FT_Infected"] / dict[country]["population"];
-      var infected_per_1m = Math.round(risk * 1000000).toLocaleString();
-      var infected_total = Math.round(
-        last_data["FT_Infected"]
-      ).toLocaleString();
-      return (
-        "Estimations:<br>" +
-        "Infected per 1M: <b>" +
-        infected_per_1m +
-        "</b><br>" +
-        "Infected total: <b>" +
-        infected_total +
-        "</b>"
-      );
-    });
-  }
-
   function get_last_data(row) {
     var sorted = Object.keys(row["data"]["estimates"]["days"]).sort();
     var last = sorted[sorted.length - 1];
@@ -70,8 +50,14 @@ function makeMap(regions_data) {
 
   var countries = {};
   for (var item in countries_json) {
-    if (countries[countries_json[item][iso_key]] !== "-99")
-      countries[countries_json[item][iso_key]] = countries_json[item]["admin"];
+    if (countries_json[item][iso_key] !== "-99") {
+      if ("admin" in countries_json[item]) {
+        countries[countries_json[item][iso_key]] =
+          countries_json[item]["admin"];
+      } else {
+        countries[countries_json[item][iso_key]] = countries_json[item]["name"];
+      }
+    }
   }
 
   var offset = 0.00001;
@@ -81,11 +67,9 @@ function makeMap(regions_data) {
   var country_data = {};
   for (var country in regions_data["regions"]) {
     if ("iso_alpha_3" in regions_data["regions"][country]) {
-      country_data[regions_data["regions"][country]["iso_alpha_3"]] =
-        regions_data["regions"][country];
-      country_data[regions_data["regions"][country]["iso_alpha_3"]][
-        "name_lowercase"
-      ] = country;
+      var country_iso = regions_data["regions"][country]["iso_alpha_3"];
+      country_data[country_iso] = regions_data["regions"][country];
+      country_data[country_iso]["name_lowercase"] = country;
     }
   }
 
