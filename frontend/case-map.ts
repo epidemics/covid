@@ -50,10 +50,12 @@ function makeMap(regions_data) {
   const iso_key = "iso_a3";
 
   var countries_json = JSON.parse(
-    $.getJSON({
-      'url': "https://storage.googleapis.com/static-covid/static/casemap-geo.json",
-      'async': false
-    }).responseText
+    $.ajax({
+      url: "https://storage.googleapis.com/static-covid/static/casemap-geo.json",
+      dataType: 'json',
+      async: false,
+    }
+    ).responseText
   )["features"].map(function(item) {
     return item["properties"]
   });
