@@ -14,10 +14,18 @@ function makeMap(regions_data) {
       var last_data = get_last_data(dict[country]);
       var risk = last_data["FT_Infected"] / dict[country]["population"];
       var infected_per_1m = Math.round(risk * 1000000).toLocaleString();
-      var infected_total = Math.round(last_data["FT_Infected"]).toLocaleString()
-      return "Estimations:<br>" +
-        "Infected per 1M: <b>" + infected_per_1m + "</b><br>" +
-        "Infected total: <b>" + infected_total + "</b>"
+      var infected_total = Math.round(
+        last_data["FT_Infected"]
+      ).toLocaleString();
+      return (
+        "Estimations:<br>" +
+        "Infected per 1M: <b>" +
+        infected_per_1m +
+        "</b><br>" +
+        "Infected total: <b>" +
+        infected_total +
+        "</b>"
+      );
     });
   }
 
@@ -51,20 +59,21 @@ function makeMap(regions_data) {
 
   var countries_json = JSON.parse(
     $.ajax({
-      url: "https://storage.googleapis.com/static-covid/static/casemap-geo.json",
-      dataType: 'json',
-      async: false,
-    }
-    ).responseText
+      url:
+        "https://storage.googleapis.com/static-covid/static/casemap-geo.json",
+      dataType: "json",
+      async: false
+    }).responseText
   )["features"].map(function(item) {
-    return item["properties"]
+    return item["properties"];
   });
 
   var countries = {};
   for (var item in countries_json) {
     if (countries[countries_json[item][iso_key]] !== "-99")
-    countries[countries_json[item][iso_key]] = countries_json[item]["brk_name"];
-  };
+      countries[countries_json[item][iso_key]] =
+        countries_json[item]["brk_name"];
+  }
 
   var offset = 0.00001;
   var tick_values = [-3, -1, 1, 3, 5, 7, 9];
@@ -73,18 +82,21 @@ function makeMap(regions_data) {
   var country_data = {};
   for (var country in regions_data["regions"]) {
     if ("iso_alpha_3" in regions_data["regions"][country]) {
-      country_data[regions_data["regions"][country]["iso_alpha_3"]] = regions_data["regions"][country];
-      country_data[regions_data["regions"][country]["iso_alpha_3"]]["name_lowercase"] = country;
+      country_data[regions_data["regions"][country]["iso_alpha_3"]] =
+        regions_data["regions"][country];
+      country_data[regions_data["regions"][country]["iso_alpha_3"]][
+        "name_lowercase"
+      ] = country;
     }
-  };
+  }
 
   var locations = Object.keys(countries);
 
   var _z_data = get_z(regions_data["regions"]);
   var _z_max = Math.max(..._z_data.filter(x => !isNaN(x)), 2); // z_max is at least 2
-  var z_min = -3.5
+  var z_min = -3.5;
 
-  var z_max = z_min + ((_z_max - z_min) / (1 - offset))
+  var z_max = z_min + (_z_max - z_min) / (1 - offset);
   var value_for_missing = z_max + offset;
 
   var z_data = locations.map(function(country) {
@@ -100,10 +112,18 @@ function makeMap(regions_data) {
       var last_data = get_last_data(country_data[country]);
       var risk = last_data["FT_Infected"] / country_data[country]["population"];
       var infected_per_1m = Math.round(risk * 1000000).toLocaleString();
-      var infected_total = Math.round(last_data["FT_Infected"]).toLocaleString()
-      return "Estimations:<br>" +
-        "Infected per 1M: <b>" + infected_per_1m + "</b><br>" +
-        "Infected total: <b>" + infected_total + "</b>"
+      var infected_total = Math.round(
+        last_data["FT_Infected"]
+      ).toLocaleString();
+      return (
+        "Estimations:<br>" +
+        "Infected per 1M: <b>" +
+        infected_per_1m +
+        "</b><br>" +
+        "Infected total: <b>" +
+        infected_total +
+        "</b>"
+      );
     }
     return "No estimation";
   });
@@ -111,7 +131,10 @@ function makeMap(regions_data) {
   var customdata = locations.map(function(country) {
     if (country in country_data) {
       return {
-        country_to_search: country_data[country]["name_lowercase"].replace(" ", "+"),
+        country_to_search: country_data[country]["name_lowercase"].replace(
+          " ",
+          "+"
+        ),
         country_name: country_data[country]["name"]
       };
     }
@@ -135,7 +158,7 @@ function makeMap(regions_data) {
       colorscale: [
         [0, "rgb(255,255,0)"],
         [0.9, "rgb(255,0,0)"],
-        [1-offset, "rgb(200,0,0)"],
+        [1 - offset, "rgb(200,0,0)"],
         [1, "rgb(70,70,70"]
       ],
       showscale: true,
