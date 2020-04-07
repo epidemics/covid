@@ -71,8 +71,7 @@ function makeMap(regions_data) {
   var countries = {};
   for (var item in countries_json) {
     if (countries[countries_json[item][iso_key]] !== "-99")
-      countries[countries_json[item][iso_key]] =
-        countries_json[item]["admin"];
+      countries[countries_json[item][iso_key]] = countries_json[item]["admin"];
   }
 
   var offset = 0.00001;
