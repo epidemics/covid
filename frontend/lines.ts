@@ -329,15 +329,28 @@ function controlModelVisualization($container: HTMLElement) {
     }
   });
 
+  // formats like d3 "s" except it keeps things integer
+  function formatSIInteger(precision: number): (n: number) => string {
+    const formatInt = d3.format("d");
+    const formatSI = d3.format(`.${precision}s`);
+
+    return (number: number) => {
+      number = Math.round(number);
+      // we want to show SI number, but it has to be integer
+      if (number < Math.pow(10, precision))
+        // for small numbers just use the decimal formatting
+        return formatInt(number);
+      // otherwise use the SI formatting
+      else return formatSI(number);
+    };
+  }
+
   // Checks if the max and traces have been loaded and preprocessed for the given region;
   // if not, loads them and does preprocessing; then caches it in the region object.
   // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
   function loadGleamvizTraces(regionRec, thenTracesMax) {
-    if (typeof regionRec.cached_gleam_traces !== "undefined") {
-      thenTracesMax(
-        regionRec.cached_gleam_traces,
-        regionRec.cached_gleam_max_y
-      );
+    if (regionRec.cache) {
+      thenTracesMax(regionRec.cache.traces, regionRec.cache.maxY);
     }
 
     // Not cached, load and preprocess
@@ -345,55 +358,66 @@ function controlModelVisualization($container: HTMLElement) {
 
     d3.json(
       `https://storage.googleapis.com/static-covid/static/${tracesUrl}`
-    ).then(mitigationsData => {
+    ).then(data => {
       // TODO error handling
 
       let highestVals = [];
+      const STRIDE = 2;
+
+      let result = { traces: [], maxY: 0 };
+      const formatPop = formatSIInteger(3);
 
       // Iterate over mitigations (groups)
-      Object.values(mitigationsData).forEach(mitigationTraces => {
+      Object.keys(data).forEach(key => {
         // Iterate over Plotly traces in groups
-        Object.values(mitigationTraces).forEach(trace => {
-          trace.text = [];
+        data[key].forEach(traceData => {
+          let trace = {
+            ...traceData,
+            text: [],
+            _mitigation: key,
+            x: [],
+            y: []
+          };
 
-          // Scale all trace Ys to percent
-          Object.keys(trace.y).forEach(i => {
-            trace.y[i] = trace.y[i] / GLEAMVIZ_TRACE_SCALE;
-            let number = Math.round(trace.y[i] * regionRec.population);
+          //trace.line.shape = "spline";
 
-            // we want to show SI number, but it has to be integer
-            let precision = 3;
-            if (number < Math.pow(10, precision)) {
-              // for small numbers just use the decimal formatting
-              trace.text.push(d3.format("d")(number));
-            } else {
-              // otherwise use the SI formatting
-              trace.text.push(d3.format(`.${precision}s`)(number));
-            }
-          });
+          result.traces.push(trace);
+
+          for (let i = 0; i < traceData.y.length; i += STRIDE) {
+            trace.y.push(traceData.y[i] / GLEAMVIZ_TRACE_SCALE);
+            trace.text.push(
+              formatPop(
+                (traceData.y[i] / GLEAMVIZ_TRACE_SCALE) * regionRec.population
+              )
+            );
+          }
           highestVals.push(Math.max(...trace.y));
 
           // When x has length 1, extend it to a day sequence of len(y) days
-          if (trace.x.length === 1) {
-            let xStart = new Date(trace.x[0]);
-            trace.x[0] = xStart;
-            for (let i = 1; i < trace.y.length; ++i) {
-              trace.x[i] = d3.timeDay.offset(xStart, i);
+          if (traceData.x.length === 1) {
+            let xStart = new Date(traceData.x[0]);
+            traceData.x[0] = xStart;
+            for (let i = 1; i < traceData.y.length; i += STRIDE) {
+              trace.x.push(d3.timeDay.offset(xStart, i));
+            }
+          } else {
+            for (let i = 1; i < traceData.y.length; i += STRIDE) {
+              trace.x.push(traceData.x[i]);
             }
           }
-          if (trace["hoverinfo"] !== "skip") {
-            trace["hoverlabel"] = { namelength: -1 };
-            trace["hovertemplate"] = "%{text}<br />%{y:.2%}";
+
+          if (traceData["hoverinfo"] !== "skip") {
+            trace.hoverlabel = { namelength: -1 };
+            trace.hovertemplate = "%{text}<br />%{y:.2%}";
           }
         });
       });
-      let maxY = Math.max(...highestVals);
+      result.maxY = Math.max(...highestVals);
 
       // Cache the values in the region
-      regionRec.cached_gleam_traces = mitigationsData;
-      regionRec.cached_gleam_max_y = maxY;
+      regionRec.cached = result;
       // Callback
-      thenTracesMax(mitigationsData, maxY);
+      thenTracesMax(result.traces, result.maxY);
     });
   }
 
@@ -421,23 +445,20 @@ function controlModelVisualization($container: HTMLElement) {
     updateStatistics();
 
     // Load and preprocess the per-region graph data
-    loadGleamvizTraces(baseData.regions[selected.region], function(
-      mitigTraces,
-      maxVal
-    ) {
+    loadGleamvizTraces(baseData.regions[selected.region], (traces, maxVal) => {
       layout.yaxis.range = [0, maxVal];
-      AddCriticalCareTrace(mitigTraces[mitigationId]);
+      // AddCriticalCareTrace(mitigTraces[mitigationId]);
       // redraw the lines on the graph
-      renderChart(mitigTraces[mitigationId]);
+      renderChart(traces.filter(trace => trace._mitigation == mitigationId));
     });
   }
 
-  function AddCriticalCareTrace(traces) {
-    let line_title = "Hospital critical care capacity (approximate)";
+  // function AddCriticalCareTrace(traces) {
+  //   let line_title = "Hospital critical care capacity (approximate)";
 
-    const lastTrace = traces[traces.length - 1];
-    if (lastTrace && lastTrace.name === line_title) return;
-  }
+  //   const lastTrace = traces[traces.length - 1];
+  //   if (lastTrace && lastTrace.name === line_title) return;
+  // }
 
   function updateRegionInText(region) {
     let countryName = regionDict[region].name;
