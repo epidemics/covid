@@ -9,21 +9,26 @@ function makeMap(regions_data) {
     });
   }
 
-  function get_text(dict) {
+  function _get_text(dict) {
     return Object.keys(dict).map(function(country) {
-      let last_data = get_last_data(dict[country]);
-      return last_data["FT_Infected"];
+      var last_data = get_last_data(dict[country]);
+      var risk = last_data["FT_Infected"] / dict[country]["population"];
+      var infected_per_1m = Math.round(risk * 1000000).toLocaleString();
+      var infected_total = Math.round(last_data["FT_Infected"]).toLocaleString()
+      return "Estimations:<br>" +
+        "Infected per 1M: <b>" + infected_per_1m + "</b><br>" +
+        "Infected total: <b>" + infected_total + "</b>"
     });
   }
 
   function get_last_data(row) {
-    let sorted = Object.keys(row["data"]["estimates"]["days"]).sort();
-    let last = sorted[sorted.length - 1];
+    var sorted = Object.keys(row["data"]["estimates"]["days"]).sort();
+    var last = sorted[sorted.length - 1];
     return row["data"]["estimates"]["days"][last];
   }
 
   function get_risk(row) {
-    let last_data = get_last_data(row);
+    var last_data = get_last_data(row);
     return last_data["FT_Infected"] / row["population"];
   }
 
@@ -42,29 +47,76 @@ function makeMap(regions_data) {
     return x.toString();
   }
 
-  function get_locations(dict) {
-    return Object.keys(dict).map(function(country) {
-      return dict[country]["iso_alpha_3"];
-    });
-  }
+  const iso_key = "iso_a3";
 
-  function get_customdata(dict) {
-    return Object.keys(dict).map(function(country) {
+  var countries_json = JSON.parse(
+    $.getJSON({
+      'url': "https://storage.googleapis.com/static-covid/static/casemap-geo.json",
+      'async': false
+    }).responseText
+  )["features"].map(function(item) {
+    return item["properties"]
+  });
+
+  var countries = {};
+  for (var item in countries_json) {
+    if (countries[countries_json[item][iso_key]] !== "-99")
+    countries[countries_json[item][iso_key]] = countries_json[item]["brk_name"];
+  };
+
+  var offset = 0.00001;
+  var tick_values = [-3, -1, 1, 3, 5, 7, 9];
+  var tick_names = tick_values.map(value_to_labels);
+
+  var country_data = {};
+  for (var country in regions_data["regions"]) {
+    if ("iso_alpha_3" in regions_data["regions"][country]) {
+      country_data[regions_data["regions"][country]["iso_alpha_3"]] = regions_data["regions"][country];
+      country_data[regions_data["regions"][country]["iso_alpha_3"]]["name_lowercase"] = country;
+    }
+  };
+
+  var locations = Object.keys(countries);
+
+  var _z_data = get_z(regions_data["regions"]);
+  var _z_max = Math.max(..._z_data.filter(x => !isNaN(x)), 2); // z_max is at least 2
+  var z_min = -3.5
+
+  var z_max = z_min + ((_z_max - z_min) / (1 - offset))
+  var value_for_missing = z_max + offset;
+
+  var z_data = locations.map(function(country) {
+    if (country in country_data) {
+      const risk = get_risk(country_data[country]);
+      return Math.log(risk * 1000) / Math.log(2);
+    }
+    return value_for_missing;
+  });
+
+  var text = locations.map(function(country) {
+    if (country in country_data) {
+      var last_data = get_last_data(country_data[country]);
+      var risk = last_data["FT_Infected"] / country_data[country]["population"];
+      var infected_per_1m = Math.round(risk * 1000000).toLocaleString();
+      var infected_total = Math.round(last_data["FT_Infected"]).toLocaleString()
+      return "Estimations:<br>" +
+        "Infected per 1M: <b>" + infected_per_1m + "</b><br>" +
+        "Infected total: <b>" + infected_total + "</b>"
+    }
+    return "No estimation";
+  });
+
+  var customdata = locations.map(function(country) {
+    if (country in country_data) {
       return {
-        country_to_search: country.replace(" ", "+"),
-        infected_per_1m: get_risk(dict[country]) * 1000000,
-        country_name: dict[country]["name"],
-        est_active: get_last_data(dict[country])["FT_Infected"]
+        country_to_search: country_data[country]["name_lowercase"].replace(" ", "+"),
+        country_name: country_data[country]["name"]
       };
-    });
-  }
-
-  let tick_values = [-3, -1, 1, 3, 5, 7, 9];
-  let tick_names = tick_values.map(value_to_labels);
-
-  var z_data = get_z(regions_data["regions"]);
-  var z_max = Math.max(...z_data.filter(x => !isNaN(x)), 2); // z_max is at least 2
-  var z_min = -3.5;
+    }
+    return {
+      country_name: countries[country]
+    };
+  });
 
   let data: Array<Partial<Plotly.PlotData>> = [
     {
@@ -72,24 +124,23 @@ function makeMap(regions_data) {
       name: "COVID-19: Active infections estimate",
       geojson:
         "https://storage.googleapis.com/static-covid/static/casemap-geo.json",
-      featureidkey: "properties.iso_a3",
-      locations: get_locations(regions_data["regions"]),
+      featureidkey: "properties." + iso_key,
+      locations: locations,
       z: z_data,
       zmax: z_max,
       zmin: z_min,
-      text: get_text(regions_data["regions"]),
+      text: text,
       colorscale: [
         [0, "rgb(255,255,0)"],
         [0.9, "rgb(255,0,0)"],
-        [1, "rgb(200,0,0)"]
+        [1-offset, "rgb(200,0,0)"],
+        [1, "rgb(50,50,50"]
       ],
       showscale: true,
-      customdata: get_customdata(regions_data["regions"]),
+      customdata: customdata,
       hovertemplate:
         "<b>%{customdata.country_name}</b><br><br>" +
-        "Estimations:<br>" +
-        "Infected per 1M: <b>%{customdata.infected_per_1m:,.0f}</b><br>" +
-        "Infected total: <b>%{customdata.est_active:,.0f}</b>" +
+        "%{text}" +
         "<extra></extra>",
       hoverlabel: {
         font: {
@@ -139,7 +190,9 @@ function makeMap(regions_data) {
   Plotly.newPlot(caseMap, data, layout).then(gd => {
     gd.on("plotly_click", d => {
       let pt = (d.points || [])[0] as any;
-      window.open("/?selection=" + pt.customdata["country_to_search"]);
+      if ("country_to_search" in pt.customdata) {
+        window.open("/?selection=" + pt.customdata["country_to_search"]);
+      }
     });
   });
 }
