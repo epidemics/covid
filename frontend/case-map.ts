@@ -134,7 +134,7 @@ function makeMap(regions_data) {
         [0, "rgb(255,255,0)"],
         [0.9, "rgb(255,0,0)"],
         [1-offset, "rgb(200,0,0)"],
-        [1, "rgb(50,50,50"]
+        [1, "rgb(70,70,70"]
       ],
       showscale: true,
       customdata: customdata,
