@@ -157,11 +157,13 @@ function controlModelVisualization($container: HTMLElement) {
     }
   };
 
+  let ybounds: Range = [0, 0.099];
+  let xbounds: Range = [null, null];
+
   // graph layout
   let layout: Partial<Plotly.Layout> = {
     ...calculateChartSize(),
-    //margin: { t: 0 },
-    margin: { r: 20 },
+    margin: { r: 20, t: 40 },
     paper_bgcolor: "#222028",
     plot_bgcolor: "#222028",
     xaxis: {
@@ -212,7 +214,7 @@ function controlModelVisualization($container: HTMLElement) {
       zerolinecolor: "#fff",
       zerolinewidth: 1,
       // this way the axis does not change width on data load
-      range: [0, 0.099]
+      range: [...ybounds]
     },
     showlegend: true,
     legend: {
@@ -240,7 +242,7 @@ function controlModelVisualization($container: HTMLElement) {
 
   let customToImage: Plotly.ModeBarButton = {
     name: "Download plot",
-    title: "",
+    title: "Download plot",
     icon: Plotly.Icons.camera,
     click: gd =>
       saveImage(gd, {
@@ -281,13 +283,36 @@ function controlModelVisualization($container: HTMLElement) {
       })
   };
 
-  let plotlyConfig: Partial<Plotly.Config> = {
+  let customResetView: Plotly.ModeBarButton = {
+    name: "Reset view",
+    title: "Reset axis",
+    icon: Plotly.Icons.autoscale,
+    click: gd => {
+      Plotly.relayout(gd, {
+        "yaxis.range": [...ybounds],
+        "xaxis.range": [...xbounds]
+      } as any);
+    }
+  };
+
+  let config: Partial<Plotly.Config> = {
     displaylogo: false,
     responsive: false,
-    scrollZoom: false,
-    modeBarButtonsToAdd: [customToImage],
-    modeBarButtonsToRemove: ["toImage"]
+    displayModeBar: true,
+    modeBarButtonsToAdd: [customToImage, customResetView],
+    modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
   };
+
+  function isTouchDevice() {
+    return !!(
+      ("ontouchstart" in window || navigator.maxTouchPoints) // works on most browsers
+    ); // works on IE10/11 and Surface
+  }
+
+  if (isTouchDevice()) {
+    config.scrollZoom = true;
+    layout.dragmode = "pan";
+  }
 
   function calculateChartSize() {
     const idealWidth = $container.clientWidth;
@@ -300,6 +325,24 @@ function controlModelVisualization($container: HTMLElement) {
     };
   }
 
+  type Range = [number, number];
+
+  function ensureZero() {
+    let shouldUpdate = false;
+    let range = layout.yaxis.range as Range;
+    if (range[0] < ybounds[0]) {
+      range[1] += ybounds[0] - range[0];
+      range[0] = ybounds[0];
+      shouldUpdate = true;
+    }
+
+    if (shouldUpdate) {
+      Plotly.relayout($container, {
+        "yaxis.range": range
+      });
+    }
+  }
+
   function makePlotlyResponsive() {
     d3.select(".js-plotly-plot .plotly .svg-container").attr("style", null);
     d3.selectAll(".js-plotly-plot .plotly .main-svg")
@@ -309,9 +352,7 @@ function controlModelVisualization($container: HTMLElement) {
   }
 
   function renderChart(traces = []) {
-    Plotly.react($container, traces, layout, plotlyConfig).then(
-      makePlotlyResponsive
-    );
+    Plotly.react($container, traces, layout, config).then(makePlotlyResponsive);
   }
 
   renderChart();
@@ -319,7 +360,10 @@ function controlModelVisualization($container: HTMLElement) {
   // @ts-ignore
   $container.on("plotly_restyle", makePlotlyResponsive);
   // @ts-ignore
-  $container.on("plotly_relayout", makePlotlyResponsive);
+  $container.on("plotly_relayout", () => {
+    ensureZero();
+    makePlotlyResponsive();
+  });
 
   window.addEventListener("resize", () => {
     const size = calculateChartSize();
@@ -350,7 +394,11 @@ function controlModelVisualization($container: HTMLElement) {
   // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
   function loadGleamvizTraces(regionRec, thenTracesMax) {
     if (regionRec.cache) {
-      thenTracesMax(regionRec.cache.traces, regionRec.cache.maxY);
+      thenTracesMax(
+        regionRec.cache.traces,
+        regionRec.cache.maxY,
+        regionRec.cache.xrange
+      );
     }
 
     // Not cached, load and preprocess
@@ -361,10 +409,9 @@ function controlModelVisualization($container: HTMLElement) {
     ).then(data => {
       // TODO error handling
 
-      let highestVals = [];
       const STRIDE = 2;
 
-      let result = { traces: [], maxY: 0 };
+      let result = { traces: [], maxY: -Infinity, xrange: null };
       const formatPop = formatSIInteger(3);
 
       // Iterate over mitigations (groups)
@@ -379,7 +426,7 @@ function controlModelVisualization($container: HTMLElement) {
             y: []
           };
 
-          //trace.line.shape = "spline";
+          trace.line.shape = "spline";
 
           result.traces.push(trace);
 
@@ -391,7 +438,7 @@ function controlModelVisualization($container: HTMLElement) {
               )
             );
           }
-          highestVals.push(Math.max(...trace.y));
+          result.maxY = Math.max(result.maxY, ...trace.y);
 
           // When x has length 1, extend it to a day sequence of len(y) days
           if (traceData.x.length === 1) {
@@ -410,14 +457,18 @@ function controlModelVisualization($container: HTMLElement) {
             trace.hoverlabel = { namelength: -1 };
             trace.hovertemplate = "%{text}<br />%{y:.2%}";
           }
+
+          if (!result.xrange) {
+            result.xrange = [trace.x[0], trace.x[trace.x.length - 1]];
+          }
         });
       });
-      result.maxY = Math.max(...highestVals);
 
       // Cache the values in the region
       regionRec.cached = result;
+
       // Callback
-      thenTracesMax(result.traces, result.maxY);
+      thenTracesMax(result.traces, result.maxY, result.xrange);
     });
   }
 
@@ -445,12 +496,17 @@ function controlModelVisualization($container: HTMLElement) {
     updateStatistics();
 
     // Load and preprocess the per-region graph data
-    loadGleamvizTraces(baseData.regions[selected.region], (traces, maxVal) => {
-      layout.yaxis.range = [0, maxVal];
-      // AddCriticalCareTrace(mitigTraces[mitigationId]);
-      // redraw the lines on the graph
-      renderChart(traces.filter(trace => trace._mitigation == mitigationId));
-    });
+    loadGleamvizTraces(
+      baseData.regions[selected.region],
+      (traces, maxVal, xrange) => {
+        layout.yaxis.range = [0, maxVal];
+        ybounds = [0, maxVal];
+        // AddCriticalCareTrace(mitigTraces[mitigationId]);
+        // redraw the lines on the graph
+        renderChart(traces.filter(trace => trace._mitigation == mitigationId));
+        xbounds = xrange;
+      }
+    );
   }
 
   // function AddCriticalCareTrace(traces) {
