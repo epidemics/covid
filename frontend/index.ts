@@ -6,4 +6,4 @@ import "./lines";
 
 import "./consulting-alert";
 
-import "./current-chart";
+import "./measures";

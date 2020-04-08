@@ -2,8 +2,9 @@ import { guessRegion } from "./tz_lookup";
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
 import { saveImage } from "./custom-plotly-image-saver";
-import { updateCurrentGraph } from "./current-chart";
+//import { updateCurrentGraph } from "./measures/current-chart";
 import { RegionDropdown } from "./region-dropdown";
+import { setGetParamUrl } from "./helpers";
 
 const GLEAMVIZ_TRACE_SCALE = 1000; // it gives infections per 1000
 const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
@@ -362,6 +363,8 @@ function controlModelVisualization($container: HTMLElement) {
   }
 
   function renderChart(traces = []) {
+    console.log(traces);
+
     Plotly.react($container, traces, layout, config).then(makePlotlyResponsive);
   }
 
@@ -508,22 +511,18 @@ function controlModelVisualization($container: HTMLElement) {
     updateStatistics();
 
     let regionData = baseData.regions[selected.region];
-    let measures = measureData[regionData.iso_alpha_3];
-
-    updateCurrentGraph(regionData, measures);
+    //let measures = measureData[regionData.iso_alpha_3];
+    //updateCurrentGraph(regionData, measures);
 
     // Load and preprocess the per-region graph data
-    loadGleamvizTraces(
-      baseData.regions[selected.region],
-      (traces, maxVal, xrange) => {
-        layout.yaxis.range = [0, maxVal];
-        ybounds = [0, maxVal];
-        // AddCriticalCareTrace(mitigTraces[mitigationId]);
-        // redraw the lines on the graph
-        renderChart(traces.filter(trace => trace._mitigation == mitigationId));
-        xbounds = xrange;
-      }
-    );
+    loadGleamvizTraces(regionData, (traces, maxVal, xrange) => {
+      layout.yaxis.range = [0, maxVal];
+      ybounds = [0, maxVal];
+      // AddCriticalCareTrace(mitigTraces[mitigationId]);
+      // redraw the lines on the graph
+      renderChart(traces.filter(trace => trace._mitigation == mitigationId));
+      xbounds = xrange;
+    });
   }
 
   // function AddCriticalCareTrace(traces) {
@@ -536,20 +535,6 @@ function controlModelVisualization($container: HTMLElement) {
   function updateRegionInText(region) {
     let countryName = baseData.regions[region].name;
     jQuery(".selected-region").html(countryName);
-  }
-
-  function setGetParamUrl(key, value) {
-    let params = new URLSearchParams(window.location.search);
-    params.set(key, value);
-    let url =
-      window.location.protocol +
-      "//" +
-      window.location.host +
-      window.location.pathname +
-      "?" +
-      params.toString();
-
-    return url;
   }
 
   function getRegionUrl(region) {
