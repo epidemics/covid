@@ -241,6 +241,16 @@ span.infections-confirmed {
   font-size: 14px;
 }
 
+.map-footnote {
+  font-size: 11px;
+  background-color: transparent !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  border: none;
+  text-align: center;
+  border-left: 5px solid transparent;
+  margin-top: 12px;
+}
+
 .mitigation-strength-explanation.footnote {
   font-size: 11px;
   background-color: transparent !important;

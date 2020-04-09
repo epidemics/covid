@@ -1,5 +1,6 @@
 import * as Plotly from "plotly.js";
 import * as d3 from "d3";
+import { isTouchDevice } from "./helpers";
 
 const MAP_ID = "mapid";
 const ISO_KEY = "iso_a3";
@@ -30,6 +31,7 @@ function makeMap(caseMap, baseData, geoData) {
     let sorted = Object.keys(days).sort();
     let last = sorted[sorted.length - 1];
 
+    region.key = key;
     region.current_infected = days[last].FT_Infected;
     region.fraction_infected = region.current_infected / region.population;
 
@@ -70,7 +72,7 @@ function makeMap(caseMap, baseData, geoData) {
         `Infected per 1M: <b>${infected_per_1m}</b><br />` +
         `Infected total: <b>${infected_total}</b>`;
 
-      item.url_key = region.name.replace(" ", "+");
+      item.url_key = region.key.replace(" ", "+");
     } else {
       item.z = value_for_missing;
       item.text = `<b>${item.name}</b><br />` + "No estimation";
@@ -80,7 +82,8 @@ function makeMap(caseMap, baseData, geoData) {
     items.push(item);
   }
 
-  let trace: Partial<Plotly.PlotData> = {
+  let mapData: Partial<Plotly.PlotData> = {
+    // @ts-ignore
     type: "choroplethmapbox",
     name: "COVID-19: Active infections estimate",
     geojson: geoData,
@@ -105,8 +108,7 @@ function makeMap(caseMap, baseData, geoData) {
       }
     },
     colorbar: {
-      y: 0,
-      yanchor: "bottom",
+      thickness: 10,
       title: {
         text: "Infected per 1M",
         side: "right",
@@ -122,17 +124,15 @@ function makeMap(caseMap, baseData, geoData) {
         family: "DM Sans"
       }
     }
-  } as any;
+  };
 
-  let layout = {
-    title: {
-      text: "COVID-19: Active infections estimate (fraction of population)",
-      font: {
-        color: "#E9E9E9",
-        size: 25,
-        family: "DM Sans"
-      }
-    },
+  if (isTouchDevice()) {
+    // @ts-ignore
+    mapData.colorbar.x = 0;
+  }
+
+  let layout: Partial<Plotly.Layout> = {
+    margin: { l: 0, r: 0, b: 0, t: 0 },
     mapbox: {
       style: "carto-darkmatter"
     },
@@ -143,15 +143,39 @@ function makeMap(caseMap, baseData, geoData) {
     }
   };
 
-  Plotly.newPlot(caseMap, [trace], layout).then(gd => {
-    gd.on("plotly_click", d => {
+  let config: Partial<Plotly.Config> = {
+    displaylogo: false,
+    responsive: true,
+    displayModeBar: false,
+    modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
+  };
+
+  Plotly.newPlot(caseMap, [mapData], layout, config);
+
+  if (isTouchDevice()) {
+    $(".case-map-nav-action").text("Tap twice");
+
+    let last: null | string = null;
+
+    // @ts-ignore
+    caseMap.on("plotly_click", d => {
       let pt = (d.points || [])[0] as any;
-      let url_key = pt.customdata;
-      if (url_key) {
-        window.open("/?selection=" + url_key);
+      let target = pt.customdata;
+      if (target && last === target) {
+        window.open("/?selection=" + target);
+      }
+      last = target;
+    });
+  } else {
+    // @ts-ignore
+    caseMap.on("plotly_click", d => {
+      let pt = (d.points || [])[0] as any;
+      let target = pt.customdata;
+      if (target) {
+        window.open("/?selection=" + pt.customdata["country_to_search"]);
       }
     });
-  });
+  }
 }
 
 let sources = ["data-main-v3.json", "casemap-geo.json"];
