@@ -194,7 +194,7 @@ function controlModelVisualization($container: HTMLElement) {
   layout.xaxis.type = "date";
   layout.yaxis.title = "Active infections (% of population)";
   layout.yaxis.tickformat = ".1%";
-  layout.yaxis.range = bounds.y;
+  layout.yaxis.range = [...bounds.y];
   layout.showlegend = true;
   layout.legend = {
     x: 1,

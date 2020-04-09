@@ -135,7 +135,8 @@ export function makeConfig(bounds, screenshotInfo?: ScreenshotInfo): Thing {
       tickcolor: "#fff",
       rangeselector: { visible: true },
       showline: true,
-      linewidth: 1
+      linewidth: 1,
+      linecolor: "#fff"
     },
     yaxis: {
       title: "Active infections (% of population)",
