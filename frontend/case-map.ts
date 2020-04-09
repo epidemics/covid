@@ -108,6 +108,7 @@ function makeMap(caseMap, baseData, geoData) {
       }
     },
     colorbar: {
+      thickness: 10,
       title: {
         text: "Infected per 1M",
         side: "right",
