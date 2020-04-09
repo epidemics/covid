@@ -94,8 +94,10 @@ registerMeasure("social", "Social", v => {
 type MeasureItem = {
   start: string;
   end?: string;
+  replaced?: string;
   label: string;
   measure: string;
+  intensity: number;
   color: chroma.Color;
 };
 
@@ -109,19 +111,21 @@ export function parseMeasures(
 
     let { name, parser, scale } = measureTypes[key];
     let data = measureData[key];
+    let category = [];
 
     let item: MeasureItem | null = null;
     data.forEach(({ date, value }) => {
       if (item) {
-        item.end = date;
-        periods.push(item as MeasureItem);
+        item.replaced = date;
+        category.push(item);
       }
 
       let tmp = parser(value);
       if (tmp) {
         let { intensity, label } = tmp;
         item = {
-          label: label,
+          label,
+          intensity,
           color: scale(intensity),
           measure: name,
           start: date
@@ -130,9 +134,21 @@ export function parseMeasures(
     });
 
     if (item) {
-      item.end = "2021-01-01";
-      periods.push(item as MeasureItem);
+      item.replaced = "2021-01-01";
+      category.push(item as MeasureItem);
       count += 1;
+    }
+
+    periods.push(...category);
+    for (let i = 0; i < category.length; i++) {
+      let j = i;
+      while (
+        j < category.length - 1 &&
+        category[j].intensity >= category[i].intensity
+      ) {
+        j += 1;
+      }
+      category[i].end = category[j].replaced;
     }
   });
 

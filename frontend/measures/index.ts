@@ -13,11 +13,11 @@ function getRegionUrl(region) {
 
 class Controller {
   dropdown: RegionDropdown;
-  data: { base: any; measure: any };
+  data: { base: any; measure: any; rates: any };
   selected: string;
   currentChart: CurrentChart;
 
-  constructor($container: HTMLElement, [baseData, measureData]: any) {
+  constructor($container: HTMLElement, baseData, measureData, ratesData) {
     this.dropdown = new RegionDropdown(
       document.getElementById("regionDropdown"),
       key => this.changeRegion(key)
@@ -32,7 +32,11 @@ class Controller {
       url.searchParams.get(SELECTION_PARAM) ||
       guessRegion({ fallback: REGION_FALLBACK });
 
-    this.data = { base: baseData, measure: measureData };
+    this.data = {
+      base: baseData,
+      measure: measureData,
+      rates: ratesData
+    };
 
     // populate the dropdown menu with countries from received data
     Object.keys(baseData.regions).forEach(key =>
@@ -54,10 +58,11 @@ class Controller {
     this.selected = key;
     let regionData = this.data.base.regions[key];
     let measureData = this.data.measure[regionData.iso_alpha_3];
+    let ratesData = this.data.rates[regionData.iso_alpha_3];
 
     this.dropdown.update(key, regionData.name);
 
-    this.currentChart.update(regionData, measureData);
+    this.currentChart.update(regionData, measureData, ratesData);
   }
 }
 
@@ -66,14 +71,18 @@ let $container: HTMLElement | undefined = document.getElementById(
   "current_viz"
 );
 if ($container) {
-  let sources = [`data-main-v3.json`, `data-testing-containments.json`];
+  let sources = [
+    `data-main-v3.json`,
+    `data-testing-containments.json`,
+    `rates_by_iso3.json`
+  ];
 
   // Load the basic data (estimates and graph URLs) for all generated countries
   Promise.all(
     sources.map(path =>
       d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
     )
-  ).then(data => {
-    new Controller($container, data);
+  ).then(([baseData, containmentData, ratesData]) => {
+    new Controller($container, baseData, containmentData, ratesData);
   });
 }

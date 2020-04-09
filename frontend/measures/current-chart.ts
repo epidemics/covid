@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import * as Plotly from "plotly.js";
 import { parseMeasures } from "./measures";
 import * as chroma from "chroma-js";
+import { interpolateInferno } from "d3";
 
 // graph layout
 let layout: Partial<Plotly.Layout> = {
@@ -109,11 +110,15 @@ type Mode = "percentage" | "absolute";
 export class CurrentChart {
   mode: Mode;
   $container: Plotly.PlotlyHTMLElement;
+  graphDomain: [number, number];
+  measureDomain: [number, number];
 
-  constructor($container, mode: Mode = "percentage") {
+  constructor($container, mode: Mode = "absolute") {
     this.mode = mode;
     this.$container = $container;
     Plotly.newPlot($container, [], layout, config);
+
+    this.initEvents();
   }
 
   makeErrorTrace({ color, fillcolor, name }, data): Array<Plotly.Data> {
@@ -165,13 +170,18 @@ export class CurrentChart {
     return [meanTrace, errorTrace];
   }
 
-  addHistoricalCases(target, regionData, cb) {
-    let cfr = 0.016;
-    let cfr_cv = 0.69; // coefficent of variance (relative sd) of cfr
+  addHistoricalCases(target, regionData, ratesData, cb) {
+    let cfr = ratesData.cfr;
+
+    // this is the standard deviation (for plotting) in the log of cfr
+    // for example with `log_cfr_var = 0.69` we get
+    //    lower confidence bound `= cfr / exp(0.69) = cfr / 2`
+    //    upper conficence bound `= cfr * exp(0.69) = 2 cfr`
+    let log_cfr_var = 0.69; // exp(0.69) = 2
 
     let scale_factor = 1;
     if (this.mode == "percentage") {
-      regionData.population;
+      scale_factor = regionData.population;
     }
 
     // retriveHistorical('italy', ({confirmed, deaths, dates}) => {
@@ -190,8 +200,8 @@ export class CurrentChart {
       }
 
       let mean = deaths / cfr / scale_factor;
-      let low = applyVariance(mean, [cfr_cv, cv / Math.sqrt(deaths)], -1);
-      let high = applyVariance(mean, [cfr_cv, cv / Math.sqrt(deaths)], 1);
+      let low = applyVariance(mean, [log_cfr_var, cv / Math.sqrt(deaths)], -1);
+      let high = applyVariance(mean, [log_cfr_var, cv / Math.sqrt(deaths)], 1);
 
       retrodicted.push({
         date: moment(date)
@@ -253,10 +263,10 @@ export class CurrentChart {
     }
   }
 
-  update(regionData, measureData) {
+  update(regionData, measureData, ratesData) {
     Plotly.react(this.$container, [], layout, config);
 
-    this.updateHistorical(regionData);
+    this.updateHistorical(regionData, ratesData);
 
     // addCurrentTraces(function (traces) {
     //   // redraw the lines on the graph
@@ -267,10 +277,11 @@ export class CurrentChart {
     this.updateMeasures(measureData);
   }
 
-  updateHistorical(regionData) {
+  updateHistorical(regionData, ratesData) {
     this.addHistoricalCases(
       this.$container,
       regionData,
+      ratesData,
       (retrodicted, reported) => {
         // function mkDeltaTrace(name, other) {
         //   return {
@@ -325,6 +336,53 @@ export class CurrentChart {
     );
   }
 
+  initEvents() {
+    this.$container.on("plotly_unhover", () => {
+      Plotly.relayout(this.$container, {
+        shapes: []
+      });
+    });
+
+    this.$container.on("plotly_hover", evt => {
+      let measure = (evt.points[0] as any).customdata;
+      let measureShapes = [];
+
+      if (!measure.start || !measure.end) return;
+
+      let { start, end } = measure;
+      measureShapes.push({
+        type: "line",
+        yref: "paper",
+        x0: moment(start).valueOf(),
+        y0: 0,
+        x1: moment(start).valueOf(),
+        y1: 1,
+        line: { color: "white" },
+        opacity: 0.5
+      });
+
+      measureShapes.push({
+        type: "rect",
+        yref: "paper",
+        x0: moment(start)
+          .add(INCUBATION_PERIOD, "days")
+          .toDate(),
+        y0: this.graphDomain[0],
+        x1: moment(end)
+          .add(INCUBATION_PERIOD, "days")
+          .toDate(),
+        y1: this.graphDomain[1],
+        fillcolor: "white",
+        line: { color: "transparent" },
+        opacity: 0.1
+      });
+
+      Plotly.relayout(this.$container, {
+        shapes: measureShapes
+      });
+    });
+  }
+
   updateMeasures(measureData) {
     let measures = parseMeasures(measureData);
 
@@ -341,17 +399,22 @@ export class CurrentChart {
       type: "bar",
       orientation: "h",
       marker: { color: [] } as Plotly.ScatterMarker,
-      id: "measures"
+      customdata: []
     };
 
-    measures.periods.forEach(({ measure: name, color, label, start, end }) => {
+    measures.periods.forEach(info => {
+      let { measure, color, label, start, replaced } = info;
+
       let x0 = moment(start).valueOf();
-      let x1 = moment(end).valueOf(); // add a day to prevent non overlap
+      let x1 = moment(replaced)
+        .add({ days: 1 })
+        .valueOf(); // add a day to prevent non overlap
 
       measureTrace.base.push(x1);
       measureTrace.x.push(x0 - x1);
       measureTrace.text.push(label);
-      measureTrace.y.push(name);
+      measureTrace.customdata.push(info);
+      measureTrace.y.push(measure);
       (measureTrace.marker.color as string[]).push(color.css());
     });
 
@@ -375,58 +438,24 @@ export class CurrentChart {
     //   });
     // })
 
-    let mwidth = 0.05 * measures.count;
-    Plotly.relayout(this.$container, {
-      "yaxis.domain": [mwidth + 0.1, 1],
-      "yaxis2.domain": [0, mwidth]
-    } as any).then(gd => {});
+    this.resize(measures.count);
+
     Plotly.addTraces(this.$container, measureTrace as Plotly.Data);
+  }
 
-    this.$container.on("plotly_unhover", () => {
-      Plotly.relayout(this.$container, {
-        shapes: []
-      });
-    });
+  resize(count) {
+    if (count === 0) {
+      this.measureDomain = [0, 0];
+      this.graphDomain = [0, 1];
+    } else {
+      let mheight = 0.05 * count;
+      this.measureDomain = [0, mheight];
+      this.graphDomain = [mheight + 0.1, 1];
+    }
 
-    this.$container.on("plotly_hover", evt => {
-      let point = evt.points[0];
-      if ((point.data as any).id !== "measures") {
-        return;
-      }
-
-      let measureShapes = [];
-      let measure = measures.periods[point.pointIndex];
-      let { start, end } = measure;
-      measureShapes.push({
-        type: "line",
-        yref: "paper",
-        x0: moment(start).valueOf(),
-        y0: 0,
-        x1: moment(start).valueOf(),
-        y1: 1,
-        line: { color: "white" },
-        opacity: 0.5
-      });
-
-      measureShapes.push({
-        type: "rect",
-        yref: "paper",
-        x0: moment(start)
-          .add(INCUBATION_PERIOD, "days")
-          .toDate(),
-        y0: 0.2,
-        x1: moment(end)
-          .add(INCUBATION_PERIOD, "days")
-          .toDate(),
-        y1: 1,
-        fillcolor: "white",
-        line: { color: "transparent" },
-        opacity: 0.1
-      });
-
-      Plotly.relayout(this.$container, {
-        shapes: measureShapes
-      });
-    });
+    Plotly.relayout(this.$container, {
+      "yaxis.domain": this.graphDomain,
+      "yaxis2.domain": this.measureDomain
+    } as any);
   }
 }
