@@ -15,8 +15,8 @@
     </div>
   </div>
   <div class="active-infections-block">
-    <span class="number-subheader" id="infections-date"></span>
-    <span class="active-infections">Active Infections:
+    <div class="number-subheader"><span id="infections-date"></span>*</div>
+    <div class="active-infections">Active Infections:
       <span class="infections-estimated" id="infections-estimated">&mdash;</span>
       <!-- TODO: Insert official case count into tooltip -->
       <a href="#case-count-explanation">
@@ -28,16 +28,17 @@
           </svg>
         </span>
       </a>
-    </span>
-    <span class="infections-confirmed"> Confirmed Infections: <span id="infections-confirmed">&mdash;</span></span>
+    </div>
+    <div class="infections-confirmed"> Confirmed Infections: <span id="infections-confirmed">&mdash;</span></div>
   </div>
 
   <div class="population-block">
-    <span class="number-subheader">Population</span>
-    <span class="infections-population" id="infections-population">&mdash;</span>
+    <div class="number-subheader">Population</div>
+    <div class="infections-population"><span id="infections-population">&mdash;</span></div>
   </div>
 
 </div>
+<p style="margin: 1em 0; font-size: 90%;">*We are updating our website, and regular public estimates are temporarily suspended, but our custom modeling service is uninterrupted.</p>
 <hr />
 <h5 class="mitigation-strength-heading">
   Explore global and national mitigation strength:
