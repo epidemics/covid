@@ -1,4 +1,17 @@
 import { string_score } from "./string_score";
+import * as d3 from "d3";
+
+const formatAbsoluteInteger = function(number) {
+  if (typeof number !== "number" || isNaN(number)) {
+    return "&mdash;";
+  }
+  number = Math.round(number);
+  if (number < 10000 && number > -10000) {
+    return String(number);
+  } else {
+    return number.toLocaleString();
+  }
+};
 
 export class RegionDropdown {
   $target: HTMLElement;
@@ -102,14 +115,70 @@ export class RegionDropdown {
     this.list.push(item);
   }
 
-  update(key: string, name: string) {
+  update(key: string, regionData) {
     if (this.active === key) {
       return;
     }
 
-    this.$label.innerHTML = name;
+    this.$label.innerHTML = regionData.name;
     this.active = key;
     this.restyleDropdownElements();
+    this.updateInfectionTotals(regionData);
+  }
+
+  updateInfectionTotals(regionData) {
+    const { population, data } = regionData;
+    const dates = Object.keys(data.estimates.days);
+    let maxDate = dates[0];
+    dates.slice(1).forEach(date => {
+      if (new Date(maxDate) < new Date(date)) {
+        maxDate = date;
+      }
+    });
+    const infections = data.estimates.days[maxDate];
+
+    const formatDate = date => {
+      const [year, month, day] = date.split("-").map(n => parseInt(n));
+
+      const monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+      ];
+
+      const monthString = monthNames[month - 1];
+
+      return `${monthString} ${day}, ${year}`;
+    };
+
+    d3.select("#infections-date").html(`${formatDate(maxDate)}`);
+    d3.select("#infections-confirmed").html(
+      formatAbsoluteInteger(
+        infections["JH_Confirmed"] -
+          infections["JH_Recovered"] -
+          infections["JH_Deaths"]
+      )
+    );
+    d3.select("#infections-estimated").html(
+      formatAbsoluteInteger(infections["FT_Infected"])
+    );
+    /* Temporarily swithed off - we do not have confidence intervals for non-FT estimates
+    d3.select("#infections-estimated-ci").html(
+      `${formatInfectionTotal(
+        infections["FT_Infected_q05"]
+      )} - ${formatInfectionTotal(infections["FT_Infected_q95"])}`
+    );
+    */
+    d3.select("#infections-population").html(formatAbsoluteInteger(population));
   }
 
   // the dropdown items are restorted depending on a search query

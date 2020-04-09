@@ -52,63 +52,6 @@ function controlModelVisualization($container: HTMLElement) {
     return mitigationIds[selected.mitigation];
   }
 
-  function updateInfectionTotals() {
-    if (typeof baseData === "undefined") return;
-
-    const { population, data } = baseData.regions[selected.region];
-    const dates = Object.keys(data.estimates.days);
-    let maxDate = dates[0];
-    dates.slice(1).forEach(date => {
-      if (new Date(maxDate) < new Date(date)) {
-        maxDate = date;
-      }
-    });
-    const infections = data.estimates.days[maxDate];
-
-    const formatDate = date => {
-      const [year, month, day] = date.split("-").map(n => parseInt(n));
-
-      const monthNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec"
-      ];
-
-      const monthString = monthNames[month - 1];
-
-      return `${monthString} ${day}, ${year}`;
-    };
-
-    d3.select("#infections-date").html(`${formatDate(maxDate)}`);
-    d3.select("#infections-confirmed").html(
-      formatAbsoluteInteger(
-        infections["JH_Confirmed"] -
-          infections["JH_Recovered"] -
-          infections["JH_Deaths"]
-      )
-    );
-    d3.select("#infections-estimated").html(
-      formatAbsoluteInteger(infections["FT_Infected"])
-    );
-    /* Temporarily swithed off - we do not have confidence intervals for non-FT estimates
-    d3.select("#infections-estimated-ci").html(
-      `${formatInfectionTotal(
-        infections["FT_Infected_q05"]
-      )} - ${formatInfectionTotal(infections["FT_Infected_q95"])}`
-    );
-    */
-    d3.select("#infections-population").html(formatAbsoluteInteger(population));
-  }
-
   function updateStatistics() {
     if (typeof baseData === "undefined") return;
 
@@ -153,18 +96,6 @@ function controlModelVisualization($container: HTMLElement) {
   };
 
   const formatPercentNumber = d3.format(".2p");
-
-  const formatAbsoluteInteger = function(number) {
-    if (typeof number !== "number" || isNaN(number)) {
-      return "&mdash;";
-    }
-    number = Math.round(number);
-    if (number < 10000 && number > -10000) {
-      return String(number);
-    } else {
-      return number.toLocaleString();
-    }
-  };
 
   let screenshotInfo = () => {
     let regions = baseData.regions;
@@ -426,11 +357,10 @@ function controlModelVisualization($container: HTMLElement) {
     }
 
     // update the dropdown
-    dropdown.update(newRegion, baseData.regions[selected.region].name);
+    dropdown.update(newRegion, baseData.regions[selected.region]);
 
     // update the graph
     updatePlot();
-    updateInfectionTotals();
   }
 
   let sources = [

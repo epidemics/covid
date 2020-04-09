@@ -48,7 +48,7 @@ add(MEASURES, { path: "/measures", caption: "Measures" }, (req, res) =>
   res.render("measures.html")
 );
 
-add(MITIGATION, { path: "/containment", caption: "Mitigation" }, (req, res) =>
+add(MITIGATION, { path: "/containment", caption: "Dataset" }, (req, res) =>
   res.render("containment.html")
 );
 

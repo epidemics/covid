@@ -125,7 +125,16 @@ export class CurrentChart {
       type: "scatter",
       name: name,
       hoverinfo: "text",
-      text: data.map(({ low, high }) => `${name}: ${f(low)}-${f(high)}`)
+      text: data.map(
+        ({ date, low, high }) =>
+          `${name}: ${f(low)}-${f(
+            high
+          )}<br />Date: ${date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+          })}`
+      )
     };
 
     return [meanTrace, errorTrace];
@@ -155,7 +164,7 @@ export class CurrentChart {
     let reported = [];
     let max = 0;
     Object.keys(timeseries).forEach(date => {
-      let { JH_Deaths: deaths, JH_Infected: confirmed } = timeseries[date];
+      let { JH_Deaths: deaths, JH_Confirmed: confirmed } = timeseries[date];
 
       confirmed /= scale_factor;
       deaths /= scale_factor;
@@ -195,7 +204,7 @@ export class CurrentChart {
       {
         color: "white",
         fillcolor: "rgba(255,255,255,0.3)",
-        name: "Symptomatic (est.)"
+        name: "Cumulative Infected (est.)"
       },
       retrodicted
     );
@@ -219,7 +228,7 @@ export class CurrentChart {
       type: "scatter",
       name: "Confirmed",
       marker: { size: 3 },
-      hovertemplate: "Confirmed: %{y:,d}"
+      hovertemplate: "Confirmed: %{y:,d}<br />Date: %{x}"
     };
 
     let data: Array<Partial<Plotly.Data>> = [
@@ -246,7 +255,7 @@ export class CurrentChart {
     //   //addCriticalCareTrace(currentGraph, d3.extent(traces[0].x));
     // })
 
-    this.updateMeasures(measureData);
+    if (measureData) this.updateMeasures(measureData);
   }
 
   updateHistorical(regionData, ratesData) {
@@ -300,7 +309,7 @@ export class CurrentChart {
 
         let startDate = "2020-03-01";
         if (retrodicted.length != 0) {
-          startDate = reported[0].date;
+          startDate = retrodicted[0].date;
         }
 
         let endDate = moment().toDate();

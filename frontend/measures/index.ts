@@ -60,7 +60,7 @@ class Controller {
     let measureData = this.data.measure[regionData.iso_alpha_3];
     let ratesData = this.data.rates[regionData.iso_alpha_3];
 
-    this.dropdown.update(key, regionData.name);
+    this.dropdown.update(key, regionData);
 
     this.currentChart.update(regionData, measureData, ratesData);
   }
