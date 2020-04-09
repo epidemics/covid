@@ -302,14 +302,15 @@ span.infections-confirmed {
   margin-top: 64px;
 }
 
-.pro-bono-banner {
+.banner-alert {
+  color: white;
   font-size: 20px;
   padding: 16px;
   margin-bottom: 32px;
   border: 1px solid white;
 }
 
-.pro-bono-banner p:last-child {
+.banner-alert p:last-child {
   margin-bottom: 0px;
 }
 
@@ -846,8 +847,4 @@ table td {
   height: auto;
   overflow-y: scroll;
   text-transform: uppercase;
-}
-
-#consultingAlert .close:hover {
-  color: white;
 }
