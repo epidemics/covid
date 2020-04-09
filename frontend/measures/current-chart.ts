@@ -38,8 +38,8 @@ layout.showlegend = true;
 layout.legend = {
   x: 1,
   xanchor: "right",
-  y: 1,
-  yanchor: "top",
+  y: 0,
+  yanchor: "bottom",
   bgcolor: "#22202888",
   font: {
     color: "#fff"
@@ -127,13 +127,14 @@ export class CurrentChart {
       hoverinfo: "text",
       text: data.map(
         ({ date, low, high }) =>
-          `${name}: ${f(low)}-${f(
-            high
-          )}<br />Date: ${date.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric"
-          })}`
+          `${name}: ${f(low)}-${f(high)}<br />Date: ${date.toLocaleDateString(
+            "en-US",
+            {
+              year: "numeric",
+              month: "short",
+              day: "numeric"
+            }
+          )}`
       )
     };
 
@@ -447,6 +448,7 @@ export class CurrentChart {
     }
 
     Plotly.relayout(this.$container, {
+      "legend.y": this.graphDomain[0],
       "yaxis.domain": this.graphDomain,
       "yaxis2.domain": this.measureDomain,
       height
