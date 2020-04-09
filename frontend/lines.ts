@@ -5,6 +5,7 @@ import { saveImage } from "./custom-plotly-image-saver";
 //import { updateCurrentGraph } from "./measures/current-chart";
 import { RegionDropdown } from "./region-dropdown";
 import { setGetParamUrl } from "./helpers";
+import { makeConfig } from "./graph-common";
 
 const GLEAMVIZ_TRACE_SCALE = 1000; // it gives infections per 1000
 const CRITICAL_CARE_RATE = 0.05; // rate of cases requiring critical care
@@ -165,150 +166,45 @@ function controlModelVisualization($container: HTMLElement) {
     }
   };
 
-  let ybounds: Range = [0, 0.099];
-  let xbounds: Range = [null, null];
-
-  // graph layout
-  let layout: Partial<Plotly.Layout> = {
-    ...calculateChartSize(),
-    margin: { r: 20, t: 40 },
-    paper_bgcolor: "#222028",
-    plot_bgcolor: "#222028",
-    xaxis: {
-      type: "date",
-      /*  title: "Date",
-      titlefont: {
-        family: "DM Sans, sans-serif",
-        size: 18,
-        color: "white"
-      }, */
-      ticks: "outside",
-      tickfont: {
-        family: "DM Sans, sans-serif",
-        size: 14,
-        color: "white"
-      },
-      tick0: 0,
-      dtick: 0.0,
-      ticklen: 8,
-      tickwidth: 1,
-      tickcolor: "#fff",
-      rangeselector: { visible: true }
-    },
-    yaxis: {
-      title: "Active infections (% of population)",
-      titlefont: {
-        family: "DM Sans, sans-serif",
-        size: 16,
-        color: "white"
-      },
-      tickfont: {
-        family: "DM Sans, sans-serif",
-        size: 14,
-        color: "white"
-      },
-      ticks: "outside",
-      tick0: 0,
-      dtick: 0.0,
-      ticklen: 8,
-      tickwidth: 1,
-      tickformat: ".1%",
-      tickcolor: "#fff",
-      showline: true,
-      linecolor: "#fff",
-      linewidth: 1,
-      showgrid: false,
-      zeroline: true,
-      zerolinecolor: "#fff",
-      zerolinewidth: 1,
-      // this way the axis does not change width on data load
-      range: [...ybounds]
-    },
-    showlegend: true,
-    legend: {
-      x: 1,
-      xanchor: "right",
-      y: 1,
-      yanchor: "top",
-      bgcolor: "#22202888",
-      font: {
-        color: "#fff"
-      }
-    }
-  };
-
-  const DOWNLOAD_PLOT_SCALE = 2;
-  let getDownloadPlotTitle = () => {
+  let screenshotInfo = () => {
     let regions = baseData.regions;
 
     if (!(selected.region in regions)) {
-      return "COVID-19 Forecast";
+      return { name: "plot", title: "COVID-19 Forecast" };
     }
 
-    return `COVID-19 Forecast for ${regions[selected.region].name}`;
+    return {
+      name: "plot",
+      title: `COVID-19 Forecast for ${regions[selected.region].name}`
+    };
   };
 
-  let customToImage: Plotly.ModeBarButton = {
-    name: "Download plot",
-    title: "Download plot",
-    icon: Plotly.Icons.camera,
-    click: gd =>
-      saveImage(gd, {
-        name: selected.region,
-        scale: DOWNLOAD_PLOT_SCALE,
-        width: 800,
-        height: 600,
-        format: "png",
-        background: "black",
-        compose: ($canvas, plot, width, height) => {
-          $canvas.width = width;
-          $canvas.height = height;
-          let ctx = $canvas.getContext("2d");
-
-          ctx.filter = "invert(1)";
-          ctx.drawImage(plot, 0, 0);
-
-          const LINE_SPACING = 0.15;
-
-          let y = 0;
-          function drawCenteredText(text, size) {
-            y += (1 + LINE_SPACING) * size;
-            ctx.font = `${Math.round(size)}px "DM Sans"`;
-            let x = (width - ctx.measureText(text).width) / 2;
-            ctx.fillText(text, x, y);
-            y += LINE_SPACING * size;
-          }
-
-          ctx.fillStyle = "white";
-          drawCenteredText(getDownloadPlotTitle(), 20 * DOWNLOAD_PLOT_SCALE);
-
-          ctx.fillStyle = "light gray";
-          drawCenteredText(
-            "by epidemicforecasting.org",
-            12 * DOWNLOAD_PLOT_SCALE
-          );
-        }
-      })
+  let bounds = {
+    y: [0, 0.099],
+    x: ["2020-01-01", "2021-01-01"]
   };
 
-  let customResetView: Plotly.ModeBarButton = {
-    name: "Reset view",
-    title: "Reset axis",
-    icon: Plotly.Icons.autoscale,
-    click: gd => {
-      Plotly.relayout(gd, {
-        "yaxis.range": [...ybounds],
-        "xaxis.range": [...xbounds]
-      } as any);
+  let { config, layout, hook } = makeConfig(bounds, screenshotInfo);
+
+  let size = calculateChartSize();
+  layout.width = size.width;
+  layout.height = size.height;
+
+  layout.margin.r = 20;
+  layout.xaxis.type = "date";
+  layout.yaxis.title = "Active infections (% of population)";
+  layout.yaxis.tickformat = ".1%";
+  layout.yaxis.range = bounds.y;
+  layout.showlegend = true;
+  layout.legend = {
+    x: 1,
+    xanchor: "right",
+    y: 1,
+    yanchor: "top",
+    bgcolor: "#22202888",
+    font: {
+      color: "#fff"
     }
-  };
-
-  let config: Partial<Plotly.Config> = {
-    displaylogo: false,
-    responsive: false,
-    displayModeBar: true,
-    modeBarButtonsToAdd: [customToImage, customResetView],
-    modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
   };
 
   function isTouchDevice() {
@@ -333,24 +229,6 @@ function controlModelVisualization($container: HTMLElement) {
     };
   }
 
-  type Range = [number, number];
-
-  function ensureZero() {
-    let shouldUpdate = false;
-    let range = layout.yaxis.range as Range;
-    if (range[0] < ybounds[0]) {
-      range[1] += ybounds[0] - range[0];
-      range[0] = ybounds[0];
-      shouldUpdate = true;
-    }
-
-    if (shouldUpdate) {
-      Plotly.relayout($container, {
-        "yaxis.range": range
-      });
-    }
-  }
-
   function makePlotlyResponsive() {
     d3.select("#my_dataviz .js-plotly-plot .plotly .svg-container").attr(
       "style",
@@ -362,20 +240,11 @@ function controlModelVisualization($container: HTMLElement) {
       .attr("viewBox", `0 0 ${layout.width} ${layout.height}`);
   }
 
-  function renderChart(traces = []) {
-    console.log(traces);
-
-    Plotly.react($container, traces, layout, config).then(makePlotlyResponsive);
-  }
-
-  renderChart();
-  // `on` is not part of the HTMLElement interface, but Plotly adds it
-  // @ts-ignore
-  $container.on("plotly_restyle", makePlotlyResponsive);
-  // @ts-ignore
-  $container.on("plotly_relayout", () => {
-    ensureZero();
+  Plotly.newPlot($container, [], layout, config).then(gd => {
     makePlotlyResponsive();
+    gd.on("plotly_restyle", makePlotlyResponsive);
+    gd.on("plotly_relayout", makePlotlyResponsive);
+    hook(gd);
   });
 
   window.addEventListener("resize", () => {
@@ -502,6 +371,8 @@ function controlModelVisualization($container: HTMLElement) {
 
   // update the graph
   function updatePlot() {
+    Plotly.react($container, [], layout);
+
     let mitigationId = getMitigationId();
 
     // update the name of the region in the text below the graph
@@ -517,11 +388,16 @@ function controlModelVisualization($container: HTMLElement) {
     // Load and preprocess the per-region graph data
     loadGleamvizTraces(regionData, (traces, maxVal, xrange) => {
       layout.yaxis.range = [0, maxVal];
-      ybounds = [0, maxVal];
+
+      bounds.y = [0, maxVal];
       // AddCriticalCareTrace(mitigTraces[mitigationId]);
       // redraw the lines on the graph
-      renderChart(traces.filter(trace => trace._mitigation == mitigationId));
-      xbounds = xrange;
+
+      Plotly.addTraces(
+        $container,
+        traces.filter(trace => trace._mitigation == mitigationId)
+      );
+      bounds.x = xrange;
     });
   }
 
