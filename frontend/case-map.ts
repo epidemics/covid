@@ -30,6 +30,7 @@ function makeMap(caseMap, baseData, geoData) {
     let sorted = Object.keys(days).sort();
     let last = sorted[sorted.length - 1];
 
+    region.key = key;
     region.current_infected = days[last].FT_Infected;
     region.fraction_infected = region.current_infected / region.population;
 
@@ -70,7 +71,7 @@ function makeMap(caseMap, baseData, geoData) {
         `Infected per 1M: <b>${infected_per_1m}</b><br />` +
         `Infected total: <b>${infected_total}</b>`;
 
-      item.url_key = region.name.replace(" ", "+");
+      item.url_key = region.key.replace(" ", "+");
     } else {
       item.z = value_for_missing;
       item.text = `<b>${item.name}</b><br />` + "No estimation";
