@@ -5,9 +5,11 @@ import { parseMeasures } from "./measures";
 import * as chroma from "chroma-js";
 import { interpolateInferno } from "d3";
 
+const GRAPH_HEIGHT = 600;
+
 // graph layout
 let layout: Partial<Plotly.Layout> = {
-  height: 800,
+  height: GRAPH_HEIGHT,
   //margin: { t: 0 },
   paper_bgcolor: "#222028",
   plot_bgcolor: "#222028",
@@ -195,28 +197,36 @@ export class CurrentChart {
     Object.keys(timeseries).forEach(date => {
       let { JH_Deaths: deaths, JH_Infected: confirmed } = timeseries[date];
 
-      if (deaths < 1) {
-        return;
+      if (confirmed > 0) {
+        reported.push({
+          date: date,
+          confirmed: confirmed / scale_factor,
+          deaths: deaths / scale_factor
+        });
       }
 
-      let mean = deaths / cfr / scale_factor;
-      let low = applyVariance(mean, [log_cfr_var, cv / Math.sqrt(deaths)], -1);
-      let high = applyVariance(mean, [log_cfr_var, cv / Math.sqrt(deaths)], 1);
+      if (deaths > 0) {
+        let mean = deaths / cfr / scale_factor;
+        let low = applyVariance(
+          mean,
+          [log_cfr_var, cv / Math.sqrt(deaths)],
+          -1
+        );
+        let high = applyVariance(
+          mean,
+          [log_cfr_var, cv / Math.sqrt(deaths)],
+          1
+        );
 
-      retrodicted.push({
-        date: moment(date)
-          .subtract(ONSET_TO_DEATH, "days")
-          .toDate(),
-        low: low,
-        mean: mean,
-        high: high
-      });
-
-      reported.push({
-        date: date,
-        confirmed: confirmed / scale_factor,
-        deaths: deaths / scale_factor
-      });
+        retrodicted.push({
+          date: moment(date)
+            .subtract(ONSET_TO_DEATH, "days")
+            .toDate(),
+          low: low,
+          mean: mean,
+          high: high
+        });
+      }
     });
 
     let symtomaticTraces = this.makeErrorTrace(
@@ -230,8 +240,8 @@ export class CurrentChart {
 
     let reportedXs = [];
     let reportedYs = [];
-    let lastConfirmed = null;
-    reported.forEach(({ date, confirmed, deaths }) => {
+    let lastConfirmed = 0;
+    reported.forEach(({ date, confirmed }) => {
       if (lastConfirmed !== confirmed) {
         reportedXs.push(date);
         reportedYs.push(confirmed);
@@ -326,7 +336,11 @@ export class CurrentChart {
 
         // Plotly.addTraces(currentGraph, [predictedDeltas, deathsDeltas, confirmedDeltas]);
 
-        let startDate = retrodicted[0].date;
+        let startDate = "2020-03-01";
+        if (retrodicted.length != 0) {
+          startDate = reported[0].date;
+        }
+
         let endDate = moment().toDate();
 
         Plotly.relayout(this.$container, {
@@ -347,7 +361,7 @@ export class CurrentChart {
       let measure = (evt.points[0] as any).customdata;
       let measureShapes = [];
 
-      if (!measure.start || !measure.end) return;
+      if (!measure || !measure.start || !measure.end) return;
 
       let { start, end } = measure;
       measureShapes.push({
@@ -443,19 +457,21 @@ export class CurrentChart {
     Plotly.addTraces(this.$container, measureTrace as Plotly.Data);
   }
 
-  resize(count) {
-    if (count === 0) {
+  resize(measureCount) {
+    let height = GRAPH_HEIGHT;
+    if (measureCount === 0) {
       this.measureDomain = [0, 0];
       this.graphDomain = [0, 1];
     } else {
-      let mheight = 0.05 * count;
-      this.measureDomain = [0, mheight];
-      this.graphDomain = [mheight + 0.1, 1];
+      this.measureDomain = [0, 0.05 * measureCount];
+      this.graphDomain = [0.05 * measureCount + 0.1, 1];
+      height /= 1 - 0.05 * measureCount - 0.1;
     }
 
     Plotly.relayout(this.$container, {
       "yaxis.domain": this.graphDomain,
-      "yaxis2.domain": this.measureDomain
+      "yaxis2.domain": this.measureDomain,
+      height
     } as any);
   }
 }
