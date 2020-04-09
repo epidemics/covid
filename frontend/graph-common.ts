@@ -83,11 +83,17 @@ export function makeConfig(bounds, screenshotInfo?: ScreenshotInfo): Thing {
     }
   };
 
+  let modeBarButtonsToAdd = [];
+  if (screenshotInfo) {
+    modeBarButtonsToAdd.push(customToImage);
+  }
+
   let customResetView: Plotly.ModeBarButton = {
     name: "Reset view",
     title: "Reset axis",
     icon: Plotly.Icons.autoscale,
     click: gd => {
+      console.log(bounds);
       Plotly.relayout(gd, {
         "yaxis.range": [...bounds.y],
         "xaxis.range": [...bounds.x]
@@ -95,11 +101,13 @@ export function makeConfig(bounds, screenshotInfo?: ScreenshotInfo): Thing {
     }
   };
 
+  modeBarButtonsToAdd.push(customResetView);
+
   let config: Partial<Plotly.Config> = {
     displaylogo: false,
     responsive: false,
     displayModeBar: true,
-    modeBarButtonsToAdd: [customToImage, customResetView],
+    modeBarButtonsToAdd,
     modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
   };
 
@@ -125,7 +133,9 @@ export function makeConfig(bounds, screenshotInfo?: ScreenshotInfo): Thing {
       ticklen: 8,
       tickwidth: 1,
       tickcolor: "#fff",
-      rangeselector: { visible: true }
+      rangeselector: { visible: true },
+      showline: true,
+      linewidth: 1
     },
     yaxis: {
       title: "Active infections (% of population)",
@@ -148,10 +158,7 @@ export function makeConfig(bounds, screenshotInfo?: ScreenshotInfo): Thing {
       showline: true,
       linecolor: "#fff",
       linewidth: 1,
-      showgrid: false,
-      zeroline: true,
-      zerolinecolor: "#fff",
-      zerolinewidth: 1
+      showgrid: false
     },
     showlegend: true,
     legend: {

@@ -3,95 +3,54 @@ import * as d3 from "d3";
 import * as Plotly from "plotly.js";
 import { parseMeasures } from "./measures";
 import * as chroma from "chroma-js";
-import { interpolateInferno } from "d3";
+import { makeConfig } from "../graph-common";
+import { isTouchDevice } from "../helpers";
 
 const GRAPH_HEIGHT = 600;
 
-// graph layout
-let layout: Partial<Plotly.Layout> = {
-  height: GRAPH_HEIGHT,
-  //margin: { t: 0 },
-  paper_bgcolor: "#222028",
-  plot_bgcolor: "#222028",
-  hovermode: "closest",
-  xaxis: {
-    type: "date",
-    ticks: "outside",
-    tickfont: {
-      family: "DM Sans, sans-serif",
-      size: 14,
-      color: "white"
-    },
-    tick0: 0,
-    dtick: 0.0,
-    ticklen: 8,
-    tickwidth: 1,
-    tickcolor: "#fff",
-    showline: true,
-    autorange: "reversed"
-  },
-  yaxis: {
-    title: "Symptomatic patients",
-    titlefont: {
-      family: "DM Sans, sans-serif",
-      size: 16,
-      color: "white"
-    },
-    tickfont: {
-      family: "DM Sans, sans-serif",
-      // size: 14,
-      color: "white"
-    },
-    ticks: "outside",
-    tick0: 0,
-    dtick: 0.0,
-    ticklen: 8,
-    tickwidth: 1,
-    tickcolor: "#fff",
-    showline: true,
-    linecolor: "#fff",
-    linewidth: 1,
-    showgrid: false,
-    zeroline: true,
-    zerolinecolor: "#fff",
-    zerolinewidth: 1,
-    type: "log",
-    domain: [0, 1]
-  },
-  yaxis2: {
-    domain: [0, 0],
-    tickfont: {
-      family: "DM Sans, sans-serif",
-      size: 14,
-      color: "white"
-    },
-    automargin: true // FIXME
-  },
-  showlegend: false,
-  barmode: "overlay",
-  legend: {
-    x: 1,
-    xanchor: "right",
-    y: 1,
-    yanchor: "top",
-    bgcolor: "#22202888",
-    font: {
-      color: "#fff"
-    }
-  },
-  grid: { rows: 2, columns: 1, pattern: "independent" }
+let bounds: any = {
+  y: [0, null],
+  x: ["2020-01-01", "2020-01-01"]
 };
 
-let config = {
-  displaylogo: false,
-  responsive: true,
-  scrollZoom: false
-};
+let { config, layout, hook } = makeConfig(bounds);
 
-// coefficent of variation
-function relativeVariance(value, mean) {
-  let relativeSD = (value - mean) / mean;
-  return relativeSD * relativeSD;
+config.responsive = true;
+layout.height = GRAPH_HEIGHT;
+
+layout.xaxis.type = "date";
+layout.yaxis.title = "Symptomatic patients";
+layout.yaxis.tickformat = ".1s";
+layout.yaxis.range = bounds.y;
+layout.yaxis.type = "log";
+layout.yaxis.domain = [0, 1];
+layout.barmode = "overlay";
+layout.yaxis2 = {
+  domain: [0, 0],
+  tickfont: {
+    family: "DM Sans, sans-serif",
+    size: 14,
+    color: "white"
+  },
+  automargin: true // FIXME
+};
+layout.showlegend = true;
+layout.legend = {
+  x: 1,
+  xanchor: "right",
+  y: 1,
+  yanchor: "top",
+  bgcolor: "#22202888",
+  font: {
+    color: "#fff"
+  }
+};
+layout.grid = { rows: 2, columns: 1, pattern: "independent" };
+layout.hovermode = "closest";
+
+if (isTouchDevice()) {
+  config.scrollZoom = true;
+  layout.dragmode = "pan";
 }
 
 function applyVariance(mean, vars, sigma) {
@@ -118,7 +77,7 @@ export class CurrentChart {
   constructor($container, mode: Mode = "absolute") {
     this.mode = mode;
     this.$container = $container;
-    Plotly.newPlot($container, [], layout, config);
+    Plotly.newPlot($container, [], layout, config).then(hook);
 
     this.initEvents();
   }
@@ -194,19 +153,20 @@ export class CurrentChart {
     let cv = 3;
     let retrodicted = [];
     let reported = [];
+    let max = 0;
     Object.keys(timeseries).forEach(date => {
       let { JH_Deaths: deaths, JH_Infected: confirmed } = timeseries[date];
 
+      confirmed /= scale_factor;
+      deaths /= scale_factor;
+
       if (confirmed > 0) {
-        reported.push({
-          date: date,
-          confirmed: confirmed / scale_factor,
-          deaths: deaths / scale_factor
-        });
+        reported.push({ date, confirmed, deaths });
+        max = Math.max(max, confirmed);
       }
 
       if (deaths > 0) {
-        let mean = deaths / cfr / scale_factor;
+        let mean = deaths / cfr;
         let low = applyVariance(
           mean,
           [log_cfr_var, cv / Math.sqrt(deaths)],
@@ -217,6 +177,8 @@ export class CurrentChart {
           [log_cfr_var, cv / Math.sqrt(deaths)],
           1
         );
+
+        max = Math.max(max, high);
 
         retrodicted.push({
           date: moment(date)
@@ -257,7 +219,7 @@ export class CurrentChart {
       type: "scatter",
       name: "Confirmed",
       marker: { size: 3 },
-      hovertemplate: "Confirmed: %{y:.3s}"
+      hovertemplate: "Confirmed: %{y:,d}"
     };
 
     let data: Array<Partial<Plotly.Data>> = [
@@ -269,7 +231,7 @@ export class CurrentChart {
     Plotly.addTraces(target, data);
 
     if (cb) {
-      cb(retrodicted, reported);
+      cb(retrodicted, reported, [1, max]);
     }
   }
 
@@ -292,7 +254,7 @@ export class CurrentChart {
       this.$container,
       regionData,
       ratesData,
-      (retrodicted, reported) => {
+      (retrodicted, reported, yrange) => {
         // function mkDeltaTrace(name, other) {
         //   return {
         //     x: [],
@@ -343,9 +305,15 @@ export class CurrentChart {
 
         let endDate = moment().toDate();
 
+        bounds.x = [startDate, endDate];
+        bounds.y = yrange.map(n => Math.log(n) / Math.log(10));
+
+        console.log(bounds);
+
         Plotly.relayout(this.$container, {
-          "xaxis.range": [startDate, endDate]
-        });
+          "xaxis.range": [...bounds.x],
+          "yaxis.range": [...bounds.y]
+        } as any);
       }
     );
   }
@@ -410,6 +378,7 @@ export class CurrentChart {
       textposition: "inside",
       text: [],
       yaxis: "y2",
+      showlegend: false,
       type: "bar",
       orientation: "h",
       marker: { color: [] } as Plotly.ScatterMarker,

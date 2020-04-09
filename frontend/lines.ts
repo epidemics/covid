@@ -4,7 +4,7 @@ import * as Plotly from "plotly.js";
 import { saveImage } from "./custom-plotly-image-saver";
 //import { updateCurrentGraph } from "./measures/current-chart";
 import { RegionDropdown } from "./region-dropdown";
-import { setGetParamUrl } from "./helpers";
+import { setGetParamUrl, isTouchDevice } from "./helpers";
 import { makeConfig } from "./graph-common";
 
 const GLEAMVIZ_TRACE_SCALE = 1000; // it gives infections per 1000
@@ -207,12 +207,6 @@ function controlModelVisualization($container: HTMLElement) {
     }
   };
 
-  function isTouchDevice() {
-    return !!(
-      ("ontouchstart" in window || navigator.maxTouchPoints) // works on most browsers
-    ); // works on IE10/11 and Surface
-  }
-
   if (isTouchDevice()) {
     config.scrollZoom = true;
     layout.dragmode = "pan";
@@ -230,11 +224,11 @@ function controlModelVisualization($container: HTMLElement) {
   }
 
   function makePlotlyResponsive() {
-    d3.select("#my_dataviz .js-plotly-plot .plotly .svg-container").attr(
+    d3.select("#my_dataviz.js-plotly-plot .plotly .svg-container").attr(
       "style",
       null
     );
-    d3.selectAll("#my_dataviz .js-plotly-plot .plotly .main-svg")
+    d3.selectAll("#my_dataviz.js-plotly-plot .plotly .main-svg")
       .attr("height", null)
       .attr("width", null)
       .attr("viewBox", `0 0 ${layout.width} ${layout.height}`);
@@ -251,8 +245,6 @@ function controlModelVisualization($container: HTMLElement) {
     const size = calculateChartSize();
     if (size.width !== layout.width || size.height !== layout.height) {
       Object.assign(layout, size);
-      console.log($container);
-
       Plotly.relayout($container, size);
     }
   });
