@@ -2,6 +2,7 @@ import { guessRegion } from "./tz_lookup";
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
 import { string_score } from "./string_score";
+import { isTouchDevice } from "./helpers";
 import { saveImage } from "./custom-plotly-image-saver";
 
 const GLEAMVIZ_TRACE_SCALE = 1000; // it gives infections per 1000
@@ -302,12 +303,6 @@ function controlModelVisualization($container: HTMLElement) {
     modeBarButtonsToAdd: [customToImage, customResetView],
     modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
   };
-
-  function isTouchDevice() {
-    return !!(
-      ("ontouchstart" in window || navigator.maxTouchPoints) // works on most browsers
-    ); // works on IE10/11 and Surface
-  }
 
   if (isTouchDevice()) {
     config.scrollZoom = true;
