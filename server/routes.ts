@@ -9,7 +9,7 @@ const ABOUT = "about";
 const MEASURES = "measures";
 
 // order of the pages as diplayed in the navigation bar
-let navigation = [MODELS, MEASURES, CASE_MAP, MITIGATION, REQUEST_MODEL, ABOUT];
+let navigation = [MODELS, CASE_MAP, MITIGATION, REQUEST_MODEL, ABOUT];
 
 type NavBarEntry = { path: string; id: string; caption: string };
 
@@ -48,7 +48,7 @@ add(MEASURES, { path: "/measures", caption: "Measures" }, (req, res) =>
   res.render("measures.html")
 );
 
-add(MITIGATION, { path: "/containment", caption: "Dataset" }, (req, res) =>
+add(MITIGATION, { path: "/containment", caption: "Mitigation" }, (req, res) =>
   res.render("containment.html")
 );
 
