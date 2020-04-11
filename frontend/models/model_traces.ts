@@ -1,6 +1,15 @@
 import * as d3 from "d3";
 import * as v4 from "./v4";
 
+const SCNARIO_COLORS = {
+  "WEAK-WEAK": "#edcdab",
+  "MEDIUM-WEAK": "#edb77e",
+  "STRONG-WEAK": "#e97f0f",
+  "WEAK-STRONG": "#9ac9d9",
+  "MEDIUM-STRONG": "#5abbdb",
+  "STRONG-STRONG": "#007ca6"
+};
+
 interface Trace {
   x: string[];
   y: number[];
@@ -41,7 +50,8 @@ export class ModelTraces {
         x: dates,
         y: [],
         line: {
-          shape: "spline"
+          shape: "spline",
+          color: SCNARIO_COLORS[obj.key]
         },
         hovertemplate: "%{text}%{y:.2p}",
         hoverlabel: { namelength: -1 }
