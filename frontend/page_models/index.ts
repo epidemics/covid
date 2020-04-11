@@ -75,6 +75,7 @@ class Controller {
       (_index: number, elem: HTMLInputElement): void | false => {
         if (elem.value === mitigation) {
           elem.checked = true;
+          elem.parentElement?.classList.add("active");
         }
 
         elem.addEventListener("click", () => {
