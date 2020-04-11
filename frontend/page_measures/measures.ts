@@ -33,27 +33,23 @@ registerMeasure("mask-wearing", "Mask usage", percent => {
 });
 
 registerMeasure("curfew", "Curfew", v => {
-  if (v === "none") {
-    return null;
-  }
-
   if (v === "general") {
     return { intensity: 0.5, label: "General curfew" };
   } else if (v === "strict") {
     return { intensity: 1, label: "Strict curfew" };
   }
+
+  return null;
 });
 
 registerMeasure("isolation", "Isolation", v => {
-  if (v === "none") {
-    return null;
-  }
-
   if (v === "cases") {
     return { intensity: 0.5, label: "Symptomatic" };
   } else if (v === "contacts") {
     return { intensity: 1, label: "Contacts and symptomatic" };
   }
+
+  return null;
 });
 
 registerMeasure("gatherings", "Gatherings", count => {
@@ -84,11 +80,10 @@ registerMeasure("schools", "Schools", v => {
 });
 
 registerMeasure("social", "Social", v => {
-  if (v === "none") return null;
-
   if (v === "stay-at-home") return { intensity: 1, label: "Stay at home" };
+  else if (v === "distancing") return { intensity: 0.5, label: "Distancing" };
 
-  if (v === "distancing") return { intensity: 0.5, label: "Distancing" };
+  return null;
 });
 
 type MeasureItem = {
@@ -111,7 +106,7 @@ export function parseMeasures(
 
     let { name, parser, scale } = measureTypes[key];
     let data = measureData[key];
-    let category = [];
+    let category: Array<MeasureItem> = [];
 
     let item: MeasureItem | null = null;
     data.forEach(({ date, value }) => {
@@ -134,8 +129,8 @@ export function parseMeasures(
     });
 
     if (item) {
-      item.replaced = "2021-01-01";
-      category.push(item as MeasureItem);
+      item!.replaced = "2021-01-01";
+      category.push(item);
       count += 1;
     }
 

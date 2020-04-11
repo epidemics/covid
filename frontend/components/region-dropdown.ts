@@ -1,5 +1,7 @@
-import { string_score } from "./string_score";
+import { string_score } from "../string_score";
 import * as d3 from "d3";
+import { Region } from "../models";
+import { formatRange } from "../helpers";
 
 const formatAbsoluteInteger = function(number) {
   if (typeof number !== "number" || isNaN(number)) {
@@ -13,18 +15,42 @@ const formatAbsoluteInteger = function(number) {
   }
 };
 
+const monthNames = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec"
+];
+
+const formatDate = (date: Date) =>
+  `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+
+type DropdownItem = {
+  key: string;
+  name: string;
+  dropdownEntry: HTMLAnchorElement;
+  score: number;
+};
+
 export class RegionDropdown {
   $target: HTMLElement;
 
   $label: HTMLElement;
   $list: HTMLElement;
   $filter: HTMLInputElement;
-  $dropdown: HTMLElement;
 
-  list = [];
+  list: Array<DropdownItem> = [];
   focused: number = 0;
   active: string = "";
-  filterQuery: string = "";
+  query: string | null = null;
 
   onChange: (key: string) => void;
 
@@ -49,13 +75,15 @@ export class RegionDropdown {
     jQuery($target).on("show.bs.dropdown", () => {
       // clear the fitler value
       this.$filter.value = "";
-      $(this.$list).css("max-height", $(window).height() * 0.5);
+      $(this.$list).css("max-height", ($(window).height() || 1600) * 0.5);
+
+      if (this.query != "") this.setQuery("");
     });
 
     jQuery($target).on("shown.bs.dropdown", () => {
-      if (this.filterQuery !== "") {
-        this.filterQuery = "";
-        this.reorderDropdown();
+      if (this.query !== "") {
+        this.query = "";
+        this.reorder();
       }
 
       // and focus the filter field
@@ -63,19 +91,19 @@ export class RegionDropdown {
     });
 
     this.$filter.addEventListener("keyup", () => {
-      if (this.filterQuery === this.$filter.value) {
+      if (this.query === this.$filter.value) {
         // dont do anything if the query didnt change
         return;
       }
 
-      this.filterQuery = this.$filter.value;
-      if (this.filterQuery !== "") {
+      this.query = this.$filter.value;
+      if (this.query !== "") {
         // focus the first element in the list
         this.focused = 0;
       }
 
-      this.reorderDropdown();
-      this.restyleDropdownElements();
+      this.reorder();
+      this.restyle();
     });
 
     // listen on regionFilter events
@@ -87,17 +115,17 @@ export class RegionDropdown {
       } else if (evt.key === "ArrowUp") {
         this.focused = Math.max(this.focused - 1, 0);
 
-        this.restyleDropdownElements();
+        this.restyle();
       } else if (evt.key === "ArrowDown") {
         this.focused = Math.min(this.focused + 1, this.list.length - 1);
 
-        this.restyleDropdownElements();
+        this.restyle();
       }
     });
   }
 
   // make the dropdown entry
-  addRegionDropdown(region_key, url, name) {
+  addRegionDropdown(region_key: string, url: string, name: string) {
     const link = document.createElement("a");
 
     link.innerHTML = name;
@@ -109,68 +137,54 @@ export class RegionDropdown {
       this.onChange(region_key);
     });
 
-    let item = { key: region_key, name, dropdownEntry: link };
+    let item = { key: region_key, name, dropdownEntry: link, score: 0 };
 
     // add it to the dict and list
     this.list.push(item);
   }
 
-  update(key: string, regionData) {
-    if (this.active === key) {
+  init() {
+    this.setQuery("");
+  }
+
+  setQuery(query: string) {
+    if (this.query === query) return;
+
+    this.query = query;
+    // focus the first element in the list
+    this.focused = 0;
+
+    this.reorder();
+    this.restyle();
+  }
+
+  update(region: Region) {
+    if (this.active === region.key) {
       return;
     }
 
-    this.$label.innerHTML = regionData.name;
-    this.active = key;
-    this.restyleDropdownElements();
-    this.updateInfectionTotals(regionData);
+    this.$label.innerHTML = region.name;
+    this.active = region.key;
+    this.reorder();
+    this.restyle();
+    this.updateInfectionTotals(region);
   }
 
-  updateInfectionTotals(regionData) {
-    const { population, data } = regionData;
-    const dates = Object.keys(data.estimates.days);
-    let maxDate = dates[0];
-    dates.slice(1).forEach(date => {
-      if (new Date(maxDate) < new Date(date)) {
-        maxDate = date;
-      }
-    });
-    const infections = data.estimates.days[maxDate];
+  updateInfectionTotals(region: Region) {
+    const { population, reported, estimates } = region;
+    if (!reported) return;
 
-    const formatDate = date => {
-      const [year, month, day] = date.split("-").map(n => parseInt(n));
+    let current = estimates?.now();
+    if (current) {
+      d3.select("#infections-date").html(`${formatDate(current.date)}`);
+      d3.select("#infections-estimated").html(d3.format(".3s")(current.mean));
+    }
 
-      const monthNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec"
-      ];
-
-      const monthString = monthNames[month - 1];
-
-      return `${monthString} ${day}, ${year}`;
-    };
-
-    d3.select("#infections-date").html(`${formatDate(maxDate)}`);
-    d3.select("#infections-confirmed").html(
-      formatAbsoluteInteger(
-        infections["JH_Confirmed"] -
-          infections["JH_Recovered"] -
-          infections["JH_Deaths"]
-      )
-    );
-    d3.select("#infections-estimated").html(
-      formatAbsoluteInteger(infections["FT_Infected"])
-    );
+    if (reported) {
+      d3.select("#infections-confirmed").html(
+        formatAbsoluteInteger(reported.last.confirmed)
+      );
+    }
     /* Temporarily swithed off - we do not have confidence intervals for non-FT estimates
     d3.select("#infections-estimated-ci").html(
       `${formatInfectionTotal(
@@ -178,14 +192,17 @@ export class RegionDropdown {
       )} - ${formatInfectionTotal(infections["FT_Infected_q95"])}`
     );
     */
-    d3.select("#infections-population").html(formatAbsoluteInteger(population));
+    if (population)
+      d3.select("#infections-population").html(
+        formatAbsoluteInteger(population)
+      );
   }
 
   // the dropdown items are restorted depending on a search query
-  reorderDropdown() {
+  reorder() {
     // we score each region item with how good the region name matches the query
     this.list.forEach(region => {
-      region.score = string_score(region.name, this.filterQuery);
+      region.score = string_score(region.name, this.query ?? "");
     });
 
     // then we sort the list
@@ -228,7 +245,7 @@ export class RegionDropdown {
   }
 
   // update the look of the of the dropdown entries
-  restyleDropdownElements() {
+  restyle() {
     this.list.forEach(({ key, dropdownEntry }, index) => {
       let className = "dropdown-item";
 

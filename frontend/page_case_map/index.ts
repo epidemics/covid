@@ -45,7 +45,7 @@ function makeMap(caseMap, baseData, geoData) {
   let value_for_missing = zmax + offset;
 
   // this is a list of items that will later be
-  let items = [];
+  let items: Array<any> = [];
   for (let key in geoData.features) {
     let country = geoData.features[key].properties;
     let iso3 = country[ISO_KEY];

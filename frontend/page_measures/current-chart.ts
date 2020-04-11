@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import * as Plotly from "plotly.js";
 import { parseMeasures } from "./measures";
 import * as chroma from "chroma-js";
-import { makeConfig } from "../graph-common";
+import { makeConfig } from "../components/graph-common";
 import { isTouchDevice } from "../helpers";
 
 const GRAPH_HEIGHT = 600;
@@ -18,12 +18,12 @@ let { config, layout, hook } = makeConfig(bounds);
 config.responsive = true;
 layout.height = GRAPH_HEIGHT;
 
-layout.xaxis.type = "date";
-layout.yaxis.title = "Symptomatic patients";
-layout.yaxis.tickformat = ".1s";
-layout.yaxis.range = bounds.y;
-layout.yaxis.type = "log";
-layout.yaxis.domain = [0, 1];
+layout.xaxis!.type = "date";
+layout.yaxis!.title = "Symptomatic patients";
+layout.yaxis!.tickformat = ".1s";
+layout.yaxis!.range = bounds.y;
+layout.yaxis!.type = "log";
+layout.yaxis!.domain = [0, 1];
 layout.barmode = "overlay";
 layout.yaxis2 = {
   domain: [0, 0],
@@ -71,8 +71,8 @@ type Mode = "percentage" | "absolute";
 export class CurrentChart {
   mode: Mode;
   $container: Plotly.PlotlyHTMLElement;
-  graphDomain: [number, number];
-  measureDomain: [number, number];
+  graphDomain: [number, number] = [0, 1];
+  measureDomain: [number, number] = [0, 0];
 
   constructor($container, mode: Mode = "absolute") {
     this.mode = mode;
@@ -83,10 +83,10 @@ export class CurrentChart {
   }
 
   makeErrorTrace({ color, fillcolor, name }, data): Array<Plotly.Data> {
-    let errorXs = [];
-    let errorYs = [];
-    let meanYs = [];
-    let meanXs = [];
+    let errorXs: Array<number> = [];
+    let errorYs: Array<number> = [];
+    let meanYs: Array<number> = [];
+    let meanXs: Array<number> = [];
 
     data.forEach(({ date, high, mean }) => {
       errorYs.push(high);
@@ -161,8 +161,17 @@ export class CurrentChart {
     let timeseries = regionData.data.estimates.days;
 
     let cv = 3;
-    let retrodicted = [];
-    let reported = [];
+    let retrodicted: Array<{
+      date: Date;
+      low: number;
+      mean: number;
+      high: number;
+    }> = [];
+    let reported: Array<{
+      date: string;
+      confirmed: number;
+      deaths: number;
+    }> = [];
     let max = 0;
     Object.keys(timeseries).forEach(date => {
       let { JH_Deaths: deaths, JH_Confirmed: confirmed } = timeseries[date];
@@ -210,8 +219,8 @@ export class CurrentChart {
       retrodicted
     );
 
-    let reportedXs = [];
-    let reportedYs = [];
+    let reportedXs: Array<string> = [];
+    let reportedYs: Array<number> = [];
     let lastConfirmed = 0;
     reported.forEach(({ date, confirmed }) => {
       if (lastConfirmed !== confirmed) {
@@ -337,7 +346,7 @@ export class CurrentChart {
 
     this.$container.on("plotly_hover", evt => {
       let measure = (evt.points[0] as any).customdata;
-      let measureShapes = [];
+      let measureShapes: Array<Partial<Plotly.Shape>> = [];
 
       if (!measure || !measure.start || !measure.end) return;
 
@@ -381,18 +390,18 @@ export class CurrentChart {
     console.log(measures);
 
     let measureTrace = {
-      base: [],
-      x: [],
-      y: [],
+      base: [] as Array<number>,
+      x: [] as Array<number>,
+      y: [] as Array<string>,
       hoverinfo: "text",
       textposition: "inside",
-      text: [],
+      text: [] as Array<string>,
       yaxis: "y2",
       showlegend: false,
       type: "bar",
       orientation: "h",
-      marker: { color: [] } as Plotly.ScatterMarker,
-      customdata: []
+      marker: { color: [] } as Partial<Plotly.ScatterMarker>,
+      customdata: [] as Array<any>
     };
 
     measures.periods.forEach(info => {

@@ -1,8 +1,7 @@
-import { RegionDropdown } from "../region-dropdown";
+import { RegionDropdown } from "../components/region-dropdown";
 import * as d3 from "d3";
 import { CurrentChart } from "./current-chart";
 import { setGetParamUrl } from "../helpers";
-import { guessRegion } from "../tz_lookup";
 
 const SELECTION_PARAM = "selection";
 const REGION_FALLBACK = "united kingdom";
@@ -17,10 +16,15 @@ class Controller {
   selected: string;
   currentChart: CurrentChart;
 
-  constructor($container: HTMLElement, baseData, measureData, ratesData) {
-    this.dropdown = new RegionDropdown(
-      document.getElementById("regionDropdown"),
-      key => this.changeRegion(key)
+  constructor(
+    $dropdown: HTMLElement,
+    $container: HTMLElement,
+    baseData,
+    measureData,
+    ratesData
+  ) {
+    this.dropdown = new RegionDropdown($dropdown, key =>
+      this.changeRegion(key)
     );
 
     this.currentChart = new CurrentChart($container);
@@ -28,9 +32,7 @@ class Controller {
     let urlString = window.location.href;
     let url = new URL(urlString);
 
-    this.selected =
-      url.searchParams.get(SELECTION_PARAM) ||
-      guessRegion({ fallback: REGION_FALLBACK });
+    this.selected = url.searchParams.get(SELECTION_PARAM) || REGION_FALLBACK;
 
     this.data = {
       base: baseData,
@@ -47,8 +49,7 @@ class Controller {
       )
     );
 
-    this.dropdown.reorderDropdown();
-    this.dropdown.restyleDropdownElements();
+    this.dropdown.init();
 
     // initialize the graph
     this.changeRegion(this.selected);
@@ -60,17 +61,16 @@ class Controller {
     let measureData = this.data.measure[regionData.iso_alpha_3];
     let ratesData = this.data.rates[regionData.iso_alpha_3];
 
-    this.dropdown.update(key, regionData);
+    this.dropdown.update(regionData);
 
     this.currentChart.update(regionData, measureData, ratesData);
   }
 }
 
 // graph
-let $container: HTMLElement | undefined = document.getElementById(
-  "current_viz"
-);
-if ($container) {
+const $container = document.getElementById("current_viz");
+const $dropdown = document.getElementById("regionDropdown");
+if ($container && $dropdown) {
   let sources = [
     `data-main-v3.json`,
     `data-testing-containments.json`,
@@ -83,6 +83,6 @@ if ($container) {
       d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
     )
   ).then(([baseData, containmentData, ratesData]) => {
-    new Controller($container, baseData, containmentData, ratesData);
+    new Controller($dropdown, $container, baseData, containmentData, ratesData);
   });
 }
