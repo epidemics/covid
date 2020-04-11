@@ -14,15 +14,13 @@ export class RatesInfo {
     this.cfr = cfr;
   }
 
-  static fromv4(obj: any): RatesInfo | null {
+  static fromv4(obj: any): RatesInfo | undefined {
     if (obj) {
       return new RatesInfo(
         obj.Hospitalization,
         obj.Critical,
         obj.CaseFatalityRate
       );
-    } else {
-      return null;
     }
   }
 }

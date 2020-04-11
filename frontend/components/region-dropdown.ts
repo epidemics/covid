@@ -1,7 +1,7 @@
 import { string_score } from "../string_score";
 import * as d3 from "d3";
 import { Region } from "../models";
-import { formatRange } from "../helpers";
+import { formatRange, formatSIInteger } from "../helpers";
 
 const formatAbsoluteInteger = function(number) {
   if (typeof number !== "number" || isNaN(number)) {
@@ -177,7 +177,7 @@ export class RegionDropdown {
     let current = estimates?.now();
     if (current) {
       d3.select("#infections-date").html(`${formatDate(current.date)}`);
-      d3.select("#infections-estimated").html(d3.format(".3s")(current.mean));
+      d3.select("#infections-estimated").html(formatSIInteger(3)(current.mean));
     }
 
     if (reported) {

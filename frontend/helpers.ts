@@ -44,3 +44,18 @@ export const formatRange = function(lower, upper) {
     return lower + "-" + upper;
   }
 };
+
+export function formatSIInteger(precision: number): (n: number) => string {
+  const formatInt = d3.format("d");
+  const formatSI = d3.format(`.${precision}s`);
+
+  return (number: number) => {
+    number = Math.round(number);
+    // we want to show SI number, but it has to be integer
+    if (number < Math.pow(10, precision))
+      // for small numbers just use the decimal formatting
+      return formatInt(number);
+    // otherwise use the SI formatting
+    else return formatSI(number);
+  };
+}

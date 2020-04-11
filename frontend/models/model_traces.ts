@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import * as v4 from "./v4";
+import { formatSIInteger } from "../helpers";
 
 const SCNARIO_COLORS = {
   "WEAK-WEAK": "#edcdab",
@@ -23,7 +24,7 @@ interface Trace {
   hoverlabel: any;
 }
 
-const formatPop = d3.format("3s");
+const formatPop = formatSIInteger(3);
 
 export class ModelTraces {
   constructor(

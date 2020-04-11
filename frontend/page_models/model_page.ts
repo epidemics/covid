@@ -188,7 +188,10 @@ export class ModelPage {
       .then(data => {
         // TODO error handling
 
-        let modelTraces = ModelTraces.fromv4(data.models);
+        let modelTraces = ModelTraces.fromv4(
+          data.models,
+          this.region.population
+        );
         this.region.modelTraces = modelTraces; // cache model traces
 
         return modelTraces;

@@ -64,8 +64,8 @@ export class EstimationInfo {
     return null;
   }
 
-  static fromv4(obj: any): EstimationInfo | null {
-    if (!obj) return null;
+  static fromv4(obj: any): EstimationInfo | undefined {
+    if (!obj) return;
 
     let points: EstimationDay[] = [];
     let length = obj.Date.length;

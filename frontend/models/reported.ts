@@ -14,8 +14,8 @@ export class ReportedInfo {
     return this.points[i - 1];
   }
 
-  static fromv4(obj: any): ReportedInfo | null {
-    if (!obj) return null;
+  static fromv4(obj: any): ReportedInfo | undefined {
+    if (!obj) return;
 
     let points: ReportDay[] = [];
     let length = obj.Date.length;
