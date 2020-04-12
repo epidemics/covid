@@ -2,16 +2,12 @@ import * as d3 from "d3";
 import { ModelPage } from "./model_page";
 import { RegionDropdown } from "../components/region-dropdown";
 import { getTimezone, setGetParamUrl } from "../helpers";
-import { Region } from "../models";
+import { Region, Regions } from "../models";
 
 const SELECTION_PARAM = "selection";
 const MITIGATION_PARAM = "mitigation";
 const CHANNEL_PARAM = "channel";
 const REGION_FALLBACK = "united kingdom";
-
-type Regions = {
-  [code: string]: Region;
-};
 
 type Options = {
   channel: string | null;
@@ -134,12 +130,6 @@ if ($pageContainer && $dropdown) {
     )
   ).then(data => {
     let [baseData] = data;
-
-    let regions: Regions = {};
-    Object.keys(baseData.regions).forEach(code => {
-      regions[code] = Region.fromv4(code, baseData.regions[code]);
-    });
-
-    new Controller($dropdown, $pageContainer, regions, params);
+    new Controller($dropdown, $pageContainer, Regions.fromv4(baseData), params);
   });
 }
