@@ -1,5 +1,4 @@
 import { env } from "process";
-import { execSync } from "child_process";
 import * as path from "path";
 
 import express from "express";

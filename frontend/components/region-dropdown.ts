@@ -180,11 +180,9 @@ export class RegionDropdown {
       d3.select("#infections-estimated").html(formatSIInteger(3)(current.mean));
     }
 
-    if (reported) {
-      d3.select("#infections-confirmed").html(
-        formatAbsoluteInteger(reported.last.confirmed)
-      );
-    }
+    d3.select("#infections-confirmed").html(
+      formatAbsoluteInteger(reported.last.confirmed)
+    );
     /* Temporarily swithed off - we do not have confidence intervals for non-FT estimates
     d3.select("#infections-estimated-ci").html(
       `${formatInfectionTotal(
