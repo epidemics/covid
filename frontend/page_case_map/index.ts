@@ -35,7 +35,7 @@ function makeMap(caseMap, regions: Regions, geoData) {
     if (isNaN(z)) z = -Infinity;
     zmax = Math.max(zmax, z);
 
-    info_by_iso3[region.iso3] = { current, z, region };
+    if (region.iso3) info_by_iso3[region.iso3] = { current, z, region };
   });
 
   zmax = zmin + (zmax - zmin) / (1 - offset);

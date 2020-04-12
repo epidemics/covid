@@ -1,3 +1,5 @@
+import { v4 } from "../../spec";
+
 export interface EstimationDay {
   date: Date;
   mean: number;
@@ -61,7 +63,7 @@ export class EstimationInfo {
     return null;
   }
 
-  static fromv4(obj: any): EstimationInfo | undefined {
+  static fromv4(obj: v4.Foretold): EstimationInfo | undefined {
     if (!obj) return;
 
     let points: EstimationDay[] = [];

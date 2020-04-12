@@ -1,4 +1,4 @@
-import * as v4 from "./v4";
+import { v4 } from "../../spec";
 import { formatSIInteger } from "../helpers";
 
 const SCNARIO_COLORS = {

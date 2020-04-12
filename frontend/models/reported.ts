@@ -1,3 +1,5 @@
+import { v4 } from "../../spec";
+
 export interface ReportDay {
   date: Date;
   active: number;
@@ -14,7 +16,7 @@ export class ReportedInfo {
     return this.points[i - 1];
   }
 
-  static fromv4(obj: any): ReportedInfo | undefined {
+  static fromv4(obj: v4.JohnsHopkins): ReportedInfo | undefined {
     if (!obj) return;
 
     let points: ReportDay[] = [];

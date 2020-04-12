@@ -1,6 +1,7 @@
 import { RatesInfo } from "./rates";
 import { EstimationInfo } from "./estimation";
 import { ReportedInfo } from "./reported";
+import { v4 } from "../../spec";
 
 function getPopulation(ageDist?: { [bracket: string]: number }): number {
   if (!ageDist) return 0;
@@ -15,19 +16,21 @@ function getPopulation(ageDist?: { [bracket: string]: number }): number {
 export class Region {
   private constructor(
     public key: string,
-    public iso2: string,
-    public iso3: string,
-    public timezones: [string],
+    public iso2: string | undefined,
+    public iso3: string | undefined,
+    public timezones: string[],
     public name: string,
     public population: number,
-    public officialName: string,
+    public officialName: string | undefined,
     public dataUrl: string,
     public rates: RatesInfo | undefined,
     public estimates: EstimationInfo | undefined,
     public reported: ReportedInfo | undefined
   ) {}
 
-  static fromv4(code: string, obj: any) {
+  static fromv4(code: string, obj: v4.Region) {
+    let { Foretold, JohnsHopkins } = obj.data;
+
     return new Region(
       code,
       obj.CountryCode,
@@ -38,8 +41,8 @@ export class Region {
       obj.OfficialName,
       obj.data_url,
       RatesInfo.fromv4(obj.data.Rates),
-      EstimationInfo.fromv4(obj.data.Foretold),
-      ReportedInfo.fromv4(obj.data.JohnsHopkins)
+      Foretold ? EstimationInfo.fromv4(Foretold) : undefined,
+      JohnsHopkins ? ReportedInfo.fromv4(JohnsHopkins) : undefined
     );
   }
 }
