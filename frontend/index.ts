@@ -1,5 +1,3 @@
-import "core-js/features/object/values";
-
 import "./page_case_map";
 
 import "./page_models";

@@ -14,6 +14,14 @@ export function setGetParamUrl(key, value) {
   return url;
 }
 
+export function getTimezone(): string | null {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {
+    return null;
+  }
+}
+
 export function isTouchDevice() {
   return !!(
     ("ontouchstart" in window || navigator.maxTouchPoints) // works on most browsers

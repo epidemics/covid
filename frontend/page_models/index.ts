@@ -1,8 +1,7 @@
 import * as d3 from "d3";
 import { ModelPage } from "./model_page";
 import { RegionDropdown } from "../components/region-dropdown";
-import { setGetParamUrl } from "../helpers";
-import { getTimezone } from "../tz_lookup";
+import { getTimezone, setGetParamUrl } from "../helpers";
 import { Region } from "../models";
 
 const SELECTION_PARAM = "selection";
