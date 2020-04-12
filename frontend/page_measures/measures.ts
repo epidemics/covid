@@ -102,7 +102,7 @@ export function parseMeasures(
   let count = 0;
   let periods: Array<MeasureItem> = [];
   measureKeys.forEach(key => {
-    let hue = Math.round(Math.random() * 360);
+    // let _hue = Math.round(Math.random() * 360);
 
     let { name, parser, scale } = measureTypes[key];
     let data = measureData[key];

@@ -1,17 +1,9 @@
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
-import { saveImage } from "../components/custom-plotly-image-saver";
-import { RegionDropdown } from "../components/region-dropdown";
-import { setGetParamUrl, isTouchDevice } from "../helpers";
+import { isTouchDevice } from "../helpers";
 import { makeConfig } from "../components/graph-common";
 import { Region } from "../models";
 import { ModelTraces } from "../models/model_traces";
-
-const GLEAMVIZ_TRACE_SCALE = 1000; // it gives infections per 1000
-
-const SELECTION_PARAM = "selection";
-const MITIGATION_PARAM = "mitigation";
-const REGION_FALLBACK = "united kingdom";
 
 const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;

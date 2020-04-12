@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import * as v4 from "./v4";
 import { formatSIInteger } from "../helpers";
 

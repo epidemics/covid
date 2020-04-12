@@ -1,6 +1,3 @@
-import * as moment from "moment";
-import { interpolate } from "d3";
-
 export interface EstimationDay {
   date: Date;
   mean: number;

@@ -116,7 +116,7 @@ export const saveImage = (function() {
           if ($offscreenElem) Plotly.purge($offscreenElem);
         };
 
-        img.onerror = function(err) {
+        img.onerror = function(_err) {
           // TODO better error handling, for now try to fallback to Plotly code
           if ($offscreenElem) Plotly.downloadImage($offscreenElem, opts);
         };

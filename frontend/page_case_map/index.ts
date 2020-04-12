@@ -1,6 +1,6 @@
 import * as Plotly from "plotly.js";
 import * as d3 from "d3";
-import { isTouchDevice } from "./helpers";
+import { isTouchDevice } from "../helpers";
 
 const MAP_ID = "mapid";
 const ISO_KEY = "iso_a3";

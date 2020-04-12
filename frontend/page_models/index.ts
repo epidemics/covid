@@ -71,7 +71,7 @@ class Controller {
     // initialize the select picker
     $('[data-toggle="tooltip"]').tooltip();
 
-    $("#mitigation input[type=radio]").each(
+    $<HTMLInputElement>("#mitigation input[type=radio]").each(
       (_index: number, elem: HTMLInputElement): void | false => {
         if (elem.value === mitigation) {
           elem.checked = true;

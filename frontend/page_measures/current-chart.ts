@@ -2,7 +2,6 @@ import * as moment from "moment";
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
 import { parseMeasures } from "./measures";
-import * as chroma from "chroma-js";
 import { makeConfig } from "../components/graph-common";
 import { isTouchDevice } from "../helpers";
 
@@ -273,7 +272,7 @@ export class CurrentChart {
       this.$container,
       regionData,
       ratesData,
-      (retrodicted, reported, yrange) => {
+      (retrodicted, _reported, yrange) => {
         // function mkDeltaTrace(name, other) {
         //   return {
         //     x: [],
