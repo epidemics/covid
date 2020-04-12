@@ -19,7 +19,7 @@ export class Region {
     public iso3: string,
     public timezones: [string],
     public name: string,
-    public population: number | undefined,
+    public population: number,
     public officialName: string,
     public dataUrl: string,
     public rates: RatesInfo | undefined,

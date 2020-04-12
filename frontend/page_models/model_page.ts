@@ -167,6 +167,10 @@ export class ModelPage {
   // if not, loads them and does preprocessing; then caches it in the region object.
   // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
   loadGleamvizTraces(): Promise<ModelTraces> {
+    let population = this.region.population;
+    let initial_infected =
+      (this.region.estimates?.now()?.mean ?? 0) / population;
+
     let modelTraces = this.region.modelTraces;
     if (modelTraces) {
       return Promise.resolve(modelTraces);
@@ -180,10 +184,10 @@ export class ModelPage {
       .then(data => {
         // TODO error handling
 
-        let modelTraces = ModelTraces.fromv4(
-          data.models,
-          this.region.population
-        );
+        let modelTraces = ModelTraces.fromv4(data.models, {
+          population,
+          initial_infected
+        });
         this.region.modelTraces = modelTraces; // cache model traces
 
         return modelTraces;

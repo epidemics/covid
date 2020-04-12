@@ -32,7 +32,13 @@ export class ModelTraces {
     public xrange: [string, string]
   ) {}
 
-  static fromv4(obj: v4.ModelTraces, population?: number): ModelTraces {
+  static fromv4(
+    obj: v4.ModelTraces,
+    {
+      population,
+      initial_infected
+    }: { population: number; initial_infected: number }
+  ): ModelTraces {
     console.log(obj);
 
     let dates = obj.date_index;
@@ -53,19 +59,16 @@ export class ModelTraces {
           shape: "spline",
           color: SCNARIO_COLORS[obj.key]
         },
-        hovertemplate: "%{text}%{y:.2p}",
+        hovertemplate: "%{text}<br />%{y:.2p}",
         hoverlabel: { namelength: -1 }
       };
 
+      let cummulative = initial_infected;
       for (let i = 0; i < length; i++) {
-        trace.y.push(obj.infected[i] * 1000);
-        if (!population) {
-          trace.text.push("");
-        } else {
-          trace.text.push(
-            formatPop(obj.infected[i] * 1000 * population) + "<br />"
-          );
-        }
+        cummulative += (obj.infected[i] - obj.recovered[i]) * 10000;
+
+        trace.y.push(cummulative);
+        trace.text.push(formatPop(cummulative * population) + "<br />");
       }
       maxY = Math.max(maxY, ...trace.y);
 
