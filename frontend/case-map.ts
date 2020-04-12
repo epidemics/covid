@@ -183,7 +183,7 @@ let caseMap = document.getElementById(MAP_ID);
 if (caseMap !== null) {
   Promise.all(
     sources.map(path =>
-      d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
+      d3.json(`https://storage.googleapis.com/epidemics-covid/static/${path}`)
     )
   ).then(([baseData, geoData]) => {
     makeMap(caseMap, baseData, geoData);

@@ -5,7 +5,7 @@
 **Channels.** The data is uploaded in channels, so that multiple versions of data can be accesible at once.
 The default channel name uset at the main site is `main` - be careful uploading to it; please test first. Channel can be an arbitrary name, use common sense. `CHANNEL` shuld be replaced by chanel name below.
 
-**URLs.** The main data file is loaded as JSON from https://stoage.googleapis.com/static-covid/static/data-CHANNEL-v3.json, e.g. https://stoage.googleapis.com/static-covid/static/data-main-v3.json
+**URLs.** The main data file is loaded as JSON from https://stoage.googleapis.com/epidemics-covid/static/data-CHANNEL-v3.json, e.g. https://stoage.googleapis.com/epidemics-covid/static/data-main-v3.json
 
 **NB.** When uploading the files, make sure you set a reasonably low chache timeout - GS default is 1 hour, making updates very slow to propagate!
 

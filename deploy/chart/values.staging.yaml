@@ -6,6 +6,6 @@ web:
   replicasCount: 1
 
 env:
-  staticUrl: "https://storage.googleapis.com/static-covid/static/staging"
+  staticUrl: "https://storage.googleapis.com/epidemics-covid/static/staging"
   nodeEnv: "production"
 

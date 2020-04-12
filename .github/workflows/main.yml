@@ -47,12 +47,12 @@ jobs:
     - name: Upload to staging
       if: github.ref == 'refs/heads/staging'
       run: |
-            gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read dist/* gs://static-covid/static/staging/
+            gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read dist/* gs://epidemics-covid/static/staging/
 
     - name: Upload to production
       if: github.ref == 'refs/heads/master'
       run: |
-          gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read dist/* gs://static-covid/static/production/
+          gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read dist/* gs://epidemics-covid/static/production/
 
   setup-build-publish-deploy:
     if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master'
