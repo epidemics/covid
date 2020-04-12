@@ -13,50 +13,54 @@ block additional_js_pre -%}
 </style>
 {% endblock %} {% block content %}
 <div class="container main">
-  <div class="row">
-    <div class="col-lg-9 col-md-12">
-      <h1 class="title-form">
-        Dataset of COVID-19 containment and mitigation measures v0.2
-      </h1>
+    <div class="row">
+        <div class="col-lg-9 col-md-12">
+            <h1 class="title-form">Dataset of COVID-19 containment and mitigation measures v0.2</h1>
 
-      <h5>Background</h5>
-      <p>
-        The dataset attempts to cover all measures of national significance
-        intended to reduce the transmission of COVID-19, in all the worlds
-        nations.
-      </p>
-      <p>Each measure in the database has entries on:</p>
-      <ul>
-        <li>Country (and state for the US)</li>
-        <li>Textual description of the measure</li>
-        <li>Start date of measure</li>
-        <li>End date (if available)</li>
-        <li>URL to source of more information</li>
-        <li>
-          Systematic keyword labels (e.g. &quot;travel ban&quot; or
-          &quot;hygiene enforcement&quot;)
-        </li>
-      </ul>
-      <p><em>This is work in progress.</em></p>
-      <p>
-        The completion state of various countries can be seen
-        <a
-          href="https://www.notion.so/dbf0f4ffc03f4417a16d65a6d08eea69?v=845ef4baafd44e72b9c483381b90caae"
-          >here</a
-        >, and a detailed description of the main tags in the database and the
-        preprocessing used to produce the sanitized version can be found
-        <a
-          href="https://www.notion.so/Tag-hierarchy-db9799312efa4f88851e8d49393bbb16"
-          >here</a
-        >.
-      </p>
-      <p>
-        As of April 6th we have about 1600 entries spanning 117 countries.
-        Countries are prioritised on the basis of population and number of
-        confirmed cases. There is likely to be a degree of bias in the dataset
-        due to some countries having information that is easier to access than
-        others.
-      </p>
+            <h5>Background</h5>
+            <p>The dataset attempts to cover all measures of national significance intended to reduce the transmission
+                of COVID-19, in all the worlds nations.</p>
+            <p>Each measure in the database has entries on:</p>
+            <ul>
+                <li>Country (and state for the US)</li>
+                <li>Textual description of the measure</li>
+                <li>Start date of measure</li>
+                <li>End date (if available)</li>
+                <li>URL to source of more information</li>
+                <li>Systematic keyword labels (e.g. &quot;travel ban&quot; or &quot;hygiene enforcement&quot;)</li>
+            </ul>
+            <p><em>This is work in progress.</em> </p>
+            <p>The completion state of various countries can be seen <a
+                    href="https://www.notion.so/dbf0f4ffc03f4417a16d65a6d08eea69?v=845ef4baafd44e72b9c483381b90caae">here</a>,
+                and a detailed description of the main tags in the database and the preprocessing used to produce the sanitized
+                version can be found  <a
+                    href="https://www.notion.so/Tag-hierarchy-db9799312efa4f88851e8d49393bbb16">here</a>.
+            </p>
+            <p>As of April 6th we have about 1600 entries spanning 117 countries. Countries are prioritised on the basis of
+                population and number of confirmed cases. There is likely to be a degree of bias in the dataset due to some
+                countries having information
+                that is easier to access than others.</p>
+
+            <br />
+            <h5>Download the data</h5>
+            <p>We have a preprocessed version of the dataset together with
+                <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data">John's Hopkins case and
+                death data</a> available as a <code>&lt;.csv&gt;</code> file <a
+                href="https://storage.googleapis.com/static-covid/Containment%20measures/countermeasures_db_johnshopkins.csv">
+                    here</a>.
+                Refer to the detailed tag descriptions linked above for information about the columns in this file,
+                or see the dataset's <a
+                href="https://www.kaggle.com/davidoj/covid19-national-responses-dataset">Kaggle page</a> for a briefer description.
+            </p>
+            <p>Raw data is available as a <code>&lt;.csv&gt;</code> file <a
+                    href="https://storage.googleapis.com/static-covid/Containment%20measures/COVID-19%20containment%20measures.zip">
+                    here</a>.
+                There is some information available in the raw data not recoverable from the sanitized file, but it will take substantially
+                more effort to get this data ready for analysis.
+            </p>
+            <p>(Last updated April 6th. To get the most recent raw data, make a copy of the <a
+                    href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=fe54f89ca9e04ac799af42b39e1efc4b">Notion
+                    database</a>, and then click &quot;Export&quot;.)</p>
 
       <br />
       <h5>Download the data</h5>
@@ -136,21 +140,20 @@ block additional_js_pre -%}
         If you'd like to volunteer to extend the dataset, or have any questions
         about usage, please reach out using this form.
       </p>
-
-      <form action="https://formspree.io/xoqlnedo" method="POST">
-        <label class="fill-available-width">Your email</label>
-        <div class="row">
-          <div class="col-lg-6">
-            <input class="fill-available-width" type="text" name="_replyto" />
+      <form action="https://formspree.io/moqnwzlb" method="POST">
+          <label class="fill-available-width">Your email</label>
+          <div class="row">
+              <div class="col-lg-6">
+                  <input class="fill-available-width" type="text" name="_replyto" />
+              </div>
           </div>
-        </div>
-        <br />
-        <label class="fill-available-width">Message</label>
-        <div class="row">
-          <div class="col-lg-6">
-            <textarea class="fill-available-width" name="message"></textarea>
+          <br />
+          <label class="fill-available-width">Message</label>
+          <div class="row">
+              <div class="col-lg-6">
+                  <textarea class="fill-available-width" name="message"></textarea>
+              </div>
           </div>
-        </div>
 
         <!-- your other form fields go here -->
         <br />

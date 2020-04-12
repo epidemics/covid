@@ -11,16 +11,18 @@
 <style>
   #mapid {
     height: 800px;
+    max-height: 60vh;
+    margin: 0 -15px;
   }
 </style>
 {% endblock %} {% block content %}
 
 <div class="container main">
-  <div class="row">
-    <div class="col-12">
-      <div id="mapid"></div>
-    </div>
-  </div>
+  <h4 class="text-center">Estimated active infections</h4>
+  <hr />
+  <div id="mapid"></div>
+  <p class="map-footnote footnote"><span class="case-map-nav-action">Click</span> to navigate to the country</p>
+  <hr />
   <div class="row">
     <div class="col"></div>
     <div class="col-9">

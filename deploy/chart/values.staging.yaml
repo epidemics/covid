@@ -3,7 +3,7 @@ ingress:
   externalIpName: loadbalance-staging
 
 web:
-  replicasCount: 2
+  replicasCount: 1
 
 env:
   staticUrl: "https://storage.googleapis.com/static-covid/static/staging"

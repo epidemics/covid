@@ -95,32 +95,34 @@ export const saveImage = (function() {
       // document.body.appendChild($canvas);
     }
 
-    Plotly.newPlot(
-      $offscreenElem,
-      plotlyElement.data,
-      layout,
-      plotlyElement.config
-    ).then(() => {
-      let svg = Plotly.Snapshot.toSVG($offscreenElem, "svg", scale);
+    let config: Partial<Plotly.Config> = {
+      ...plotlyElement.config,
+      staticPlot: true
+    };
 
-      // fixes the lines becoming thin
-      svg = svg.replace(VECTOR_EFFECT_REGEX, "");
-      let img = new window.Image();
+    Plotly.newPlot($offscreenElem, plotlyElement.data, layout, config).then(
+      () => {
+        let svg = Plotly.Snapshot.toSVG($offscreenElem, "svg", scale);
 
-      img.onload = function() {
-        compose($canvas, img, width * scale, height * scale);
+        // fixes the lines becoming thin
+        svg = svg.replace(VECTOR_EFFECT_REGEX, "");
+        let img = new window.Image();
 
-        download($canvas, `${name}.${format}`, format);
+        img.onload = function() {
+          compose($canvas, img, width * scale, height * scale);
 
-        if ($offscreenElem) Plotly.purge($offscreenElem);
-      };
+          download($canvas, `${name}.${format}`, format);
 
-      img.onerror = function(err) {
-        // TODO better error handling, for now try to fallback to Plotly code
-        if ($offscreenElem) Plotly.downloadImage($offscreenElem, opts);
-      };
+          if ($offscreenElem) Plotly.purge($offscreenElem);
+        };
 
-      img.src = "data:image/svg+xml;base64," + btoa(svg);
-    });
+        img.onerror = function(err) {
+          // TODO better error handling, for now try to fallback to Plotly code
+          if ($offscreenElem) Plotly.downloadImage($offscreenElem, opts);
+        };
+
+        img.src = "data:image/svg+xml;base64," + btoa(svg);
+      }
+    );
   };
 })();
