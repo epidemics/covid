@@ -41,6 +41,10 @@ router.get("/request-calculation", (req, res) =>
   res.render("request-calculation.html", { message: "Please provide data" })
 );
 
+router.get("/request-calculation-submitted", (req, res) =>
+  res.render("request-calculation-submitted.html", { message: "Form submitted" })
+);
+
 router.get("/about", (req, res) => res.render("about.html"));
 
 // Not sure why, but we had a lot of 404 in access log for this URL

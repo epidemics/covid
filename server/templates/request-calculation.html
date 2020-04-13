@@ -34,6 +34,11 @@ active_page = 'request-model' %} {%- block additional_js_pre -%} {%- endblock
     ,
     method="POST"
   >
+    <input 
+      type="hidden" 
+      name="_next" 
+      value="/request-calculation-submitted"
+    />
     <div class="form-group">
       <div class="row">
         <div class="col-lg-6">
