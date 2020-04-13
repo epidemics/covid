@@ -20,8 +20,8 @@ interface Trace {
   };
   name?: string;
   line: Partial<Plotly.ScatterLine>;
-  hovertemplate: string;
-  hoverlabel: any;
+  hovertemplate?: string;
+  hoverlabel?: any;
   type: "scatter";
 }
 
@@ -106,9 +106,13 @@ export class ModelTraces {
         let trace: Trace = {
           customdata: { mitigation },
           text: [],
-          hovertemplate: "%{text}<br />%{y:.2p}",
           ...obj
         };
+
+        if (obj.hoverinfo !== "skip") {
+          trace.hoverlabel = { namelength: -1 };
+          trace.hovertemplate = "%{text}<br />%{y:.2p}";
+        }
 
         let length = trace.y.length;
 
