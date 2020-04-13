@@ -209,29 +209,56 @@ export class ModelPage {
     this.loadGleamvizTraces().then(({ maxY, traces, xrange }: ModelTraces) => {
       maxY *= 1.01;
 
-      layout.yaxis.range = [0, maxY];
       bounds.y = [0, maxY];
-      // AddCriticalCareTrace(mitigTraces[mitigationId]);
+      bounds.x = [...xrange];
+
       // redraw the lines on the graph
-
-      console.log({ maxY, traces, xrange });
-
       Plotly.addTraces(
         this.$container,
         traces.filter(
           trace => trace.customdata?.mitigation == mitigationId
         ) as any
       );
-      bounds.x = [...xrange];
+
+      this.addCapacityTrace(xrange);
+
+      Plotly.relayout(this.$container, {
+        "yaxis.range": [0, maxY],
+        "xaxis.range": [xrange[0], xrange[1]]
+      });
     });
   }
 
-  // function AddCriticalCareTrace(traces) {
-  //   let line_title = "Hospital critical care capacity (approximate)";
+  addCapacityTrace(xrange: [string, string]) {
+    let criticalRate = this.region.rates?.critical;
+    let criticalBedsPer100k = this.region.capacity?.criticalBedsPer100k;
 
-  //   const lastTrace = traces[traces.length - 1];
-  //   if (lastTrace && lastTrace.name === line_title) return;
-  // }
+    if (!criticalRate || !criticalBedsPer100k) return;
+
+    const capacity = criticalBedsPer100k / 100000 / criticalRate;
+
+    Plotly.addTraces(this.$container, {
+      x: xrange,
+      y: [capacity, capacity],
+      name: "Hospital critical care capacity (approximate)",
+      legendgroup: "crit_line",
+      mode: "lines",
+      line: { color: "#be3a40", dash: "solid", width: 1.6 },
+      hoverinfo: "skip"
+    });
+
+    Plotly.addTraces(this.$container, {
+      x: [xrange[0], xrange[1], xrange[1], xrange[0]],
+      y: [capacity, capacity, capacity * 2, capacity * 2],
+      legendgroup: "crit_line",
+      showlegend: false,
+      mode: "lines",
+      fill: "tozerox",
+      fillcolor: "rgba(190,58,64,0.2)",
+      line: { color: "transparent" },
+      hoverinfo: "none"
+    });
+  }
 
   updateRegionInText() {
     let countryName = this.region.name;

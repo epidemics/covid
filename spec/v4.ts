@@ -28,6 +28,7 @@ export interface Region {
         Timezones: string[];
         AgeDist?: {[bracket: string]: number}
         TracesV3: string;
+        Capacity: Capacity
     };
     data_url: string;
     Name: string;
@@ -49,6 +50,7 @@ export interface Rates {
     Hospitalization: number
 }
 
+
 export interface JohnsHopkins {
     Date: string[],
     Recovered: number[],
@@ -64,4 +66,12 @@ export interface Foretold {
     "0.05": number[],
     "0.50": number[],
     "0.95": number[],
+}
+
+export interface Capacity {
+    CapacityActiveInfectionPercent: number;
+    CapacityNewInfectionsPerDayPer1000: number;
+    CriticalBedsPer100k: number;
+    Source: string;
+    Year: number;
 }
