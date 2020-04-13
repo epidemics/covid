@@ -16,6 +16,10 @@ describe('server', () => {
         request(app).get('/about').expect(200,done);
     })
 
+    it('about-submitted', (done) => {
+        request(app).get('/about-submitted').expect(200,done);
+    })
+
     it('containment', async () => {
         await request(app).get('/containment').expect(200);
     })
