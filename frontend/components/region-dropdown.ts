@@ -30,7 +30,7 @@ const monthNames = [
   "Dec"
 ];
 
-const formatDate = (date: Date) =>
+const formatDate = (date: Date = new Date()) =>
   `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
 type DropdownItem = {
@@ -174,10 +174,13 @@ export class RegionDropdown {
     const { population, reported, estimates } = region;
     if (!reported) return;
 
-    let current = estimates?.now();
+    let current = region.currentActiveInfected();
     if (current) {
-      d3.select("#infections-date").html(`${formatDate(current.date)}`);
-      d3.select("#infections-estimated").html(formatSIInteger(3)(current.mean));
+      d3.select("#infections-date").html(`${formatDate()}`);
+      d3.select("#infections-estimated").html(formatSIInteger(3)(current));
+    } else {
+      d3.select("#infections-date").html("");
+      d3.select("#infections-estimated").html("&mdash;");
     }
 
     d3.select("#infections-confirmed").html(

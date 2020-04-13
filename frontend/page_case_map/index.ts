@@ -1,7 +1,7 @@
 import * as Plotly from "plotly.js";
 import * as d3 from "d3";
 import { isTouchDevice } from "../helpers";
-import { Regions, Region, EstimationDay } from "../models";
+import { Regions, Region } from "../models";
 
 const MAP_ID = "mapid";
 const ISO_KEY = "iso_a3";
@@ -20,7 +20,7 @@ function makeMap(caseMap, regions: Regions, geoData) {
   let tick_names = tick_values.map(value_to_labels);
 
   let info_by_iso3: {
-    [key: string]: { region: Region; z: number; current: EstimationDay };
+    [key: string]: { region: Region; z: number; current: number };
   } = {};
   let zmax = 2; // we want the max to start at 2
   let zmin = -3.5;
@@ -28,10 +28,11 @@ function makeMap(caseMap, regions: Regions, geoData) {
   // invert the binary tree
   Object.keys(regions).forEach(key => {
     let region: Region = regions[key];
-    let current = region.estimates?.now();
+
+    let current = region.currentActiveInfected();
     if (!current) return;
 
-    let z = Math.log((current.mean / region.population) * 1000) / Math.log(2);
+    let z = Math.log((current / region.population) * 1000) / Math.log(2);
     if (isNaN(z)) z = -Infinity;
     zmax = Math.max(zmax, z);
 
@@ -57,12 +58,12 @@ function makeMap(caseMap, regions: Regions, geoData) {
     if (info) {
       item.z = info.z;
 
-      let fraction_infected = info.current.mean / info.region.population;
+      let fraction_infected = info.current / info.region.population;
 
       let infected_per_1m = Math.round(
         fraction_infected * 1000000
       ).toLocaleString();
-      let infected_total = Math.round(info.current.mean).toLocaleString();
+      let infected_total = Math.round(info.current).toLocaleString();
       item.text =
         `<b>${item.name}</b><br />` +
         "Estimations:<br />" +

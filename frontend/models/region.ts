@@ -13,6 +13,8 @@ function getPopulation(ageDist?: { [bracket: string]: number }): number {
   return population;
 }
 
+const ONSET_TO_DEATH = 10;
+
 export class Region {
   private constructor(
     public key: string,
@@ -28,6 +30,30 @@ export class Region {
     public estimates: EstimationInfo | undefined,
     public reported: ReportedInfo | undefined
   ) {}
+
+  currentActiveInfected(): number | void {
+    // default to fortold mean estimate
+    let est = this.estimates?.now()?.mean;
+    if (est) return est;
+
+    // otherwise use this
+    let cfr = this.rates?.cfr;
+    let reports = this.reported?.points;
+    if (!cfr || !reports) return;
+
+    let l = reports.length;
+    let deathsNow = reports[l - 1].deaths + 0.001; // add epsilon to prevent NaN's
+    let retrodictedInfected = deathsNow / cfr;
+    let growthSinceThen = Math.min(
+      deathsNow / reports[l - ONSET_TO_DEATH].deaths,
+      4
+    );
+    let cases = Math.max(
+      retrodictedInfected * growthSinceThen,
+      reports[l - 1].confirmed
+    );
+    return cases - reports[l - 1].recovered;
+  }
 
   static fromv4(code: string, obj: v4.Region) {
     let { Foretold, JohnsHopkins } = obj.data;
