@@ -1,7 +1,7 @@
-import "core-js/features/object/values";
+import "./page_case_map";
 
-import "./case-map";
+import "./page_models";
 
-import "./lines";
+import "./page_models/consulting-alert";
 
-import "./consulting-alert";
+import "./page_measures";

@@ -1,7 +1,5 @@
-{% extends "base.html" %}
-{% set title = 'About Epidemic Forecasting' %}
-{% set active_page = 'about' %}
-{%- block additional_js_pre -%}
+{% extends "base.html" %} {% set title = 'About Epidemic Forecasting' %} {%-
+block additional_js_pre -%}
 <style type="text/css">
   label {
     margin-bottom: 15spx;
@@ -20,18 +18,17 @@
       <h5>TEAM</h5>
 
       <p>
-        EpidemicForecasting.org was created by a team of research scholars from the Future of
-        Humanity Institute, University of Oxford, with collaborators from Australian National University, Harvard
-        University and a number of volunteer data scientists and developers from Google, GitLab and other
-        organisations.
+        EpidemicForecasting.org was created by a team of research scholars from
+        the Future of Humanity Institute, University of Oxford, with
+        collaborators from Australian National University, Harvard University
+        and a number of volunteer data scientists and developers from Google,
+        GitLab and other organisations.
       </p>
 
       <p>
-        Our research is led by Jan Kulveit (Senior Research Scholar, University of Oxford). The project is managed by
-        Jacob Lagerros (Research Scholar,
-        University of Oxford).
-        To contact us please
-        use the form below.
+        Our research is led by Jan Kulveit (Senior Research Scholar, University
+        of Oxford). The project is managed by Jacob Lagerros (Research Scholar,
+        University of Oxford). To contact us please use the form below.
       </p>
     </div>
   </div>
@@ -41,43 +38,68 @@
       Our modelling is in part based on
       <ul>
         <li>
-          GLEAMviz computational tool, a publicly available software to explore realistic epidemic spreading scenarios
-          at the global scale. W. Van den Broeck,
-          C. Gioannini, B. Gonçalves, M. Quaggiotto, V. Colizza, and A. Vespignani.
-          BMC Infectious Diseases 11, 37 (2011).
+          GLEAMviz computational tool, a publicly available software to explore
+          realistic epidemic spreading scenarios at the global scale. W. Van den
+          Broeck, C. Gioannini, B. Gonçalves, M. Quaggiotto, V. Colizza, and A.
+          Vespignani. BMC Infectious Diseases 11, 37 (2011).
         </li>
         <li>
-          Seasonal transmission potential and activity peaks of the new influenza
-          A(H1N1): a Monte Carlo likelihood analysis based on human mobility. D.
-          Balcan, H. Hu, B. Gonçalves, P. Bajardi, C. Poletto, J. J. Ramasco, D. Paolotti,
-          N. Perra, M. Tizzoni, W. Van den Broeck, V. Colizza, and A. Vespignani. BMC
-          Medicine 7, 45 (2009).
+          Seasonal transmission potential and activity peaks of the new
+          influenza A(H1N1): a Monte Carlo likelihood analysis based on human
+          mobility. D. Balcan, H. Hu, B. Gonçalves, P. Bajardi, C. Poletto, J.
+          J. Ramasco, D. Paolotti, N. Perra, M. Tizzoni, W. Van den Broeck, V.
+          Colizza, and A. Vespignani. BMC Medicine 7, 45 (2009).
         </li>
         <li>
-          Modeling the spatial spread of infectious diseases: The Global Epidemic
-          and Mobility computational model. D. Balcan, B. Gonçalves, H. Hu, J. J.
-          Ramasco, V. Colizza, and A. Vespignani. Journal of Computational Science
-          1, 132 (2010).
+          Modeling the spatial spread of infectious diseases: The Global
+          Epidemic and Mobility computational model. D. Balcan, B. Gonçalves, H.
+          Hu, J. J. Ramasco, V. Colizza, and A. Vespignani. Journal of
+          Computational Science 1, 132 (2010).
         </li>
       </ul>
       <h5 class="mt-3">Active datasets</h5>
       <ul>
-        <li><a href="https://storage.googleapis.com/static-covid/static/simulation-defs-main.zip">GLEAM simulation
-            definitions with infection estimates</a></li>
-        <li><a href="https://storage.googleapis.com/static-covid/static/data-main-v3.json">Results data</a>
-          (JSON, see the <a
-            href="https://github.com/epidemics/covid/blob/master/docs/data-specification.md">specification</a>)</li>
-        <li><a href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=fe54f89ca9e04ac799af42b39e1efc4b">Country
-            containment measures</a></li>
-        <li><a href="https://storage.googleapis.com/static-covid/static/countries-spread.csv">Country spreads map
-            data</a></li>
+        <li>
+          <a
+            href="https://storage.googleapis.com/static-covid/static/simulation-defs-main.zip"
+            >GLEAM simulation definitions with infection estimates</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://storage.googleapis.com/static-covid/static/data-main-v3.json"
+            >Results data</a
+          >
+          (JSON, see the
+          <a
+            href="https://github.com/epidemics/covid/blob/master/docs/data-specification.md"
+            >specification</a
+          >)
+        </li>
+        <li>
+          <a
+            href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=fe54f89ca9e04ac799af42b39e1efc4b"
+            >Country containment measures</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://storage.googleapis.com/static-covid/static/countries-spread.csv"
+            >Country spreads map data</a
+          >
+        </li>
       </ul>
 
-      <h5 class="mt-3">License of the output data </h5>
-      The original scenario's output data are licensed under CC0 <a
-        href="http://creativecommons.org/publicdomain/zero/1.0/">
-        <img src="https://licensebuttons.net/p/zero/1.0/88x31.png" height="31" width="88" alt="CC0"
-          style="border-style:none">
+      <h5 class="mt-3">License of the output data</h5>
+      The original scenario's output data are licensed under CC0
+      <a href="http://creativecommons.org/publicdomain/zero/1.0/">
+        <img
+          src="https://licensebuttons.net/p/zero/1.0/88x31.png"
+          height="31"
+          width="88"
+          alt="CC0"
+          style="border-style:none"
+        />
       </a>
     </div>
   </div>
@@ -114,5 +136,4 @@
     <br />
   </div>
 </div>
-{% endblock %} {% block additional_js %}
-{% endblock %}
+{% endblock %} {% block additional_js %} {% endblock %}

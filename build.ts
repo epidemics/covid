@@ -1,12 +1,12 @@
 
 import webpackConfig from './webpack.config';
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
 import { resolve } from 'path';
 import webpack from 'webpack';
 
 let dist = resolve(__dirname, "./dist");
 
-execSync(`rm -rf ${dist}`)
+execFileSync("rm", ["-rf", dist])
 
 execSync("cp -r ./static ./dist", {cwd: __dirname})
 

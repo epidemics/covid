@@ -852,7 +852,7 @@ table td {
   padding: 0.1em 0.7em;
 }
 
-#regionList {
+.dropdown-list {
   height: auto;
   overflow-y: scroll;
   text-transform: uppercase;

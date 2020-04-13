@@ -3,10 +3,13 @@
     "noImplicitAny": false,
     "module": "es6",
     "target": "es5",
-    "lib": ["DOM", "DOM.Iterable", "ES2015", "ES2018.Promise", "ES2017.Object"],
+    "lib": ["DOM", "DOM.Iterable", "ES2015", "ES2018.Promise"],
     "moduleResolution": "node",
     "allowJs": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true
   },
   "exclude": ["node_modules"]
 }

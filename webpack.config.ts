@@ -29,7 +29,8 @@ let config: Configuration = {
     jQuery: "jQuery", 
     d3: "d3", 
     "plotly.js": "Plotly", 
-    "moment": "moment"
+    "moment": "moment",
+    "chroma-js": "chroma"
   }
 };
 
