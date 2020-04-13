@@ -126,7 +126,8 @@
         others.
       </i>
     </div>
-    <!-- <div class="col-sm-auto col-xm-12 mitigation-strength">
+    
+    {# <div class="col-sm-auto col-xm-12 mitigation-strength">
       <button id="showMitigation" onclick="showExplanation('showMitigation','hideMitigation','explanationMitigation')"
         class="detail-button less-visible7">
         More detail <svg class="bi bi-chevron-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
@@ -145,13 +146,14 @@
             clip-rule="evenodd" />
         </svg>
       </button>
-    </div> -->
+    </div> #}
 
     <!-- Create a div where the graph will take place -->
   </div>
 
   <div class="graph-column">
     <div id="my_dataviz"></div>
+    {#
     <div class="projections-row">
       <div class="total-infected">
         <span class="number-subheader">
@@ -166,12 +168,14 @@
         <span class="sim-infected-number" id="sim-infected"></span>
       </div>
     </div>
+    #}
   </div>
 </div>
 <hr />
 
+{#
 <!-- Toggleable explanation -->
-<!-- <div id="explanationMitigation" class="row less-visible8" style="display: none;">
+ <div id="explanationMitigation" class="row less-visible8" style="display: none;">
   <div class="col-12">
     We're modelling global mitigation measures via their impact on effective transmission rate, since the same mitigation
     strength can be often achieved in multiple ways. For example, something roughly in the range of "weak mitigation"
@@ -189,11 +193,12 @@
       implementation of all measures [...ref...]. This would correspond to a mitigation strength of ~90% — stronger than
       our &quot;Strong&quot; setting.</p>
   </div>
-</div> -->
+</div>
+#}
 
-<!-- <p><i>Choose the aggregate effect on COVID-19 transmission rate, of all mitigation measures implemented globally (not
+{# <p><i>Choose the aggregate effect on COVID-19 transmission rate, of all mitigation measures implemented globally (not
     just in <span class="selected-region"></span>).</i>
-</p> -->
+</p> #}
 
 <!-- Script for the behaviour of the toggleable explanation-->
 <script>

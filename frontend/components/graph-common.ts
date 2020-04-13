@@ -158,7 +158,6 @@ export function makeConfig(bounds, screenshotInfo?: ScreenshotInfo): ChartInfo {
     title: "Reset axis",
     icon: Plotly.Icons.autoscale,
     click: gd => {
-      console.log(bounds);
       Plotly.relayout(gd, {
         "yaxis.range": [...bounds.y],
         "xaxis.range": [...bounds.x]

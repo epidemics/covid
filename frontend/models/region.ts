@@ -23,6 +23,7 @@ export class Region {
     public population: number,
     public officialName: string | undefined,
     public dataUrl: string,
+    public dataUrlV3: string,
     public rates: RatesInfo | undefined,
     public estimates: EstimationInfo | undefined,
     public reported: ReportedInfo | undefined
@@ -40,6 +41,7 @@ export class Region {
       getPopulation(obj.data.AgeDist), // obj.Population
       obj.OfficialName,
       obj.data_url,
+      obj.data.TracesV3,
       RatesInfo.fromv4(obj.data.Rates),
       Foretold ? EstimationInfo.fromv4(Foretold) : undefined,
       JohnsHopkins ? ReportedInfo.fromv4(JohnsHopkins) : undefined

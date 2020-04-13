@@ -177,17 +177,14 @@ export class ModelPage {
     }
 
     // Not cached, load and preprocess
-    let tracesUrl = this.region.dataUrl;
+    let tracesUrl = this.region.dataUrlV3;
 
     return d3
       .json(`https://storage.googleapis.com/static-covid/static/${tracesUrl}`)
       .then(data => {
         // TODO error handling
 
-        let modelTraces = ModelTraces.fromv4(data.models, {
-          population,
-          initial_infected
-        });
+        let modelTraces = ModelTraces.fromv3(data, { population });
         this.region.modelTraces = modelTraces; // cache model traces
 
         return modelTraces;
@@ -217,7 +214,7 @@ export class ModelPage {
       // AddCriticalCareTrace(mitigTraces[mitigationId]);
       // redraw the lines on the graph
 
-      console.log(traces);
+      console.log({ maxY, traces, xrange });
 
       Plotly.addTraces(
         this.$container,

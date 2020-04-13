@@ -27,6 +27,7 @@ export interface Region {
         Foretold?: Foretold;
         Timezones: string[];
         AgeDist?: {[bracket: string]: number}
+        TracesV3: string;
     };
     data_url: string;
     Name: string;

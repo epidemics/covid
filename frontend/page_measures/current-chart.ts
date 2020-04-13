@@ -326,8 +326,6 @@ export class CurrentChart {
         bounds.x = [startDate, endDate];
         bounds.y = yrange.map(n => Math.log(n) / Math.log(10));
 
-        console.log(bounds);
-
         Plotly.relayout(this.$container, {
           "xaxis.range": [...bounds.x],
           "yaxis.range": [...bounds.y]
@@ -385,8 +383,6 @@ export class CurrentChart {
 
   updateMeasures(measureData) {
     let measures = parseMeasures(measureData);
-
-    console.log(measures);
 
     let measureTrace = {
       base: [] as Array<number>,
