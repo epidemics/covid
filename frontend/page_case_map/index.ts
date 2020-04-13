@@ -170,7 +170,7 @@ function makeMap(caseMap, regions: Regions, geoData) {
       let pt = (d.points || [])[0] as any;
       let target = pt.customdata;
       if (target) {
-        window.open("/?selection=" + pt.customdata["country_to_search"]);
+        window.open("/?selection=" + target);
       }
     });
   }
