@@ -13,7 +13,7 @@ function dateDiff(a: Date, b: Date) {
   return a.getTime() - b.getTime();
 }
 
-export class EstimationInfo {
+export class Estimation {
   now(): EstimationDay | null {
     return this.at(new Date());
   }
@@ -63,7 +63,7 @@ export class EstimationInfo {
     return null;
   }
 
-  static fromv4(obj: v4.Foretold): EstimationInfo | undefined {
+  static fromv4(obj: v4.Foretold): Estimation | undefined {
     if (!obj) return;
 
     let points: EstimationDay[] = [];
@@ -78,6 +78,6 @@ export class EstimationInfo {
         p95: obj["0.95"][i]
       });
     }
-    return new EstimationInfo(points);
+    return new Estimation(points);
   }
 }
