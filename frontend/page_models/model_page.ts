@@ -168,8 +168,8 @@ export class ModelPage {
   // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
   loadGleamvizTraces(): Promise<ModelTraces> {
     let population = this.region.population;
-    let initial_infected =
-      (this.region.estimates?.now()?.mean ?? 0) / population;
+    // let initial_infected =
+    //   (this.region.estimates?.now()?.mean ?? 0) / population;
 
     let modelTraces = this.region.modelTraces;
     if (modelTraces) {

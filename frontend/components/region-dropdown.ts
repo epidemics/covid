@@ -171,7 +171,7 @@ export class RegionDropdown {
   }
 
   updateInfectionTotals(region: Region) {
-    const { population, reported, estimates } = region;
+    const { population, reported } = region;
     if (!reported) return;
 
     let current = region.currentActiveInfected();
