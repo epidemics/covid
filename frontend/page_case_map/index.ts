@@ -148,32 +148,30 @@ function makeMap(caseMap, regions: Regions, geoData) {
     modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
   };
 
-  Plotly.newPlot(caseMap, [mapData], layout, config);
+  Plotly.newPlot(caseMap, [mapData], layout, config).then(gd => {
+    if (isTouchDevice()) {
+      $(".case-map-nav-action").text("Tap twice");
 
-  if (isTouchDevice()) {
-    $(".case-map-nav-action").text("Tap twice");
+      let last: null | string = null;
 
-    let last: null | string = null;
-
-    // @ts-ignore
-    caseMap.on("plotly_click", d => {
-      let pt = (d.points || [])[0] as any;
-      let target = pt.customdata;
-      if (target && last === target) {
-        window.open("/?selection=" + target);
-      }
-      last = target;
-    });
-  } else {
-    // @ts-ignore
-    caseMap.on("plotly_click", d => {
-      let pt = (d.points || [])[0] as any;
-      let target = pt.customdata;
-      if (target) {
-        window.open("/?selection=" + target);
-      }
-    });
-  }
+      gd.on("plotly_click", d => {
+        let pt = (d.points || [])[0] as any;
+        let target = pt.customdata;
+        if (target && last === target) {
+          window.open("/?selection=" + target);
+        }
+        last = target;
+      });
+    } else {
+      gd.on("plotly_click", d => {
+        let pt = (d.points || [])[0] as any;
+        let target = pt.customdata;
+        if (target) {
+          window.open("/?selection=" + target);
+        }
+      });
+    }
+  });
 }
 
 let sources = ["data-main-v4.json", "casemap-geo.json"];
