@@ -11,7 +11,7 @@ const MIN_CHART_SIZE = 500;
 
 let bounds = {
   y: [0, 0.099],
-  x: ["2020-01-01", "2021-01-01"]
+  x: ["2020-01-01", "2021-01-01"] as [string, string]
 };
 
 type Options = { mitigation: string; region: Region };
@@ -31,7 +31,7 @@ export class ModelPage {
 
     this.initChart();
 
-    this.update();
+    this.update(true);
   }
 
   getMitigationId() {
@@ -52,7 +52,7 @@ export class ModelPage {
 
   setRegion(region: Region) {
     this.region = region;
-    this.update();
+    this.update(true);
   }
 
   updateStatistics() {
@@ -192,7 +192,7 @@ export class ModelPage {
   }
 
   // update the graph
-  update() {
+  update(resetAxis: boolean = false) {
     Plotly.react(this.$container, [], this.chartInfo.layout);
 
     let mitigationId = this.getMitigationId();
@@ -209,20 +209,23 @@ export class ModelPage {
     this.loadGleamvizTraces().then(({ maxY, traces, xrange }: ModelTraces) => {
       maxY *= 1.01;
 
-      layout.yaxis.range = [0, maxY];
-      bounds.y = [0, maxY];
+      if (resetAxis) {
+        Plotly.relayout(this.$container, {
+          "yaxis.range": [0, maxY],
+          "xaxis.range": [xrange[0], xrange[1]]
+        });
+
+        bounds.y = [0, maxY];
+        bounds.x = [xrange[0], xrange[1]];
+      }
       // AddCriticalCareTrace(mitigTraces[mitigationId]);
       // redraw the lines on the graph
-
-      console.log({ maxY, traces, xrange });
-
       Plotly.addTraces(
         this.$container,
         traces.filter(
           trace => trace.customdata?.mitigation == mitigationId
         ) as any
       );
-      bounds.x = [...xrange];
     });
   }
 
