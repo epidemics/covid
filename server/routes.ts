@@ -42,7 +42,9 @@ router.get("/request-calculation", (req, res) =>
 );
 
 router.get("/request-calculation-submitted", (req, res) =>
-  res.render("request-calculation-submitted.html", { message: "Form submitted" })
+  res.render("request-calculation-submitted.html", {
+    message: "Form submitted"
+  })
 );
 
 router.get("/about", (req, res) => res.render("about.html"));
