@@ -2,7 +2,7 @@ import { Rates } from "./rates";
 import { Estimation } from "./estimation";
 import { Reported } from "./reported";
 import { v4 } from "../../common/spec";
-import { ExternalData,ExternalDataFetcher } from "./external_data";
+import { ExternalData, ExternalDataFetcher } from "./external_data";
 
 function getPopulation(ageDist?: { [bracket: string]: number }): number {
   if (!ageDist) return 0;

@@ -178,11 +178,9 @@ function makeMap(caseMap, regions: Regions, geoData) {
 let sources = ["data-main-v4.json", "casemap-geo.json"];
 let caseMap = document.getElementById(MAP_ID);
 if (caseMap !== null) {
-  Promise.all(
-    sources.map(path =>
-      d3.json(`${STATIC_ROOT}/${path}`)
-    )
-  ).then(([baseData, geoData]) => {
-    makeMap(caseMap, Regions.fromv4(baseData), geoData);
-  });
+  Promise.all(sources.map(path => d3.json(`${STATIC_ROOT}/${path}`))).then(
+    ([baseData, geoData]) => {
+      makeMap(caseMap, Regions.fromv4(baseData), geoData);
+    }
+  );
 }
