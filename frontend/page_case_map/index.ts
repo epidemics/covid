@@ -1,12 +1,13 @@
 import * as Plotly from "plotly.js";
 import * as d3 from "d3";
 import { isTouchDevice } from "../helpers";
-import { Regions, Region } from "../models";
 
 const MAP_ID = "mapid";
 const ISO_KEY = "iso_a3";
 
-function makeMap(caseMap, regions: Regions, geoData) {
+function makeMap(caseMap, baseData, geoData) {
+  let regions = baseData.regions;
+
   function value_to_labels(v) {
     const x = Math.pow(2, v) * 1000;
     if (x >= 1000) {
@@ -19,30 +20,32 @@ function makeMap(caseMap, regions: Regions, geoData) {
   let tick_values = [-3, -1, 1, 3, 5, 7, 9];
   let tick_names = tick_values.map(value_to_labels);
 
-  let info_by_iso3: {
-    [key: string]: { region: Region; z: number; current: number };
-  } = {};
+  let regionData_by_iso3 = {};
   let zmax = 2; // we want the max to start at 2
   let zmin = -3.5;
 
-  // invert the binary tree
+  // first we go over all the items
   Object.keys(regions).forEach(key => {
-    let region: Region = regions[key];
+    let region = regions[key];
+    let days = region.data.estimates.days;
+    let sorted = Object.keys(days).sort();
+    let last = sorted[sorted.length - 1];
 
-    let current = region.currentActiveInfected();
-    if (!current) return;
+    region.key = key;
+    region.current_infected = days[last].FT_Infected;
+    region.fraction_infected = region.current_infected / region.population;
 
-    let z = Math.log((current / region.population) * 1000) / Math.log(2);
-    if (isNaN(z)) z = -Infinity;
-    zmax = Math.max(zmax, z);
+    region.z = Math.log(region.fraction_infected * 1000) / Math.log(2);
+    if (isNaN(region.z)) region.z = -Infinity;
 
-    if (region.iso3) info_by_iso3[region.iso3] = { current, z, region };
+    regionData_by_iso3[region.iso_alpha_3] = region;
+    zmax = Math.max(zmax, region.z);
   });
 
   zmax = zmin + (zmax - zmin) / (1 - offset);
   let value_for_missing = zmax + offset;
 
-  // this is a list of items that will later be putting into the plotly trace
+  // this is a list of items that will later be
   let items: Array<any> = [];
   for (let key in geoData.features) {
     let country = geoData.features[key].properties;
@@ -54,23 +57,22 @@ function makeMap(caseMap, regions: Regions, geoData) {
       iso3
     };
 
-    let info = info_by_iso3[iso3];
-    if (info) {
-      item.z = info.z;
-
-      let fraction_infected = info.current / info.region.population;
+    let region = regionData_by_iso3[iso3];
+    if (region) {
+      item.z = region.z;
 
       let infected_per_1m = Math.round(
-        fraction_infected * 1000000
+        region.fraction_infected * 1000000
       ).toLocaleString();
-      let infected_total = Math.round(info.current).toLocaleString();
+      let infected_total = Math.round(region.current_infected).toLocaleString();
+
       item.text =
         `<b>${item.name}</b><br />` +
         "Estimations:<br />" +
         `Infected per 1M: <b>${infected_per_1m}</b><br />` +
         `Infected total: <b>${infected_total}</b>`;
 
-      item.url_key = info.region.key;
+      item.url_key = region.key.replace(" ", "+");
     } else {
       item.z = value_for_missing;
       item.text = `<b>${item.name}</b><br />` + "No estimation";
@@ -148,33 +150,35 @@ function makeMap(caseMap, regions: Regions, geoData) {
     modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
   };
 
-  Plotly.newPlot(caseMap, [mapData], layout, config).then(gd => {
-    if (isTouchDevice()) {
-      $(".case-map-nav-action").text("Tap twice");
+  Plotly.newPlot(caseMap, [mapData], layout, config);
 
-      let last: null | string = null;
+  if (isTouchDevice()) {
+    $(".case-map-nav-action").text("Tap twice");
 
-      gd.on("plotly_click", d => {
-        let pt = (d.points || [])[0] as any;
-        let target = pt.customdata;
-        if (target && last === target) {
-          window.open("/?selection=" + target);
-        }
-        last = target;
-      });
-    } else {
-      gd.on("plotly_click", d => {
-        let pt = (d.points || [])[0] as any;
-        let target = pt.customdata;
-        if (target) {
-          window.open("/?selection=" + target);
-        }
-      });
-    }
-  });
+    let last: null | string = null;
+
+    // @ts-ignore
+    caseMap.on("plotly_click", d => {
+      let pt = (d.points || [])[0] as any;
+      let target = pt.customdata;
+      if (target && last === target) {
+        window.open("/?selection=" + target);
+      }
+      last = target;
+    });
+  } else {
+    // @ts-ignore
+    caseMap.on("plotly_click", d => {
+      let pt = (d.points || [])[0] as any;
+      let target = pt.customdata;
+      if (target) {
+        window.open("/?selection=" + target);
+      }
+    });
+  }
 }
 
-let sources = ["data-main-v4.json", "casemap-geo.json"];
+let sources = ["data-main-v3.json", "casemap-geo.json"];
 let caseMap = document.getElementById(MAP_ID);
 if (caseMap !== null) {
   Promise.all(
@@ -182,6 +186,6 @@ if (caseMap !== null) {
       d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
     )
   ).then(([baseData, geoData]) => {
-    makeMap(caseMap, Regions.fromv4(baseData), geoData);
+    makeMap(caseMap, baseData, geoData);
   });
 }
