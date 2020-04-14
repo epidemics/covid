@@ -4,10 +4,7 @@ import { isTouchDevice } from "../helpers";
 import { makeConfig } from "../components/graph-common";
 import { Region } from "../models";
 import { ModelTraces } from "../models/model_traces";
-import {
-  addEstimatedCases,
-  addHistoricalCases
-} from "../page_measures/current-chart";
+import { addEstimatedCases } from "../page_measures/current-chart";
 
 const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;
@@ -21,14 +18,18 @@ let bounds = {
 type Options = { mitigation: string; region: Region };
 
 export class ModelPage {
-  $container: HTMLElement;
+  $container: Plotly.PlotlyHTMLElement;
 
   region: Region & { modelTraces?: ModelTraces };
   mitigation: string = "none"; // TODO strong type this
 
   chartInfo: any;
+  showEstimates: boolean = false;
 
-  constructor($container: HTMLElement, { mitigation, region }: Options) {
+  constructor(
+    $container: Plotly.PlotlyHTMLElement,
+    { mitigation, region }: Options
+  ) {
     this.$container = $container;
     this.mitigation = mitigation;
     this.region = region;
@@ -185,6 +186,13 @@ export class ModelPage {
   update(resetAxis: boolean = false) {
     Plotly.react(this.$container, [], this.chartInfo.layout);
 
+    if (this.showEstimates) {
+      addEstimatedCases(this.$container, this.region, {
+        mode: "percentage",
+        addCI: false
+      });
+    }
+
     let mitigationId = this.getMitigationId();
 
     // update the name of the region in the text below the graph
@@ -193,16 +201,16 @@ export class ModelPage {
     // update the summary statistics per selected mitigation strength
     this.updateStatistics();
 
-    let { layout } = this.chartInfo;
-
     // Load and preprocess the per-region graph data
     this.loadGleamvizTraces().then(({ maxY, traces, xrange }: ModelTraces) => {
       maxY *= 1.01;
 
+      let start = this.showEstimates ? new Date("2020-02-01") : xrange[0];
+
       if (resetAxis) {
         Plotly.relayout(this.$container, {
           "yaxis.range": [0, maxY],
-          "xaxis.range": [xrange[0], xrange[1]]
+          "xaxis.range": [start, xrange[1]]
         });
 
         bounds.y = [0, maxY];
@@ -212,9 +220,7 @@ export class ModelPage {
       // redraw the lines on the graph
       Plotly.addTraces(
         this.$container,
-        traces.filter(
-          trace => trace.customdata?.mitigation == mitigationId
-        ) as any
+        traces.filter(trace => trace?.mitigation == mitigationId)
       );
     });
   }

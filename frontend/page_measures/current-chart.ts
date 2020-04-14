@@ -71,9 +71,12 @@ type Mode = "percentage" | "absolute";
 export function addEstimatedCases(
   gd: Plotly.PlotlyHTMLElement,
   region: Region,
-  mode: Mode
+  opts: {mode: Mode, addCI?: boolean}
 ) {
   const estimationPoints = region.estimates?.points;
+
+  let mode = opts.mode ?? "percentage";
+  let addCI = opts.addCI ?? true;
 
   if (!estimationPoints) return;
 
@@ -95,7 +98,7 @@ export function addEstimatedCases(
     timeseries.push({ date, low, mean, high });
   });
 
-  let traces = makeErrorTrace(
+  let {meanTrace, errorTrace} = makeErrorTrace(
     {
       color: "white",
       fillcolor: "rgba(255,255,255,0.2)",
@@ -103,6 +106,10 @@ export function addEstimatedCases(
     },
     timeseries
   );
+
+  let traces = [meanTrace];
+  if(addCI)
+    traces.push(errorTrace);
 
   // redraw the lines on the graph
   Plotly.addTraces(gd, traces);
@@ -113,8 +120,12 @@ export function addEstimatedCases(
 export function addHistoricalCases(
   gd: Plotly.PlotlyHTMLElement,
   region: Region,
-  mode: Mode
+  opts: {mode: Mode, addCI?: boolean, cases?: boolean }
 ) {
+  let showCI = opts.addCI ?? true;
+  let showCases = opts.cases ?? true;
+  let mode = opts.mode ?? "percentage";
+
   // this is the standard deviation (for plotting) in the log of cfr
   // for example with `log_cfr_var = 0.69` we get
   //    lower confidence bound `= cfr / exp(0.69) = cfr / 2`
@@ -169,7 +180,7 @@ export function addHistoricalCases(
     }
   });
 
-  let symtomaticTraces = makeErrorTrace(
+  let {errorTrace, meanTrace} = makeErrorTrace(
     {
       color: "white",
       fillcolor: "rgba(255,255,255,0.2)",
@@ -200,13 +211,16 @@ export function addHistoricalCases(
     hovertemplate: "Confirmed: %{y:,d}<br />Date: %{x}"
   };
 
-  let data: Array<Partial<Plotly.Data>> = [
-    reportedConfirmed,
-    ...symtomaticTraces
-  ];
+  let traces = [meanTrace];
+
+  if(showCI)
+    traces.push(errorTrace)
+
+  if(showCases)
+    traces.push(reportedConfirmed)
 
   // redraw the lines on the graph
-  Plotly.addTraces(gd, data);
+  Plotly.addTraces(gd, traces);
 
   return { retrodicted, reported, range: [1, max] };
 }
@@ -221,7 +235,7 @@ type TimeseriesCI = Array<{
 function makeErrorTrace(
   { color, fillcolor, name },
   data: TimeseriesCI
-): Array<Plotly.Data> {
+): {[name: string]: Plotly.Data} {
   let errorYs: Array<number> = [];
   let errorXs: Array<Date> = [];
   let meanYs: Array<number> = [];
@@ -260,7 +274,7 @@ function makeErrorTrace(
     mode: "lines",
     x: meanXs,
     y: meanYs,
-    line: { color: color },
+    line: { color: color, shape: "spline", smoothing: 1.3 },
     type: "scatter",
     name: name,
     hoverinfo: "text",
@@ -277,7 +291,7 @@ function makeErrorTrace(
     )
   };
 
-  return [meanTrace, errorTrace];
+  return {meanTrace, errorTrace};
 }
 
 export class CurrentChart {
@@ -309,9 +323,9 @@ export class CurrentChart {
   }
 
   updateHistorical(region: Region) {
-    addEstimatedCases(this.$container, region, this.mode);
+    addEstimatedCases(this.$container, region, {mode: this.mode});
 
-    let data = addHistoricalCases(this.$container, region, this.mode);
+    let data = addHistoricalCases(this.$container, region, {mode: this.mode});
 
     if (!data) return;
 
