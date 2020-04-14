@@ -110,6 +110,11 @@ block additional_js_pre -%}
     <!-- modify this form HTML and place wherever you want your form -->
 
     <form action="https://formspree.io/xoqlnedo" method="POST">
+      <input 
+        type="hidden" 
+        name="_next" 
+        value="/about-submitted"
+      />
       <label class="fill-available-width">Your email address:</label>
       <div class="row">
         <div class="col-lg-6">

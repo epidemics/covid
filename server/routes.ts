@@ -69,6 +69,10 @@ add(ABOUT, { path: "/about", caption: "About" }, (req, res) =>
   res.render("about.html")
 );
 
+router.get("/about-submitted", (req, res) =>
+  res.render("about-submitted.html")
+);
+
 // Not sure why, but we had a lot of 404 in access log for this URL
 router.get("/containment.", (req, res) => res.redirect("/containment"));
 
