@@ -2,7 +2,7 @@ import { RegionDropdown } from "../components/region-dropdown";
 import * as d3 from "d3";
 import { CurrentChart } from "./current-chart";
 import { setGetParamUrl, getTimezone } from "../helpers";
-import { Regions, Rates, Region } from "../models";
+import { Regions, Region } from "../models";
 
 const SELECTION_PARAM = "selection";
 const REGION_FALLBACK = "united kingdom";

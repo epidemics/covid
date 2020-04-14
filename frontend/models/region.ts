@@ -1,7 +1,8 @@
 import { Rates } from "./rates";
 import { Estimation } from "./estimation";
 import { Reported } from "./reported";
-import { v4 } from "../../spec";
+import { v4 } from "../../common/spec";
+import { ExternalData,ExternalDataFetcher } from "./external_data";
 
 function getPopulation(ageDist?: { [bracket: string]: number }): number {
   if (!ageDist) return 0;
@@ -24,8 +25,7 @@ export class Region {
     public name: string,
     public population: number,
     public officialName: string | undefined,
-    public dataUrl: string,
-    public dataUrlV3: string,
+    public fetchExtData: ExternalDataFetcher,
     public rates: Rates | undefined,
     public estimates: Estimation | undefined,
     public reported: Reported | undefined
@@ -66,8 +66,7 @@ export class Region {
       obj.Name,
       getPopulation(obj.data.AgeDist), // obj.Population
       obj.OfficialName,
-      obj.data_url,
-      obj.data.TracesV3,
+      ExternalData.fromv3(obj.data.TracesV3),
       Rates.fromv4(obj.data.Rates),
       Foretold ? Estimation.fromv4(Foretold) : undefined,
       JohnsHopkins ? Reported.fromv4(JohnsHopkins) : undefined

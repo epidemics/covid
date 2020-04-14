@@ -1,4 +1,4 @@
-import { v4 } from "../../spec";
+import { v4 } from "../../common/spec";
 
 export interface ReportDay {
   date: Date;

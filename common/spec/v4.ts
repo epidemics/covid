@@ -12,7 +12,11 @@ export type ModelTraces = {
     traces: Array<ModelTrace>;
 };
 
-export interface Root {
+export interface ExternalData {
+    models: ModelTraces;
+}
+
+export interface Main {
     created: string;
     created_by: string;
     comment?: string;
