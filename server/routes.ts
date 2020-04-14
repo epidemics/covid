@@ -52,6 +52,12 @@ add(MITIGATION, { path: "/containment", caption: "Mitigation" }, (req, res) =>
   res.render("containment.html")
 );
 
+router.get("/request-calculation-submitted", (req, res) =>
+  res.render("request-calculation-submitted.html", {
+    message: "Form submitted"
+  })
+);
+
 add(
   REQUEST_MODEL,
   { path: "/request-calculation", caption: "Request model" },

@@ -24,6 +24,10 @@ describe('server', () => {
         await request(app).get('/request-calculation').expect(200);
     })
 
+    it('request-calculation-submitted', async () => {
+        await request(app).get('/request-calculation-submitted').expect(200);
+    })
+
     it('status', async () => {
         await request(app).get('/status').expect(200);
     })

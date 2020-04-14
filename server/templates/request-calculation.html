@@ -33,6 +33,11 @@ block additional_js_pre -%} {%- endblock -%} {%- block content -%}
     ,
     method="POST"
   >
+    <input 
+      type="hidden" 
+      name="_next" 
+      value="/request-calculation-submitted"
+    />
     <div class="form-group">
       <div class="row">
         <div class="col-lg-6">
