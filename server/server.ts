@@ -5,7 +5,7 @@ import express from "express";
 import compression from "compression";
 import nunjucks from "nunjucks";
 import morgan from "morgan";
-import * as constants from "../common/constants";
+import constants from "../common/constants";
 
 import webpack from "webpack";
 import webpackDev from "webpack-dev-middleware";

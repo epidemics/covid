@@ -4,7 +4,7 @@ import * as d3 from "d3";
 import { Region } from "./region";
 import * as moment from "moment";
 
-const SCNARIO_COLORS = {
+const SCENARIO_COLORS: { [key: string]: string } = {
   "WEAK-WEAK": "#edcdab",
   "MEDIUM-WEAK": "#edb77e",
   "STRONG-WEAK": "#e97f0f",
@@ -22,7 +22,7 @@ interface Trace {
   line: Partial<Plotly.ScatterLine>;
   hovertemplate?: string;
   legendgroup?: string;
-  hoverlabel?: any;
+  hoverlabel?: Partial<Plotly.HoverLabel>;
   type: "scatter";
 }
 
@@ -67,7 +67,7 @@ export class ModelTraces {
         line: {
           shape: "spline",
           smoothing: 1.3,
-          color: SCNARIO_COLORS[obj.key]
+          color: SCENARIO_COLORS[obj.key]
         },
         hovertemplate: "%{text}<br />%{y:.2p}",
         hoverlabel: { namelength: -1 }
@@ -79,8 +79,8 @@ export class ModelTraces {
           .toDate()
       )!.mean;
 
-      let cummulative = initial_infected / region.population; 
-      for (let i = 0; i < length ; i++) {
+      let cummulative = initial_infected / region.population;
+      for (let i = 0; i < length; i++) {
         cummulative += (obj.infected[i] - obj.recovered[i]) * 1000;
 
         trace.y.push(cummulative);
@@ -108,7 +108,7 @@ export class ModelTraces {
           ...obj
         };
 
-        trace.legendgroup = obj.line.color as any;
+        trace.legendgroup = obj.line.color as string | undefined;
 
         if (obj.hoverinfo !== "skip") {
           trace.hoverlabel = { namelength: -1 };

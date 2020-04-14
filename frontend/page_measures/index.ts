@@ -8,21 +8,20 @@ import { STATIC_ROOT } from "../../common/constants";
 const SELECTION_PARAM = "selection";
 const REGION_FALLBACK = "united kingdom";
 
-function getRegionUrl(region) {
-  return setGetParamUrl(SELECTION_PARAM, region);
+function getRegionUrl(region: Region) {
+  return setGetParamUrl(SELECTION_PARAM, region.key);
 }
 
 class Controller {
   dropdown: RegionDropdown;
   regions: Regions;
-  measures: any;
   currentChart: CurrentChart;
 
   constructor(
     $dropdown: HTMLElement,
     $container: HTMLElement,
     regions: Regions,
-    measures: any
+    public measures: { [key: string]: any }
   ) {
     this.dropdown = new RegionDropdown($dropdown, key =>
       this.changeRegion(regions[key])
@@ -62,9 +61,10 @@ class Controller {
     }
 
     // populate the dropdown menu with countries from received data
-    Object.keys(regions).forEach(key =>
-      this.dropdown.addRegionDropdown(key, getRegionUrl(key), regions[key].name)
-    );
+    Object.keys(regions).forEach(key => {
+      let region = regions[key];
+      this.dropdown.addRegionDropdown(key, getRegionUrl(region), region.name);
+    });
 
     this.dropdown.init();
 

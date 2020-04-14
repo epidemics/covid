@@ -50,7 +50,7 @@ export function string_score(string: string, word: string, fuzziness?: number) {
 
   // Walk through word and add up scores.
   // Code duplication occurs to prevent checking fuzziness inside for loop
-  if (fuzziness) {
+  if (fuzzyFactor) {
     for (i = 0; i < wordLength; i += 1) {
       // Find next first case-insensitive match of a character.
       idxOf = lString.indexOf(lWord[i], startAt);

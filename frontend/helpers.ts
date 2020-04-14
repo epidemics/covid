@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 
-export function setGetParamUrl(key, value) {
+export function setGetParamUrl(key: string, value: string) {
   let params = new URLSearchParams(window.location.search);
   params.set(key, value);
   let url =
@@ -45,7 +45,7 @@ export const formatStatisticsLine = function(
   );
 };
 
-export const formatRange = function(lower, upper) {
+export const formatRange = function(lower: string, upper: string) {
   if (lower == upper) {
     return "~" + lower;
   } else {

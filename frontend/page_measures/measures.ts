@@ -86,7 +86,7 @@ registerMeasure("social", "Social", v => {
   return null;
 });
 
-type MeasureItem = {
+export type MeasureItem = {
   start: string;
   end?: string;
   replaced?: string;
@@ -97,7 +97,7 @@ type MeasureItem = {
 };
 
 export function parseMeasures(
-  measureData
+  measureData: any
 ): { count: number; periods: Array<MeasureItem> } {
   let count = 0;
   let periods: Array<MeasureItem> = [];
@@ -109,7 +109,7 @@ export function parseMeasures(
     let category: Array<MeasureItem> = [];
 
     let item: MeasureItem | null = null;
-    data.forEach(({ date, value }) => {
+    data.forEach(({ date, value }: any) => {
       if (item) {
         item.replaced = date;
         category.push(item);

@@ -1,15 +1,15 @@
 import * as moment from "moment";
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
-import { parseMeasures } from "./measures";
-import { makeConfig } from "../components/graph-common";
+import { parseMeasures, MeasureItem } from "./measures";
+import { makeConfig, Bounds } from "../components/graph-common";
 import { isTouchDevice } from "../helpers";
 import { Region, EstimationPoint } from "../models";
 
 const GRAPH_HEIGHT = 600;
 
-let bounds: any = {
-  y: [0, null],
+let bounds: Bounds = {
+  y: [0, 0.099],
   x: ["2020-01-01", "2020-01-01"]
 };
 
@@ -71,13 +71,13 @@ type Mode = "percentage" | "absolute";
 export function addEstimatedCases(
   gd: Plotly.PlotlyHTMLElement,
   region: Region,
-  opts: {mode: Mode, addCI?: boolean}
+  opts: { mode?: Mode; addCI?: boolean; smoothing?: number }
 ) {
-  const estimationPoints = region.estimates?.points;
-
+  let smoothing = opts.smoothing ?? 1;
   let mode = opts.mode ?? "percentage";
   let addCI = opts.addCI ?? true;
 
+  const estimationPoints = region.estimates?.points;
   if (!estimationPoints) return;
 
   let scaleFactor = 1;
@@ -98,18 +98,18 @@ export function addEstimatedCases(
     timeseries.push({ date, low, mean, high });
   });
 
-  let {meanTrace, errorTrace} = makeErrorTrace(
+  let { meanTrace, errorTrace } = makeErrorTrace(
     {
       color: "white",
       fillcolor: "rgba(255,255,255,0.2)",
-      name: "Cumulative Infected (est.)"
+      name: "Cumulative Infected (est.)",
+      smoothing
     },
     timeseries
   );
 
   let traces = [meanTrace];
-  if(addCI)
-    traces.push(errorTrace);
+  if (addCI) traces.push(errorTrace);
 
   // redraw the lines on the graph
   Plotly.addTraces(gd, traces);
@@ -120,7 +120,7 @@ export function addEstimatedCases(
 export function addHistoricalCases(
   gd: Plotly.PlotlyHTMLElement,
   region: Region,
-  opts: {mode: Mode, addCI?: boolean, cases?: boolean }
+  opts: { mode: Mode; addCI?: boolean; cases?: boolean }
 ) {
   let showCI = opts.addCI ?? true;
   let showCases = opts.cases ?? true;
@@ -180,7 +180,7 @@ export function addHistoricalCases(
     }
   });
 
-  let {errorTrace, meanTrace} = makeErrorTrace(
+  let { errorTrace, meanTrace } = makeErrorTrace(
     {
       color: "white",
       fillcolor: "rgba(255,255,255,0.2)",
@@ -213,11 +213,9 @@ export function addHistoricalCases(
 
   let traces = [meanTrace];
 
-  if(showCI)
-    traces.push(errorTrace)
+  if (showCI) traces.push(errorTrace);
 
-  if(showCases)
-    traces.push(reportedConfirmed)
+  if (showCases) traces.push(reportedConfirmed);
 
   // redraw the lines on the graph
   Plotly.addTraces(gd, traces);
@@ -233,9 +231,17 @@ type TimeseriesCI = Array<{
 }>;
 
 function makeErrorTrace(
-  { color, fillcolor, name },
+  opts: {
+    color: string;
+    fillcolor: string;
+    name: string;
+    smoothing?: number;
+  },
   data: TimeseriesCI
-): {[name: string]: Plotly.Data} {
+): { [name: string]: Plotly.Data } {
+  let { color, fillcolor, name } = opts;
+  let smoothing = opts.smoothing ?? 0;
+
   let errorYs: Array<number> = [];
   let errorXs: Array<Date> = [];
   let meanYs: Array<number> = [];
@@ -268,13 +274,15 @@ function makeErrorTrace(
     hoverinfo: "skip"
   };
 
+  let shape: "spline" | "linear" = smoothing > 0 ? "spline" : "linear";
+
   let f = d3.format(".2s");
   // estimation
   let meanTrace: Plotly.Data = {
     mode: "lines",
     x: meanXs,
     y: meanYs,
-    line: { color: color, shape: "spline", smoothing: 1.3 },
+    line: { color: color, shape, smoothing },
     type: "scatter",
     name: name,
     hoverinfo: "text",
@@ -291,7 +299,7 @@ function makeErrorTrace(
     )
   };
 
-  return {meanTrace, errorTrace};
+  return { meanTrace, errorTrace };
 }
 
 export class CurrentChart {
@@ -300,9 +308,9 @@ export class CurrentChart {
   graphDomain: [number, number] = [0, 1];
   measureDomain: [number, number] = [0, 0];
 
-  constructor($container, mode: Mode = "absolute") {
+  constructor($container: HTMLElement, mode: Mode = "absolute") {
     this.mode = mode;
-    this.$container = $container;
+    this.$container = $container as Plotly.PlotlyHTMLElement;
     Plotly.newPlot($container, [], layout, config).then(hook);
 
     this.initEvents();
@@ -323,9 +331,9 @@ export class CurrentChart {
   }
 
   updateHistorical(region: Region) {
-    addEstimatedCases(this.$container, region, {mode: this.mode});
+    addEstimatedCases(this.$container, region, { mode: this.mode });
 
-    let data = addHistoricalCases(this.$container, region, {mode: this.mode});
+    let data = addHistoricalCases(this.$container, region, { mode: this.mode });
 
     if (!data) return;
 
@@ -382,12 +390,12 @@ export class CurrentChart {
     let endDate = moment().toDate();
 
     bounds.x = [startDate, endDate];
-    bounds.y = yrange.map(n => Math.log(n) / Math.log(10));
+    bounds.y = yrange.map(n => Math.log(n) / Math.log(10)) as [number, number];
 
     Plotly.relayout(this.$container, {
-      "xaxis.range": [...bounds.x],
-      "yaxis.range": [...bounds.y]
-    } as any);
+      "xaxis.range": [bounds.x[0], bounds.x[1]],
+      "yaxis.range": [bounds.y[0], bounds.y[1]]
+    });
   }
 
   initEvents() {
@@ -398,7 +406,8 @@ export class CurrentChart {
     });
 
     this.$container.on("plotly_hover", evt => {
-      let measure = (evt.points[0] as any).customdata;
+      let hit = evt.points[0] as { customdata?: MeasureItem } | undefined;
+      let measure = hit?.customdata;
       let measureShapes: Array<Partial<Plotly.Shape>> = [];
 
       if (!measure || !measure.start || !measure.end) return;
@@ -437,7 +446,7 @@ export class CurrentChart {
     });
   }
 
-  updateMeasures(measureData) {
+  updateMeasures(measureData: any) {
     let measures = parseMeasures(measureData);
 
     let measureTrace = {
@@ -496,7 +505,7 @@ export class CurrentChart {
     Plotly.addTraces(this.$container, measureTrace as Plotly.Data);
   }
 
-  resize(measureCount) {
+  resize(measureCount: number) {
     let height = GRAPH_HEIGHT;
     if (measureCount === 0) {
       this.measureDomain = [0, 0];
@@ -512,6 +521,6 @@ export class CurrentChart {
       "yaxis.domain": this.graphDomain,
       "yaxis2.domain": this.measureDomain,
       height
-    } as any);
+    });
   }
 }
