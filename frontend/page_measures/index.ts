@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import { CurrentChart } from "./current-chart";
 import { setGetParamUrl, getTimezone } from "../helpers";
 import { Regions, Region } from "../models";
+import { STATIC_ROOT } from "../../common/constants";
 
 const SELECTION_PARAM = "selection";
 const REGION_FALLBACK = "united kingdom";
@@ -87,7 +88,7 @@ if ($container && $dropdown) {
   // Load the basic data (estimates and graph URLs) for all generated countries
   Promise.all(
     sources.map(path =>
-      d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
+      d3.json(`${STATIC_ROOT}/${path}`)
     )
   ).then(([baseData, containmentData]) => {
     new Controller(

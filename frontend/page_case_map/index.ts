@@ -2,6 +2,7 @@ import * as Plotly from "plotly.js";
 import * as d3 from "d3";
 import { isTouchDevice } from "../helpers";
 import { Regions, Region } from "../models";
+import { STATIC_ROOT } from "../../common/constants";
 
 const MAP_ID = "mapid";
 const ISO_KEY = "iso_a3";
@@ -179,7 +180,7 @@ let caseMap = document.getElementById(MAP_ID);
 if (caseMap !== null) {
   Promise.all(
     sources.map(path =>
-      d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
+      d3.json(`${STATIC_ROOT}/${path}`)
     )
   ).then(([baseData, geoData]) => {
     makeMap(caseMap, Regions.fromv4(baseData), geoData);
