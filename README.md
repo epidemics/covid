@@ -81,5 +81,11 @@ Rather overcommunicate what you are working on.
 
 We use Github Actions. The pipeline is specified in `.github/workflows/main.yml`
 
-- On a merge to `staging` branch, the code is deployed to the staging environment: http://staging.epidemicforecasting.org/
-- On a merge to `master` branch, the code is deployed to the production environment: http://epidemicforecasting.org/
+You can see in the `gsutil` command that it's setting `Cache-Control`. By default, files are cached under the same name up to 1 hour. So you either want to reduce it to the above (10 seconds) or have to use a different name. Sadly, there is no way to do this via the web console. For that, there is a handy [CI bit here](https://github.com/epidemics/covid/blob/master/.github/workflows/pythonapp.yml#L19-L21) - once a build is triggered (on ANY branch), all files are set to be public and with lower cache. So if you don't wanna mess with gsutil on your machine, just upload the files and trigger a build by random commit.
+
+# Loading different datasets for visualization
+You can visualize a different source data from our Google Cloud Storage bucket by providing a `channel` get parameter in URL. The website then fetches corresponding file from: https://storage.googleapis.com/static-covid/static/data-${channel}-v4.json
+
+By default, `channel` is set to `main`, so the site fetches https://storage.googleapis.com/static-covid/static/data-main-v4.json. To be able to make this work, files produced by you has to conform to our data format so frontend knows how to visualize it.
+
+<Data format TBD?>
