@@ -1,8 +1,8 @@
 import * as Plotly from "plotly.js";
 
 export const saveImage = (function() {
-  let $offscreenElem = null;
-  let $canvas = null;
+  let $offscreenElem: HTMLElement | null = null;
+  let $canvas: HTMLCanvasElement | null = null;
   const VECTOR_EFFECT_REGEX = /vector-effect: non-scaling-stroke;/g;
 
   // adapted form https://stackoverflow.com/questions/20830309/download-file-using-an-ajax-request
@@ -113,12 +113,12 @@ export const saveImage = (function() {
 
           download($canvas, `${name}.${format}`, format);
 
-          Plotly.purge($offscreenElem);
+          if ($offscreenElem) Plotly.purge($offscreenElem);
         };
 
-        img.onerror = function(err) {
+        img.onerror = function(_err) {
           // TODO better error handling, for now try to fallback to Plotly code
-          Plotly.downloadImage($offscreenElem, opts);
+          if ($offscreenElem) Plotly.downloadImage($offscreenElem, opts);
         };
 
         img.src = "data:image/svg+xml;base64," + btoa(svg);
