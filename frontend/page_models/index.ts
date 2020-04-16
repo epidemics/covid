@@ -1,9 +1,8 @@
-import * as d3 from "d3";
 import { ModelPage } from "./model_page";
 import { RegionDropdown } from "../components/region-dropdown";
 import { getTimezone, setGetParamUrl } from "../helpers";
 import { Region, Regions } from "../models";
-import { STATIC_ROOT } from "../../common/constants";
+import { makeDataStore } from "../ds";
 
 const SELECTION_PARAM = "selection";
 const MITIGATION_PARAM = "mitigation";
@@ -123,17 +122,9 @@ if ($pageContainer && $dropdown) {
 
   let channel = params.channel || "main";
 
-  let sources = [`data-${channel}-v4.json`];
+  let data = makeDataStore(channel);
 
-  Promise.all(sources.map(path => d3.json(`${STATIC_ROOT}/${path}`))).then(
-    data => {
-      let [baseData] = data;
-      new Controller(
-        $dropdown,
-        $pageContainer,
-        Regions.fromv4(baseData),
-        params
-      );
-    }
-  );
+  data.regions.then(regions => {
+    new Controller($dropdown, $pageContainer, regions, params);
+  });
 }

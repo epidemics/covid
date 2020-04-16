@@ -1,9 +1,8 @@
 import { RegionDropdown } from "../components/region-dropdown";
-import * as d3 from "d3";
 import { CurrentChart } from "./current-chart";
 import { setGetParamUrl, getTimezone } from "../helpers";
 import { Regions, Region } from "../models";
-import { STATIC_ROOT } from "../../common/constants";
+import { makeDataStore } from "../ds";
 
 const SELECTION_PARAM = "selection";
 const REGION_FALLBACK = "united kingdom";
@@ -82,18 +81,13 @@ class Controller {
 // graph
 const $container = document.getElementById("current_viz");
 const $dropdown = document.getElementById("regionDropdown");
-if ($container && $dropdown) {
-  let sources = [`data-staging-v4.json`, `data-testing-containments.json`];
 
-  // Load the basic data (estimates and graph URLs) for all generated countries
-  Promise.all(sources.map(path => d3.json(`${STATIC_ROOT}/${path}`))).then(
-    ([baseData, containmentData]) => {
-      new Controller(
-        $dropdown,
-        $container,
-        Regions.fromv4(baseData),
-        containmentData
-      );
+if ($container && $dropdown) {
+  let data = makeDataStore("main");
+
+  Promise.all([data.regions, data.containments]).then(
+    ([regions, conainments]) => {
+      new Controller($dropdown, $container, regions, conainments);
     }
   );
 }

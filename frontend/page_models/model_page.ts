@@ -20,7 +20,7 @@ type Options = { mitigation: string; region: Region };
 export class ModelPage {
   $container: Plotly.PlotlyHTMLElement;
 
-  region: Region & { modelTraces?: ModelTraces };
+  region: Region;
   mitigation: string = "none"; // TODO strong type this
 
   chartInfo: ChartInfo;
@@ -160,22 +160,8 @@ export class ModelPage {
     };
   }
 
-  // Checks if the max and traces have been loaded and preprocessed for the given region;
-  // if not, loads them and does preprocessing; then caches it in the region object.
-  // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
-  async loadGleamvizTraces(): Promise<ModelTraces> {
-    let cached = this.region.modelTraces;
-    if (cached) return cached;
-
-    // Not cached, load and preprocess
-    let { modelTraces } = await this.region.fetchExtData();
-
-    this.region.modelTraces = modelTraces;
-    return modelTraces;
-  }
-
   // update the graph
-  update(resetAxis: boolean = false) {
+  async update(resetAxis: boolean = false) {
     Plotly.react(this.$container, [], this.chartInfo.layout);
 
     if (this.showEstimates) {
@@ -194,7 +180,7 @@ export class ModelPage {
     this.updateStatistics();
 
     // Load and preprocess the per-region graph data
-    this.loadGleamvizTraces().then(({ maxY, traces, xrange }: ModelTraces) => {
+    this.region.modelTraces.then(({ maxY, traces, xrange }: ModelTraces) => {
       maxY *= 1.01;
 
       let start = this.showEstimates ? new Date("2020-02-01") : xrange[0];

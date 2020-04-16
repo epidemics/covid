@@ -150,7 +150,7 @@ export function addHistoricalCases(
     deaths: number;
   }> = [];
   let max = 0;
-  timeseries.forEach(point => {
+  timeseries.forEach((point: any) => {
     let { date, confirmed, deaths } = point;
 
     if (point.confirmed > 0) {
@@ -333,7 +333,9 @@ export class CurrentChart {
   updateHistorical(region: Region) {
     addEstimatedCases(this.$container, region, { mode: this.mode });
 
-    let data = addHistoricalCases(this.$container, region, { mode: this.mode });
+    let data = addHistoricalCases(this.$container, region, {
+      mode: this.mode
+    });
 
     if (!data) return;
 
@@ -484,7 +486,6 @@ export class CurrentChart {
     // measures.forEach(({start, type}) => {
     //   start = moment(start);
     //   let end = moment(start).add(10,"days");
-    //   console.log(start, end, type)
 
     //   //measuresTraces.push();
 
