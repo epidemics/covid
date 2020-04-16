@@ -29,7 +29,7 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
   Object.keys(regions).map(key => {
     let region: Region = regions[key];
 
-    let current = region.currentActiveInfected();
+    let current = region.currentInfected;
     if (!current) return;
 
     let z = Math.log((current / region.population) * 1000) / Math.log(2);
@@ -176,7 +176,7 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
 
 const caseMap = document.getElementById(MAP_ID);
 if (caseMap) {
-  let data = makeDataStore("main");
+  let data = makeDataStore("testing");
   Promise.all([data.regions, data.geoData]).then(([regions, geoData]) =>
     makeMap(caseMap, regions, geoData)
   );

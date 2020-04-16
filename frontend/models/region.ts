@@ -16,55 +16,26 @@ function getPopulation(ageDist?: { [bracket: string]: number }): number {
   return population;
 }
 
-const ONSET_TO_DEATH = 10;
-
 export class Region {
-  private _modelTraces: Thunk<ModelTraces>;
-
   private constructor(
     public key: string,
+    public currentInfected: number,
     public iso2: string | undefined,
     public iso3: string | undefined,
     public timezones: string[],
     public name: string,
     public population: number,
     public officialName: string | undefined,
-    _externalData: Thunk<ExternalData>,
+    private externalData: Thunk<ExternalData>,
     public rates: Rates | undefined,
     public estimates: Estimation | undefined,
     public reported: Reported | undefined
-  ) {
-    this._modelTraces = _externalData.map(({ getModelTraces }) =>
-      getModelTraces(this)
-    );
-  }
+  ) {}
 
   get modelTraces() {
-    return this._modelTraces.poll();
-  }
-
-  currentActiveInfected(): number | void {
-    // default to fortold mean estimate
-    let est = this.estimates?.now()?.mean;
-    if (est) return est;
-
-    // otherwise use this
-    let cfr = this.rates?.cfr;
-    let reports = this.reported?.points;
-    if (!cfr || !reports) return;
-
-    let l = reports.length;
-    let deathsNow = reports[l - 1].deaths + 0.001; // add epsilon to prevent NaN's
-    let retrodictedInfected = deathsNow / cfr;
-    let growthSinceThen = Math.min(
-      deathsNow / reports[l - ONSET_TO_DEATH].deaths,
-      4
-    );
-    let cases = Math.max(
-      retrodictedInfected * growthSinceThen,
-      reports[l - 1].confirmed
-    );
-    return cases - reports[l - 1].recovered;
+    return this.externalData
+      .poll()
+      .then(({ getModelTraces }) => getModelTraces(this));
   }
 
   static fromv4(code: string, obj: v4.Region) {
@@ -72,13 +43,16 @@ export class Region {
 
     return new Region(
       code,
+      obj.CurrentEstimate,
       obj.CountryCode,
       obj.CountryCodeISOa3,
       obj.data.Timezones,
       obj.Name,
       getPopulation(obj.data.AgeDist), // obj.Population
       obj.OfficialName,
-      Thunk.fetchJson(`${STATIC_ROOT}/${TracesV3}`).map(ExternalData.fromv3),
+      Thunk.fetchThen(`${STATIC_ROOT}/${TracesV3}`, res =>
+        res.json().then(ExternalData.fromv3)
+      ),
       //Thunk.fetchJson(`${STATIC_ROOT}/${obj.data_url}`).map(ExternalData.fromv4),
       rates ? Rates.fromv4(rates) : undefined,
       Foretold ? Estimation.fromv4(Foretold) : undefined,
