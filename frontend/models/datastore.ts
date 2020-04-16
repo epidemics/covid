@@ -52,15 +52,14 @@ export class Thunk<T> {
   }
 
   poll() {
-    console.info(`Poll thunk ${this.name}`);
     if (this.promise === null) {
-      console.info(`Resolving thunk ${this.name}`);
+      console.info(`Loading thunk ${this.name}`);
       this.promise = this.thunk();
     }
     return this.promise;
   }
 
-  map<V>(f: (v: T) => V | PromiseLike<V>): Thunk<V> {
-    return new Thunk(() => this.poll().then(f));
+  map<V>(name: string, f: (v: T) => V | PromiseLike<V>): Thunk<V> {
+    return new Thunk(() => this.poll().then(f), name);
   }
 }

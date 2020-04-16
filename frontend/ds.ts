@@ -9,7 +9,9 @@ export function makeDataStore(channel: string) {
   );
 
   return new Datastore({
-    regions: mainv4.map(({ regions }) => Regions.fromv4(regions)),
+    regions: mainv4.map("parse_regions", ({ regions }) =>
+      Regions.fromv4(regions)
+    ),
     geoData: Thunk.fetchJson(`${STATIC_ROOT}/casemap-geo.json`),
     containments: Thunk.fetchJson(
       `${STATIC_ROOT}/data-testing-containments.json`
