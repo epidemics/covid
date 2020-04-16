@@ -32,6 +32,11 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
     let current = region.currentInfected;
     if (!current) return;
 
+    if (region.population <= 1) {
+      console.error("Illegal population for (will skip)", region);
+      return;
+    }
+
     let z = Math.log((current / region.population) * 1000) / Math.log(2);
     if (isNaN(z)) z = -Infinity;
     zmax = Math.max(zmax, z);
