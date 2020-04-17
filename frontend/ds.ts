@@ -3,7 +3,14 @@ import { v4 } from "../common/spec";
 import { Regions } from "./models";
 import { STATIC_ROOT } from "../common/constants";
 
-export function makeDataStore(channel: string = DEFAULT_EPIFOR_CHANNEL) {
+const CHANNEL_PARAM = "channel";
+
+let url = new URL(window.location.href);
+let paramChannel = url.searchParams.get(CHANNEL_PARAM);
+
+export function makeDataStore(
+  channel: string = paramChannel ?? DEFAULT_EPIFOR_CHANNEL
+) {
   let mainv4 = Thunk.fetchJson<v4.Main>(
     `${STATIC_ROOT}/data-${channel}-v4.json`
   );

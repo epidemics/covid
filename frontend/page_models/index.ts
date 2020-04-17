@@ -6,11 +6,9 @@ import { makeDataStore } from "../ds";
 
 const SELECTION_PARAM = "selection";
 const MITIGATION_PARAM = "mitigation";
-const CHANNEL_PARAM = "channel";
 const REGION_FALLBACK = "united kingdom";
 
 type Options = {
-  channel: string | null;
   region: string | null;
   mitigation: string | null;
 };
@@ -102,14 +100,11 @@ if ($pageContainer && $dropdown) {
   let urlString = window.location.href;
   let url = new URL(urlString);
   let params = {
-    channel: url.searchParams.get(CHANNEL_PARAM),
     region: url.searchParams.get(SELECTION_PARAM),
     mitigation: url.searchParams.get(MITIGATION_PARAM)
   };
 
-  let channel = params.channel || DEFAULT_EPIFOR_CHANNEL;
-
-  let data = makeDataStore(channel);
+  let data = makeDataStore();
 
   data.regions.then(regions => {
     new Controller($dropdown, $pageContainer, regions, params);

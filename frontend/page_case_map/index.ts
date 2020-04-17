@@ -181,7 +181,7 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
 
 const caseMap = document.getElementById(MAP_ID);
 if (caseMap) {
-  let data = makeDataStore("testing");
+  let data = makeDataStore();
   Promise.all([data.regions, data.geoData]).then(([regions, geoData]) =>
     makeMap(caseMap, regions, geoData)
   );
