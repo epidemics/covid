@@ -6,10 +6,11 @@ export const saveImage = (function() {
   const VECTOR_EFFECT_REGEX = /vector-effect: non-scaling-stroke;/g;
 
   // adapted form https://stackoverflow.com/questions/20830309/download-file-using-an-ajax-request
-  function download(canvas, filename, type) {
+  function download(canvas: HTMLCanvasElement, filename: string, type: string) {
     //for IE
-    if (canvas.msToBlob && window.navigator.msSaveBlob) {
-      let blob = canvas.msToBlob(type);
+    let { msToBlob } = canvas as any;
+    if (msToBlob && window.navigator.msSaveBlob) {
+      let blob = msToBlob(type);
       window.navigator.msSaveBlob(blob, filename);
       return;
     }
@@ -28,8 +29,7 @@ export const saveImage = (function() {
     /// pushed as "download" in HTML5 capable browsers
     link.href = canvas.toDataURL();
 
-    let fireEvent = (link as any).fireEvent;
-
+    let { fireEvent } = link as any;
     /// create a "fake" click-event to trigger the download
     if (document.createEvent) {
       event = document.createEvent("MouseEvents");
@@ -59,21 +59,40 @@ export const saveImage = (function() {
     document.body.removeChild(link);
   }
 
-  return function saveImage(plotlyElement, opts) {
-    let scale = opts.scale || 1;
-    let format = opts.format || "png";
-    let name = opts.name || "plot";
-    let background = opts.background || "black";
+  type Compose = (
+    $canvas: HTMLCanvasElement,
+    plot: CanvasImageSource,
+    width: number,
+    height: number
+  ) => void;
+
+  return function saveImage(
+    plotlyElement: Plotly.PlotlyHTMLElement,
+    opts: {
+      scale?: number;
+      format?: "png" | "webp" | "jpeg" | "svg";
+      name?: string;
+      background?: string;
+      compose?: Compose;
+      width?: number;
+      height?: number;
+    }
+  ) {
+    let scale = opts.scale ?? 1;
+    let format = opts.format ?? "png";
+    let name = opts.name ?? "plot";
+    let background = opts.background ?? "black";
     let compose =
-      opts.compose ||
+      opts.compose ??
       function($canvas, plot, width, height) {
         $canvas.width = width;
         $canvas.height = height;
-        let ctx = $canvas.getContext("2d");
+        let ctx = $canvas.getContext("2d")!;
 
         ctx.filter = "invert(1)";
         ctx.drawImage(plot, 0, 0);
       };
+
     let width = opts.width || plotlyElement._fullLayout.width;
     let height = opts.height || plotlyElement._fullLayout.height;
 
@@ -101,24 +120,34 @@ export const saveImage = (function() {
     };
 
     Plotly.newPlot($offscreenElem, plotlyElement.data, layout, config).then(
-      () => {
-        let svg = Plotly.Snapshot.toSVG($offscreenElem, "svg", scale);
+      gd => {
+        let svg = Plotly.Snapshot.toSVG(gd, "svg", scale);
 
         // fixes the lines becoming thin
         svg = svg.replace(VECTOR_EFFECT_REGEX, "");
         let img = new window.Image();
+        let filename = `${name}.${format}`;
 
         img.onload = function() {
+          if (!$canvas) return;
+
           compose($canvas, img, width * scale, height * scale);
 
-          download($canvas, `${name}.${format}`, format);
+          download($canvas, filename, format);
 
           if ($offscreenElem) Plotly.purge($offscreenElem);
         };
 
         img.onerror = function(_err) {
           // TODO better error handling, for now try to fallback to Plotly code
-          if ($offscreenElem) Plotly.downloadImage($offscreenElem, opts);
+          if ($offscreenElem)
+            Plotly.downloadImage($offscreenElem, {
+              ...opts,
+              width,
+              height,
+              filename,
+              format
+            });
         };
 
         img.src = "data:image/svg+xml;base64," + btoa(svg);

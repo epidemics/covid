@@ -7,8 +7,8 @@ import { STATIC_ROOT } from "../../common/constants";
 const MAP_ID = "mapid";
 const ISO_KEY = "iso_a3";
 
-function makeMap(caseMap, regions: Regions, geoData) {
-  function value_to_labels(v) {
+function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
+  function value_to_labels(v: number) {
     const x = Math.pow(2, v) * 1000;
     if (x >= 1000) {
       return (x / 1000).toString() + "k";
@@ -176,8 +176,8 @@ function makeMap(caseMap, regions: Regions, geoData) {
 }
 
 let sources = ["data-main-v4.json", "casemap-geo.json"];
-let caseMap = document.getElementById(MAP_ID);
-if (caseMap !== null) {
+const caseMap = document.getElementById(MAP_ID);
+if (caseMap) {
   Promise.all(sources.map(path => d3.json(`${STATIC_ROOT}/${path}`))).then(
     ([baseData, geoData]) => {
       makeMap(caseMap, Regions.fromv4(baseData), geoData);

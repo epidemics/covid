@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
 import { isTouchDevice } from "../helpers";
-import { makeConfig } from "../components/graph-common";
+import { makeConfig, Bounds, ChartInfo } from "../components/graph-common";
 import { Region } from "../models";
 import { ModelTraces } from "../models/model_traces";
 import { addEstimatedCases } from "../page_measures/current-chart";
@@ -10,7 +10,7 @@ const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;
 const MIN_CHART_SIZE = 500;
 
-let bounds = {
+let bounds: Bounds = {
   y: [0, 0.099],
   x: ["2020-01-01", "2021-01-01"] as [string, string]
 };
@@ -23,65 +23,15 @@ export class ModelPage {
   region: Region & { modelTraces?: ModelTraces };
   mitigation: string = "none"; // TODO strong type this
 
-  chartInfo: any;
+  chartInfo: ChartInfo;
   showEstimates: boolean = false;
 
-  constructor(
-    $container: Plotly.PlotlyHTMLElement,
-    { mitigation, region }: Options
-  ) {
-    this.$container = $container;
+  constructor($container_: HTMLElement, { mitigation, region }: Options) {
     this.mitigation = mitigation;
     this.region = region;
+    this.$container = $container_ as Plotly.PlotlyHTMLElement;
+    let $container = this.$container;
 
-    this.initChart();
-
-    this.update(true);
-  }
-
-  getMitigationId() {
-    let mitigationIds = {
-      none: "None",
-      weak: "Low",
-      moderate: "Medium",
-      strong: "High"
-    };
-
-    return mitigationIds[this.mitigation];
-  }
-
-  setMitigation(value: string) {
-    this.mitigation = value;
-    this.update();
-  }
-
-  setRegion(region: Region) {
-    this.region = region;
-    this.update(true);
-  }
-
-  updateStatistics() {
-    // const { population, stats } = this.region;
-    // if(!estimates)
-    //   return;
-    // let mitigation = this.getMitigationId();
-    // const stats = estimates.last;
-    // let total_infected = formatStatisticsLine(
-    //   stats.p05,
-    //   stats.p95,
-    //   population
-    // );
-    // $("#total-infected").html(total_infected);
-    // TODO
-    // let peak_infected = formatStatisticsLine(
-    //   stats.MaxActiveInfected_per1000_q05,
-    //   stats.MaxActiveInfected_per1000_q95,
-    //   population
-    // );
-    // $("#sim-infected").html(peak_infected);
-  }
-
-  initChart() {
     let screenshotInfo = () => {
       let region = this.region;
       if (!region) {
@@ -97,8 +47,6 @@ export class ModelPage {
       }
     };
 
-    let $container = this.$container;
-
     this.chartInfo = makeConfig(bounds, screenshotInfo);
     let { config, layout, hook } = this.chartInfo;
 
@@ -106,11 +54,11 @@ export class ModelPage {
     layout.width = size.width;
     layout.height = size.height;
 
-    layout.margin.r = 20;
-    layout.xaxis.type = "date";
-    layout.yaxis.title = "Active infections (% of population)";
-    layout.yaxis.tickformat = ".1%";
-    layout.yaxis.range = [...bounds.y];
+    layout.margin!.r = 20;
+    layout.xaxis!.type = "date";
+    layout.yaxis!.title = "Active infections (% of population)";
+    layout.yaxis!.tickformat = ".1%";
+    layout.yaxis!.range = [...bounds.y];
     layout.showlegend = true;
     layout.legend = {
       x: 1,
@@ -155,6 +103,50 @@ export class ModelPage {
         Plotly.relayout($container, size);
       }
     });
+
+    this.update(true);
+  }
+
+  getMitigationId() {
+    let mitigationIds: { [key: string]: string } = {
+      none: "None",
+      weak: "Low",
+      moderate: "Medium",
+      strong: "High"
+    };
+
+    return mitigationIds[this.mitigation];
+  }
+
+  setMitigation(value: string) {
+    this.mitigation = value;
+    this.update();
+  }
+
+  setRegion(region: Region) {
+    this.region = region;
+    this.update(true);
+  }
+
+  updateStatistics() {
+    // const { population, stats } = this.region;
+    // if(!estimates)
+    //   return;
+    // let mitigation = this.getMitigationId();
+    // const stats = estimates.last;
+    // let total_infected = formatStatisticsLine(
+    //   stats.p05,
+    //   stats.p95,
+    //   population
+    // );
+    // $("#total-infected").html(total_infected);
+    // TODO
+    // let peak_infected = formatStatisticsLine(
+    //   stats.MaxActiveInfected_per1000_q05,
+    //   stats.MaxActiveInfected_per1000_q95,
+    //   population
+    // );
+    // $("#sim-infected").html(peak_infected);
   }
 
   calculateChartSize() {

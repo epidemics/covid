@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "es6",
-    "lib": ["ES2015"],
+    "target": "ES2019",
     "esModuleInterop": true
   },
-  "include": ["server/**/*", "tests/**/*"],
-  "exclude": ["node_modules"]
+  "include": [
+    "server/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
