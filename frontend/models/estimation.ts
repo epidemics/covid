@@ -1,6 +1,6 @@
-import { v4 } from "../../spec";
+import { v4 } from "../../common/spec";
 
-export interface EstimationDay {
+export interface EstimationPoint {
   date: Date;
   mean: number;
   variance: number;
@@ -14,25 +14,25 @@ function dateDiff(a: Date, b: Date) {
 }
 
 export class Estimation {
-  now(): EstimationDay | null {
+  now(): EstimationPoint | null {
     return this.at(new Date());
   }
-  private constructor(public points: EstimationDay[]) {}
+  private constructor(public points: EstimationPoint[]) {}
 
   get last() {
     let i = this.points.length - 1;
     return this.points[i - 1];
   }
 
-  at(date: Date): EstimationDay | null {
+  at(date: Date): EstimationPoint | null {
     if (this.points.length <= 2) {
       return null;
     }
 
     function interpolate_(
-      left: EstimationDay,
-      right: EstimationDay
-    ): EstimationDay {
+      left: EstimationPoint,
+      right: EstimationPoint
+    ): EstimationPoint {
       let l = dateDiff(date, left.date);
       let r = dateDiff(right.date, date);
       let t = l + r;
@@ -66,7 +66,7 @@ export class Estimation {
   static fromv4(obj: v4.Foretold): Estimation | undefined {
     if (!obj) return;
 
-    let points: EstimationDay[] = [];
+    let points: EstimationPoint[] = [];
     let length = obj.Date.length;
     for (let i = 0; i < length; i++) {
       points.push({

@@ -4,7 +4,7 @@ import * as Plotly from "plotly.js";
 import { parseMeasures } from "./measures";
 import { makeConfig } from "../components/graph-common";
 import { isTouchDevice } from "../helpers";
-import { Region, Rates } from "../models";
+import { Region, EstimationPoint } from "../models";
 
 const GRAPH_HEIGHT = 600;
 
@@ -53,7 +53,7 @@ if (isTouchDevice()) {
   layout.dragmode = "pan";
 }
 
-function applyVariance(mean, vars, sigma) {
+function applyVariance(mean: number, vars: Array<number>, sigma: number) {
   let totalVar = 0;
   vars.forEach(v => {
     totalVar += v * v;
@@ -68,10 +68,52 @@ const ONSET_TO_DEATH = 9;
 
 type Mode = "percentage" | "absolute";
 
+export function addEstimatedCases(
+  gd: Plotly.PlotlyHTMLElement,
+  region: Region,
+  mode: Mode
+) {
+  const estimationPoints = region.estimates?.points;
+
+  if (!estimationPoints) return;
+
+  let scaleFactor = 1;
+  if (mode == "percentage") {
+    scaleFactor = region.population;
+  }
+  let timeseries: TimeseriesCI = [];
+  let max = 0;
+  estimationPoints.forEach((point: EstimationPoint) => {
+    let { date, mean, p05, p95 } = point;
+
+    let low = p05 / scaleFactor;
+    let high = p95 / scaleFactor;
+    mean /= scaleFactor;
+
+    max = Math.max(max, high);
+
+    timeseries.push({ date, low, mean, high });
+  });
+
+  let traces = makeErrorTrace(
+    {
+      color: "white",
+      fillcolor: "rgba(255,255,255,0.2)",
+      name: "Cumulative Infected (est.)"
+    },
+    timeseries
+  );
+
+  // redraw the lines on the graph
+  Plotly.addTraces(gd, traces);
+
+  return { estimated: timeseries, range: [1, max] };
+}
+
 export function addHistoricalCases(
   gd: Plotly.PlotlyHTMLElement,
   region: Region,
-  scaleFactor: number = 1
+  mode: Mode
 ) {
   // this is the standard deviation (for plotting) in the log of cfr
   // for example with `log_cfr_var = 0.69` we get
@@ -84,13 +126,13 @@ export function addHistoricalCases(
 
   if (!timeseries || !cfr) return;
 
+  let scaleFactor = 1;
+  if (mode == "percentage") {
+    scaleFactor = region.population;
+  }
+
   let cv = 3;
-  let retrodicted: Array<{
-    date: Date;
-    low: number;
-    mean: number;
-    high: number;
-  }> = [];
+  let retrodicted: TimeseriesCI = [];
   let reported: Array<{
     date: Date;
     confirmed: number;
@@ -120,9 +162,9 @@ export function addHistoricalCases(
         date: moment(date)
           .subtract(ONSET_TO_DEATH, "days")
           .toDate(),
-        low: low,
-        mean: mean,
-        high: high
+        low: low / scaleFactor,
+        mean: mean / scaleFactor,
+        high: high / scaleFactor
       });
     }
   });
@@ -130,7 +172,7 @@ export function addHistoricalCases(
   let symtomaticTraces = makeErrorTrace(
     {
       color: "white",
-      fillcolor: "rgba(255,255,255,0.3)",
+      fillcolor: "rgba(255,255,255,0.2)",
       name: "Cumulative Infected (est.)"
     },
     retrodicted
@@ -169,11 +211,21 @@ export function addHistoricalCases(
   return { retrodicted, reported, range: [1, max] };
 }
 
-function makeErrorTrace({ color, fillcolor, name }, data): Array<Plotly.Data> {
-  let errorXs: Array<number> = [];
+type TimeseriesCI = Array<{
+  date: Date;
+  low: number;
+  mean: number;
+  high: number;
+}>;
+
+function makeErrorTrace(
+  { color, fillcolor, name },
+  data: TimeseriesCI
+): Array<Plotly.Data> {
   let errorYs: Array<number> = [];
+  let errorXs: Array<Date> = [];
   let meanYs: Array<number> = [];
-  let meanXs: Array<number> = [];
+  let meanXs: Array<Date> = [];
 
   data.forEach(({ date, high, mean }) => {
     errorYs.push(high);
@@ -257,16 +309,13 @@ export class CurrentChart {
   }
 
   updateHistorical(region: Region) {
-    let scaleFactor = 1;
-    if (this.mode == "percentage") {
-      scaleFactor = region.population;
-    }
+    addEstimatedCases(this.$container, region, this.mode);
 
-    let data = addHistoricalCases(this.$container, region, scaleFactor);
+    let data = addHistoricalCases(this.$container, region, this.mode);
 
     if (!data) return;
 
-    let { retrodicted, reported, range: yrange } = data;
+    let { retrodicted, range: yrange } = data;
 
     // function mkDeltaTrace(name, other) {
     //   return {

@@ -1,6 +1,8 @@
-import { v4, v3 } from "../../spec";
+import { v4, v3 } from "../../common/spec";
 import { formatSIInteger } from "../helpers";
 import * as d3 from "d3";
+import { Region } from "./region";
+import * as moment from "moment";
 
 const SCNARIO_COLORS = {
   "WEAK-WEAK": "#edcdab",
@@ -48,13 +50,9 @@ export class ModelTraces {
     public xrange: [string, string]
   ) {}
 
-  static fromv4(
-    obj: v4.ModelTraces,
-    {
-      population,
-      initial_infected
-    }: { population: number; initial_infected: number }
-  ): ModelTraces {
+  static fromv4(obj: v4.ModelTraces, region: Region): ModelTraces {
+    console.log(obj);
+
     let dates = obj.date_index;
     let length = dates.length;
     let xrange: [string, string] = [dates[0], dates[length - 1]];
@@ -78,12 +76,19 @@ export class ModelTraces {
         hoverlabel: { namelength: -1 }
       };
 
-      let cummulative = initial_infected;
+      let initial_infected = region.estimates!.at(
+        moment(dates[0])
+          .add({ days: -7 })
+          .toDate()
+      )!.mean;
+      console.log(initial_infected);
+
+      let cummulative = initial_infected / region.population;
       for (let i = 0; i < length; i++) {
-        cummulative += (obj.infected[i] - obj.recovered[i]) * 10000;
+        cummulative += (obj.infected[i] - obj.recovered[i]) * 1000;
 
         trace.y.push(cummulative);
-        trace.text.push(formatPop(cummulative * population));
+        trace.text.push(formatPop(cummulative * region.population));
       }
       maxY = Math.max(maxY, ...trace.y);
 
@@ -95,17 +100,12 @@ export class ModelTraces {
     return new ModelTraces(traces, maxY, xrange);
   }
 
-  static fromv3(
-    obj: v3.ModelTraces,
-    { population }: { population: number }
-  ): ModelTraces {
+  static fromv3(obj: v3.ModelTraces, region: Region): ModelTraces {
     let traces: Trace[] = [];
     let maxY = -Infinity;
     Object.keys(obj).forEach(mitigation => {
       let group = obj[mitigation];
       group.forEach((obj: v3.ModelTrace) => {
-        console.log(obj);
-
         let trace: Trace = {
           customdata: { mitigation },
           text: [],
@@ -125,7 +125,7 @@ export class ModelTraces {
           let y = trace.y[i] / 1000;
           maxY = Math.max(maxY, y);
           trace.y[i] = y;
-          trace.text.push(formatPop(y * population));
+          trace.text.push(formatPop(y * region.population));
         }
 
         // When x has length 1, extend it to a day sequence of len(y) days

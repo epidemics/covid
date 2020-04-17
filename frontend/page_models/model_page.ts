@@ -4,6 +4,10 @@ import { isTouchDevice } from "../helpers";
 import { makeConfig } from "../components/graph-common";
 import { Region } from "../models";
 import { ModelTraces } from "../models/model_traces";
+import {
+  addEstimatedCases,
+  addHistoricalCases
+} from "../page_measures/current-chart";
 
 const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;
@@ -166,29 +170,15 @@ export class ModelPage {
   // Checks if the max and traces have been loaded and preprocessed for the given region;
   // if not, loads them and does preprocessing; then caches it in the region object.
   // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
-  loadGleamvizTraces(): Promise<ModelTraces> {
-    let population = this.region.population;
-    // let initial_infected =
-    //   (this.region.estimates?.now()?.mean ?? 0) / population;
-
-    let modelTraces = this.region.modelTraces;
-    if (modelTraces) {
-      return Promise.resolve(modelTraces);
-    }
+  async loadGleamvizTraces(): Promise<ModelTraces> {
+    let cached = this.region.modelTraces;
+    if (cached) return cached;
 
     // Not cached, load and preprocess
-    let tracesUrl = this.region.dataUrlV3;
+    let { modelTraces } = await this.region.fetchExtData();
 
-    return d3
-      .json(`https://storage.googleapis.com/static-covid/static/${tracesUrl}`)
-      .then(data => {
-        // TODO error handling
-
-        let modelTraces = ModelTraces.fromv3(data, { population });
-        this.region.modelTraces = modelTraces; // cache model traces
-
-        return modelTraces;
-      });
+    this.region.modelTraces = modelTraces;
+    return modelTraces;
   }
 
   // update the graph

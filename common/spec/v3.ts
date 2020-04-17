@@ -12,6 +12,8 @@ export interface ModelTrace{
     type: "scatter";
 }
 
+export type ExternalData = ModelTrace;
+
 export interface ModelTraces{
     [mitigation: string]: Array<ModelTrace>;
 }
