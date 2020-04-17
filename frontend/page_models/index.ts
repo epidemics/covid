@@ -3,6 +3,7 @@ import { ModelPage } from "./model_page";
 import { RegionDropdown } from "../components/region-dropdown";
 import { getTimezone, setGetParamUrl } from "../helpers";
 import { Region, Regions } from "../models";
+import { STATIC_ROOT } from "../../common/constants";
 
 const SELECTION_PARAM = "selection";
 const MITIGATION_PARAM = "mitigation";
@@ -126,7 +127,7 @@ if ($pageContainer && $dropdown) {
 
   Promise.all(
     sources.map(path =>
-      d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
+      d3.json(`${STATIC_ROOT}/${path}`)
     )
   ).then(data => {
     let [baseData] = data;

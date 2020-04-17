@@ -41,27 +41,6 @@ block additional_js_pre -%}
                 countries having information
                 that is easier to access than others.</p>
 
-            <br />
-            <h5>Download the data</h5>
-            <p>We have a preprocessed version of the dataset together with
-                <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data">John's Hopkins case and
-                death data</a> available as a <code>&lt;.csv&gt;</code> file <a
-                href="https://storage.googleapis.com/static-covid/Containment%20measures/countermeasures_db_johnshopkins.csv">
-                    here</a>.
-                Refer to the detailed tag descriptions linked above for information about the columns in this file,
-                or see the dataset's <a
-                href="https://www.kaggle.com/davidoj/covid19-national-responses-dataset">Kaggle page</a> for a briefer description.
-            </p>
-            <p>Raw data is available as a <code>&lt;.csv&gt;</code> file <a
-                    href="https://storage.googleapis.com/static-covid/Containment%20measures/COVID-19%20containment%20measures.zip">
-                    here</a>.
-                There is some information available in the raw data not recoverable from the sanitized file, but it will take substantially
-                more effort to get this data ready for analysis.
-            </p>
-            <p>(Last updated April 6th. To get the most recent raw data, make a copy of the <a
-                    href="https://www.notion.so/977d5e5be0434bf996704ec361ad621d?v=fe54f89ca9e04ac799af42b39e1efc4b">Notion
-                    database</a>, and then click &quot;Export&quot;.)</p>
-
       <br />
       <h5>Download the data</h5>
       <p>
@@ -72,7 +51,7 @@ block additional_js_pre -%}
         >
         available as a <code>&lt;.csv&gt;</code> file
         <a
-          href="https://storage.googleapis.com/static-covid/Containment%20measures/countermeasures_db_johnshopkins.csv"
+          href="{{ BUCKET_ROOT }}/Containment%20measures/countermeasures_db_johnshopkins.csv"
         >
           here</a
         >. Refer to the detailed tag descriptions linked above for information
@@ -86,7 +65,7 @@ block additional_js_pre -%}
       <p>
         Raw data is available as a <code>&lt;.csv&gt;</code> file
         <a
-          href="https://storage.googleapis.com/static-covid/Containment%20measures/COVID-19%20containment%20measures.zip"
+          href="{{ BUCKET_ROOT }}/Containment%20measures/COVID-19%20containment%20measures.zip"
         >
           here</a
         >. There is some information available in the raw data not recoverable
