@@ -53,7 +53,9 @@ export class Region {
       Thunk.fetchThen(`${STATIC_ROOT}/${TracesV3}`, res =>
         res.json().then(ExternalData.fromv3)
       ),
-      //Thunk.fetchJson(`${STATIC_ROOT}/${obj.data_url}`).map(ExternalData.fromv4),
+      // Thunk.fetchThen(`${STATIC_ROOT}/${obj.data_url}`, res =>
+      //   res.json().then(ExternalData.fromv4)
+      // ),
       rates ? Rates.fromv4(rates) : undefined,
       Foretold ? Estimation.fromv4(Foretold) : undefined,
       JohnsHopkins ? Reported.fromv4(JohnsHopkins) : undefined

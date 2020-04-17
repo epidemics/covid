@@ -52,34 +52,32 @@ export class ModelTraces {
     let dates = obj.date_index;
     let length = dates.length;
     let xrange: [string, string] = [dates[0], dates[length - 1]];
-    let initial_infected = region.estimates!.at(
-      moment(dates[0])
-        .add({ days: -2 })
-        .toDate()
-    )!.mean;
 
     let maxY = -Infinity;
     function makeTrace(obj: v4.ModelTrace) {
+      let { name, group, initial_infected } = obj;
+
       let trace: Trace = {
         type: "scatter",
-        name: obj.name,
-        mitigation: obj.group,
+        name,
+        mitigation: group,
         text: [],
         x: dates,
         y: [],
         line: {
           shape: "spline",
-          smoothing: 1.3,
+          smoothing: 0,
           color: SCENARIO_COLORS[obj.key]
         },
         hovertemplate: "%{text}<br />%{y:.2p}",
         hoverlabel: { namelength: -1 }
       };
 
-      let cummulative = initial_infected / region.population;
-      for (let i = 0; i < length; i++) {
-        cummulative += (obj.infected[i] - obj.recovered[i]) * 1000;
+      console.log(obj);
 
+      let cummulative = initial_infected / region.population;
+      for (let i = 1; i < length - 1; i++) {
+        cummulative += obj.infected[i] - obj.recovered[i];
         trace.y.push(cummulative);
         trace.text.push(formatPop(cummulative * region.population));
       }

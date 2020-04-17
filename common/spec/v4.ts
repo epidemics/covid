@@ -2,6 +2,8 @@ export type ModelTrace = {
   group: string;
   key: string;
   name: string;
+  initial_infected: number;
+  initial_exposed: number;
   infected: Array<number>;
   recovered: Array<number>;
 };
