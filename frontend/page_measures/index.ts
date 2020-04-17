@@ -86,16 +86,14 @@ if ($container && $dropdown) {
   let sources = [`data-staging-v4.json`, `data-testing-containments.json`];
 
   // Load the basic data (estimates and graph URLs) for all generated countries
-  Promise.all(
-    sources.map(path =>
-      d3.json(`${STATIC_ROOT}/${path}`)
-    )
-  ).then(([baseData, containmentData]) => {
-    new Controller(
-      $dropdown,
-      $container,
-      Regions.fromv4(baseData),
-      containmentData
-    );
-  });
+  Promise.all(sources.map(path => d3.json(`${STATIC_ROOT}/${path}`))).then(
+    ([baseData, containmentData]) => {
+      new Controller(
+        $dropdown,
+        $container,
+        Regions.fromv4(baseData),
+        containmentData
+      );
+    }
+  );
 }

@@ -125,12 +125,15 @@ if ($pageContainer && $dropdown) {
 
   let sources = [`data-${channel}-v4.json`];
 
-  Promise.all(
-    sources.map(path =>
-      d3.json(`${STATIC_ROOT}/${path}`)
-    )
-  ).then(data => {
-    let [baseData] = data;
-    new Controller($dropdown, $pageContainer, Regions.fromv4(baseData), params);
-  });
+  Promise.all(sources.map(path => d3.json(`${STATIC_ROOT}/${path}`))).then(
+    data => {
+      let [baseData] = data;
+      new Controller(
+        $dropdown,
+        $pageContainer,
+        Regions.fromv4(baseData),
+        params
+      );
+    }
+  );
 }
