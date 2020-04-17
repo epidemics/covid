@@ -66,7 +66,7 @@ export class ModelTraces {
         line: {
           shape: "spline",
           smoothing: 0,
-          color: SCENARIO_COLORS[obj.key]
+          color: SCENARIO_COLORS[obj.key.replace("_", "-")]
         },
         hovertemplate: "%{text}<br />%{y:.2p}",
         hoverlabel: { namelength: -1 }
