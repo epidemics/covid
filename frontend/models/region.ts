@@ -5,6 +5,7 @@ import { v4, v3 } from "../../common/spec";
 import { ModelTraces } from "./model_traces";
 import { STATIC_ROOT } from "../../common/constants";
 import { Thunk } from "./datastore";
+import { Scenarios } from "./scenario";
 
 function getPopulation(ageDist?: { [bracket: string]: number }): number {
   if (!ageDist) return 0;
@@ -17,8 +18,10 @@ function getPopulation(ageDist?: { [bracket: string]: number }): number {
 }
 
 export class Region {
+  private _modelTraces: Thunk<ModelTraces>;
+
   private constructor(
-    public key: string,
+    public code: string,
     public currentInfected: number,
     public iso2: string | undefined,
     public iso3: string | undefined,
@@ -26,24 +29,43 @@ export class Region {
     public name: string,
     public population: number,
     public officialName: string | undefined,
-    private externalData: Thunk<ExternalData>,
+    private _externalData: Thunk<ExternalData>,
     public rates: Rates | undefined,
     public estimates: Estimation | undefined,
     public reported: Reported | undefined
-  ) {}
+  ) {
+    this._modelTraces = _externalData.map(
+      `model-traces ${code}, ${name}`,
+      ({ getModelTraces }) => getModelTraces(this)
+    );
+  }
+
+  get externalData() {
+    return this._externalData.poll();
+  }
 
   get modelTraces() {
-    return this.externalData
-      .poll()
-      .then(({ getModelTraces }) => getModelTraces(this));
+    return this._modelTraces.poll();
   }
 
   get customModelDescription() {
-    return this.externalData.poll().then(obj => obj.modelDescription);
+    return this.externalData.then(obj => obj.modelDescription);
   }
 
-  get customMitigations() {
-    return this.externalData.poll().then(obj => obj.scenarios);
+  get scenarios() {
+    return this.externalData.then(obj => {
+      let out = obj.scenarios;
+      if (!out) throw new Error("No scenarios found");
+      return out;
+    });
+  }
+
+  async getScenario(identifier: string | null | undefined | number) {
+    return (await this.scenarios).get(identifier ?? 0);
+  }
+
+  async statistics(idx: string | null | undefined | number) {
+    return (await this.getScenario(idx)).statistics;
   }
 
   static fromv4(code: string, obj: v4.Region) {
@@ -71,12 +93,10 @@ export class Region {
   }
 }
 
-export type Scenario = v4.Scenario;
-
 interface ExternalData {
   getModelTraces: (region: Region) => ModelTraces;
   modelDescription?: string;
-  scenarios?: Array<Scenario>;
+  scenarios?: Scenarios;
 }
 
 const ExternalData = {
@@ -94,7 +114,7 @@ const ExternalData = {
         return ModelTraces.fromv4(obj.models, region);
       },
       modelDescription: obj.ModelDescription,
-      scenarios: obj.Scenarios
+      scenarios: Scenarios.fromv4(obj.scenarios!, obj.models.statistics)
     };
   }
 };

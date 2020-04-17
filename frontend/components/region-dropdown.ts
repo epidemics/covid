@@ -159,12 +159,12 @@ export class RegionDropdown {
   }
 
   update(region: Region) {
-    if (this.active === region.key) {
+    if (this.active === region.code) {
       return;
     }
 
     this.$label.innerHTML = region.name;
-    this.active = region.key;
+    this.active = region.code;
     this.reorder();
     this.restyle();
     this.updateInfectionTotals(region);

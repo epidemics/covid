@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
-import { isTouchDevice } from "../helpers";
+import { isTouchDevice, formatStatisticsLine } from "../helpers";
 import { makeConfig, Bounds, ChartInfo } from "../components/graph-common";
 import { Region, Scenario } from "../models";
 import { ModelTraces } from "../models/model_traces";
@@ -15,20 +15,19 @@ let bounds: Bounds = {
   x: ["2020-01-01", "2021-01-01"] as [string, string]
 };
 
-type Options = { mitigation: string; region: Region };
+type Options = { mitigation: string | null; region: Region };
 
 export class ModelPage {
   $container: Plotly.PlotlyHTMLElement;
 
   region: Region;
-  mitigation: string = "none"; // TODO strong type this
+  scenario: string | null; // TODO strong type this
 
   chartInfo: ChartInfo;
   showEstimates: boolean = false;
 
   constructor($container_: HTMLElement, { mitigation, region }: Options) {
-    this.mitigation = mitigation;
-    this.region = region;
+    this.scenario = mitigation;
     this.$container = $container_ as Plotly.PlotlyHTMLElement;
     let $container = this.$container;
 
@@ -104,49 +103,77 @@ export class ModelPage {
       }
     });
 
-    this.update(true);
-  }
-
-  getMitigationId() {
-    let mitigationIds: { [key: string]: string } = {
-      none: "None",
-      weak: "Low",
-      moderate: "Medium",
-      strong: "High"
-    };
-
-    return mitigationIds[this.mitigation];
+    this.region = region; // to make TS not complain
+    this.setRegion(region);
   }
 
   setMitigation(value: string) {
-    this.mitigation = value;
+    this.scenario = value;
     this.update();
   }
 
   setRegion(region: Region) {
     this.region = region;
+
+    this.region.scenarios.then(scenarios => {
+      let $mitigation = $(".mitigation-strength-buttons").empty();
+
+      if (!this.scenario) this.scenario = scenarios.get(0).group;
+
+      scenarios.forEach((scenario: Scenario) => {
+        let group = scenario.group;
+        let name = scenario.name ?? group;
+        let description = scenario.description ?? "";
+
+        let out = $(`
+        <div class="mitigation-strength-button" id="mitigation-${group}">
+          <label class="btn btn-secondary ${
+            this.scenario == group ? "active" : ""
+          }">
+            <input
+              type="radio"
+              name="mitigation"
+              id="mitigation-${group}"
+              autocomplete="off"
+              value="${group}"/>
+            ${name}
+            <div class="mitigation-strength-explanation">
+              ${description}
+            </div>
+          </label>
+        </div>`);
+
+        $mitigation.append(out);
+
+        out.find("input[type=radio").click(() => this.setMitigation(group));
+      });
+    });
+
     this.update(true);
   }
 
-  updateStatistics() {
-    // const { population, stats } = this.region;
-    // if(!estimates)
-    //   return;
-    // let mitigation = this.getMitigationId();
-    // const stats = estimates.last;
-    // let total_infected = formatStatisticsLine(
-    //   stats.p05,
-    //   stats.p95,
-    //   population
-    // );
-    // $("#total-infected").html(total_infected);
-    // TODO
-    // let peak_infected = formatStatisticsLine(
-    //   stats.MaxActiveInfected_per1000_q05,
-    //   stats.MaxActiveInfected_per1000_q95,
-    //   population
-    // );
-    // $("#sim-infected").html(peak_infected);
+  async updateStatistics() {
+    const { population } = this.region;
+
+    let statistics = await this.region.statistics(this.scenario);
+
+    let total_infected = statistics
+      ? formatStatisticsLine(
+          statistics.totalInfected.q05,
+          statistics.totalInfected.q95,
+          population
+        )
+      : "&mdash;";
+    $("#total-infected").html(total_infected);
+
+    let peak_infected = statistics
+      ? formatStatisticsLine(
+          statistics.maxActiveInfected.q05,
+          statistics.maxActiveInfected.q95,
+          population
+        )
+      : "&mdash;";
+    $("#sim-infected").html(peak_infected);
   }
 
   calculateChartSize() {
@@ -171,8 +198,6 @@ export class ModelPage {
       });
     }
 
-    let mitigationId = this.getMitigationId();
-
     // update the name of the region in the text below the graph
     this.updateRegionInText();
 
@@ -192,29 +217,7 @@ export class ModelPage {
       }
     });
 
-    this.region.customMitigations.then(raw => {
-      const defaultScenarios: Array<Scenario> = [
-        { id: "none", name: "0%" },
-        { id: "weak", name: "20%" },
-        { id: "moderate", name: "50%" },
-        { id: "strong", name: "80%" }
-      ];
-      const scenarios = raw ?? defaultScenarios;
-
-      $(".mitigation-strength-button").hide();
-
-      scenarios.forEach(scenario => {
-        // let $scenario =
-        $(`#mitigation-${scenario.id}`).show();
-
-        // TODO name and description
-        // if (scenario.description) {
-        //   $scenario
-        //     .find(".mitigation-strength-explanation")
-        //     .html(scenario.description);
-        // }
-      });
-    });
+    let scenario = await this.region.getScenario(this.scenario);
 
     // Load and preprocess the per-region graph data
     this.region.modelTraces.then(({ maxY, traces, xrange }: ModelTraces) => {
@@ -231,11 +234,12 @@ export class ModelPage {
         bounds.y = [0, maxY];
         bounds.x = [xrange[0], xrange[1]];
       }
+
       // AddCriticalCareTrace(mitigTraces[mitigationId]);
       // redraw the lines on the graph
       Plotly.addTraces(
         this.$container,
-        traces.filter(trace => trace?.mitigation == mitigationId)
+        traces.filter(trace => trace?.scenario == scenario.group)
       );
     });
   }

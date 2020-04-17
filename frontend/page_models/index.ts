@@ -25,7 +25,7 @@ class Controller {
     private regions: Regions,
     params: Options
   ) {
-    let mitigation = params.mitigation || "none";
+    let mitigation = params.mitigation;
 
     this.dropdown = new RegionDropdown($dropdown, key => {
       this.changeRegion(key, true);
@@ -65,23 +65,10 @@ class Controller {
 
     // initialize the select picker
     $('[data-toggle="tooltip"]').tooltip();
-
-    $<HTMLInputElement>("#mitigation input[type=radio]").each(
-      (_index: number, elem: HTMLInputElement): void | false => {
-        if (elem.value === mitigation) {
-          elem.checked = true;
-          elem.parentElement?.classList.add("active");
-        }
-
-        elem.addEventListener("click", () => {
-          this.modelPage.setMitigation(elem.value);
-        });
-      }
-    );
   }
 
   getRegionUrl(region: Region) {
-    return setGetParamUrl(SELECTION_PARAM, region.key);
+    return setGetParamUrl(SELECTION_PARAM, region.code);
   }
 
   // change the displayed region

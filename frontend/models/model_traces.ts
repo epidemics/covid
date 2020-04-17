@@ -9,14 +9,20 @@ const SCENARIO_COLORS: { [key: string]: string } = {
   "STRONG-WEAK": "#e97f0f",
   "WEAK-STRONG": "#9ac9d9",
   "MEDIUM-STRONG": "#5abbdb",
-  "STRONG-STRONG": "#007ca6"
+  "STRONG-STRONG": "#007ca6",
+  "HIGHER-WEAK": "#edcdab",
+  "EXPECTED-WEAK": "#edb77e",
+  "LOWER-WEAK": "#e97f0f",
+  "HIGHER-STRONG": "#9ac9d9",
+  "EXPECTED-STRONG": "#5abbdb",
+  "LOWER-STRONG": "#007ca6"
 };
 
 interface Trace {
   x: string[];
   y: number[];
   text: string[];
-  mitigation: string;
+  scenario: string;
   name?: string;
   line: Partial<Plotly.ScatterLine>;
   hovertemplate?: string;
@@ -59,7 +65,7 @@ export class ModelTraces {
       let trace: Trace = {
         type: "scatter",
         name,
-        mitigation: group,
+        scenario: group,
         text: [],
         x: dates,
         y: [],
@@ -94,7 +100,7 @@ export class ModelTraces {
       let group = obj[mitigation];
       group.forEach((obj: v3.ModelTrace) => {
         let trace: Trace = {
-          mitigation,
+          scenario: mitigation,
           text: [],
           ...obj
         };

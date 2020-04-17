@@ -75,7 +75,7 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
         `Infected per 1M: <b>${infected_per_1m}</b><br />` +
         `Infected total: <b>${infected_total}</b>`;
 
-      item.url_key = info.region.key;
+      item.url_key = info.region.code;
     } else {
       item.z = value_for_missing;
       item.text = `<b>${item.name}</b><br />` + "No estimation";

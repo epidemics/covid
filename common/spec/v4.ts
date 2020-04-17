@@ -60,16 +60,16 @@ export namespace v4 {
   }
 
   export type Scenario = {
-    id: string;
-    name: string;
+    group: string;
+    name?: string;
     description?: string;
   };
 
   // Per country seperate file
   export interface RegionExternalData {
     models: ModelTraces;
+    scenarios?: Array<Scenario>;
     ModelDescription?: string;
-    Scenarios?: Array<Scenario>;
   }
 
   export type ModelTrace = {
@@ -86,5 +86,14 @@ export namespace v4 {
   export type ModelTraces = {
     date_index: string[];
     traces: Array<ModelTrace>;
+    statistics: { [scenario: string]: ScenarioStats };
   };
+
+  export type Stat = {
+    mean: number;
+    q05: number;
+    q95: number;
+  };
+
+  export type ScenarioStats = { [variable: string]: Stat };
 }

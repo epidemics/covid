@@ -8,7 +8,7 @@ const SELECTION_PARAM = "selection";
 const REGION_FALLBACK = "united kingdom";
 
 function getRegionUrl(region: Region) {
-  return setGetParamUrl(SELECTION_PARAM, region.key);
+  return setGetParamUrl(SELECTION_PARAM, region.code);
 }
 
 class Controller {
