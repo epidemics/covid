@@ -1,20 +1,22 @@
-{% extends "base.html" %} {% set title = 'Medium-Term COVID-19 Forecast' %} {%-
+{% extends "base.html" %}
+{% set title = 'Medium-Term COVID-19 Forecast' %}
+{%-
 block additional_js_pre -%}
-<style type="text/css">
-  @media only screen and (min-width: 992px) and (max-width: 1199px) {
-    .legend {
-      min-height: 473px;
+  <style type="text/css">
+    @media only screen and (min-width: 992px) and (max-width: 1199px) {
+      .legend {
+        min-height: 473px;
+      }
     }
-  }
 
-  @media only screen and (min-width: 1200px) {
-    .legend {
-      min-height: 555px;
+    @media only screen and (min-width: 1200px) {
+      .legend {
+        min-height: 555px;
+      }
     }
-  }
 
-  /* apply column-specific scrolling only if columns are side-by-side */
-  /* @media only screen and (min-width: 576px) {
+    /* apply column-specific scrolling only if columns are side-by-side */
+    /* @media only screen and (min-width: 576px) {
   html {
     overflow: hidden;
   }
@@ -27,11 +29,12 @@ block additional_js_pre -%}
     padding-bottom: 10em;
   }
 } */
-</style>
-{% endblock %} {% block content %}
+  </style>
+{% endblock %}
+{% block content %}
 
-<!-- Pro bono consulting alert-->
-<!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <!-- Pro bono consulting alert-->
+  <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
   <p class="text-center">
     We're offering pro bono consulting services and custom forecasts for decision-makers. Please reach out <a
       href="http://epidemicforecasting.org/request-calculation" class="alert-link">here</a>. </p>
@@ -40,24 +43,24 @@ block additional_js_pre -%}
   </button>
 </div> -->
 
-<!-- Main model graph -->
-<div class="main-wrapper">
-  <div class="row">
-    <div class="central-column">
-      <div
+  <!-- Main model graph -->
+  <div class="main-wrapper">
+    <div class="row">
+      <div class="central-column">
+        <div
         class="pro-bono-banner alert alert-dismissible d-none"
         id="consultingAlert"
         role="alert"
       >
-        <button
+          <button
           type="button"
           class="close"
           data-dismiss="alert"
           aria-label="Close"
         >
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <p>
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <p>
           We're offering pro bono consulting services and custom forecasts for
           decision-makers. Please reach out
           <a
@@ -66,11 +69,12 @@ block additional_js_pre -%}
             >here</a
           >.
         </p>
-      </div>
-      {% include "lines.html" %}
-      <div class="model-explanation">
-        <h5 class="mitigation-strength-heading">How the Model Works</h5>
-        <p>
+        </div>
+        {% include "lines.html" %}
+        <div class="custom-model-explanation"></div>
+        <div class="model-explanation">
+          <h5 class="mitigation-strength-heading">How the Model Works</h5>
+          <p>
           The impact on <span class="selected-region"></span> is simulated using
           an epidemiological model based on global, real-world data on human
           population and travel patterns, displayed as an
@@ -78,22 +82,23 @@ block additional_js_pre -%}
             >an epidemic curve</a
           >.
         </p>
-        <p>
+          <p>
           We want to emphasise that real outcomes depend on human actions. The
           mitigation strength is our choice. Even given some mitigation level,
           the outcome is still uncertain, and depends on:
         </p>
-        <ul>
-          <li>
+          <ul>
+            <li>
             the seasonality of the virus and its response to changing weather
             conditions
           </li>
-          <li>the mitigation decisions made by <i>other countries</i></li>
-          <li>
+            <li>the mitigation decisions made by <i>other countries</i>
+            </li>
+            <li>
             technological progress in testing, contact tracing and vaccines
           </li>
-        </ul>
-        <p>
+          </ul>
+          <p>
           For now we are capturing the international response in a single
           parameter determining the rate of spread of SARS-CoV-2, but we are
           building
@@ -103,34 +108,34 @@ block additional_js_pre -%}
           >
           and working to integrate them into the model.
         </p>
-        <p>
-          <em
+          <p>
+            <em
             >If you&#39;re a decision-maker thinking about how various measures
             can impact COVID-19 outcomes, please reach out
             <a href="http://epidemicforecasting.org/request-calculation">here</a
             >.</em
           >
-        </p>
-        <hr />
-        <p id="case-count-explanation">
-          <strong> Active Infections Estimate </strong>
-        </p>
-        <p>
+          </p>
+          <hr/>
+          <p id="case-count-explanation">
+            <strong> Active Infections Estimate </strong>
+          </p>
+          <p>
           This counts number of people currently infected with COVID-19
           (including those have not yet shown symptoms or are not yet
           infectious, but excluding those who have recovered or died).
         </p>
-        <p>
+          <p>
           We are trying to augment data on confirmed cases by estimating the
           true number of infections in selected regions. This gets around issues
           of testing capacity and under-reporting in official statistics. This
           is done using a combination of statistical modelling and human
           forecasting.
         </p>
-        <p id="mitigation-measures-explanation">
-          <strong> Mitigation Measures </strong>
-        </p>
-        <p>
+          <p id="mitigation-measures-explanation">
+            <strong> Mitigation Measures </strong>
+          </p>
+          <p>
           We're modelling mitigation measures via their impact on effective
           transmission rate, since the same mitigation strength can be often
           achieved in multiple ways. For example, something roughly in the range
@@ -138,66 +143,69 @@ block additional_js_pre -%}
           banning large gatherings (alone) or by compulsory wear of masks and
           widely adopted voluntary social distancing (alone).
         </p>
-        <p>
+          <p>
           The available mitigation levels are:
         </p>
-        <ul>
-          <li>
+          <ul>
+            <li>
             Do nothing
           </li>
-          <li>
+            <li>
             Decrease of effective transmission rate by 20%
           </li>
-          <li>
+            <li>
             Decrease of effective transmission rate by 50%
           </li>
-          <li>
+            <li>
             Decrease of effective transmission rate by 80%
           </li>
-        </ul>
-        <p>
+          </ul>
+          <p>
           For comparison, in Wuhan the estimated reproduction number was ~3.5
           before mitigation measures, and ~0.32 after implementation of all
           measures. This would correspond to a mitigation strength of ~90% —
           stronger than our "Strong" setting.
         </p>
-        <p>
+          <p>
           We are tracking the effectiveness of containments measures in a
           <a href="/containment">public database</a>
           with thousands of entries. As more data becomes available on their
           effectiveness we will integrate them into the simulation.
         </p>
 
-        <p><strong>Computational modelling</strong></p>
-        <p>
+          <p>
+            <strong>Computational modelling</strong>
+          </p>
+          <p>
           The results are used as an input to the publicly available version of
           the epidemic modelling software
           <a href="http://www.gleamviz.org/" rel="noopener" target="_blank">GLEaM</a>
           (the authors of the software are not part of our project and have not
           been involved in the study design).
         </p>
-        <p>The global development of COVID-19 is simulated using:</p>
-        <ul>
-          <li>
+          <p>The global development of COVID-19 is simulated using:</p>
+          <ul>
+            <li>
             a global transport network (with multiple settings of travel
             reduction)
           </li>
-          <li>
+            <li>
             multiple models of SARS-CoV-2, capturing uncertainty about
             seasonality and transmissibility
           </li>
-          <li>
+            <li>
             multiple levels of global mitigation measures, represented by their
             effect on reproduction rate
           </li>
-        </ul>
-        <p>
+          </ul>
+          <p>
           The results are displayed as a pack of trajectories, representing the
           uncertainty inherent in our model — and the difference in trajectory
           caused by the response of us as a society.
         </p>
+        </div>
       </div>
     </div>
   </div>
-</div>
-{% endblock %} {% block additional_js %} {% endblock %}
+{% endblock %}
+{% block additional_js %}{% endblock %}

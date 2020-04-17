@@ -1,22 +1,4 @@
-export type ModelTrace = {
-  group: string;
-  key: string;
-  name: string;
-  initial_infected: number;
-  initial_exposed: number;
-  infected: Array<number>;
-  recovered: Array<number>;
-};
-
-export type ModelTraces = {
-  date_index: string[];
-  traces: Array<ModelTrace>;
-};
-
-export interface ExternalData {
-  models: ModelTraces;
-}
-
+// Main file
 export interface Main {
   created: string;
   created_by: string;
@@ -73,3 +55,31 @@ export interface Foretold {
   "0.50": number[];
   "0.95": number[];
 }
+
+export type Scenario = {
+  id: string;
+  name: string;
+  description?: string;
+};
+
+// Per country seperate file
+export interface RegionExternalData {
+  models: ModelTraces;
+  ModelDescription?: string;
+  Scenarios?: Array<Scenario>;
+}
+
+export type ModelTrace = {
+  group: string;
+  key: string;
+  name: string;
+  initial_infected: number;
+  initial_exposed: number;
+  infected: Array<number>;
+  recovered: Array<number>;
+};
+
+export type ModelTraces = {
+  date_index: string[];
+  traces: Array<ModelTrace>;
+};

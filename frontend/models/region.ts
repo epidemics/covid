@@ -38,6 +38,14 @@ export class Region {
       .then(({ getModelTraces }) => getModelTraces(this));
   }
 
+  get customModelDescription() {
+    return this.externalData.poll().then(obj => obj.modelDescription);
+  }
+
+  get customMitigations() {
+    return this.externalData.poll().then(obj => obj.scenarios);
+  }
+
   static fromv4(code: string, obj: v4.Region) {
     let { Foretold, JohnsHopkins, Rates: rates, TracesV3 } = obj.data;
 
@@ -63,8 +71,12 @@ export class Region {
   }
 }
 
+export type Scenario = v4.Scenario;
+
 interface ExternalData {
   getModelTraces: (region: Region) => ModelTraces;
+  modelDescription?: string;
+  scenarios?: Array<Scenario>;
 }
 
 const ExternalData = {
@@ -76,11 +88,13 @@ const ExternalData = {
     };
   },
 
-  fromv4(obj: v4.ExternalData): ExternalData {
+  fromv4(obj: v4.RegionExternalData): ExternalData {
     return {
       getModelTraces: function(region: Region) {
         return ModelTraces.fromv4(obj.models, region);
-      }
+      },
+      modelDescription: obj.ModelDescription,
+      scenarios: obj.Scenarios
     };
   }
 };

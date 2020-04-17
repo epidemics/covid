@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import * as Plotly from "plotly.js";
 import { isTouchDevice } from "../helpers";
 import { makeConfig, Bounds, ChartInfo } from "../components/graph-common";
-import { Region } from "../models";
+import { Region, Scenario } from "../models";
 import { ModelTraces } from "../models/model_traces";
 import { addEstimatedCases } from "../page_measures/current-chart";
 
@@ -178,6 +178,43 @@ export class ModelPage {
 
     // update the summary statistics per selected mitigation strength
     this.updateStatistics();
+
+    this.region.customModelDescription.then(modelDescription => {
+      if (modelDescription) {
+        $(".custom-model-explanation")
+          .html(modelDescription)
+          .show();
+
+        $(".model-explanation").hide();
+      } else {
+        $(".model-explanation").show();
+        $(".custom-model-explanation").hide();
+      }
+    });
+
+    this.region.customMitigations.then(raw => {
+      const defaultScenarios: Array<Scenario> = [
+        { id: "none", name: "0%" },
+        { id: "weak", name: "20%" },
+        { id: "moderate", name: "50%" },
+        { id: "strong", name: "80%" }
+      ];
+      const scenarios = raw ?? defaultScenarios;
+
+      $(".mitigation-strength-button").hide();
+
+      scenarios.forEach(scenario => {
+        // let $scenario =
+        $(`#mitigation-${scenario.id}`).show();
+
+        // TODO name and description
+        // if (scenario.description) {
+        //   $scenario
+        //     .find(".mitigation-strength-explanation")
+        //     .html(scenario.description);
+        // }
+      });
+    });
 
     // Load and preprocess the per-region graph data
     this.region.modelTraces.then(({ maxY, traces, xrange }: ModelTraces) => {
