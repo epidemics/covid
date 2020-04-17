@@ -66,7 +66,8 @@ export class Region {
       obj.Name,
       getPopulation(obj.data.AgeDist), // obj.Population
       obj.OfficialName,
-      ExternalData.fromv3(obj.data.TracesV3),
+      ExternalData.fromv3(obj.data.TracesV3), 
+      //ExternalData.fromv4(obj.data_url),
       Rates.fromv4(obj.data.Rates),
       Foretold ? Estimation.fromv4(Foretold) : undefined,
       JohnsHopkins ? Reported.fromv4(JohnsHopkins) : undefined

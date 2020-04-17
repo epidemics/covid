@@ -17,9 +17,7 @@ interface Trace {
   x: string[];
   y: number[];
   text: string[];
-  customdata: {
-    mitigation: string;
-  };
+  mitigation: string;
   name?: string;
   line: Partial<Plotly.ScatterLine>;
   hovertemplate?: string;
@@ -62,14 +60,13 @@ export class ModelTraces {
       let trace: Trace = {
         type: "scatter",
         name: obj.name,
-        customdata: {
-          mitigation: obj.group
-        },
+        mitigation: obj.group,
         text: [],
         x: dates,
         y: [],
         line: {
           shape: "spline",
+          smoothing: 1.3,
           color: SCNARIO_COLORS[obj.key]
         },
         hovertemplate: "%{text}<br />%{y:.2p}",
@@ -78,13 +75,12 @@ export class ModelTraces {
 
       let initial_infected = region.estimates!.at(
         moment(dates[0])
-          .add({ days: -7 })
+          .add({ days: -2 })
           .toDate()
       )!.mean;
-      console.log(initial_infected);
 
-      let cummulative = initial_infected / region.population;
-      for (let i = 0; i < length; i++) {
+      let cummulative = initial_infected / region.population; 
+      for (let i = 0; i < length ; i++) {
         cummulative += (obj.infected[i] - obj.recovered[i]) * 1000;
 
         trace.y.push(cummulative);
@@ -107,7 +103,7 @@ export class ModelTraces {
       let group = obj[mitigation];
       group.forEach((obj: v3.ModelTrace) => {
         let trace: Trace = {
-          customdata: { mitigation },
+          mitigation,
           text: [],
           ...obj
         };
