@@ -138,11 +138,13 @@ block additional_js_pre -%}
           <p>
           We're modelling mitigation measures via their impact on effective
           transmission rate, since the same mitigation strength can be often
-          achieved in multiple ways. For example, something roughly in the range
+          achieved in multiple ways. 
+        {#For example, something roughly in the range
           of "weak mitigation" can be achieved either by closing schools and
           banning large gatherings (alone) or by compulsory wear of masks and
           widely adopted voluntary social distancing (alone).
         </p>
+
           <p>
           The available mitigation levels are:
         </p>
@@ -160,6 +162,7 @@ block additional_js_pre -%}
             Decrease of effective transmission rate by 80%
           </li>
           </ul>
+        
           <p>
           For comparison, in Wuhan the estimated reproduction number was ~3.5
           before mitigation measures, and ~0.32 after implementation of all
@@ -167,6 +170,7 @@ block additional_js_pre -%}
           stronger than our "Strong" setting.
         </p>
           <p>
+        #}
           We are tracking the effectiveness of containments measures in a
           <a href="/containment">public database</a>
           with thousands of entries. As more data becomes available on their
@@ -183,7 +187,7 @@ block additional_js_pre -%}
           (the authors of the software are not part of our project and have not
           been involved in the study design).
         </p>
-          <p>The global development of COVID-19 is simulated using:</p>
+          {#<p>The global development of COVID-19 is simulated using:</p>
           <ul>
             <li>
             a global transport network (with multiple settings of travel
@@ -197,7 +201,7 @@ block additional_js_pre -%}
             multiple levels of global mitigation measures, represented by their
             effect on reproduction rate
           </li>
-          </ul>
+          </ul>#}
           <p>
           The results are displayed as a pack of trajectories, representing the
           uncertainty inherent in our model — and the difference in trajectory
