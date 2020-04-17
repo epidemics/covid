@@ -2,7 +2,6 @@ import { v4, v3 } from "../../common/spec";
 import { formatSIInteger } from "../helpers";
 import * as d3 from "d3";
 import { Region } from "./region";
-import * as moment from "moment";
 
 const SCENARIO_COLORS: { [key: string]: string } = {
   "WEAK-WEAK": "#edcdab",
@@ -75,11 +74,12 @@ export class ModelTraces {
 
       console.log(obj);
 
-      let cummulative = initial_infected / region.population;
+      //let cummulative = initial_infected / region.population;
       for (let i = 1; i < length - 1; i++) {
-        cummulative += obj.infected[i] - obj.recovered[i];
-        trace.y.push(cummulative);
-        trace.text.push(formatPop(cummulative * region.population));
+        //cummulative += obj.infected[i] - obj.recovered[i];
+        let value = obj.active[i];
+        trace.y.push(value);
+        trace.text.push(formatPop(value * region.population));
       }
       maxY = Math.max(maxY, ...trace.y);
 
