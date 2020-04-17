@@ -54,7 +54,7 @@ export class ModelTraces {
 
     let maxY = -Infinity;
     function makeTrace(obj: v4.ModelTrace) {
-      let { name, group, initial_infected } = obj;
+      let { name, group } = obj;
 
       let trace: Trace = {
         type: "scatter",
@@ -74,9 +74,7 @@ export class ModelTraces {
 
       console.log(obj);
 
-      //let cummulative = initial_infected / region.population;
       for (let i = 1; i < length - 1; i++) {
-        //cummulative += obj.infected[i] - obj.recovered[i];
         let value = obj.active[i];
         trace.y.push(value);
         trace.text.push(formatPop(value * region.population));

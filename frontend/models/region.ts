@@ -47,7 +47,7 @@ export class Region {
   }
 
   static fromv4(code: string, obj: v4.Region) {
-    let { Foretold, JohnsHopkins, Rates: rates, TracesV3 } = obj.data;
+    let { Foretold, JohnsHopkins, Rates: rates } = obj.data;
 
     return new Region(
       code,
@@ -58,7 +58,7 @@ export class Region {
       obj.Name,
       getPopulation(obj.data.AgeDist), // obj.Population
       obj.OfficialName,
-      // Thunk.fetchThen(`${STATIC_ROOT}/${TracesV3}`, res =>
+      // Thunk.fetchThen(`${STATIC_ROOT}/${obj.data.TracesV3}`, res =>
       //   res.json().then(ExternalData.fromv3)
       // ),
       Thunk.fetchThen(`${STATIC_ROOT}/${obj.data_url}`, res =>

@@ -76,6 +76,7 @@ export type ModelTrace = {
   initial_infected: number;
   initial_exposed: number;
   infected: Array<number>;
+  active: Array<number>;
   recovered: Array<number>;
 };
 
