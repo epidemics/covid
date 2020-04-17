@@ -41,19 +41,21 @@ export interface Rates {
 
 export interface JohnsHopkins {
   Date: string[];
-  Recovered: number[];
-  Confirmed: number[];
-  Deaths: number[];
-  Active: number[];
+  Recovered: Array<NumberLike>;
+  Confirmed: Array<NumberLike>;
+  Deaths: Array<NumberLike>;
+  Active: Array<NumberLike>;
 }
+
+type NumberLike = string | number;
 
 export interface Foretold {
   Date: string[];
-  Mean: number[];
-  Variance: number[];
-  "0.05": number[];
-  "0.50": number[];
-  "0.95": number[];
+  Mean: Array<NumberLike>;
+  Variance: Array<NumberLike>;
+  "0.05": Array<NumberLike>;
+  "0.50": Array<NumberLike>;
+  "0.95": Array<NumberLike>;
 }
 
 export type Scenario = {

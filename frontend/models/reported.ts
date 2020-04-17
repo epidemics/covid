@@ -24,10 +24,10 @@ export class Reported {
     for (let i = 0; i < length; i++) {
       points.push({
         date: new Date(obj.Date[i]),
-        recovered: obj.Recovered[i],
-        deaths: obj.Deaths[i],
-        active: obj.Active[i],
-        confirmed: obj.Confirmed[i]
+        recovered: +obj.Recovered[i],
+        deaths: +obj.Deaths[i],
+        active: +obj.Active[i],
+        confirmed: +obj.Confirmed[i]
       });
     }
     return new Reported(points);

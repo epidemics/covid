@@ -71,11 +71,11 @@ export class Estimation {
     for (let i = 0; i < length; i++) {
       points.push({
         date: new Date(obj.Date[i]),
-        mean: obj.Mean[i],
-        variance: obj.Variance[i],
-        median: obj["0.50"][i],
-        p05: obj["0.05"][i],
-        p95: obj["0.95"][i]
+        mean: +obj.Mean[i],
+        variance: +obj.Variance[i],
+        median: +obj["0.50"][i],
+        p05: +obj["0.05"][i],
+        p95: +obj["0.95"][i]
       });
     }
     return new Estimation(points);
