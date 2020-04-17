@@ -10,5 +10,6 @@ RUN yarn install
 
 COPY ./webpack.config.ts ./tsconfig.json ./
 COPY ./server/ ./server
+COPY ./common/ ./common
 
 ENTRYPOINT yarn run serve
