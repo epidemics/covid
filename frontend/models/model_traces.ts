@@ -21,6 +21,7 @@ interface Trace {
   name?: string;
   line: Partial<Plotly.ScatterLine>;
   hovertemplate?: string;
+  legendgroup?: string;
   hoverlabel?: any;
   type: "scatter";
 }
@@ -103,11 +104,15 @@ export class ModelTraces {
     Object.keys(obj).forEach(mitigation => {
       let group = obj[mitigation];
       group.forEach((obj: v3.ModelTrace) => {
+        console.log(obj);
+
         let trace: Trace = {
           customdata: { mitigation },
           text: [],
           ...obj
         };
+
+        trace.legendgroup = obj.line.color as any;
 
         if (obj.hoverinfo !== "skip") {
           trace.hoverlabel = { namelength: -1 };
