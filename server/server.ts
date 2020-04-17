@@ -29,6 +29,9 @@ nunjucks.configure(path.join(__dirname, "templates"), {
   express: app
 });
 
+app.locals.DEFAULT_EPIFOR_CHANNEL =
+  process.env.DEFAULT_EPIFOR_CHANNEL ?? "testing";
+
 // set up the static file server, but only if we get no STATIC_URL
 if (!process.env.STATIC_URL) {
   let mount = "/static";

@@ -83,7 +83,7 @@ const $container = document.getElementById("current_viz");
 const $dropdown = document.getElementById("regionDropdown");
 
 if ($container && $dropdown) {
-  let data = makeDataStore("main");
+  let data = makeDataStore();
 
   Promise.all([data.regions, data.containments]).then(
     ([regions, conainments]) => {

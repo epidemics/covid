@@ -8,3 +8,4 @@ web:
 env:
   staticUrl: "https://storage.googleapis.com/static-covid/static/production"
   nodeEnv: "production"
+  defaultEpiforChannel: "main"
