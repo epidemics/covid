@@ -16,7 +16,7 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
   }
 
   let offset = 0.00001;
-  let tick_values = [-3, -1, 1, 3, 5, 7, 9];
+  let tick_values = [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   let tick_names = tick_values.map(value_to_labels);
 
   let info_by_iso3: {

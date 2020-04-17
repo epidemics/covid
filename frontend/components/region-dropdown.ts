@@ -183,8 +183,6 @@ export class RegionDropdown {
       d3.select("#infections-estimated").html("&mdash;");
     }
 
-    console.log(reported.last);
-
     d3.select("#infections-confirmed").html(
       formatAbsoluteInteger(reported.last.confirmed)
     );

@@ -7,28 +7,54 @@ Frontend for http://epidemicforecasting.org/
 ![Screenshot of local app](./covid_local_app.png)
 
 ## Architecture
-* `server` - a express.js webserver using nunjucks for templating
-* `frontend` - client-side code, written in typescript and bundled by webpack.
-* `static` - static resources
 
-# Development
-## Using docker (the easiest)
+- `server` - a express.js webserver using nunjucks for templating
+- `frontend` - client-side code, written in typescript and bundled by webpack.
+- `common` - shared code between the frontend and server
+- `static` - static resources
+
+## Setup
+
+### Using docker (the easiest)
+
 Run
-```
-docker-compose up 
-```
-and visit http://localhost:8000.
 
-## Local installation
+```
+docker-compose up
+```
+
+visit http://localhost:8000.
+
+### Local installation (recommended)
+
 Requires `nodejs` and `yarn`. Run
+
 ```
 yarn install // install dependencies
 yarn run dev // start the dev server
 ```
 
-and visit http://localhost:8000.
+visit http://localhost:8000.
 
-## Tests and linting
+## Contributing
+
+### Channels and deployments
+
+The project fetches data and displays data from google cloud. We have three different data channels
+that get used depending on the context:
+
+- On production at `http://epidemicforecasting.org/` the default `channel` is `"main"`
+- On staging at `http://staging.epidemicforecasting.org/` the default `channel` is `"staging"`
+- Anywhere else like a local development server uses `testing` as the default `channel`
+
+There can be overridden manually by using the url param `?channel=` using the identifiers above.
+These data channels correspond to the `-c` argument of the `epimodel` commmand `./do web_upload`.
+
+In the `frontend` the current `channel` is accessible as a global variable `DEFAULT_EPIFOR_CHANNEL`,
+see `frontend/@types/epifor.d.ts` for more info.
+
+### Tests and linting
+
 ```
 yarn run lint-check // linting - just checking)
 yarn run lint-write // linting - updating in place
@@ -36,10 +62,11 @@ yarn run test // run tests
 ```
 
 There is a git hook for running the linter on pre-commit in `/hooks`.
-This can be configured to run every time (for this repository only) 
+This can be configured to run every time (for this repository only)
 by running `git config core.hooksPath hooks`.
 
-## Development flow
+### Development flow
+
 It's the author responsibility to do the merge, ideally after having it reviewed. That is:
 
 1. run `yarn run lint-write` and do your PR
@@ -50,17 +77,9 @@ It's the author responsibility to do the merge, ideally after having it reviewed
 
 Rather overcommunicate what you are working on.
 
-# Deployment
-We use Github Actions. The pipeline is specified in `.github/workflows/pythonapp.yml`
+## Deployment
 
-* On a merge to `staging` branch, the code is deployed to the staging environment: http://staging.epidemicforecasting.org/
-* On a merge to `master` branch, the code is deployed to the production environment: http://epidemicforecasting.org/
+We use Github Actions. The pipeline is specified in `.github/workflows/main.yml`
 
-# Using Google Cloud Storage for the web assets
-We are using Google Cloud Storage bucket called `static-covid`. To upload things there you need:
-
-1. permissions to upload things there, can be granted to your gmail account by owners of the `GCP` project (@hnykda, @gavento, @laggeros, ...)
-2. either use `gsutil`: `gsutil -h "Cache-Control:public, max-age=10" cp -a public-read  <your-file> gs://static-covid/static/`
-3. Or go via [browser to the bucket](https://console.cloud.google.com/storage/browser/static-covid?forceOnBucketsSortingFiltering=false&project=epidemics-270907), upload the file via UI and make [them public](https://cloud.google.com/storage/docs/access-control/making-data-public).
-
-You can see in the `gsutil` command that it's setting `Cache-Control`. By default, files are cached under the same name up to 1 hour. So you either want to reduce it to the above (10 seconds) or have to use a different name. Sadly, there is no way to do this via the web console. For that, there is a handy [CI bit here](https://github.com/epidemics/covid/blob/master/.github/workflows/pythonapp.yml#L19-L21) - once a build is triggered (on ANY branch), all files are set to be public and with lower cache. So if you don't wanna mess with gsutil on your machine, just upload the files and trigger a build by random commit.
+- On a merge to `staging` branch, the code is deployed to the staging environment: http://staging.epidemicforecasting.org/
+- On a merge to `master` branch, the code is deployed to the production environment: http://epidemicforecasting.org/

@@ -120,7 +120,7 @@ if ($pageContainer && $dropdown) {
     mitigation: url.searchParams.get(MITIGATION_PARAM)
   };
 
-  let channel = params.channel || DEFAULT_CHANNEL;
+  let channel = params.channel || DEFAULT_EPIFOR_CHANNEL;
 
   let data = makeDataStore(channel);
 
