@@ -1,5 +1,5 @@
-import { ModelPage } from "./model_page";
-import { RegionDropdown } from "../components/region-dropdown";
+import { ModelPage } from "./model_page.ts.old";
+import { RegionDropdown } from "../components/region-dropdown.ts.old";
 import { getTimezone, setGetParamUrl } from "../helpers";
 import { Region, Regions } from "../models";
 import { makeDataStore } from "../ds";

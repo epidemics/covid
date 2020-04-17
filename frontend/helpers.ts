@@ -1,5 +1,28 @@
 import * as d3 from "d3";
 
+export function classNames(
+  ...names: Array<{ [name: string]: boolean } | string>
+) {
+  let set: { [name: string]: boolean } = {};
+  names.forEach(obj => {
+    if (typeof obj === "string") {
+      set[obj] = true;
+      return;
+    }
+
+    Object.keys(obj).forEach(name => {
+      if (obj[name]) set[name] = true;
+    });
+  });
+
+  return Object.keys(set).join(" ");
+}
+
+export function getUrlParam(key: string, defaultValue?: string): string | null {
+  let params = new URLSearchParams(window.location.search);
+  return params.get(key) ?? defaultValue ?? null;
+}
+
 export function setGetParamUrl(key: string, value: string) {
   let params = new URLSearchParams(window.location.search);
   params.set(key, value);
@@ -34,7 +57,7 @@ export const formatPercentNumber = d3.format(".2p");
 export const formatStatisticsLine = function(
   q05: number,
   q95: number,
-  population: number = 0
+  population: number
 ) {
   let _q05 = formatBigInteger(q05 * population);
   let _q95 = formatBigInteger(q95 * population);
@@ -67,3 +90,15 @@ export function formatSIInteger(precision: number): (n: number) => string {
     else return formatSI(number);
   };
 }
+
+export const formatAbsoluteInteger = function(number: number | undefined) {
+  if (typeof number !== "number" || isNaN(number)) {
+    return "\u2014";
+  }
+  number = Math.round(number);
+  if (number < 10000 && number > -10000) {
+    return String(number);
+  } else {
+    return number.toLocaleString();
+  }
+};

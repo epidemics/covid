@@ -4,7 +4,7 @@ import { isTouchDevice, formatStatisticsLine } from "../helpers";
 import { makeConfig, Bounds, ChartInfo } from "../components/graph-common";
 import { Region, Scenario } from "../models";
 import { ModelTraces } from "../models/model_traces";
-import { addEstimatedCases } from "../page_measures/current-chart";
+import { addEstimatedCases } from "../page_measures/current-chart.ts.old";
 
 const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;

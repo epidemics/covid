@@ -1,19 +1,7 @@
 import { string_score } from "../string_score";
 import * as d3 from "d3";
 import { Region } from "../models";
-import { formatSIInteger } from "../helpers";
-
-const formatAbsoluteInteger = function(number?: number) {
-  if (typeof number !== "number" || isNaN(number)) {
-    return "&mdash;";
-  }
-  number = Math.round(number);
-  if (number < 10000 && number > -10000) {
-    return String(number);
-  } else {
-    return number.toLocaleString();
-  }
-};
+import { formatSIInteger, formatAbsoluteInteger } from "../helpers";
 
 const monthNames = [
   "Jan",
@@ -52,7 +40,7 @@ export class RegionDropdown {
   active: string = "";
   query: string | null = null;
 
-  onChange: (key: string) => void;
+  onChange: (key: Region) => void;
 
   private find<T extends HTMLElement>(role: string): T {
     let query = `[data-dropdown='${role}']`;
@@ -63,7 +51,7 @@ export class RegionDropdown {
     return result[0] as T;
   }
 
-  constructor($target: HTMLElement, onChange: (key: string) => void) {
+  constructor($target: HTMLElement, onChange: (key: Region) => void) {
     this.$target = $target;
     this.onChange = onChange;
 
@@ -110,7 +98,7 @@ export class RegionDropdown {
     this.$filter.addEventListener("keydown", evt => {
       // on enter we select the currently highlighted entry
       if (evt.key === "Enter") {
-        this.onChange(this.list[this.focused].key);
+        this.onChange(this.list[this.focused]);
         $(this.$target).dropdown("toggle");
       } else if (evt.key === "ArrowUp") {
         this.focused = Math.max(this.focused - 1, 0);

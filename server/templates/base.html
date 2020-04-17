@@ -118,6 +118,11 @@ endset -%}
     <script>
     var DEFAULT_EPIFOR_CHANNEL = "{{ DEFAULT_EPIFOR_CHANNEL }}";
     </script>    
+    
+    {# <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.13.1/umd/react.production.min.js" integrity="sha256-yUhvEmYVhZ/GGshIQKArLvySDSh6cdmdcIx0spR3UP4=" crossorigin="anonymous"></script> #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.13.1/umd/react.development.js" crossorigin="anonymous"></script>
+    {# <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.13.1/umd/react-dom.production.min.js" integrity="sha256-vFt3l+illeNlwThbDUdoPTqF81M8WNSZZZt3HEjsbSU=" crossorigin="anonymous"></script> #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.13.1/umd/react-dom.development.min.js" crossorigin="anonymous"></script>
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
@@ -149,6 +154,7 @@ endset -%}
     ></script>
 
     <script src="https://cdn.plot.ly/plotly-1.53.0.min.js"></script>
+    <script src="https://unpkg.com/react-plotly.js@latest/dist/create-plotly-component.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.51.1/plotly-basic.min.js" integrity="sha256-uFsGuCb3OlYSUV+cZuYWVrTNA+Q5IccRLWCG1vzsCCs=" crossorigin="anonymous"></script> -->
 
     <script
@@ -163,7 +169,7 @@ endset -%}
       crossorigin="anonymous"
     ></script>
 
-    {% block additional_js %} {% endblock %}
+    {% block additional_js %}{% endblock %}
 
     <script src="{{BUNDLE_LOCATION}}/bundle.js"></script>
   </body>

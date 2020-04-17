@@ -7,7 +7,6 @@ type ScreenshotInfo = () => { name: string; title: string };
 
 export type ChartInfo = {
   config: Partial<Plotly.Config>;
-  layout: Partial<Plotly.Layout>;
   hook: (gd: Plotly.PlotlyHTMLElement) => void;
 };
 
@@ -16,12 +15,8 @@ export type Bounds = {
   y: Plotly.Range;
 };
 
-export function makeConfig(
-  bounds: Bounds,
-  screenshotInfo?: ScreenshotInfo
-): ChartInfo {
-  // graph layout
-  let layout: Partial<Plotly.Layout> = {
+export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
+  return {
     margin: { t: 40 },
     paper_bgcolor: "#222028",
     plot_bgcolor: "#222028",
@@ -40,6 +35,7 @@ export function makeConfig(
       tick0: 0,
       dtick: 0.0,
       ticklen: 8,
+      range: bounds ? bounds.x : undefined,
       tickwidth: 1,
       tickcolor: "#fff",
       rangeselector: { visible: true },
@@ -64,6 +60,7 @@ export function makeConfig(
       dtick: 0.0,
       ticklen: 8,
       tickwidth: 1,
+      range: bounds ? bounds.y : undefined,
       tickcolor: "#fff",
       showline: true,
       linecolor: "#fff",
@@ -82,10 +79,19 @@ export function makeConfig(
       }
     }
   };
+}
+
+export function makeConfig(
+  bounds?: Bounds,
+  screenshotInfo?: ScreenshotInfo
+): ChartInfo {
+  // graph layout
 
   function ensureZero(gd: Plotly.PlotlyHTMLElement) {
+    if (!bounds) return;
+
     let shouldUpdate = false;
-    let range = layout.yaxis?.range as Plotly.Range;
+    let range = gd.layout.yaxis?.range as Plotly.Range;
     let ybounds = bounds.y;
     if (range[0] < ybounds[0]) {
       range[1] += ybounds[0] - range[0];
@@ -164,6 +170,8 @@ export function makeConfig(
     title: "Reset axis",
     icon: Plotly.Icons.autoscale,
     click: gd => {
+      if (!bounds) return;
+
       Plotly.relayout(gd, {
         "yaxis.range": [bounds.y[0], bounds.y[1]],
         "xaxis.range": [bounds.x[0], bounds.x[1]]
@@ -181,5 +189,5 @@ export function makeConfig(
     modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
   };
 
-  return { config, layout, hook };
+  return { config, hook };
 }

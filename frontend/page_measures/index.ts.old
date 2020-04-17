@@ -22,8 +22,8 @@ class Controller {
     regions: Regions,
     public measures: { [key: string]: any }
   ) {
-    this.dropdown = new RegionDropdown($dropdown, key =>
-      this.changeRegion(regions[key])
+    this.dropdown = new RegionDropdown($dropdown, region =>
+      this.changeRegion(region)
     );
 
     this.currentChart = new CurrentChart($container);

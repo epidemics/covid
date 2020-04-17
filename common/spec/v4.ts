@@ -71,7 +71,7 @@ export namespace v4 {
 
   // Per country seperate file
   export interface RegionExternalData {
-    models: ModelTraces;
+    models: Model;
     scenarios?: Array<Scenario>;
     ModelDescription?: string;
   }
@@ -87,7 +87,7 @@ export namespace v4 {
     recovered: Array<number>;
   };
 
-  export type ModelTraces = {
+  export type Model = {
     date_index: string[];
     traces: Array<ModelTrace>;
     statistics: { [scenario: string]: ScenarioStats };
