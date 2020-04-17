@@ -1,6 +1,6 @@
-import { RatesInfo } from "./rates";
-import { EstimationInfo } from "./estimation";
-import { ReportedInfo } from "./reported";
+import { Rates } from "./rates";
+import { Estimation } from "./estimation";
+import { Reported } from "./reported";
 import { v4 } from "../../spec";
 
 function getPopulation(ageDist?: { [bracket: string]: number }): number {
@@ -26,9 +26,9 @@ export class Region {
     public officialName: string | undefined,
     public dataUrl: string,
     public dataUrlV3: string,
-    public rates: RatesInfo | undefined,
-    public estimates: EstimationInfo | undefined,
-    public reported: ReportedInfo | undefined
+    public rates: Rates | undefined,
+    public estimates: Estimation | undefined,
+    public reported: Reported | undefined
   ) {}
 
   currentActiveInfected(): number | void {
@@ -68,9 +68,9 @@ export class Region {
       obj.OfficialName,
       obj.data_url,
       obj.data.TracesV3,
-      RatesInfo.fromv4(obj.data.Rates),
-      Foretold ? EstimationInfo.fromv4(Foretold) : undefined,
-      JohnsHopkins ? ReportedInfo.fromv4(JohnsHopkins) : undefined
+      Rates.fromv4(obj.data.Rates),
+      Foretold ? Estimation.fromv4(Foretold) : undefined,
+      JohnsHopkins ? Reported.fromv4(JohnsHopkins) : undefined
     );
   }
 }

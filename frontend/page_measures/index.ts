@@ -1,7 +1,8 @@
 import { RegionDropdown } from "../components/region-dropdown";
 import * as d3 from "d3";
 import { CurrentChart } from "./current-chart";
-import { setGetParamUrl } from "../helpers";
+import { setGetParamUrl, getTimezone } from "../helpers";
+import { Regions, Rates, Region } from "../models";
 
 const SELECTION_PARAM = "selection";
 const REGION_FALLBACK = "united kingdom";
@@ -12,58 +13,68 @@ function getRegionUrl(region) {
 
 class Controller {
   dropdown: RegionDropdown;
-  data: { base: any; measure: any; rates: any };
-  selected: string;
+  regions: Regions;
+  measures: any;
   currentChart: CurrentChart;
 
   constructor(
     $dropdown: HTMLElement,
     $container: HTMLElement,
-    baseData,
-    measureData,
-    ratesData
+    regions: Regions,
+    measures: any
   ) {
     this.dropdown = new RegionDropdown($dropdown, key =>
-      this.changeRegion(key)
+      this.changeRegion(regions[key])
     );
 
     this.currentChart = new CurrentChart($container);
+    this.regions = regions;
+    this.measures = measures;
 
     let urlString = window.location.href;
     let url = new URL(urlString);
+    let selected_key = url.searchParams.get(SELECTION_PARAM);
 
-    this.selected = url.searchParams.get(SELECTION_PARAM) || REGION_FALLBACK;
+    // determines the users timezone
+    let tz = getTimezone();
 
-    this.data = {
-      base: baseData,
-      measure: measureData,
-      rates: ratesData
-    };
+    // the region which has our timezone
+    let tzRegion: Region | null = null;
+    // populate the dropdown menu with countries from received data
+    Object.keys(regions).forEach(key => {
+      let region = this.regions[key];
+      this.dropdown.addRegionDropdown(key, getRegionUrl(region), region.name);
+
+      if (tz && region.timezones.indexOf(tz) !== -1) {
+        tzRegion = region;
+      }
+    });
+
+    // default region selection, start with the fallback
+    let region: Region = this.regions[REGION_FALLBACK];
+    if (selected_key && selected_key in this.regions) {
+      // prefer a valid region from param (from url)
+      region = this.regions[selected_key];
+    } else if (tzRegion) {
+      // otherwise use the region infered from the timezone
+      region = tzRegion;
+    }
 
     // populate the dropdown menu with countries from received data
-    Object.keys(baseData.regions).forEach(key =>
-      this.dropdown.addRegionDropdown(
-        key,
-        getRegionUrl(key),
-        baseData.regions[key].name
-      )
+    Object.keys(regions).forEach(key =>
+      this.dropdown.addRegionDropdown(key, getRegionUrl(key), regions[key].name)
     );
 
     this.dropdown.init();
 
     // initialize the graph
-    this.changeRegion(this.selected);
+    this.changeRegion(region);
   }
 
-  changeRegion(key: string): void {
-    this.selected = key;
-    let regionData = this.data.base.regions[key];
-    let measureData = this.data.measure[regionData.iso_alpha_3];
-    let ratesData = this.data.rates[regionData.iso_alpha_3];
-
-    this.dropdown.update(regionData);
-
-    this.currentChart.update(regionData, measureData, ratesData);
+  changeRegion(region: Region): void {
+    let measures = region.iso3 ? this.measures[region.iso3] : undefined;
+    this.dropdown.update(region);
+    this.currentChart.update(region, measures);
   }
 }
 
@@ -71,18 +82,19 @@ class Controller {
 const $container = document.getElementById("current_viz");
 const $dropdown = document.getElementById("regionDropdown");
 if ($container && $dropdown) {
-  let sources = [
-    `data-main-v3.json`,
-    `data-testing-containments.json`,
-    `rates_by_iso3.json`
-  ];
+  let sources = [`data-staging-v4.json`, `data-testing-containments.json`];
 
   // Load the basic data (estimates and graph URLs) for all generated countries
   Promise.all(
     sources.map(path =>
       d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
     )
-  ).then(([baseData, containmentData, ratesData]) => {
-    new Controller($dropdown, $container, baseData, containmentData, ratesData);
+  ).then(([baseData, containmentData]) => {
+    new Controller(
+      $dropdown,
+      $container,
+      Regions.fromv4(baseData),
+      containmentData
+    );
   });
 }
