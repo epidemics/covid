@@ -72,8 +72,6 @@ export class ModelTraces {
         hoverlabel: { namelength: -1 }
       };
 
-      console.log(obj);
-
       for (let i = 1; i < length - 1; i++) {
         let value = obj.active[i];
         trace.y.push(value);
