@@ -37,6 +37,7 @@ export interface Region {
   data_url: string;
   Name: string;
   Level: string;
+  CurrentEstimate: number;
   OfficialName?: string;
   Population?: string;
   Lat?: number;

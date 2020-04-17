@@ -29,8 +29,8 @@ export class Thunk<T> {
   private promise: Promise<T> | null = null;
 
   constructor(private thunk: () => Promise<T>, name?: string) {
-    this.name = name ?? `${i++}`;
-    console.trace(`Created thunk ${this.name}`);
+    this.name = name ?? `thunk-${i}`;
+    //console.info(`Created thunk ${this.name} (#${i++})`);
   }
 
   static fetch(input: RequestInfo, init?: RequestInit): Thunk<Response> {
@@ -52,9 +52,9 @@ export class Thunk<T> {
   }
 
   poll() {
-    console.trace(`Poll thunk ${this.name}`);
+    console.info(`Poll thunk ${this.name}`);
     if (this.promise === null) {
-      console.trace(`Resolving thunk ${this.name}`);
+      console.info(`Resolving thunk ${this.name}`);
       this.promise = this.thunk();
     }
     return this.promise;

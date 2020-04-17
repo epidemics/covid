@@ -174,7 +174,7 @@ export class RegionDropdown {
     const { population, reported } = region;
     if (!reported) return;
 
-    let current = region.currentActiveInfected();
+    let current = region.currentInfected;
     if (current) {
       d3.select("#infections-date").html(`${formatDate()}`);
       d3.select("#infections-estimated").html(formatSIInteger(3)(current));
