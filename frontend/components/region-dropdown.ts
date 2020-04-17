@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import { Region } from "../models";
 import { formatSIInteger } from "../helpers";
 
-const formatAbsoluteInteger = function(number) {
+const formatAbsoluteInteger = function(number: number) {
   if (typeof number !== "number" || isNaN(number)) {
     return "&mdash;";
   }
@@ -54,13 +54,13 @@ export class RegionDropdown {
 
   onChange: (key: string) => void;
 
-  private find<T>(role): T {
+  private find<T extends HTMLElement>(role: string): T {
     let query = `[data-dropdown='${role}']`;
-    let result = $<any>(this.$target).find(query);
+    let result = $<HTMLElement>(this.$target).find(query);
     if (result.length !== 1)
       throw new Error(`Region dropdown, could not find ${query}`);
 
-    return result[0];
+    return result[0] as T;
   }
 
   constructor($target: HTMLElement, onChange: (key: string) => void) {
@@ -159,12 +159,12 @@ export class RegionDropdown {
   }
 
   update(region: Region) {
-    if (this.active === region.key) {
+    if (this.active === region.code) {
       return;
     }
 
     this.$label.innerHTML = region.name;
-    this.active = region.key;
+    this.active = region.code;
     this.reorder();
     this.restyle();
     this.updateInfectionTotals(region);
@@ -174,7 +174,7 @@ export class RegionDropdown {
     const { population, reported } = region;
     if (!reported) return;
 
-    let current = region.currentActiveInfected();
+    let current = region.currentInfected;
     if (current) {
       d3.select("#infections-date").html(`${formatDate()}`);
       d3.select("#infections-estimated").html(formatSIInteger(3)(current));

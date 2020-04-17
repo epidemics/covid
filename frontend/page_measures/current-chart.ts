@@ -1,14 +1,15 @@
 import * as moment from "moment";
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
-import { parseMeasures } from "./measures";
-import { makeConfig } from "../components/graph-common";
+import { parseMeasures, MeasureItem } from "./measures";
+import { makeConfig, Bounds } from "../components/graph-common";
 import { isTouchDevice } from "../helpers";
+import { Region, EstimationPoint } from "../models";
 
 const GRAPH_HEIGHT = 600;
 
-let bounds: any = {
-  y: [0, null],
+let bounds: Bounds = {
+  y: [0, 0.099],
   x: ["2020-01-01", "2020-01-01"]
 };
 
@@ -52,7 +53,7 @@ if (isTouchDevice()) {
   layout.dragmode = "pan";
 }
 
-function applyVariance(mean, vars, sigma) {
+function applyVariance(mean: number, vars: Array<number>, sigma: number) {
   let totalVar = 0;
   vars.forEach(v => {
     totalVar += v * v;
@@ -67,196 +68,258 @@ const ONSET_TO_DEATH = 9;
 
 type Mode = "percentage" | "absolute";
 
+export function addEstimatedCases(
+  gd: Plotly.PlotlyHTMLElement,
+  region: Region,
+  opts: { mode?: Mode; addCI?: boolean; smoothing?: number }
+) {
+  let smoothing = opts.smoothing ?? 1;
+  let mode = opts.mode ?? "percentage";
+  let addCI = opts.addCI ?? true;
+
+  const estimationPoints = region.estimates?.points;
+  if (!estimationPoints) return;
+
+  let scaleFactor = 1;
+  if (mode == "percentage") {
+    scaleFactor = region.population;
+  }
+  let timeseries: TimeseriesCI = [];
+  let max = 0;
+  estimationPoints.forEach((point: EstimationPoint) => {
+    let { date, mean, p05, p95 } = point;
+
+    let low = p05 / scaleFactor;
+    let high = p95 / scaleFactor;
+    mean /= scaleFactor;
+
+    max = Math.max(max, high);
+
+    timeseries.push({ date, low, mean, high });
+  });
+
+  let { meanTrace, errorTrace } = makeErrorTrace(
+    {
+      color: "white",
+      fillcolor: "rgba(255,255,255,0.2)",
+      name: "Cumulative Infected (est.)",
+      smoothing
+    },
+    timeseries
+  );
+
+  let traces = [meanTrace];
+  if (addCI) traces.push(errorTrace);
+
+  // redraw the lines on the graph
+  Plotly.addTraces(gd, traces);
+
+  return { estimated: timeseries, range: [1, max] };
+}
+
+export function addHistoricalCases(
+  gd: Plotly.PlotlyHTMLElement,
+  region: Region,
+  opts: { mode: Mode; addCI?: boolean; cases?: boolean }
+) {
+  let showCI = opts.addCI ?? true;
+  let showCases = opts.cases ?? true;
+  let mode = opts.mode ?? "percentage";
+
+  // this is the standard deviation (for plotting) in the log of cfr
+  // for example with `log_cfr_var = 0.69` we get
+  //    lower confidence bound `= cfr / exp(0.69) = cfr / 2`
+  //    upper conficence bound `= cfr * exp(0.69) = 2 cfr`
+  let log_cfr_var = 0.69; // exp(0.69) = 2
+
+  const cfr = region.rates?.cfr;
+  const timeseries = region.reported?.points;
+
+  if (!timeseries || !cfr) return;
+
+  let scaleFactor = 1;
+  if (mode == "percentage") {
+    scaleFactor = region.population;
+  }
+
+  let cv = 3;
+  let retrodicted: TimeseriesCI = [];
+  let reported: Array<{
+    date: Date;
+    confirmed: number;
+    deaths: number;
+  }> = [];
+  let max = 0;
+  timeseries.forEach((point: any) => {
+    let { date, confirmed, deaths } = point;
+
+    if (point.confirmed > 0) {
+      reported.push({
+        date,
+        confirmed: confirmed / scaleFactor,
+        deaths: deaths / scaleFactor
+      });
+      max = Math.max(max, point.confirmed);
+    }
+
+    if (deaths > 0) {
+      let mean = deaths / cfr;
+      let low = applyVariance(mean, [log_cfr_var, cv / Math.sqrt(deaths)], -1);
+      let high = applyVariance(mean, [log_cfr_var, cv / Math.sqrt(deaths)], 1);
+
+      max = Math.max(max, high);
+
+      retrodicted.push({
+        date: moment(date)
+          .subtract(ONSET_TO_DEATH, "days")
+          .toDate(),
+        low: low / scaleFactor,
+        mean: mean / scaleFactor,
+        high: high / scaleFactor
+      });
+    }
+  });
+
+  let { errorTrace, meanTrace } = makeErrorTrace(
+    {
+      color: "white",
+      fillcolor: "rgba(255,255,255,0.2)",
+      name: "Cumulative Infected (est.)"
+    },
+    retrodicted
+  );
+
+  let reportedXs: Array<Date> = [];
+  let reportedYs: Array<number> = [];
+  let lastConfirmed = 0;
+  reported.forEach(({ date, confirmed }) => {
+    if (lastConfirmed !== confirmed) {
+      reportedXs.push(date);
+      reportedYs.push(confirmed);
+      lastConfirmed = confirmed;
+    }
+  });
+
+  let reportedConfirmed: Plotly.Data = {
+    mode: "markers",
+    x: reportedXs,
+    y: reportedYs,
+    line: { color: "#fff" },
+    type: "scatter",
+    name: "Confirmed",
+    marker: { size: 3 },
+    hovertemplate: "Confirmed: %{y:,d}<br />Date: %{x}"
+  };
+
+  let traces = [meanTrace];
+
+  if (showCI) traces.push(errorTrace);
+
+  if (showCases) traces.push(reportedConfirmed);
+
+  // redraw the lines on the graph
+  Plotly.addTraces(gd, traces);
+
+  return { retrodicted, reported, range: [1, max] };
+}
+
+type TimeseriesCI = Array<{
+  date: Date;
+  low: number;
+  mean: number;
+  high: number;
+}>;
+
+function makeErrorTrace(
+  opts: {
+    color: string;
+    fillcolor: string;
+    name: string;
+    smoothing?: number;
+  },
+  data: TimeseriesCI
+): { [name: string]: Plotly.Data } {
+  let { color, fillcolor, name } = opts;
+  let smoothing = opts.smoothing ?? 0;
+
+  let errorYs: Array<number> = [];
+  let errorXs: Array<Date> = [];
+  let meanYs: Array<number> = [];
+  let meanXs: Array<Date> = [];
+
+  data.forEach(({ date, high, mean }) => {
+    errorYs.push(high);
+    errorXs.push(date);
+
+    meanYs.push(mean);
+    meanXs.push(date);
+  });
+
+  for (let i = data.length - 1; i >= 0; i--) {
+    let { date, low } = data[i];
+    errorYs.push(low);
+    errorXs.push(date);
+  }
+
+  // error bars
+  let errorTrace: Plotly.Data = {
+    y: errorYs,
+    x: errorXs,
+    mode: "lines",
+    line: { color: "transparent" },
+    fillcolor: fillcolor,
+    fill: "tozerox",
+    type: "scatter",
+    showlegend: false,
+    hoverinfo: "skip"
+  };
+
+  let shape: "spline" | "linear" = smoothing > 0 ? "spline" : "linear";
+
+  let f = d3.format(".2s");
+  // estimation
+  let meanTrace: Plotly.Data = {
+    mode: "lines",
+    x: meanXs,
+    y: meanYs,
+    line: { color: color, shape, smoothing },
+    type: "scatter",
+    name: name,
+    hoverinfo: "text",
+    text: data.map(
+      ({ date, low, high }) =>
+        `${name}: ${f(low)}-${f(high)}<br />Date: ${date.toLocaleDateString(
+          "en-US",
+          {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+          }
+        )}`
+    )
+  };
+
+  return { meanTrace, errorTrace };
+}
+
 export class CurrentChart {
   mode: Mode;
   $container: Plotly.PlotlyHTMLElement;
   graphDomain: [number, number] = [0, 1];
   measureDomain: [number, number] = [0, 0];
 
-  constructor($container, mode: Mode = "absolute") {
+  constructor($container: HTMLElement, mode: Mode = "absolute") {
     this.mode = mode;
-    this.$container = $container;
+    this.$container = $container as Plotly.PlotlyHTMLElement;
     Plotly.newPlot($container, [], layout, config).then(hook);
 
     this.initEvents();
   }
 
-  makeErrorTrace({ color, fillcolor, name }, data): Array<Plotly.Data> {
-    let errorXs: Array<number> = [];
-    let errorYs: Array<number> = [];
-    let meanYs: Array<number> = [];
-    let meanXs: Array<number> = [];
-
-    data.forEach(({ date, high, mean }) => {
-      errorYs.push(high);
-      errorXs.push(date);
-
-      meanYs.push(mean);
-      meanXs.push(date);
-    });
-
-    for (let i = data.length - 1; i >= 0; i--) {
-      let { date, low } = data[i];
-      errorYs.push(low);
-      errorXs.push(date);
-    }
-
-    // error bars
-    let errorTrace: Plotly.Data = {
-      y: errorYs,
-      x: errorXs,
-      mode: "lines",
-      line: { color: "transparent" },
-      fillcolor: fillcolor,
-      fill: "tozerox",
-      type: "scatter",
-      showlegend: false,
-      hoverinfo: "skip"
-    };
-
-    let f = d3.format(".2s");
-    // estimation
-    let meanTrace: Plotly.Data = {
-      mode: "lines",
-      x: meanXs,
-      y: meanYs,
-      line: { color: color },
-      type: "scatter",
-      name: name,
-      hoverinfo: "text",
-      text: data.map(
-        ({ date, low, high }) =>
-          `${name}: ${f(low)}-${f(high)}<br />Date: ${date.toLocaleDateString(
-            "en-US",
-            {
-              year: "numeric",
-              month: "short",
-              day: "numeric"
-            }
-          )}`
-      )
-    };
-
-    return [meanTrace, errorTrace];
-  }
-
-  addHistoricalCases(target, regionData, ratesData, cb) {
-    let cfr = ratesData.cfr;
-
-    // this is the standard deviation (for plotting) in the log of cfr
-    // for example with `log_cfr_var = 0.69` we get
-    //    lower confidence bound `= cfr / exp(0.69) = cfr / 2`
-    //    upper conficence bound `= cfr * exp(0.69) = 2 cfr`
-    let log_cfr_var = 0.69; // exp(0.69) = 2
-
-    let scale_factor = 1;
-    if (this.mode == "percentage") {
-      scale_factor = regionData.population;
-    }
-
-    // retriveHistorical('italy', ({confirmed, deaths, dates}) => {
-    //   // let highestVals = [];
-
-    let timeseries = regionData.data.estimates.days;
-
-    let cv = 3;
-    let retrodicted: Array<{
-      date: Date;
-      low: number;
-      mean: number;
-      high: number;
-    }> = [];
-    let reported: Array<{
-      date: string;
-      confirmed: number;
-      deaths: number;
-    }> = [];
-    let max = 0;
-    Object.keys(timeseries).forEach(date => {
-      let { JH_Deaths: deaths, JH_Confirmed: confirmed } = timeseries[date];
-
-      confirmed /= scale_factor;
-      deaths /= scale_factor;
-
-      if (confirmed > 0) {
-        reported.push({ date, confirmed, deaths });
-        max = Math.max(max, confirmed);
-      }
-
-      if (deaths > 0) {
-        let mean = deaths / cfr;
-        let low = applyVariance(
-          mean,
-          [log_cfr_var, cv / Math.sqrt(deaths)],
-          -1
-        );
-        let high = applyVariance(
-          mean,
-          [log_cfr_var, cv / Math.sqrt(deaths)],
-          1
-        );
-
-        max = Math.max(max, high);
-
-        retrodicted.push({
-          date: moment(date)
-            .subtract(ONSET_TO_DEATH, "days")
-            .toDate(),
-          low: low,
-          mean: mean,
-          high: high
-        });
-      }
-    });
-
-    let symtomaticTraces = this.makeErrorTrace(
-      {
-        color: "white",
-        fillcolor: "rgba(255,255,255,0.3)",
-        name: "Cumulative Infected (est.)"
-      },
-      retrodicted
-    );
-
-    let reportedXs: Array<string> = [];
-    let reportedYs: Array<number> = [];
-    let lastConfirmed = 0;
-    reported.forEach(({ date, confirmed }) => {
-      if (lastConfirmed !== confirmed) {
-        reportedXs.push(date);
-        reportedYs.push(confirmed);
-        lastConfirmed = confirmed;
-      }
-    });
-
-    let reportedConfirmed: Plotly.Data = {
-      mode: "markers",
-      x: reportedXs,
-      y: reportedYs,
-      line: { color: "#fff" },
-      type: "scatter",
-      name: "Confirmed",
-      marker: { size: 3 },
-      hovertemplate: "Confirmed: %{y:,d}<br />Date: %{x}"
-    };
-
-    let data: Array<Partial<Plotly.Data>> = [
-      reportedConfirmed,
-      ...symtomaticTraces
-    ];
-
-    // redraw the lines on the graph
-    Plotly.addTraces(target, data);
-
-    if (cb) {
-      cb(retrodicted, reported, [1, max]);
-    }
-  }
-
-  update(regionData, measureData, ratesData) {
+  update(region: Region, measureData: any) {
     Plotly.react(this.$container, [], layout, config);
 
-    this.updateHistorical(regionData, ratesData);
+    this.updateHistorical(region);
 
     // addCurrentTraces(function (traces) {
     //   // redraw the lines on the graph
@@ -267,71 +330,74 @@ export class CurrentChart {
     if (measureData) this.updateMeasures(measureData);
   }
 
-  updateHistorical(regionData, ratesData) {
-    this.addHistoricalCases(
-      this.$container,
-      regionData,
-      ratesData,
-      (retrodicted, _reported, yrange) => {
-        // function mkDeltaTrace(name, other) {
-        //   return {
-        //     x: [],
-        //     y: [],
-        //     name: `Δ ${name}`,
-        //     histfunc: "sum",
-        //     marker: {
-        //       color: "rgba(255, 100, 102, 0.7)",
-        //       line: {
-        //         color: "rgba(255, 100, 102, 1)",
-        //         width: 1
-        //       }
-        //     },
-        //     autobinx: false,
-        //     xbins:{size: "D1"},
-        //     hovertemplate: "+%{y}",
-        //     opacity: 0.5,
-        //     type: "histogram",
-        //     ...other
-        //   }
-        // }
+  updateHistorical(region: Region) {
+    addEstimatedCases(this.$container, region, { mode: this.mode });
 
-        // let predictedDeltas = mkDeltaTrace("Predicted");
-        // for(let i = 1; i < retrodicted.length; i++){
-        //   let delta = retrodicted[i].mean - retrodicted[i-1].mean;
-        //   predictedDeltas.x.push(retrodicted[i].date);
-        //   predictedDeltas.y.push(delta);
-        // }
+    let data = addHistoricalCases(this.$container, region, {
+      mode: this.mode
+    });
 
-        // let confirmedDeltas = mkDeltaTrace("Confirmed");
-        // let deathsDeltas = mkDeltaTrace("Deaths");
-        // for(let i = 1; i < reported.length; i++){
-        //   let {date, confirmed, deaths} = reported[i];
+    if (!data) return;
 
-        //   confirmedDeltas.x.push(date);
-        //   confirmedDeltas.y.push(confirmed - reported[i-1].confirmed);
+    let { retrodicted, range: yrange } = data;
 
-        //   deathsDeltas.x.push(date);
-        //   deathsDeltas.y.push(deaths - reported[i-1].deaths);
-        // }
+    // function mkDeltaTrace(name, other) {
+    //   return {
+    //     x: [],
+    //     y: [],
+    //     name: `Δ ${name}`,
+    //     histfunc: "sum",
+    //     marker: {
+    //       color: "rgba(255, 100, 102, 0.7)",
+    //       line: {
+    //         color: "rgba(255, 100, 102, 1)",
+    //         width: 1
+    //       }
+    //     },
+    //     autobinx: false,
+    //     xbins:{size: "D1"},
+    //     hovertemplate: "+%{y}",
+    //     opacity: 0.5,
+    //     type: "histogram",
+    //     ...other
+    //   }
+    // }
 
-        // Plotly.addTraces(currentGraph, [predictedDeltas, deathsDeltas, confirmedDeltas]);
+    // let predictedDeltas = mkDeltaTrace("Predicted");
+    // for(let i = 1; i < retrodicted.length; i++){
+    //   let delta = retrodicted[i].mean - retrodicted[i-1].mean;
+    //   predictedDeltas.x.push(retrodicted[i].date);
+    //   predictedDeltas.y.push(delta);
+    // }
 
-        let startDate = "2020-03-01";
-        if (retrodicted.length != 0) {
-          startDate = retrodicted[0].date;
-        }
+    // let confirmedDeltas = mkDeltaTrace("Confirmed");
+    // let deathsDeltas = mkDeltaTrace("Deaths");
+    // for(let i = 1; i < reported.length; i++){
+    //   let {date, confirmed, deaths} = reported[i];
 
-        let endDate = moment().toDate();
+    //   confirmedDeltas.x.push(date);
+    //   confirmedDeltas.y.push(confirmed - reported[i-1].confirmed);
 
-        bounds.x = [startDate, endDate];
-        bounds.y = yrange.map(n => Math.log(n) / Math.log(10));
+    //   deathsDeltas.x.push(date);
+    //   deathsDeltas.y.push(deaths - reported[i-1].deaths);
+    // }
 
-        Plotly.relayout(this.$container, {
-          "xaxis.range": [...bounds.x],
-          "yaxis.range": [...bounds.y]
-        } as any);
-      }
-    );
+    // Plotly.addTraces(currentGraph, [predictedDeltas, deathsDeltas, confirmedDeltas]);
+
+    let startDate = new Date("2020-03-01");
+    if (retrodicted.length != 0) {
+      startDate = retrodicted[0].date;
+    }
+
+    let endDate = moment().toDate();
+
+    bounds.x = [startDate, endDate];
+    bounds.y = yrange.map(n => Math.log(n) / Math.log(10)) as [number, number];
+
+    Plotly.relayout(this.$container, {
+      "xaxis.range": [bounds.x[0], bounds.x[1]],
+      "yaxis.range": [bounds.y[0], bounds.y[1]]
+    });
   }
 
   initEvents() {
@@ -342,7 +408,8 @@ export class CurrentChart {
     });
 
     this.$container.on("plotly_hover", evt => {
-      let measure = (evt.points[0] as any).customdata;
+      let hit = evt.points[0] as { customdata?: MeasureItem } | undefined;
+      let measure = hit?.customdata;
       let measureShapes: Array<Partial<Plotly.Shape>> = [];
 
       if (!measure || !measure.start || !measure.end) return;
@@ -381,7 +448,7 @@ export class CurrentChart {
     });
   }
 
-  updateMeasures(measureData) {
+  updateMeasures(measureData: any) {
     let measures = parseMeasures(measureData);
 
     let measureTrace = {
@@ -419,7 +486,6 @@ export class CurrentChart {
     // measures.forEach(({start, type}) => {
     //   start = moment(start);
     //   let end = moment(start).add(10,"days");
-    //   console.log(start, end, type)
 
     //   //measuresTraces.push();
 
@@ -440,7 +506,7 @@ export class CurrentChart {
     Plotly.addTraces(this.$container, measureTrace as Plotly.Data);
   }
 
-  resize(measureCount) {
+  resize(measureCount: number) {
     let height = GRAPH_HEIGHT;
     if (measureCount === 0) {
       this.measureDomain = [0, 0];
@@ -456,6 +522,6 @@ export class CurrentChart {
       "yaxis.domain": this.graphDomain,
       "yaxis2.domain": this.measureDomain,
       height
-    } as any);
+    });
   }
 }

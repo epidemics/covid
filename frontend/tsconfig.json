@@ -1,15 +1,18 @@
 {
   "compilerOptions": {
-    "noImplicitAny": false,
     "module": "es6",
     "target": "es5",
     "lib": ["DOM", "DOM.Iterable", "ES2015", "ES2018.Promise"],
     "moduleResolution": "node",
     "allowJs": true,
+    "outDir": ".out",
     "sourceMap": true,
     "noImplicitThis": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true
   },
-  "exclude": ["node_modules"]
+  "exclude": ["../node_modules"],
+  "include": ["**/*", "../common/**/*"]
 }

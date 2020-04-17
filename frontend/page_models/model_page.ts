@@ -1,82 +1,36 @@
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
-import { isTouchDevice } from "../helpers";
-import { makeConfig } from "../components/graph-common";
-import { Region } from "../models";
+import { isTouchDevice, formatStatisticsLine } from "../helpers";
+import { makeConfig, Bounds, ChartInfo } from "../components/graph-common";
+import { Region, Scenario } from "../models";
 import { ModelTraces } from "../models/model_traces";
+import { addEstimatedCases } from "../page_measures/current-chart";
 
 const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;
 const MIN_CHART_SIZE = 500;
 
-let bounds = {
+let bounds: Bounds = {
   y: [0, 0.099],
-  x: ["2020-01-01", "2021-01-01"]
+  x: ["2020-01-01", "2021-01-01"] as [string, string]
 };
 
-type Options = { mitigation: string; region: Region };
+type Options = { mitigation: string | null; region: Region };
 
 export class ModelPage {
-  $container: HTMLElement;
+  $container: Plotly.PlotlyHTMLElement;
 
-  region: Region & { modelTraces?: ModelTraces };
-  mitigation: string = "none"; // TODO strong type this
+  region: Region;
+  scenario: string | null; // TODO strong type this
 
-  chartInfo: any;
+  chartInfo: ChartInfo;
+  showEstimates: boolean = false;
 
-  constructor($container: HTMLElement, { mitigation, region }: Options) {
-    this.$container = $container;
-    this.mitigation = mitigation;
-    this.region = region;
+  constructor($container_: HTMLElement, { mitigation, region }: Options) {
+    this.scenario = mitigation;
+    this.$container = $container_ as Plotly.PlotlyHTMLElement;
+    let $container = this.$container;
 
-    this.initChart();
-
-    this.update();
-  }
-
-  getMitigationId() {
-    let mitigationIds = {
-      none: "None",
-      weak: "Low",
-      moderate: "Medium",
-      strong: "High"
-    };
-
-    return mitigationIds[this.mitigation];
-  }
-
-  setMitigation(value: string) {
-    this.mitigation = value;
-    this.update();
-  }
-
-  setRegion(region: Region) {
-    this.region = region;
-    this.update();
-  }
-
-  updateStatistics() {
-    // const { population, stats } = this.region;
-    // if(!estimates)
-    //   return;
-    // let mitigation = this.getMitigationId();
-    // const stats = estimates.last;
-    // let total_infected = formatStatisticsLine(
-    //   stats.p05,
-    //   stats.p95,
-    //   population
-    // );
-    // $("#total-infected").html(total_infected);
-    // TODO
-    // let peak_infected = formatStatisticsLine(
-    //   stats.MaxActiveInfected_per1000_q05,
-    //   stats.MaxActiveInfected_per1000_q95,
-    //   population
-    // );
-    // $("#sim-infected").html(peak_infected);
-  }
-
-  initChart() {
     let screenshotInfo = () => {
       let region = this.region;
       if (!region) {
@@ -92,8 +46,6 @@ export class ModelPage {
       }
     };
 
-    let $container = this.$container;
-
     this.chartInfo = makeConfig(bounds, screenshotInfo);
     let { config, layout, hook } = this.chartInfo;
 
@@ -101,11 +53,11 @@ export class ModelPage {
     layout.width = size.width;
     layout.height = size.height;
 
-    layout.margin.r = 20;
-    layout.xaxis.type = "date";
-    layout.yaxis.title = "Active infections (% of population)";
-    layout.yaxis.tickformat = ".1%";
-    layout.yaxis.range = [...bounds.y];
+    layout.margin!.r = 20;
+    layout.xaxis!.type = "date";
+    layout.yaxis!.title = "Active infections (% of population)";
+    layout.yaxis!.tickformat = ".1%";
+    layout.yaxis!.range = [...bounds.y];
     layout.showlegend = true;
     layout.legend = {
       x: 1,
@@ -150,6 +102,78 @@ export class ModelPage {
         Plotly.relayout($container, size);
       }
     });
+
+    this.region = region; // to make TS not complain
+    this.setRegion(region);
+  }
+
+  setMitigation(value: string) {
+    this.scenario = value;
+    this.update();
+  }
+
+  setRegion(region: Region) {
+    this.region = region;
+
+    this.region.scenarios.then(scenarios => {
+      let $mitigation = $(".mitigation-strength-buttons").empty();
+
+      if (!this.scenario) this.scenario = scenarios.get(0).group;
+
+      scenarios.forEach((scenario: Scenario) => {
+        let group = scenario.group;
+        let name = scenario.name ?? group;
+        let description = scenario.description ?? "";
+
+        let out = $(`
+        <div class="mitigation-strength-button" id="mitigation-${group}">
+          <label class="btn btn-secondary ${
+            this.scenario == group ? "active" : ""
+          }">
+            <input
+              type="radio"
+              name="mitigation"
+              id="mitigation-${group}"
+              autocomplete="off"
+              value="${group}"/>
+            ${name}
+            <div class="mitigation-strength-explanation">
+              ${description}
+            </div>
+          </label>
+        </div>`);
+
+        $mitigation.append(out);
+
+        out.find("input[type=radio").click(() => this.setMitigation(group));
+      });
+    });
+
+    this.update(true);
+  }
+
+  async updateStatistics() {
+    const { population } = this.region;
+
+    let statistics = await this.region.statistics(this.scenario);
+
+    let total_infected = statistics
+      ? formatStatisticsLine(
+          statistics.totalInfected.q05,
+          statistics.totalInfected.q95,
+          population
+        )
+      : "&mdash;";
+    $("#total-infected").html(total_infected);
+
+    let peak_infected = statistics
+      ? formatStatisticsLine(
+          statistics.maxActiveInfected.q05,
+          statistics.maxActiveInfected.q95,
+          population
+        )
+      : "&mdash;";
+    $("#sim-infected").html(peak_infected);
   }
 
   calculateChartSize() {
@@ -163,39 +187,16 @@ export class ModelPage {
     };
   }
 
-  // Checks if the max and traces have been loaded and preprocessed for the given region;
-  // if not, loads them and does preprocessing; then caches it in the region object.
-  // Finally calls thenTracesMax(mitigationTraces, max_Y_val).
-  loadGleamvizTraces(): Promise<ModelTraces> {
-    let population = this.region.population;
-    // let initial_infected =
-    //   (this.region.estimates?.now()?.mean ?? 0) / population;
-
-    let modelTraces = this.region.modelTraces;
-    if (modelTraces) {
-      return Promise.resolve(modelTraces);
-    }
-
-    // Not cached, load and preprocess
-    let tracesUrl = this.region.dataUrlV3;
-
-    return d3
-      .json(`https://storage.googleapis.com/static-covid/static/${tracesUrl}`)
-      .then(data => {
-        // TODO error handling
-
-        let modelTraces = ModelTraces.fromv3(data, { population });
-        this.region.modelTraces = modelTraces; // cache model traces
-
-        return modelTraces;
-      });
-  }
-
   // update the graph
-  update() {
+  async update(resetAxis: boolean = false) {
     Plotly.react(this.$container, [], this.chartInfo.layout);
 
-    let mitigationId = this.getMitigationId();
+    if (this.showEstimates) {
+      addEstimatedCases(this.$container, this.region, {
+        mode: "percentage",
+        addCI: false
+      });
+    }
 
     // update the name of the region in the text below the graph
     this.updateRegionInText();
@@ -203,26 +204,43 @@ export class ModelPage {
     // update the summary statistics per selected mitigation strength
     this.updateStatistics();
 
-    let { layout } = this.chartInfo;
+    this.region.customModelDescription.then(modelDescription => {
+      if (modelDescription) {
+        $(".custom-model-explanation")
+          .html(modelDescription)
+          .show();
+
+        $(".model-explanation").hide();
+      } else {
+        $(".model-explanation").show();
+        $(".custom-model-explanation").hide();
+      }
+    });
+
+    let scenario = await this.region.getScenario(this.scenario);
 
     // Load and preprocess the per-region graph data
-    this.loadGleamvizTraces().then(({ maxY, traces, xrange }: ModelTraces) => {
+    this.region.modelTraces.then(({ maxY, traces, xrange }: ModelTraces) => {
       maxY *= 1.01;
 
-      layout.yaxis.range = [0, maxY];
-      bounds.y = [0, maxY];
+      let start = this.showEstimates ? new Date("2020-02-01") : xrange[0];
+
+      if (resetAxis) {
+        Plotly.relayout(this.$container, {
+          "yaxis.range": [0, maxY],
+          "xaxis.range": [start, xrange[1]]
+        });
+
+        bounds.y = [0, maxY];
+        bounds.x = [xrange[0], xrange[1]];
+      }
+
       // AddCriticalCareTrace(mitigTraces[mitigationId]);
       // redraw the lines on the graph
-
-      console.log({ maxY, traces, xrange });
-
       Plotly.addTraces(
         this.$container,
-        traces.filter(
-          trace => trace.customdata?.mitigation == mitigationId
-        ) as any
+        traces.filter(trace => trace?.scenario == scenario.group)
       );
-      bounds.x = [...xrange];
     });
   }
 

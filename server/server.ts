@@ -5,6 +5,7 @@ import express from "express";
 import compression from "compression";
 import nunjucks from "nunjucks";
 import morgan from "morgan";
+import constants from "../common/constants";
 
 import webpack from "webpack";
 import webpackDev from "webpack-dev-middleware";
@@ -28,14 +29,22 @@ nunjucks.configure(path.join(__dirname, "templates"), {
   express: app
 });
 
+app.locals.DEFAULT_EPIFOR_CHANNEL =
+  process.env.DEFAULT_EPIFOR_CHANNEL ?? "testing";
+
 // set up the static file server, but only if we get no STATIC_URL
 if (!process.env.STATIC_URL) {
   let mount = "/static";
 
-  app.locals.STATIC_URL = mount;
+  app.locals.ASSET_ROOT = mount;
   app.use(mount, express.static(path.join(__dirname, "../static")));
 } else {
-  app.locals.STATIC_URL = process.env.STATIC_URL;
+  app.locals.ASSET_ROOT = process.env.STATIC_URL;
+}
+
+// add local constants
+for (let key in constants) {
+  app.locals[key] = constants[key];
 }
 
 if (app.get("env") === "development") {
@@ -49,7 +58,7 @@ if (app.get("env") === "development") {
 
   app.locals.BUNDLE_LOCATION = publicPath;
 } else {
-  app.locals.BUNDLE_LOCATION = app.locals.STATIC_URL;
+  app.locals.BUNDLE_LOCATION = app.locals.ASSET_ROOT;
 }
 
 // make the navigation structure availible and load the routes

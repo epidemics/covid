@@ -1,8 +1,8 @@
-import * as d3 from "d3";
 import { ModelPage } from "./model_page";
 import { RegionDropdown } from "../components/region-dropdown";
 import { getTimezone, setGetParamUrl } from "../helpers";
 import { Region, Regions } from "../models";
+import { makeDataStore } from "../ds";
 
 const SELECTION_PARAM = "selection";
 const MITIGATION_PARAM = "mitigation";
@@ -25,7 +25,7 @@ class Controller {
     private regions: Regions,
     params: Options
   ) {
-    let mitigation = params.mitigation || "none";
+    let mitigation = params.mitigation;
 
     this.dropdown = new RegionDropdown($dropdown, key => {
       this.changeRegion(key, true);
@@ -65,23 +65,10 @@ class Controller {
 
     // initialize the select picker
     $('[data-toggle="tooltip"]').tooltip();
-
-    $<HTMLInputElement>("#mitigation input[type=radio]").each(
-      (_index: number, elem: HTMLInputElement): void | false => {
-        if (elem.value === mitigation) {
-          elem.checked = true;
-          elem.parentElement?.classList.add("active");
-        }
-
-        elem.addEventListener("click", () => {
-          this.modelPage.setMitigation(elem.value);
-        });
-      }
-    );
   }
 
   getRegionUrl(region: Region) {
-    return setGetParamUrl(SELECTION_PARAM, region.key);
+    return setGetParamUrl(SELECTION_PARAM, region.code);
   }
 
   // change the displayed region
@@ -120,16 +107,11 @@ if ($pageContainer && $dropdown) {
     mitigation: url.searchParams.get(MITIGATION_PARAM)
   };
 
-  let channel = params.channel || "main";
+  let channel = params.channel || DEFAULT_EPIFOR_CHANNEL;
 
-  let sources = [`data-${channel}-v4.json`];
+  let data = makeDataStore(channel);
 
-  Promise.all(
-    sources.map(path =>
-      d3.json(`https://storage.googleapis.com/static-covid/static/${path}`)
-    )
-  ).then(data => {
-    let [baseData] = data;
-    new Controller($dropdown, $pageContainer, Regions.fromv4(baseData), params);
+  data.regions.then(regions => {
+    new Controller($dropdown, $pageContainer, regions, params);
   });
 }

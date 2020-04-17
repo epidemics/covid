@@ -1,4 +1,6 @@
-export class RatesInfo {
+import { v4 } from "../../common/spec";
+
+export class Rates {
   /** fraction of population that needs hospitalization */
   hospitalization: number;
 
@@ -14,13 +16,9 @@ export class RatesInfo {
     this.cfr = cfr;
   }
 
-  static fromv4(obj: any): RatesInfo | undefined {
+  static fromv4(obj: v4.Rates): Rates | undefined {
     if (obj) {
-      return new RatesInfo(
-        obj.Hospitalization,
-        obj.Critical,
-        obj.CaseFatalityRate
-      );
+      return new Rates(obj.Hospitalization, obj.Critical, obj.CaseFatalityRate);
     }
   }
 }

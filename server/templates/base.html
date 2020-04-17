@@ -9,14 +9,14 @@ endset -%}
     <meta charset="utf-8" />
     <link
       rel="preload"
-      href="https://storage.googleapis.com/static-covid/static/data-main-v3.json"
+      href="{{ STATIC_ROOT }}/data-main-v3.json"
     />
     <meta http-equiv="Content-Type" content="text/html" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <link rel="icon" href="{{STATIC_URL}}/img/favicon.ico" />
+    <link rel="icon" href="{{ASSET_ROOT}}/img/favicon.ico" />
 
     <title>{{ title }}</title>
     <meta name="description" content="{{ description }}" />
@@ -25,7 +25,7 @@ endset -%}
     <meta property="og:title" content="{{ title }}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ request.url }}" />
-    <meta property="og:image" content="{{STATIC_URL}}/img/thumbnail.jpg" />
+    <meta property="og:image" content="{{ASSET_ROOT}}/img/thumbnail.jpg" />
     <meta property="og:description" content="{{ description }}" />
 
     <!-- Google Tag Manager -->
@@ -76,7 +76,7 @@ endset -%}
     />
 
     <!-- Custom styles for this template -->
-    <link href="{{STATIC_URL}}/css/main.css" rel="stylesheet" />
+    <link href="{{ASSET_ROOT}}/css/main.css" rel="stylesheet" />
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script
@@ -114,6 +114,10 @@ endset -%}
     <!-- ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CURL%2Cfetch%2CPromise"></script>
+
+    <script>
+    var DEFAULT_EPIFOR_CHANNEL = "{{ DEFAULT_EPIFOR_CHANNEL }}";
+    </script>    
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"

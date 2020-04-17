@@ -11,9 +11,15 @@ export type ChartInfo = {
   hook: (gd: Plotly.PlotlyHTMLElement) => void;
 };
 
-type Range = [number, number];
+export type Bounds = {
+  x: Plotly.Range<number | Date | string>;
+  y: Plotly.Range;
+};
 
-export function makeConfig(bounds, screenshotInfo?: ScreenshotInfo): ChartInfo {
+export function makeConfig(
+  bounds: Bounds,
+  screenshotInfo?: ScreenshotInfo
+): ChartInfo {
   // graph layout
   let layout: Partial<Plotly.Layout> = {
     margin: { t: 40 },
@@ -79,7 +85,7 @@ export function makeConfig(bounds, screenshotInfo?: ScreenshotInfo): ChartInfo {
 
   function ensureZero(gd: Plotly.PlotlyHTMLElement) {
     let shouldUpdate = false;
-    let range = layout.yaxis?.range as Range;
+    let range = layout.yaxis?.range as Plotly.Range;
     let ybounds = bounds.y;
     if (range[0] < ybounds[0]) {
       range[1] += ybounds[0] - range[0];
@@ -119,7 +125,7 @@ export function makeConfig(bounds, screenshotInfo?: ScreenshotInfo): ChartInfo {
         compose: ($canvas, plot, width, height) => {
           $canvas.width = width;
           $canvas.height = height;
-          let ctx = $canvas.getContext("2d");
+          let ctx = $canvas.getContext("2d")!;
 
           ctx.filter = "invert(1)";
           ctx.drawImage(plot, 0, 0);
@@ -127,7 +133,7 @@ export function makeConfig(bounds, screenshotInfo?: ScreenshotInfo): ChartInfo {
           const LINE_SPACING = 0.15;
 
           let y = 0;
-          function drawCenteredText(text, size) {
+          function drawCenteredText(text: string, size: number) {
             y += (1 + LINE_SPACING) * size;
             ctx.font = `${Math.round(size)}px "DM Sans"`;
             let x = (width - ctx.measureText(text).width) / 2;
@@ -159,9 +165,9 @@ export function makeConfig(bounds, screenshotInfo?: ScreenshotInfo): ChartInfo {
     icon: Plotly.Icons.autoscale,
     click: gd => {
       Plotly.relayout(gd, {
-        "yaxis.range": [...bounds.y],
-        "xaxis.range": [...bounds.x]
-      } as any);
+        "yaxis.range": [bounds.y[0], bounds.y[1]],
+        "xaxis.range": [bounds.x[0], bounds.x[1]]
+      });
     }
   };
 

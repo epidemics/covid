@@ -1,4 +1,4 @@
-import { v4 } from "../../spec";
+import { v4 } from "../../common/spec";
 import { Region } from "./region";
 
 export type Regions = {
@@ -6,10 +6,10 @@ export type Regions = {
 };
 
 export const Regions = {
-  fromv4: (obj: v4.Root): Regions => {
+  fromv4(obj: v4.Regions): Regions {
     let regions: Regions = {};
-    Object.keys(obj.regions).forEach(code => {
-      regions[code] = Region.fromv4(code, obj.regions[code]);
+    Object.keys(obj).forEach(code => {
+      regions[code] = Region.fromv4(code, obj[code]);
     });
     return regions;
   }

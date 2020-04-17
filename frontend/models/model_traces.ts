@@ -1,27 +1,33 @@
-import { v4, v3 } from "../../spec";
+import { v4, v3 } from "../../common/spec";
 import { formatSIInteger } from "../helpers";
 import * as d3 from "d3";
+import { Region } from "./region";
 
-const SCNARIO_COLORS = {
+const SCENARIO_COLORS: { [key: string]: string } = {
   "WEAK-WEAK": "#edcdab",
   "MEDIUM-WEAK": "#edb77e",
   "STRONG-WEAK": "#e97f0f",
   "WEAK-STRONG": "#9ac9d9",
   "MEDIUM-STRONG": "#5abbdb",
-  "STRONG-STRONG": "#007ca6"
+  "STRONG-STRONG": "#007ca6",
+  "HIGHER-WEAK": "#edcdab",
+  "EXPECTED-WEAK": "#edb77e",
+  "LOWER-WEAK": "#e97f0f",
+  "HIGHER-STRONG": "#9ac9d9",
+  "EXPECTED-STRONG": "#5abbdb",
+  "LOWER-STRONG": "#007ca6"
 };
 
 interface Trace {
   x: string[];
   y: number[];
   text: string[];
-  customdata: {
-    mitigation: string;
-  };
+  scenario: string;
   name?: string;
   line: Partial<Plotly.ScatterLine>;
   hovertemplate?: string;
-  hoverlabel?: any;
+  legendgroup?: string;
+  hoverlabel?: Partial<Plotly.HoverLabel>;
   type: "scatter";
 }
 
@@ -47,42 +53,35 @@ export class ModelTraces {
     public xrange: [string, string]
   ) {}
 
-  static fromv4(
-    obj: v4.ModelTraces,
-    {
-      population,
-      initial_infected
-    }: { population: number; initial_infected: number }
-  ): ModelTraces {
+  static fromv4(obj: v4.ModelTraces, region: Region): ModelTraces {
     let dates = obj.date_index;
     let length = dates.length;
     let xrange: [string, string] = [dates[0], dates[length - 1]];
 
     let maxY = -Infinity;
     function makeTrace(obj: v4.ModelTrace) {
+      let { name, group } = obj;
+
       let trace: Trace = {
         type: "scatter",
-        name: obj.name,
-        customdata: {
-          mitigation: obj.group
-        },
+        name,
+        scenario: group,
         text: [],
         x: dates,
         y: [],
         line: {
           shape: "spline",
-          color: SCNARIO_COLORS[obj.key]
+          smoothing: 0,
+          color: SCENARIO_COLORS[obj.key.replace("_", "-")]
         },
         hovertemplate: "%{text}<br />%{y:.2p}",
         hoverlabel: { namelength: -1 }
       };
 
-      let cummulative = initial_infected;
-      for (let i = 0; i < length; i++) {
-        cummulative += (obj.infected[i] - obj.recovered[i]) * 10000;
-
-        trace.y.push(cummulative);
-        trace.text.push(formatPop(cummulative * population));
+      for (let i = 1; i < length - 1; i++) {
+        let value = +obj.active[i];
+        trace.y.push(value);
+        trace.text.push(formatPop(value * region.population));
       }
       maxY = Math.max(maxY, ...trace.y);
 
@@ -94,20 +93,19 @@ export class ModelTraces {
     return new ModelTraces(traces, maxY, xrange);
   }
 
-  static fromv3(
-    obj: v3.ModelTraces,
-    { population }: { population: number }
-  ): ModelTraces {
+  static fromv3(obj: v3.ModelTraces, region: Region): ModelTraces {
     let traces: Trace[] = [];
     let maxY = -Infinity;
     Object.keys(obj).forEach(mitigation => {
       let group = obj[mitigation];
       group.forEach((obj: v3.ModelTrace) => {
         let trace: Trace = {
-          customdata: { mitigation },
+          scenario: mitigation,
           text: [],
           ...obj
         };
+
+        trace.legendgroup = obj.line.color as string | undefined;
 
         if (obj.hoverinfo !== "skip") {
           trace.hoverlabel = { namelength: -1 };
@@ -120,7 +118,7 @@ export class ModelTraces {
           let y = trace.y[i] / 1000;
           maxY = Math.max(maxY, y);
           trace.y[i] = y;
-          trace.text.push(formatPop(y * population));
+          trace.text.push(formatPop(y * region.population));
         }
 
         // When x has length 1, extend it to a day sequence of len(y) days

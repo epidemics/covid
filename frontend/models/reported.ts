@@ -1,4 +1,4 @@
-import { v4 } from "../../spec";
+import { v4 } from "../../common/spec";
 
 export interface ReportDay {
   date: Date;
@@ -8,7 +8,7 @@ export interface ReportDay {
   recovered: number;
 }
 
-export class ReportedInfo {
+export class Reported {
   private constructor(public points: ReportDay[]) {}
 
   get last() {
@@ -16,7 +16,7 @@ export class ReportedInfo {
     return this.points[i - 1];
   }
 
-  static fromv4(obj: v4.JohnsHopkins): ReportedInfo | undefined {
+  static fromv4(obj: v4.JohnsHopkins): Reported | undefined {
     if (!obj) return;
 
     let points: ReportDay[] = [];
@@ -24,12 +24,12 @@ export class ReportedInfo {
     for (let i = 0; i < length; i++) {
       points.push({
         date: new Date(obj.Date[i]),
-        recovered: obj.Recovered[i],
-        deaths: obj.Deaths[i],
-        active: obj.Active[i],
-        confirmed: obj.Confirmed[i]
+        recovered: +obj.Recovered[i],
+        deaths: +obj.Deaths[i],
+        active: +obj.Active[i],
+        confirmed: +obj.Confirmed[i]
       });
     }
-    return new ReportedInfo(points);
+    return new Reported(points);
   }
 }
