@@ -49,11 +49,14 @@ export class ModelTraces {
   ) {}
 
   static fromv4(obj: v4.ModelTraces, region: Region): ModelTraces {
-    console.log(obj);
-
     let dates = obj.date_index;
     let length = dates.length;
     let xrange: [string, string] = [dates[0], dates[length - 1]];
+    let initial_infected = region.estimates!.at(
+      moment(dates[0])
+        .add({ days: -2 })
+        .toDate()
+    )!.mean;
 
     let maxY = -Infinity;
     function makeTrace(obj: v4.ModelTrace) {
@@ -72,12 +75,6 @@ export class ModelTraces {
         hovertemplate: "%{text}<br />%{y:.2p}",
         hoverlabel: { namelength: -1 }
       };
-
-      let initial_infected = region.estimates!.at(
-        moment(dates[0])
-          .add({ days: -2 })
-          .toDate()
-      )!.mean;
 
       let cummulative = initial_infected / region.population;
       for (let i = 0; i < length; i++) {

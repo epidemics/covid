@@ -1,8 +1,7 @@
 import * as Plotly from "plotly.js";
-import * as d3 from "d3";
 import { isTouchDevice } from "../helpers";
 import { Regions, Region } from "../models";
-import { STATIC_ROOT } from "../../common/constants";
+import { makeDataStore } from "../ds";
 
 const MAP_ID = "mapid";
 const ISO_KEY = "iso_a3";
@@ -27,7 +26,7 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
   let zmin = -3.5;
 
   // invert the binary tree
-  Object.keys(regions).forEach(key => {
+  Object.keys(regions).map(key => {
     let region: Region = regions[key];
 
     let current = region.currentActiveInfected();
@@ -175,12 +174,10 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
   });
 }
 
-let sources = ["data-main-v4.json", "casemap-geo.json"];
 const caseMap = document.getElementById(MAP_ID);
 if (caseMap) {
-  Promise.all(sources.map(path => d3.json(`${STATIC_ROOT}/${path}`))).then(
-    ([baseData, geoData]) => {
-      makeMap(caseMap, Regions.fromv4(baseData), geoData);
-    }
+  let data = makeDataStore("main");
+  Promise.all([data.regions, data.geoData]).then(([regions, geoData]) =>
+    makeMap(caseMap, regions, geoData)
   );
 }
