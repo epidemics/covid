@@ -70,8 +70,9 @@ const APP_NAME: string = `${env.npm_package_name} ${env.npm_package_version}`;
 app.get("/status", (_req, res) =>
   res.json({
     app: APP_NAME,
-    env: app.get("env"),
-    version: process.env.APP_VERSION
+    nodeEnv: app.get("env"),
+    version: process.env.APP_VERSION,
+    epiforChannel: process.env.DEFAULT_EPIFOR_CHANNEL
   })
 );
 
