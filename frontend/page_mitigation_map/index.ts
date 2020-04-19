@@ -5,7 +5,7 @@ import { makeDataStore } from "../ds";
 const MAP_ID = "mapid";
 const ISO_KEY = "iso_a3";
 
-function makeMitigationMap(caseMap: HTMLElement, betaData, geoData: any) {
+function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
   function value_to_labels(v: number) {
     return v.toString();
   }
