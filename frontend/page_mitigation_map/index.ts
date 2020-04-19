@@ -1,6 +1,5 @@
 import * as Plotly from "plotly.js";
 import { isTouchDevice } from "../helpers";
-import { Regions, Region } from "../models";
 import { makeDataStore } from "../ds";
 
 const MAP_ID = "mapid";
