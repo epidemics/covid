@@ -11,7 +11,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData, geoData: any) {
   }
 
   function get_tick_values(zmax, step) {
-    var res = [];
+    let res: Array<number> = [];
     let i = 0;
     while (i <= zmax) {
       res.push(i);
