@@ -99,7 +99,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData, geoData: any) {
     zmax,
     zmin,
     text: items.map(thing => thing.text),
-    colorscale: colorscale,
+    colorscale,
     showscale: true,
     customdata: items.map(thing => thing.url_key),
     hovertemplate: "%{text}" + "<extra></extra>",
