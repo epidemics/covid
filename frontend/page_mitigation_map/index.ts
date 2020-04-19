@@ -46,7 +46,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
   let zmax = zmin + (_zmax - zmin) / (1 - offset);
   let value_for_missing = zmax + offset;
 
-  let colorscale = [
+  let colorscale: Array<[number, string]> = [
     [0, "rgb(0,153,0)"],
     [0.5 / _zmax, "rgb(0,153,0)"],
     [0.5 / _zmax, "rgb(255,255,0)"],
