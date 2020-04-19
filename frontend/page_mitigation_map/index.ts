@@ -21,7 +21,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
   }
 
   let info_by_iso3: {
-    [key: string]: { regionInfo; z: number; current: number };
+    [key: string]: { name: string; code: string; beta1: number };
   } = {};
   let _zmax = 1; // we want the max to start at 1
   let zmin = 0;
