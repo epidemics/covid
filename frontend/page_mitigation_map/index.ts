@@ -27,11 +27,23 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
   let _zmax = 1; // we want the max to start at 1
   let zmin = 0;
 
-  betaData = betaData.filter(
-    x => x["Beta1"] != "" && x["iso_a2"] != "" && x[ISO_KEY] != ""
-  );
+  function betaDataItemValid(item: {
+    Name: string;
+    iso_a2: string;
+    iso_a3: string;
+    Beta1: string;
+  }) {
+    return item["Beta1"] != "" && item["iso_a2"] != "" && item["iso_a3"] != "";
+  }
 
-  betaData.map(function(countryData) {
+  betaData = betaData.filter(betaDataItemValid);
+
+  betaData.map(function(countryData: {
+    Name: string;
+    iso_a2: string;
+    iso_a3: string;
+    Beta1: string;
+  }) {
     info_by_iso3[countryData[ISO_KEY]] = {
       name: countryData["Name"],
       code: countryData["iso_a2"],
