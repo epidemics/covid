@@ -1,4 +1,5 @@
 import * as Plotly from "plotly.js";
+import * as d3 from "d3";
 import { isTouchDevice } from "../helpers";
 import { makeDataStore } from "../ds";
 
@@ -10,7 +11,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
     return v.toString();
   }
 
-  function get_tick_values(zmax, step) {
+  function get_tick_values(zmax: number, step: number) {
     let res: Array<number> = [];
     let i = 0;
     while (i <= zmax) {
