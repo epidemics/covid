@@ -204,7 +204,7 @@ if (mitigationMap) {
   let data = makeDataStore();
   Promise.all([
     d3.csv(
-      "https://storage.googleapis.com/static-covid/static/beta-estimates-2020-04-20.csv"
+      "https://storage.googleapis.com/static-covid/static/beta-estimates-2020-04-20-2.csv"
     ),
     data.geoData
   ]).then(([betaData, geoData]) =>
