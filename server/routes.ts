@@ -4,12 +4,20 @@ import { Router, RequestHandler } from "express";
 const MODELS = "models";
 const CASE_MAP = "case-map";
 const MITIGATION = "mitigation";
+const MITIGATION_MAP = "mitigation-map";
 const REQUEST_MODEL = "request-model";
 const ABOUT = "about";
 const MEASURES = "measures";
 
 // order of the pages as diplayed in the navigation bar
-let navigation = [MODELS, CASE_MAP, MITIGATION, REQUEST_MODEL, ABOUT];
+let navigation = [
+  MODELS,
+  CASE_MAP,
+  MITIGATION_MAP,
+  MITIGATION,
+  REQUEST_MODEL,
+  ABOUT
+];
 
 type NavBarEntry = { path: string; id: string; caption: string };
 
@@ -42,6 +50,12 @@ add(MODELS, { path: "/", caption: "Models" }, (req, res) =>
 
 add(CASE_MAP, { path: "/case-map", caption: "Case map" }, (req, res) =>
   res.render("case-map.html")
+);
+
+add(
+  MITIGATION_MAP,
+  { path: "/mitigation-map", caption: "Mitigation map" },
+  (req, res) => res.render("mitigation-map.html")
 );
 
 add(MEASURES, { path: "/measures", caption: "Measures" }, (req, res) =>
