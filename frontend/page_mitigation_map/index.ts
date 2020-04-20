@@ -24,7 +24,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
   let info_by_iso3: {
     [key: string]: { name: string; code: string; z: number };
   } = {};
-  let _zmax = 3; // we want the max to start at 3
+  let _zmax = 3.7; // we want the max to start at 3
   let zmin = 0;
 
   function betaDataItemValid(item: {
@@ -44,13 +44,13 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
     iso_a3: string;
     Beta1: string;
   }) {
-    let effectiveReplicationNumber = parseFloat(countryData["Beta1"]) * 2;
+    let reproductionNumber = parseFloat(countryData["Beta1"]) * 2;
     info_by_iso3[countryData[ISO_KEY]] = {
       name: countryData["Name"],
       code: countryData["iso_a2"],
-      z: effectiveReplicationNumber
+      z: reproductionNumber
     };
-    _zmax = Math.max(_zmax, effectiveReplicationNumber);
+    _zmax = Math.max(_zmax, reproductionNumber);
   });
 
   let offset = 0.00001;
@@ -60,19 +60,26 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
   let zmax = zmin + (_zmax - zmin) / (1 - offset);
   let value_for_missing = zmax + offset;
 
-  const GREEN_RGB = "rgb(0,200,0)";
-  const YELLOW_RGB = "rgb(255,255,0)";
-  const RED_RGB = "rgb(255,0,0)";
-  const VIOLET_RGB = "rgb(143,0,255)";
+  let GREEN_RGB = "rgb(0,200,0)";
+  let YELLOW_RGB = "rgb(255,255,0)";
+  let RED_RGB = "rgb(255,0,0)";
+  let VIOLET_RGB = "rgb(143,0,255)";
+  let BLACK_RGB = "rgb(60,60,60";
+
+  function relativeBeta(beta: number) {
+    return (beta * 2 - zmin) / (zmax - zmin);
+  }
 
   let colorscale: Array<[number, string]> = [
     [0, GREEN_RGB],
-    [1 / _zmax, GREEN_RGB],
-    [1.5 / _zmax, YELLOW_RGB],
-    [2 / _zmax, RED_RGB],
-    [3 / _zmax, VIOLET_RGB],
+    // the colors are specified for specific value of beta
+    // the function relativeBeta converts the given beta to the number between 0 and 1
+    [relativeBeta(0.4), GREEN_RGB],
+    [relativeBeta(0.6), YELLOW_RGB],
+    [relativeBeta(1), RED_RGB],
+    [relativeBeta(1.8), VIOLET_RGB],
     [1 - offset, VIOLET_RGB],
-    [1, "rgb(70,70,70"]
+    [1, BLACK_RGB]
   ];
 
   // this is a list of items that will later be putting into the plotly trace
@@ -94,7 +101,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
       item.text =
         `<b>${item.name}</b><br />` +
         "Estimations:<br />" +
-        `Effective replication number: <b>${item.z}</b><br />`;
+        `Effective reproduction number: <b>${item.z}</b><br />`;
 
       item.url_key = info.code;
     } else {
@@ -109,7 +116,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
   let mapData: Partial<Plotly.PlotData> = {
     // @ts-ignore
     type: "choroplethmapbox",
-    name: "COVID-19: Effective replication number",
+    name: "COVID-19: Effective reproduction number",
     geojson: geoData,
     featureidkey: "properties." + ISO_KEY,
     locations: items.map(thing => thing.iso3),
@@ -129,7 +136,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
     colorbar: {
       thickness: 10,
       title: {
-        text: "Effective replication number",
+        text: "Effective reproduction number",
         side: "right",
         font: {
           color: "#B5B5B5",
