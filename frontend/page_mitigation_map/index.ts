@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import { isTouchDevice } from "../helpers";
 import { makeDataStore } from "../ds";
 
-const MAP_ID = "mapid";
+const MAP_ID = "mitigation_mapid";
 const ISO_KEY = "iso_a3";
 
 function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
@@ -113,7 +113,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
     items.push(item);
   }
 
-  let mapData: Partial<Plotly.PlotData> = {
+  let mitigationMapData: Partial<Plotly.PlotData> = {
     // @ts-ignore
     type: "choroplethmapbox",
     name: "COVID-19: Effective reproduction number",
@@ -154,7 +154,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
 
   if (isTouchDevice()) {
     // @ts-ignore
-    mapData.colorbar.x = 0;
+    mitigationMapData.colorbar.x = 0;
   }
 
   let layout: Partial<Plotly.Layout> = {
@@ -176,9 +176,9 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
     modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
   };
 
-  Plotly.newPlot(caseMap, [mapData], layout, config).then(gd => {
+  Plotly.newPlot(caseMap, [mitigationMapData], layout, config).then(gd => {
     if (isTouchDevice()) {
-      $(".case-map-nav-action").text("Tap twice");
+      $(".map-nav-action").text("Tap twice");
 
       let last: null | string = null;
 
