@@ -42,9 +42,9 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
     Name: string;
     iso_a2: string;
     iso_a3: string;
-    Beta1: string;
+    Beta: string;
   }) {
-    let reproductionNumber = parseFloat(countryData["Beta1"]) * 2;
+    let reproductionNumber = parseFloat(countryData["Beta"]) * 2;
     info_by_iso3[countryData[ISO_KEY]] = {
       name: countryData["Name"],
       code: countryData["iso_a2"],
@@ -207,7 +207,7 @@ if (mitigationMap) {
   let data = makeDataStore();
   Promise.all([
     d3.csv(
-      "https://storage.googleapis.com/static-covid/static/estimates-JK-2020-04-15-with-iso.csv"
+      "https://storage.googleapis.com/static-covid/static/beta-estimates-2020-04-20.csv"
     ),
     data.geoData
   ]).then(([betaData, geoData]) =>
