@@ -1,10 +1,11 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { Regions, Thunk, Region, Scenario, Scenarios } from "../models";
 import { getTimezone, getUrlParam } from "../helpers";
 import { RegionSelector } from "../components/RegionSelector";
 import { ModelView } from "./ModelView";
 import { makeDataStore } from "../ds";
-import * as ReactDOM from "react-dom";
+import { DismissableAlert } from "../components/DismissableAlert";
 
 const REGION_FALLBACK = "united kingdom";
 const SELECTION_PARAM = "selection";
@@ -38,7 +39,7 @@ function useThunk<T>(init: T, promise: Thunk<T> | undefined | null): T {
   return state;
 }
 
-const data = makeDataStore(DEFAULT_EPIFOR_CHANNEL);
+const data = makeDataStore();
 
 export function Page() {
   const regions = useThunk<Regions>([], data.regions);
@@ -49,7 +50,7 @@ export function Page() {
 
   const scenarios = useThunk<Scenarios | null>(null, region?.scenarios);
 
-  let scenario = scenarios?.get(scenarioID ?? 0);
+  let scenario = scenarios?.get(scenarioID ?? 0) ?? null;
 
   React.useEffect(() => {
     // determines the users timezone
@@ -72,6 +73,26 @@ export function Page() {
 
   return (
     <>
+      <DismissableAlert
+        className="pro-bono-banner"
+        storage={window.sessionStorage}
+        dismissalDuration={{ days: 1 }}
+        id="consultingAlert"
+        revision="0"
+      >
+        <p>
+          We're offering pro bono consulting services and custom forecasts for
+          decision-makers. Please reach out{" "}
+          <a
+            href="http://epidemicforecasting.org/request-calculation"
+            className="alert-link"
+          >
+            here
+          </a>
+          .
+        </p>
+      </DismissableAlert>
+
       <RegionSelector
         regions={regions}
         selected={region}
@@ -79,14 +100,12 @@ export function Page() {
       />
 
       <hr />
-      {scenario ? (
-        <ModelView
-          region={region}
-          scenario={scenario}
-          scenarios={scenarios}
-          dispatch={dispatch}
-        />
-      ) : null}
+      <ModelView
+        region={region}
+        scenario={scenario}
+        scenarios={scenarios}
+        dispatch={dispatch}
+      />
     </>
   );
 }

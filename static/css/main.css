@@ -858,6 +858,6 @@ table td {
   text-transform: uppercase;
 }
 
-#consultingAlert .close:hover {
+.alert-dismissible .close:hover {
   color: white;
 }
