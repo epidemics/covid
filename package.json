@@ -54,6 +54,7 @@
     "@types/react-plotly.js": "^2.2.4",
     "@types/webpack": "^4.41.10",
     "@types/webpack-dev-middleware": "^3.7.0",
+    "bootstrap": "^4.4.1",
     "compression": "^1.7.4",
     "express": "^4.17.1",
     "morgan": "^1.10.0",

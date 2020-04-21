@@ -146,7 +146,7 @@ header h1:before {
   width: inherit !important;
 }
 
-.region-dropdown-label {
+.region-dropdown .dropdown-label {
   font-size: 48px;
   font-weight: 600;
   text-transform: none;
@@ -378,7 +378,7 @@ span.infections-confirmed {
   .sim-infected-subheader {
     text-align: left;
   }
-  .region-dropdown-label {
+  .region-dropdown .dropdown-label {
     font-size: 28px;
   }
   .dropdown-caret-styling:after {

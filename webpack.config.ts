@@ -27,6 +27,7 @@ let config: Configuration = {
   },
   externals: {
     jQuery: "jQuery",
+    jquery: "jQuery",
     d3: "d3",
     "plotly.js": "Plotly",
     moment: "moment",
