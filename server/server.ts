@@ -32,6 +32,10 @@ nunjucks.configure(path.join(__dirname, "templates"), {
 app.locals.DEFAULT_EPIFOR_CHANNEL =
   process.env.DEFAULT_EPIFOR_CHANNEL ?? "testing";
 
+let REACT_BUILD: "production" | "development" =
+  app.get("env") === "produciton" ? "production" : "development";
+app.locals.REACT_BUILD = REACT_BUILD;
+
 // set up the static file server, but only if we get no STATIC_URL
 if (!process.env.STATIC_URL) {
   let mount = "/static";
