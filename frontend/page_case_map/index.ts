@@ -153,7 +153,9 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
 
   Plotly.newPlot(caseMap, [mapData], layout, config).then((gd) => {
     if (isTouchDevice()) {
-      $(".case-map-nav-action").text("Tap twice");
+      document
+        .querySelectorAll(".case-map-nav-action")
+        .forEach(elem => (elem.innerHTML = "Tap twice"));
 
       let last: null | string = null;
 

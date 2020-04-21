@@ -78,12 +78,16 @@ export function ModelView(props: ModelViewProps) {
   }
 
   let makeResponsive = () => {
-    $(".svg-container", node).attr("style", null);
-    $(".main-svg", node).attr({
-      height: null,
-      width: null,
-      viewBox: `0 0 ${width} ${height}`,
-    });
+    if (!node) return;
+
+    (node.querySelector(".svg-container") as HTMLElement).removeAttribute(
+      "style"
+    );
+
+    let mainSvg = node.querySelector(".main-svg") as SVGSVGElement;
+    mainSvg.removeAttribute("width");
+    mainSvg.removeAttribute("height");
+    mainSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
   };
 
   // listen for

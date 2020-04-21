@@ -175,7 +175,9 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
 
   Plotly.newPlot(caseMap, [mitigationMapData], layout, config).then(gd => {
     if (isTouchDevice()) {
-      $(".map-nav-action").text("Tap twice");
+      document
+        .querySelectorAll(".map-nav-action")
+        .forEach(elem => (elem.innerHTML = "Tap twice"));
 
       let last: null | string = null;
 
