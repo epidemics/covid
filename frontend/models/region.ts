@@ -7,7 +7,7 @@ import { STATIC_ROOT } from "../../common/constants";
 import { Thunk } from "./datastore";
 import { Scenarios } from "./scenario";
 
-type Current = { infected: number; beta0?: number; beta1?: number };
+type Current = { infected?: number; beta0?: number; beta1?: number };
 
 export class Region {
   private _modelTraces: Thunk<ModelTraces>;
@@ -65,7 +65,7 @@ export class Region {
 
     return new Region(
       code,
-      parseCurrent(obj.CurrentEstimate),
+      parseCurrent(obj?.CurrentEstimate),
       obj.CountryCode,
       obj.CountryCodeISOa3,
       obj.data.Timezones,
@@ -85,8 +85,10 @@ export class Region {
   }
 }
 
-function parseCurrent(obj: v4.CurrentEstimate) {
-  if (typeof obj == "object") {
+function parseCurrent(obj: v4.CurrentEstimate | null) {
+  if (obj == null) {
+    return {};
+  } else if (typeof obj == "object") {
     return {
       infected: obj.Infectious_mean,
       beta0: obj.Beta0,

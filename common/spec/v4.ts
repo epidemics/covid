@@ -26,7 +26,7 @@ export namespace v4 {
     data_url: string;
     Name: string;
     Level: string;
-    CurrentEstimate: CurrentEstimate;
+    CurrentEstimate: CurrentEstimate | null;
     OfficialName?: string;
     Population: NumberLike;
     Lat?: number;
