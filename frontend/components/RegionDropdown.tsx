@@ -3,18 +3,20 @@ import * as React from "react";
 import { string_score } from "../string_score";
 import { classNames } from "../helpers";
 import { Dropdown } from "./Dropdown";
+import { LocationContext } from "./LocationContext";
 
 type Props = {
   regions: Array<Region>;
   selected: Region | null;
   id: string;
-  onSelect: (region: Region) => void;
+  onSelect: (region: Region, url: string) => void;
 };
 
 export function RegionDropdown({ id, regions, selected, onSelect }: Props) {
   const [query, setQuery] = React.useState<string>("");
   const [focused, setFocused] = React.useState<number>(-1);
   const [show, setShow] = React.useState<boolean>(false);
+  const location = React.useContext(LocationContext);
 
   let filterRef = React.useRef<HTMLInputElement>(null);
 
@@ -30,8 +32,8 @@ export function RegionDropdown({ id, regions, selected, onSelect }: Props) {
     }
   }
 
-  function doChange(region: Region) {
-    onSelect(region);
+  function doChange({ region, href }: { region: Region; href: string }) {
+    onSelect(region, href);
     onToggle(false);
   }
 
@@ -48,8 +50,15 @@ export function RegionDropdown({ id, regions, selected, onSelect }: Props) {
   }, [show]);
 
   // make a copy of the regions and add scores
-  let list = React.useMemo<Array<{ region: Region; score: number }>>(
-    () => regions.map((region) => ({ region, score: 0 })),
+  let list = React.useMemo<
+    Array<{ region: Region; score: number; href: string }>
+  >(
+    () =>
+      regions.map((region) => ({
+        region,
+        score: 0,
+        href: location({ regionCode: region.code }),
+      })),
     [regions]
   );
 
@@ -76,7 +85,9 @@ export function RegionDropdown({ id, regions, selected, onSelect }: Props) {
   let dropdownEntries = [];
   let bestScore = list?.[0]?.score ?? 0;
   for (let index = 0; index < list.length; index++) {
-    let { score, region } = list[index];
+    let item = list[index];
+    let { score, region, href } = item;
+
     let show = score >= bestScore / 1000;
 
     // if we have good matches we only want to show those
@@ -92,8 +103,11 @@ export function RegionDropdown({ id, regions, selected, onSelect }: Props) {
       <a
         style={{ display: show ? "block" : "none" }}
         key={region.code}
-        href={`#${region.code}`}
-        onClick={() => doChange(region)}
+        href={href}
+        onClick={(evt) => {
+          doChange(item);
+          evt.preventDefault();
+        }}
         className={classNames({ "dropdown-item": true, active })}
       >
         {region.name}
@@ -103,7 +117,7 @@ export function RegionDropdown({ id, regions, selected, onSelect }: Props) {
 
   function handleKeyDown(evt: React.KeyboardEvent) {
     if (evt.key === "Enter") {
-      doChange(list[focused].region);
+      doChange(list[focused]);
     } else if (evt.key === "ArrowUp") {
       setFocused(Math.max(focused - 1, 0));
     } else if (evt.key === "ArrowDown") {

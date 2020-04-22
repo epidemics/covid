@@ -1,4 +1,5 @@
 import { Regions } from "./regions";
+import * as React from "react";
 
 export type DatastoreThunks = {
   regions: Thunk<Regions>;
@@ -78,4 +79,17 @@ export class Thunk<T> implements PromiseLike<T> {
   map<V>(name: string, f: (v: T) => V | PromiseLike<V>): Thunk<V> {
     return new Thunk(() => this.poll().then(f), name);
   }
+}
+
+export function useThunk<T>(init: T, thunk: Thunk<T> | undefined | null): T {
+  let [state, setState] = React.useState<T>(() => thunk?.result ?? init);
+  React.useEffect(() => {
+    let result = thunk?.result;
+    if (result) {
+      setState(result);
+      return;
+    }
+    if (thunk) thunk.then(setState);
+  }, [thunk]);
+  return state;
 }

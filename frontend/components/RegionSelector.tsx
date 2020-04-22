@@ -6,7 +6,7 @@ import { RegionDropdown } from "./RegionDropdown";
 type Props = {
   regions: Array<Region>;
   selected: Region | null;
-  onSelect: (region: Region) => void;
+  onSelect: (region: Region, url: string) => void;
 };
 
 let formatCurrentInfected = formatSIInteger(3);

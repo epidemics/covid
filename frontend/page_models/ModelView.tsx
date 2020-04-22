@@ -5,6 +5,7 @@ import { PageActions } from "./Page";
 import { makeConfig, makeLayout } from "../components/graph-common";
 import * as Plotly from "plotly.js";
 import Plot from "react-plotly.js";
+import { LocationContext } from "../components/LocationContext";
 
 const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;
@@ -22,6 +23,8 @@ export function ModelView(props: ModelViewProps) {
   let { scenario, region, scenarios } = props;
   // const showEstimates = props.showEstimates ?? false;
 
+  let location = React.useContext(LocationContext);
+
   const scenarioPicker = (
     <div className="mitigation-strength-buttons">
       {scenarios
@@ -31,7 +34,11 @@ export function ModelView(props: ModelViewProps) {
               scenario={scenario}
               selected={scenario == props.scenario}
               onSelect={(scenario) =>
-                props.dispatch({ action: "switch_scenario", scenario })
+                props.dispatch({
+                  action: "switch_scenario",
+                  scenario,
+                  url: location({ scenarioID: scenario.group }),
+                })
               }
             />
           ))

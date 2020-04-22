@@ -1,52 +1,63 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Regions, Thunk, Region, Scenario, Scenarios } from "../models";
+import { Regions, Region, Scenario, Scenarios, useThunk } from "../models";
 import { getTimezone, getUrlParam } from "../helpers";
 import { RegionSelector } from "../components/RegionSelector";
 import { ModelView } from "./ModelView";
 import { makeDataStore } from "../ds";
 import { DismissableAlert } from "../components/DismissableAlert";
+import {
+  LocationContext,
+  makeFragmentLocationContext,
+} from "../components/LocationContext";
 
 const REGION_FALLBACK = "united kingdom";
-const SELECTION_PARAM = "selection";
+const params = {
+  regionCode: "region",
+  scenarioID: "scenario",
+};
 
-type PageState = { region: Region | null; scenarioID?: string };
-export type PageActions =
+type PageState = {
+  region: Region | null;
+  scenarioID: string | null;
+};
+export type PageActions = { url?: string } & (
   | { action: "switch_region"; region: Region | null }
-  | { action: "switch_scenario"; scenario: Scenario | null };
+  | { action: "switch_scenario"; scenario: Scenario | null }
+);
 
 type PageReducer = React.Reducer<PageState, PageActions>;
-const reducer: PageReducer = (state, action) => {
-  switch (action.action) {
+const reducer: PageReducer = (state: PageState, obj: PageActions) => {
+  if (obj.url) window.history.pushState({ href: obj.url }, "", obj.url);
+
+  switch (obj.action) {
     case "switch_region":
-      return { ...state, region: action.region };
+      let { region } = obj;
+      return { ...state, region };
 
     case "switch_scenario":
-      return { ...state, scenarioID: action.scenario?.group };
+      let { scenario } = obj;
+      return { ...state, scenarioID: scenario?.group ?? null };
   }
 };
 
-function useThunk<T>(init: T, promise: Thunk<T> | undefined | null): T {
-  let [state, setState] = React.useState<T>(() => promise?.result ?? init);
-  React.useEffect(() => {
-    let result = promise?.result;
-    if (result) {
-      setState(result);
-      return;
-    }
-    if (promise) promise.then(setState);
-  }, [promise]);
-  return state;
-}
-
 const data = makeDataStore();
+
+function init(param: string): PageState {
+  return {
+    region: null,
+    scenarioID: getUrlParam(param),
+  };
+}
 
 export function Page() {
   const regions = useThunk<Regions>([], data.regions);
 
-  const [{ region, scenarioID }, dispatch] = React.useReducer(reducer, {
-    region: null,
-  });
+  const [{ region, scenarioID }, dispatch] = React.useReducer(
+    reducer,
+    params.scenarioID,
+    init
+  );
 
   const scenarios = useThunk<Scenarios | null>(null, region?.scenarios);
 
@@ -60,7 +71,7 @@ export function Page() {
     let tzRegion: Region | null = null;
     let paramRegion: Region | null = null;
     regions.forEach((region) => {
-      if (region.code === getUrlParam(SELECTION_PARAM)) paramRegion = region;
+      if (region.code === getUrlParam(params.regionCode)) paramRegion = region;
 
       if (region.code === REGION_FALLBACK) fallbackRegion = region;
 
@@ -71,8 +82,10 @@ export function Page() {
     if (region) dispatch({ action: "switch_region", region });
   }, [regions]);
 
+  let locationContext = makeFragmentLocationContext(params);
+
   return (
-    <>
+    <LocationContext.Provider value={locationContext}>
       <DismissableAlert
         className="pro-bono-banner"
         storage={window.sessionStorage}
@@ -96,7 +109,9 @@ export function Page() {
       <RegionSelector
         regions={regions}
         selected={region}
-        onSelect={(region) => dispatch({ action: "switch_region", region })}
+        onSelect={(region, url) =>
+          dispatch({ action: "switch_region", region, url })
+        }
       />
 
       <hr />
@@ -106,7 +121,7 @@ export function Page() {
         scenarios={scenarios}
         dispatch={dispatch}
       />
-    </>
+    </LocationContext.Provider>
   );
 }
 
