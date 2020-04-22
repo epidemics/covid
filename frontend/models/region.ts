@@ -17,12 +17,14 @@ function getPopulation(ageDist?: { [bracket: string]: number }): number {
   return population;
 }
 
+type Current = { infected: number; beta0?: number; beta1?: number };
+
 export class Region {
   private _modelTraces: Thunk<ModelTraces>;
 
   private constructor(
     public code: string,
-    public currentInfected: number,
+    public current: Current,
     public iso2: string | undefined,
     public iso3: string | undefined,
     public timezones: string[],
@@ -73,7 +75,7 @@ export class Region {
 
     return new Region(
       code,
-      obj.CurrentEstimate,
+      parseCurrent(obj.CurrentEstimate),
       obj.CountryCode,
       obj.CountryCodeISOa3,
       obj.data.Timezones,
@@ -90,6 +92,18 @@ export class Region {
       Foretold ? Estimation.fromv4(Foretold) : undefined,
       JohnsHopkins ? Reported.fromv4(JohnsHopkins) : undefined
     );
+  }
+}
+
+function parseCurrent(obj: v4.CurrentEstimate) {
+  if (typeof obj == "object") {
+    return {
+      infected: obj.Infectious_mean,
+      beta0: obj.Beta0,
+      beta1: obj.Beta1
+    };
+  } else {
+    return { infected: obj };
   }
 }
 

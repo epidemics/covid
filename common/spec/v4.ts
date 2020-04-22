@@ -10,6 +10,10 @@ export namespace v4 {
 
   export type Regions = { [code: string]: Region };
 
+  export type CurrentEstimate =
+    | number
+    | { Infectious_mean: number; Beta0: number; Beta1: number };
+
   export interface Region {
     data: {
       Rates?: Rates;
@@ -22,7 +26,7 @@ export namespace v4 {
     data_url: string;
     Name: string;
     Level: string;
-    CurrentEstimate: number;
+    CurrentEstimate: CurrentEstimate;
     OfficialName?: string;
     Population?: string;
     Lat?: number;

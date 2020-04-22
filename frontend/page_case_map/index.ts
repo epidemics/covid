@@ -29,7 +29,7 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
   Object.keys(regions).map(key => {
     let region: Region = regions[key];
 
-    let current = region.currentInfected;
+    let current = region.current.infected;
     if (!current) return;
 
     if (region.population <= 1) {
