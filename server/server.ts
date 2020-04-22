@@ -33,7 +33,7 @@ app.locals.DEFAULT_EPIFOR_CHANNEL =
   process.env.DEFAULT_EPIFOR_CHANNEL ?? "testing";
 
 let REACT_BUILD: "production" | "development" =
-  app.get("env") === "produciton" ? "production" : "development";
+  app.get("env") === "production" ? "production" : "development";
 app.locals.REACT_BUILD = REACT_BUILD;
 
 // set up the static file server, but only if we get no STATIC_URL
