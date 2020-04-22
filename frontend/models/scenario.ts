@@ -72,7 +72,7 @@ export class Scenarios {
 
     let bounds: Bounds = {
       x: xrange,
-      y: [0, maxY]
+      y: [0, maxY * 1.01]
     };
 
     traces.forEach(trace => {

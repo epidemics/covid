@@ -35,7 +35,7 @@ export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
       tick0: 0,
       dtick: 0.0,
       ticklen: 8,
-      range: bounds ? bounds.x : undefined,
+      range: bounds ? bounds.x.slice() : undefined,
       tickwidth: 1,
       tickcolor: "#fff",
       rangeselector: { visible: true },
@@ -60,7 +60,7 @@ export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
       dtick: 0.0,
       ticklen: 8,
       tickwidth: 1,
-      range: bounds ? bounds.y : undefined,
+      range: bounds ? bounds.y.slice() : undefined,
       tickcolor: "#fff",
       showline: true,
       linecolor: "#fff",
@@ -81,21 +81,15 @@ export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
   };
 }
 
-export function makeConfig(
-  bounds?: Bounds,
-  screenshotInfo?: ScreenshotInfo
-): ChartInfo {
+export function makeConfig(screenshotInfo?: ScreenshotInfo): ChartInfo {
   // graph layout
 
   function ensureZero(gd: Plotly.PlotlyHTMLElement) {
-    if (!bounds) return;
-
     let shouldUpdate = false;
     let range = gd.layout.yaxis?.range as Plotly.Range;
-    let ybounds = bounds.y;
-    if (range[0] < ybounds[0]) {
-      range[1] += ybounds[0] - range[0];
-      range[0] = ybounds[0];
+    if (range[0] < 0) {
+      range[1] += -range[0];
+      range[0] = 0;
       shouldUpdate = true;
     }
 
@@ -170,11 +164,14 @@ export function makeConfig(
     title: "Reset axis",
     icon: Plotly.Icons.autoscale,
     click: gd => {
+      // @ts-ignore
+      let bounds = gd?.bounds;
+
       if (!bounds) return;
 
       Plotly.relayout(gd, {
-        "yaxis.range": [bounds.y[0], bounds.y[1]],
-        "xaxis.range": [bounds.x[0], bounds.x[1]]
+        "yaxis.range": bounds.y.slice(),
+        "xaxis.range": bounds.x.slice()
       });
     }
   };

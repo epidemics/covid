@@ -2,7 +2,7 @@ import * as React from "react";
 import { Scenario, Region, Scenarios, Stat } from "../models";
 import { formatStatisticsLine, classNames, isTouchDevice } from "../helpers";
 import { PageActions } from "./Page";
-import { makeConfig, makeLayout } from "../components/graph-common";
+import { makeConfig, makeLayout, Bounds } from "../components/graph-common";
 import * as Plotly from "plotly.js";
 import Plot from "react-plotly.js";
 import { LocationContext } from "../components/LocationContext";
@@ -19,11 +19,19 @@ type ModelViewProps = {
   showEstimates?: boolean;
 };
 
+let initialBounds: Bounds = {
+  y: [0, 0.099],
+  x: ["2020-01-01", "2021-01-01"] as [string, string],
+};
+
 export function ModelView(props: ModelViewProps) {
   let { scenario, region, scenarios } = props;
   // const showEstimates = props.showEstimates ?? false;
 
   let location = React.useContext(LocationContext);
+
+  let containerRef = React.useCallback(rescale, []);
+  let [gd, setGd] = React.useState<Plotly.PlotlyHTMLElement>();
 
   const scenarioPicker = (
     <div className="mitigation-strength-buttons">
@@ -46,21 +54,31 @@ export function ModelView(props: ModelViewProps) {
     </div>
   );
 
-  let layout = makeLayout(scenarios?.bounds);
+  let layout = makeLayout(scenarios?.bounds ?? initialBounds);
+  let { config, hook } = React.useMemo(
+    () =>
+      makeConfig(() => {
+        if (!region) {
+          return {
+            name: "plot",
+            title: "COVID-19 Forecast",
+          };
+        } else {
+          return {
+            name: region.name,
+            title: `COVID-19 Forecast for ${region.name}`,
+          };
+        }
+      }),
+    []
+  );
 
-  let { config, hook } = makeConfig(scenarios?.bounds, () => {
-    if (!region) {
-      return {
-        name: "plot",
-        title: "COVID-19 Forecast",
-      };
-    } else {
-      return {
-        name: region.name,
-        title: `COVID-19 Forecast for ${region.name}`,
-      };
+  React.useEffect(() => {
+    if (gd) {
+      // @ts-ignore
+      gd.bounds = scenarios?.bounds;
     }
-  });
+  }, [gd, scenarios]);
 
   let [{ width, height, node }, setDimensions] = React.useState<{
     node?: HTMLElement;
@@ -96,9 +114,6 @@ export function ModelView(props: ModelViewProps) {
     mainSvg.removeAttribute("height");
     mainSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
   };
-
-  // listen for
-  let containerRef = React.useCallback(rescale, []);
 
   // also attach a listener for window resize
   React.useEffect(() => {
@@ -158,6 +173,7 @@ export function ModelView(props: ModelViewProps) {
         <div className="graph-column">
           <div id="my_dataviz" ref={containerRef}>
             <Plot
+              style={{}}
               data={scenario?.traces ?? []}
               layout={layout}
               config={config as any}
@@ -165,6 +181,7 @@ export function ModelView(props: ModelViewProps) {
                 makeResponsive()
               }
               onInitialized={(_: any, gd: Plotly.PlotlyHTMLElement) => {
+                setGd(gd);
                 hook(gd);
               }}
               onRelayout={() => makeResponsive()}
