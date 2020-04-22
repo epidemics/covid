@@ -7,7 +7,7 @@ import { makeDataStore } from "../ds";
 import { DismissableAlert } from "../components/DismissableAlert";
 import {
   LocationContext,
-  makeFragmentLocationContext,
+  makeFragmentLocationContext
 } from "../components/LocationContext";
 import { CurrentChart } from "./current-chart";
 
@@ -40,7 +40,7 @@ export function MeasuresPage({ data }: { data: Datastore }) {
 
   const [currentChart, setCurrentChart] = React.useState<CurrentChart>();
 
-  const currentChartRef = React.useCallback((node) => {
+  const currentChartRef = React.useCallback(node => {
     if (!node) return;
     setCurrentChart(new CurrentChart(node));
   }, []);
@@ -68,7 +68,7 @@ export function MeasuresPage({ data }: { data: Datastore }) {
     let timezoneRegion: Region | null = null;
 
     let paramRegion: Region | null = null;
-    regions.forEach((region) => {
+    regions.forEach(region => {
       if (region.code === getUrlParam("region")) paramRegion = region;
 
       if (region.code === REGION_FALLBACK) fallbackRegion = region;

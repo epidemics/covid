@@ -6,7 +6,7 @@ type LocationProvider = (change: LocationChange) => string;
 
 // a react context which generates URL's for a given region/scenario
 export const LocationContext = React.createContext<LocationProvider>(
-  (_) => document.location.href
+  _ => document.location.href
 );
 
 // a location context which stores the region and scenario in the url search params
@@ -22,7 +22,7 @@ export function makeFragmentLocationContext() {
       }
     }
 
-    Object.keys(changes).forEach((key) => {
+    Object.keys(changes).forEach(key => {
       update(key, changes[key]);
     });
 

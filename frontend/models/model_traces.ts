@@ -46,10 +46,7 @@ function show(date: Date) {
   )}`;
 }
 
-export function getModelTraces(
-  obj: v4.Model,
-  population: number
-) {
+export function getModelTraces(obj: v4.Model, population: number) {
   let dates = obj.date_index;
   let length = dates.length;
   let xrange: [string, string] = [dates[0], dates[length - 1]];

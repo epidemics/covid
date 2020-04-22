@@ -8,7 +8,7 @@ import { makeDataStore } from "../ds";
 import { DismissableAlert } from "../components/DismissableAlert";
 import {
   LocationContext,
-  makeFragmentLocationContext,
+  makeFragmentLocationContext
 } from "../components/LocationContext";
 
 const REGION_FALLBACK = "united kingdom";
@@ -42,7 +42,7 @@ const data = makeDataStore();
 function init(): PageState {
   return {
     region: null,
-    scenarioID: getUrlParam("scenario"),
+    scenarioID: getUrlParam("scenario")
   };
 }
 
@@ -62,7 +62,7 @@ export function Page() {
   React.useEffect(() => {
     jQuery(".selected-region").text(region?.name ?? "the selected region");
 
-    region?.customModelDescription.then((modelDescription) => {
+    region?.customModelDescription.then(modelDescription => {
       if (modelDescription) {
         jQuery(".custom-model-explanation")
           .html(modelDescription)
@@ -91,7 +91,7 @@ export function Page() {
     let timezoneRegion: Region | null = null;
 
     let paramRegion: Region | null = null;
-    regions.forEach((region) => {
+    regions.forEach(region => {
       if (region.code === getUrlParam("region")) paramRegion = region;
 
       if (region.code === REGION_FALLBACK) fallbackRegion = region;

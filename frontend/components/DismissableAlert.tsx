@@ -23,7 +23,7 @@ export function DismissableAlert(props: React.PropsWithChildren<Props>) {
     children,
     revision,
     dismissalDuration,
-    className,
+    className
   } = props;
 
   const storageDescriptor: StorageDescriptor<{
@@ -31,15 +31,15 @@ export function DismissableAlert(props: React.PropsWithChildren<Props>) {
     revision: string | number | null;
   }> = {
     key: id,
-    serialize: (obj) => JSON.stringify(obj),
-    deserialize: (raw) => {
+    serialize: obj => JSON.stringify(obj),
+    deserialize: raw => {
       let obj = JSON.parse(raw);
       obj.date = moment(obj.date);
       if (!obj.date.isValid()) {
         throw new Error();
       }
       return obj;
-    },
+    }
   };
 
   let [dismissed, setDismissed] = useStorage(storage, storageDescriptor);
@@ -55,7 +55,7 @@ export function DismissableAlert(props: React.PropsWithChildren<Props>) {
     console.log("Dismiss");
     setDismissed({
       date: moment(),
-      revision: revision,
+      revision: revision
     });
   }
 

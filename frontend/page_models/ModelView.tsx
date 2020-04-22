@@ -24,7 +24,7 @@ type ModelViewProps = {
 
 let initialBounds: Bounds = {
   y: [0, 0.099],
-  x: ["2020-01-01", "2021-01-01"] as [string, string],
+  x: ["2020-01-01", "2021-01-01"] as [string, string]
 };
 
 export function ModelView(props: ModelViewProps) {
@@ -53,7 +53,7 @@ export function ModelView(props: ModelViewProps) {
     setDimensions({
       node,
       width: Math.max(Math.min(idealWidth, maxWidth), MIN_CHART_SIZE),
-      height: Math.max(Math.min(idealHeight, maxHeight), MIN_CHART_SIZE),
+      height: Math.max(Math.min(idealHeight, maxHeight), MIN_CHART_SIZE)
     });
   }, []);
 
@@ -87,12 +87,12 @@ export function ModelView(props: ModelViewProps) {
         if (!region) {
           return {
             name: "plot",
-            title: "COVID-19 Forecast",
+            title: "COVID-19 Forecast"
           };
         } else {
           return {
             name: region.name,
-            title: `COVID-19 Forecast for ${region.name}`,
+            title: `COVID-19 Forecast for ${region.name}`
           };
         }
       }),
@@ -130,8 +130,8 @@ export function ModelView(props: ModelViewProps) {
     yanchor: "top",
     bgcolor: "#22202888",
     font: {
-      color: "#fff",
-    },
+      color: "#fff"
+    }
   };
 
   if (isTouchDevice()) {
@@ -144,7 +144,7 @@ export function ModelView(props: ModelViewProps) {
   if (showEstimates && region) {
     let out = addEstimatedCases(region, {
       mode: "percentage",
-      addCI: false,
+      addCI: false
     });
 
     if (out) {
@@ -176,11 +176,11 @@ export function ModelView(props: ModelViewProps) {
                   key={scenario.group}
                   scenario={scenario}
                   selected={scenario == props.scenario}
-                  onSelect={(scenario) =>
+                  onSelect={scenario =>
                     props.dispatch({
                       action: "switch_scenario",
                       scenario,
-                      url: location({ scenario: scenario.group }),
+                      url: location({ scenario: scenario.group })
                     })
                   }
                 />
@@ -254,7 +254,7 @@ function ScenarioButton({ scenario, selected, onSelect }: ScenarioButtonProps) {
         className={classNames({
           btn: true,
           "btn-secondary": true,
-          active: selected,
+          active: selected
         })}
       >
         <input

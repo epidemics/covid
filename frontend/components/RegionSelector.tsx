@@ -5,7 +5,7 @@ import {
   classNames,
   formatAbsoluteInteger,
   formatSIInteger,
-  formatDate,
+  formatDate
 } from "../helpers";
 import { Dropdown } from "./Dropdown";
 import { LocationContext } from "./LocationContext";
@@ -62,10 +62,10 @@ export function RegionSelector({ id, regions, selected, onSelect }: Props) {
     Array<{ region: Region; score: number; href: string }>
   >(
     () =>
-      regions.map((region) => ({
+      regions.map(region => ({
         region,
         score: 0,
-        href: location({ region: region.code }),
+        href: location({ region: region.code })
       })),
     [regions]
   );
@@ -73,7 +73,7 @@ export function RegionSelector({ id, regions, selected, onSelect }: Props) {
   // whenever `list` and `query` changes we sort the list
   React.useMemo(() => {
     // we score each region item with how good the region name matches the query
-    list.forEach((item) => {
+    list.forEach(item => {
       item.score = string_score(item.region.name, query);
     });
 
@@ -112,7 +112,7 @@ export function RegionSelector({ id, regions, selected, onSelect }: Props) {
         style={{ display: show ? "block" : "none" }}
         key={region.code}
         href={href}
-        onClick={(evt) => {
+        onClick={evt => {
           doChange(item);
           evt.preventDefault();
         }}
@@ -150,7 +150,7 @@ export function RegionSelector({ id, regions, selected, onSelect }: Props) {
             ref={filterRef}
             className="form-control"
             onKeyDown={handleKeyDown}
-            onChange={(evt) => updateQuery(evt.target.value)}
+            onChange={evt => updateQuery(evt.target.value)}
             value={query}
             type="text"
             placeholder="Filter..."
@@ -161,7 +161,7 @@ export function RegionSelector({ id, regions, selected, onSelect }: Props) {
           className="dropdown-list"
           style={{
             overflowY: "auto",
-            maxHeight: "50vh",
+            maxHeight: "50vh"
           }}
         >
           {dropdownEntries}
