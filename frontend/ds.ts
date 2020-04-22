@@ -11,6 +11,8 @@ let paramChannel = url.searchParams.get(CHANNEL_PARAM);
 export function makeDataStore(
   channel: string = paramChannel ?? DEFAULT_EPIFOR_CHANNEL
 ) {
+  console.info(`Using channel ${channel}`);
+
   let mainv4 = Thunk.fetchJson<v4.Main>(
     `${STATIC_ROOT}/data-${channel}-v4.json`
   );

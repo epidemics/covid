@@ -1,43 +1,172 @@
 import { Region } from "../models";
 import * as React from "react";
-import { formatSIInteger, formatAbsoluteInteger } from "../helpers";
-import { RegionDropdown } from "./RegionDropdown";
+import { string_score } from "../string_score";
+import {
+  classNames,
+  formatAbsoluteInteger,
+  formatSIInteger,
+  formatDate,
+} from "../helpers";
+import { Dropdown } from "./Dropdown";
+import { LocationContext } from "./LocationContext";
+import { QuestionTooltip } from "./QuestionTooltip";
 
 type Props = {
   regions: Array<Region>;
   selected: Region | null;
+  id: string;
   onSelect: (region: Region, url: string) => void;
 };
 
 let formatCurrentInfected = formatSIInteger(3);
 
-const monthNames = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
+export function RegionSelector({ id, regions, selected, onSelect }: Props) {
+  const [query, setQuery] = React.useState<string>("");
+  const [focused, setFocused] = React.useState<number>(-1);
+  const [show, setShow] = React.useState<boolean>(false);
+  const location = React.useContext(LocationContext);
 
-const formatDate = (date: Date = new Date()) =>
-  `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+  let filterRef = React.useRef<HTMLInputElement>(null);
 
-export function RegionSelector({ regions, selected, onSelect }: Props) {
+  function onToggle(show: boolean) {
+    if (show === false) {
+      setShow(false);
+      if (query !== "") {
+        setQuery("");
+        setFocused(-1);
+      }
+    } else {
+      setShow(true);
+    }
+  }
+
+  function doChange({ region, href }: { region: Region; href: string }) {
+    onSelect(region, href);
+    onToggle(false);
+  }
+
+  function updateQuery(query: string) {
+    setQuery(query);
+    setFocused(0);
+  }
+
+  React.useEffect(() => {
+    let $filter = filterRef.current;
+    if (show && $filter) {
+      $filter.focus();
+    }
+  }, [show]);
+
+  // make a copy of the regions and add scores
+  let list = React.useMemo<
+    Array<{ region: Region; score: number; href: string }>
+  >(
+    () =>
+      regions.map((region) => ({
+        region,
+        score: 0,
+        href: location({ region: region.code }),
+      })),
+    [regions]
+  );
+
+  // whenever `list` and `query` changes we sort the list
+  React.useMemo(() => {
+    // we score each region item with how good the region name matches the query
+    list.forEach((item) => {
+      item.score = string_score(item.region.name, query);
+    });
+
+    // then we sort the list
+    list.sort((a, b) => {
+      // first by score
+      if (a.score < b.score) return 1;
+      if (a.score > b.score) return -1;
+      // then alphabetically
+      if (a.region.name > b.region.name) return 1;
+      if (a.region.name < b.region.name) return -1;
+      return 0;
+    });
+  }, [list, query]);
+
+  // prepare the list to be rendered
+  let dropdownEntries = [];
+  let bestScore = list?.[0]?.score ?? 0;
+  for (let index = 0; index < list.length; index++) {
+    let item = list[index];
+    let { score, region, href } = item;
+
+    let show = score >= bestScore / 1000;
+
+    // if we have good matches we only want to show those
+    if (!show) {
+      if (focused >= index) {
+        // correct the focus offset so it does not exceed the list
+        setFocused(index - 1);
+      }
+    }
+
+    const active = selected === region || focused === index;
+    dropdownEntries.push(
+      <a
+        style={{ display: show ? "block" : "none" }}
+        key={region.code}
+        href={href}
+        onClick={(evt) => {
+          doChange(item);
+          evt.preventDefault();
+        }}
+        className={classNames({ "dropdown-item": true, active })}
+      >
+        {region.name}
+      </a>
+    );
+  }
+
+  function handleKeyDown(evt: React.KeyboardEvent) {
+    if (evt.key === "Enter") {
+      doChange(list[focused]);
+    } else if (evt.key === "ArrowUp") {
+      setFocused(Math.max(focused - 1, 0));
+    } else if (evt.key === "ArrowDown") {
+      setFocused(Math.min(focused + 1, list.length - 1));
+    } else if (evt.key === "Escape") {
+      onToggle(false);
+    }
+  }
+
+  let button = (
+    <>
+      <span className="dropdown-label">{selected?.name ?? <>...</>}</span>{" "}
+      <span className="caret"></span>
+    </>
+  );
+
   return (
     <div className="top-row">
-      <RegionDropdown
-        id="regionDropdown"
-        regions={regions}
-        selected={selected}
-        onSelect={onSelect}
-      />
+      <Dropdown show={show} id={id} button={button} onToggle={onToggle}>
+        <div className="px-3 py-2">
+          <input
+            ref={filterRef}
+            className="form-control"
+            onKeyDown={handleKeyDown}
+            onChange={(evt) => updateQuery(evt.target.value)}
+            value={query}
+            type="text"
+            placeholder="Filter..."
+          />
+        </div>
+        <div className="dropdown-divider"></div>
+        <div
+          className="dropdown-list"
+          style={{
+            overflowY: "auto",
+            maxHeight: "50vh",
+          }}
+        >
+          {dropdownEntries}
+        </div>
+      </Dropdown>
       <div className="active-infections-block">
         <span className="number-subheader" id="infections-date">
           {formatDate(selected?.reported?.last?.date)}
@@ -52,17 +181,7 @@ export function RegionSelector({ regions, selected, onSelect }: Props) {
             )}
           </span>
           <a href="#case-count-explanation">
-            <span className="question-tooltip">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="18"
-                viewBox="0 0 24 24"
-                width="18"
-              >
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" />
-              </svg>
-            </span>
+            <QuestionTooltip />
           </a>
         </div>
         <div className="infections-confirmed">

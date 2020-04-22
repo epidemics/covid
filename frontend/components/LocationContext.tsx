@@ -1,21 +1,17 @@
 import * as React from "react";
 
-type LocationChange = {
-  regionCode?: string | null;
-  scenarioID?: string | null;
-};
+type LocationChange = { [param: string]: string };
 
 type LocationProvider = (change: LocationChange) => string;
 
+// a react context which generates URL's for a given region/scenario
 export const LocationContext = React.createContext<LocationProvider>(
   (_) => document.location.href
 );
 
-export function makeFragmentLocationContext(target: {
-  regionCode: string;
-  scenarioID: string;
-}) {
-  return function(values: LocationChange) {
+// a location context which stores the region and scenario in the url search params
+export function makeFragmentLocationContext() {
+  return function(changes: LocationChange) {
     let url = new URL(window.location.href);
 
     function update(target: string, value?: string | null) {
@@ -26,8 +22,9 @@ export function makeFragmentLocationContext(target: {
       }
     }
 
-    update(target.regionCode, values.regionCode);
-    update(target.scenarioID, values.scenarioID);
+    Object.keys(changes).forEach((key) => {
+      update(key, changes[key]);
+    });
 
     return url.href;
   };

@@ -14,7 +14,7 @@ let bounds: Bounds = {
 };
 
 let layout = makeLayout(bounds);
-let { config, hook } = makeConfig(bounds);
+let { config, hook } = makeConfig();
 
 config.responsive = true;
 layout.height = GRAPH_HEIGHT;
@@ -70,7 +70,6 @@ const ONSET_TO_DEATH = 9;
 type Mode = "percentage" | "absolute";
 
 export function addEstimatedCases(
-  gd: Plotly.PlotlyHTMLElement,
   region: Region,
   opts: { mode?: Mode; addCI?: boolean; smoothing?: number }
 ) {
@@ -112,10 +111,7 @@ export function addEstimatedCases(
   let traces = [meanTrace];
   if (addCI) traces.push(errorTrace);
 
-  // redraw the lines on the graph
-  Plotly.addTraces(gd, traces);
-
-  return { estimated: timeseries, range: [1, max] };
+  return { traces, estimated: timeseries, range: [1, max] };
 }
 
 export function addHistoricalCases(
@@ -332,7 +328,8 @@ export class CurrentChart {
   }
 
   updateHistorical(region: Region) {
-    addEstimatedCases(this.$container, region, { mode: this.mode });
+    let traces = addEstimatedCases(region, { mode: this.mode })?.traces;
+    if (traces) Plotly.addTraces(this.$container, traces);
 
     let data = addHistoricalCases(this.$container, region, {
       mode: this.mode

@@ -18,23 +18,27 @@ export function classNames(
   return Object.keys(set).join(" ");
 }
 
+const monthNames = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec"
+];
+
+export const formatDate = (date: Date = new Date()) =>
+  `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+
 export function getUrlParam(key: string, defaultValue?: string): string | null {
   let params = new URLSearchParams(window.location.search);
   return params.get(key) ?? defaultValue ?? null;
-}
-
-export function setGetParamUrl(key: string, value: string) {
-  let params = new URLSearchParams(window.location.search);
-  params.set(key, value);
-  let url =
-    window.location.protocol +
-    "//" +
-    window.location.host +
-    window.location.pathname +
-    "?" +
-    params.toString();
-
-  return url;
 }
 
 export function getTimezone(): string | null {

@@ -39,8 +39,6 @@ export function useStorage<T>(
 
   // whenever the state changes
   React.useEffect(() => {
-    console.log("Trigger action", state);
-
     if (state) {
       storage.setItem(key, serialize(state));
     } else {

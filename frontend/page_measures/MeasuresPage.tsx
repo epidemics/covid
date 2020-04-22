@@ -1,30 +1,26 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Regions, Region, Scenario, Scenarios, useThunk } from "../models";
+import { Regions, Region, useThunk, Datastore } from "../models";
 import { getTimezone, getUrlParam } from "../helpers";
 import { RegionSelector } from "../components/RegionSelector";
-import { ModelView } from "./ModelView";
 import { makeDataStore } from "../ds";
 import { DismissableAlert } from "../components/DismissableAlert";
 import {
   LocationContext,
   makeFragmentLocationContext,
 } from "../components/LocationContext";
+import { CurrentChart } from "./current-chart";
 
 const REGION_FALLBACK = "united kingdom";
-const params = {
-  regionCode: "region",
-  scenarioID: "scenario",
-};
 
 type PageState = {
   region: Region | null;
-  scenarioID: string | null;
 };
-export type PageActions = { url?: string } & (
-  | { action: "switch_region"; region: Region | null }
-  | { action: "switch_scenario"; scenario: Scenario | null }
-);
+export type PageActions = {
+  url?: string;
+  action: "switch_region";
+  region: Region | null;
+};
 
 type PageReducer = React.Reducer<PageState, PageActions>;
 const reducer: PageReducer = (state: PageState, obj: PageActions) => {
@@ -34,55 +30,61 @@ const reducer: PageReducer = (state: PageState, obj: PageActions) => {
     case "switch_region":
       let { region } = obj;
       return { ...state, region };
-
-    case "switch_scenario":
-      let { scenario } = obj;
-      return { ...state, scenarioID: scenario?.group ?? null };
   }
 };
-
-const data = makeDataStore();
-
-function init(param: string): PageState {
-  return {
-    region: null,
-    scenarioID: getUrlParam(param),
-  };
-}
-
-export function Page() {
+export function MeasuresPage({ data }: { data: Datastore }) {
   const regions = useThunk<Regions>([], data.regions);
+  const measures = useThunk([], data.containments);
 
-  const [{ region, scenarioID }, dispatch] = React.useReducer(
-    reducer,
-    params.scenarioID,
-    init
-  );
+  const [{ region }, dispatch] = React.useReducer(reducer, { region: null });
 
-  const scenarios = useThunk<Scenarios | null>(null, region?.scenarios);
+  const [currentChart, setCurrentChart] = React.useState<CurrentChart>();
 
-  let scenario = scenarios?.get(scenarioID ?? 0) ?? null;
+  const currentChartRef = React.useCallback((node) => {
+    if (!node) return;
+    setCurrentChart(new CurrentChart(node));
+  }, []);
 
   React.useEffect(() => {
-    // determines the users timezone
-    const tz = getTimezone();
+    if (!region) return;
+    currentChart?.update(
+      region,
+      region.iso3 ? measures[region.iso3] : undefined
+    );
+  }, [region]);
+
+  // select a region to show upon receiving a list of regions
+  React.useEffect(() => {
+    if (region) {
+      return;
+    }
+
+    // determine the users timezone
+    const timezone = getTimezone();
 
     let fallbackRegion: Region | null = null;
-    let tzRegion: Region | null = null;
+
+    // the region which has our timezone
+    let timezoneRegion: Region | null = null;
+
     let paramRegion: Region | null = null;
     regions.forEach((region) => {
-      if (region.code === getUrlParam(params.regionCode)) paramRegion = region;
+      if (region.code === getUrlParam("region")) paramRegion = region;
 
       if (region.code === REGION_FALLBACK) fallbackRegion = region;
 
-      if (tz && region.timezones.includes(tz)) tzRegion = region;
+      if (timezone && region.timezones.includes(timezone))
+        timezoneRegion = region;
     });
 
-    let region = paramRegion ?? tzRegion ?? fallbackRegion;
-    if (region) dispatch({ action: "switch_region", region });
+    // pick an initial region to display
+    let initialRegion = paramRegion ?? timezoneRegion ?? fallbackRegion;
+    if (initialRegion)
+      dispatch({ action: "switch_region", region: initialRegion });
   }, [regions]);
 
-  let locationContext = makeFragmentLocationContext(params);
+  // makes a context for giving urls to regions/scenarios
+  let locationContext = makeFragmentLocationContext();
 
   return (
     <LocationContext.Provider value={locationContext}>
@@ -109,23 +111,21 @@ export function Page() {
       <RegionSelector
         regions={regions}
         selected={region}
+        id="regionDropdown"
         onSelect={(region, url) =>
           dispatch({ action: "switch_region", region, url })
         }
       />
 
       <hr />
-      <ModelView
-        region={region}
-        scenario={scenario}
-        scenarios={scenarios}
-        dispatch={dispatch}
-      />
+      <div ref={currentChartRef}></div>
+      <hr />
     </LocationContext.Provider>
   );
 }
 
-let $root = document.getElementById("react-root");
+let $root = document.getElementById("react-measures");
 if ($root) {
-  ReactDOM.render(<Page />, $root);
+  console.log($root);
+  ReactDOM.render(<MeasuresPage data={makeDataStore()} />, $root);
 }
