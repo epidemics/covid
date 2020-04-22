@@ -163,7 +163,10 @@ export function ModelView(props: ModelViewProps) {
     <>
       <h5 className="mitigation-strength-heading">
         Explore global and national mitigation strength:
-        <a href="#mitigation-measures-explanation">
+        <a
+          href="#mitigation-measures-explanation"
+          aria-label="Explanation about mitigation strength"
+        >
           <QuestionTooltip />
         </a>
       </h5>

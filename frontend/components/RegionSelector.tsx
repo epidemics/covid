@@ -180,7 +180,10 @@ export function RegionSelector({ id, regions, selected, onSelect }: Props) {
               <>&mdash;</>
             )}
           </span>
-          <a href="#case-count-explanation">
+          <a
+            href="#case-count-explanation"
+            aria-label="Explanation about the case count"
+          >
             <QuestionTooltip />
           </a>
         </div>

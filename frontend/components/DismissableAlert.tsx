@@ -59,25 +59,21 @@ export function DismissableAlert(props: React.PropsWithChildren<Props>) {
     });
   }
 
-  if (shouldDisplay) {
-    return (
-      <div
-        id={id}
-        className={`alert alert-dismissible ${className ?? ""}`}
-        role="alert"
+  return (
+    <div
+      id={id}
+      className={`alert alert-dismissible ${className ?? ""}`}
+      role="alert"
+    >
+      <button
+        type="button"
+        className="close"
+        onClick={dismiss}
+        aria-label="Close"
       >
-        <button
-          type="button"
-          className="close"
-          onClick={dismiss}
-          aria-label="Close"
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
-        {children}
-      </div>
-    );
-  } else {
-    return null;
-  }
+        <span aria-hidden="true">&times;</span>
+      </button>
+      {children}
+    </div>
+  );
 }
