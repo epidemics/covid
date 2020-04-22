@@ -21,14 +21,14 @@ export namespace v4 {
       Foretold?: Foretold;
       Timezones: string[];
       AgeDist?: { [bracket: string]: number };
-      TracesV3: string;
+      TracesV3?: string;
     };
     data_url: string;
     Name: string;
     Level: string;
     CurrentEstimate: CurrentEstimate;
     OfficialName?: string;
-    Population?: string;
+    Population: NumberLike;
     Lat?: number;
     Lon?: number;
     M49Code?: string;

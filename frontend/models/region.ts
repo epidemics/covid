@@ -7,16 +7,6 @@ import { STATIC_ROOT } from "../../common/constants";
 import { Thunk } from "./datastore";
 import { Scenarios } from "./scenario";
 
-function getPopulation(ageDist?: { [bracket: string]: number }): number {
-  if (!ageDist) return 0;
-
-  let population = 0;
-  Object.keys(ageDist).forEach(bracket => {
-    population += ageDist[bracket];
-  });
-  return population;
-}
-
 type Current = { infected: number; beta0?: number; beta1?: number };
 
 export class Region {
@@ -80,7 +70,7 @@ export class Region {
       obj.CountryCodeISOa3,
       obj.data.Timezones,
       obj.Name,
-      getPopulation(obj.data.AgeDist), // obj.Population
+      +obj.Population,
       obj.OfficialName,
       // Thunk.fetchThen(`${STATIC_ROOT}/${obj.data.TracesV3}`, res =>
       //   res.json().then(ExternalData.fromv3)
