@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import { Region } from "../models";
 import { formatSIInteger } from "../helpers";
 
-const formatAbsoluteInteger = function(number: number) {
+const formatAbsoluteInteger = function(number?: number) {
   if (typeof number !== "number" || isNaN(number)) {
     return "&mdash;";
   }
@@ -182,11 +182,9 @@ export class RegionDropdown {
       d3.select("#infections-estimated").html("&mdash;");
     }
 
-    if (reported) {
-      d3.select("#infections-confirmed").html(
-        formatAbsoluteInteger(reported.last.confirmed)
-      );
-    }
+    d3.select("#infections-confirmed").html(
+      formatAbsoluteInteger(reported?.last.confirmed)
+    );
     /* Temporarily swithed off - we do not have confidence intervals for non-FT estimates
     d3.select("#infections-estimated-ci").html(
       `${formatInfectionTotal(
@@ -194,11 +192,8 @@ export class RegionDropdown {
       )} - ${formatInfectionTotal(infections["FT_Infected_q95"])}`
     );
     */
-    if (population) {
-      d3.select("#infections-population").html(
-        formatAbsoluteInteger(population)
-      );
-    }
+
+    d3.select("#infections-population").html(formatAbsoluteInteger(population));
   }
 
   // the dropdown items are restorted depending on a search query
