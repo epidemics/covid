@@ -43,7 +43,7 @@ export class Estimation {
         variance: (l * left.variance + r * right.variance) / t,
         median: (l * left.median + r * right.median) / t,
         p05: (l * left.p05 + r * right.p05) / t,
-        p95: (l * left.p95 + r * right.p95) / t
+        p95: (l * left.p95 + r * right.p95) / t,
       };
     }
 
@@ -75,7 +75,7 @@ export class Estimation {
         variance: +obj.Variance[i],
         median: +obj["0.50"][i],
         p05: +obj["0.05"][i],
-        p95: +obj["0.95"][i]
+        p95: +obj["0.95"][i],
       });
     }
     return new Estimation(points);

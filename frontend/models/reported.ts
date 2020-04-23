@@ -27,7 +27,7 @@ export class Reported {
         recovered: +obj.Recovered[i],
         deaths: +obj.Deaths[i],
         active: +obj.Active[i],
-        confirmed: +obj.Confirmed[i]
+        confirmed: +obj.Confirmed[i],
       });
     }
     return new Reported(points);

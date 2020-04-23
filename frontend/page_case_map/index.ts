@@ -26,9 +26,7 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
   let zmin = -3.5;
 
   // invert the binary tree
-  Object.keys(regions).map(key => {
-    let region: Region = regions[key];
-
+  regions.map((region) => {
     let current = region.current.infected;
     if (!current) return;
 
@@ -56,7 +54,7 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
 
     let item: any = {
       name: country.admin || country.name,
-      iso3
+      iso3,
     };
 
     let info = info_by_iso3[iso3];
@@ -91,24 +89,24 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
     name: "COVID-19: Active infections estimate",
     geojson: geoData,
     featureidkey: "properties." + ISO_KEY,
-    locations: items.map(thing => thing.iso3),
-    z: items.map(thing => thing.z),
+    locations: items.map((thing) => thing.iso3),
+    z: items.map((thing) => thing.z),
     zmax,
     zmin,
-    text: items.map(thing => thing.text),
+    text: items.map((thing) => thing.text),
     colorscale: [
       [0, "rgb(255,255,0)"],
       [0.9, "rgb(255,0,0)"],
       [1 - offset, "rgb(200,0,0)"],
-      [1, "rgb(70,70,70"]
+      [1, "rgb(70,70,70"],
     ],
     showscale: true,
-    customdata: items.map(thing => thing.url_key),
+    customdata: items.map((thing) => thing.url_key),
     hovertemplate: "%{text}" + "<extra></extra>",
     hoverlabel: {
       font: {
-        family: "DM Sans"
-      }
+        family: "DM Sans",
+      },
     },
     colorbar: {
       thickness: 10,
@@ -117,16 +115,16 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
         side: "right",
         font: {
           color: "#B5B5B5",
-          family: "DM Sans"
-        }
+          family: "DM Sans",
+        },
       },
       tickvals: tick_values,
       ticktext: tick_names,
       tickfont: {
         color: "#B5B5B5",
-        family: "DM Sans"
-      }
-    }
+        family: "DM Sans",
+      },
+    },
   };
 
   if (isTouchDevice()) {
@@ -137,29 +135,31 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
   let layout: Partial<Plotly.Layout> = {
     margin: { l: 0, r: 0, b: 0, t: 0 },
     mapbox: {
-      style: "carto-darkmatter"
+      style: "carto-darkmatter",
     },
     paper_bgcolor: "#222028",
     geo: {
       showframe: false,
-      showcoastlines: false
-    }
+      showcoastlines: false,
+    },
   };
 
   let config: Partial<Plotly.Config> = {
     displaylogo: false,
     responsive: true,
     displayModeBar: false,
-    modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
+    modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"],
   };
 
-  Plotly.newPlot(caseMap, [mapData], layout, config).then(gd => {
+  Plotly.newPlot(caseMap, [mapData], layout, config).then((gd) => {
     if (isTouchDevice()) {
-      $(".case-map-nav-action").text("Tap twice");
+      document
+        .querySelectorAll(".case-map-nav-action")
+        .forEach((elem) => (elem.innerHTML = "Tap twice"));
 
       let last: null | string = null;
 
-      gd.on("plotly_click", d => {
+      gd.on("plotly_click", (d) => {
         let pt = (d.points || [])[0] as any;
         let target = pt.customdata;
         if (target && last === target) {
@@ -168,7 +168,7 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
         last = target;
       });
     } else {
-      gd.on("plotly_click", d => {
+      gd.on("plotly_click", (d) => {
         let pt = (d.points || [])[0] as any;
         let target = pt.customdata;
         if (target) {

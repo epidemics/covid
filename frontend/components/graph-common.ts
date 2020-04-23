@@ -7,7 +7,6 @@ type ScreenshotInfo = () => { name: string; title: string };
 
 export type ChartInfo = {
   config: Partial<Plotly.Config>;
-  layout: Partial<Plotly.Layout>;
   hook: (gd: Plotly.PlotlyHTMLElement) => void;
 };
 
@@ -16,12 +15,8 @@ export type Bounds = {
   y: Plotly.Range;
 };
 
-export function makeConfig(
-  bounds: Bounds,
-  screenshotInfo?: ScreenshotInfo
-): ChartInfo {
-  // graph layout
-  let layout: Partial<Plotly.Layout> = {
+export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
+  return {
     margin: { t: 40 },
     paper_bgcolor: "#222028",
     plot_bgcolor: "#222028",
@@ -29,46 +24,48 @@ export function makeConfig(
       titlefont: {
         family: "DM Sans, sans-serif",
         size: 16,
-        color: "white"
+        color: "white",
       },
       ticks: "outside",
       tickfont: {
         family: "DM Sans, sans-serif",
         size: 14,
-        color: "white"
+        color: "white",
       },
       tick0: 0,
       dtick: 0.0,
       ticklen: 8,
+      range: bounds ? bounds.x.slice() : undefined,
       tickwidth: 1,
       tickcolor: "#fff",
       rangeselector: { visible: true },
       showline: true,
       linewidth: 1,
-      linecolor: "#fff"
+      linecolor: "#fff",
     },
     yaxis: {
       title: "Active spreaders (% of population)",
       titlefont: {
         family: "DM Sans, sans-serif",
         size: 16,
-        color: "white"
+        color: "white",
       },
       tickfont: {
         family: "DM Sans, sans-serif",
         size: 14,
-        color: "white"
+        color: "white",
       },
       ticks: "outside",
       tick0: 0,
       dtick: 0.0,
       ticklen: 8,
       tickwidth: 1,
+      range: bounds ? bounds.y.slice() : undefined,
       tickcolor: "#fff",
       showline: true,
       linecolor: "#fff",
       linewidth: 1,
-      showgrid: false
+      showgrid: false,
     },
     showlegend: true,
     legend: {
@@ -78,24 +75,27 @@ export function makeConfig(
       yanchor: "top",
       bgcolor: "#22202888",
       font: {
-        color: "#fff"
-      }
-    }
+        color: "#fff",
+      },
+    },
   };
+}
+
+export function makeConfig(screenshotInfo?: ScreenshotInfo): ChartInfo {
+  // graph layout
 
   function ensureZero(gd: Plotly.PlotlyHTMLElement) {
     let shouldUpdate = false;
-    let range = layout.yaxis?.range as Plotly.Range;
-    let ybounds = bounds.y;
-    if (range[0] < ybounds[0]) {
-      range[1] += ybounds[0] - range[0];
-      range[0] = ybounds[0];
+    let range = gd.layout.yaxis?.range as Plotly.Range;
+    if (range[0] < 0) {
+      range[1] += -range[0];
+      range[0] = 0;
       shouldUpdate = true;
     }
 
     if (shouldUpdate) {
       Plotly.relayout(gd, {
-        "yaxis.range": range
+        "yaxis.range": range,
       });
     }
   }
@@ -110,7 +110,7 @@ export function makeConfig(
     name: "Download plot",
     title: "Download plot",
     icon: Plotly.Icons.camera,
-    click: gd => {
+    click: (gd) => {
       if (!screenshotInfo) return;
 
       let { name, title } = screenshotInfo();
@@ -149,9 +149,9 @@ export function makeConfig(
             "by epidemicforecasting.org",
             12 * DOWNLOAD_PLOT_SCALE
           );
-        }
+        },
       });
-    }
+    },
   };
 
   let modeBarButtonsToAdd: Array<Plotly.ModeBarButton> = [];
@@ -163,12 +163,17 @@ export function makeConfig(
     name: "Reset view",
     title: "Reset axis",
     icon: Plotly.Icons.autoscale,
-    click: gd => {
+    click: (gd) => {
+      // @ts-ignore
+      let bounds = gd?.bounds;
+
+      if (!bounds) return;
+
       Plotly.relayout(gd, {
-        "yaxis.range": [bounds.y[0], bounds.y[1]],
-        "xaxis.range": [bounds.x[0], bounds.x[1]]
+        "yaxis.range": bounds.y.slice(),
+        "xaxis.range": bounds.x.slice(),
       });
-    }
+    },
   };
 
   modeBarButtonsToAdd.push(customResetView);
@@ -178,8 +183,8 @@ export function makeConfig(
     responsive: false,
     displayModeBar: true,
     modeBarButtonsToAdd,
-    modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
+    modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"],
   };
 
-  return { config, layout, hook };
+  return { config, hook };
 }

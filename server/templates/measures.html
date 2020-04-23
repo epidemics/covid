@@ -1,44 +1,16 @@
-{% from "snippets/region-dropdown.html" import region_dropdown %} {% extends
-"base.html" %} {% set title = 'Countermeasures' %} {%- block additional_js_pre
--%}
+{% extends "base.html" %} 
+{% set title = 'Countermeasures' %} 
+{%- block additional_js_pre-%}
 <style type="text/css">
 </style>
-{% endblock %} {% block content %}
+{% endblock %} 
+{% block content %}
 
 <!-- Main model graph -->
 <div class="main-wrapper">
   <div class="row">
     <div class="central-column">
-      <div class="top-row">
-        {{ region_dropdown("regionDropdown") }}
-        <div class="active-infections-block">
-          <span class="number-subheader" id="infections-date"></span>
-          <span class="active-infections">Active Infections:
-            <span class="infections-estimated" id="infections-estimated">
-              &mdash;
-            </span>
-          </span>
-          <span class="infections-confirmed">
-            Confirmed Infections:
-            <span id="infections-confirmed">
-              &mdash;
-            </span>
-          </span>
-        </div>
-
-        <div class="population-block">
-          <span class="number-subheader">Population</span>
-          <span class="infections-population" id="infections-population">
-            &mdash;
-          </span>
-        </div>
-      </div>
-
-      <hr />
-
-      <div id="current_viz"></div>
-
-      <hr />
+      <div id="react-measures"></div>
 
       <div class="model-explanation">
         <h5 class="mitigation-strength-heading">Explain measures (TODO)</h5>
@@ -47,4 +19,5 @@
     </div>
   </div>
 </div>
-{% endblock %} {% block additional_js %} {% endblock %}
+{% endblock %} 
+{% block additional_js %} {% endblock %}

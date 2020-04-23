@@ -2,7 +2,7 @@ import * as moment from "moment";
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
 import { parseMeasures, MeasureItem } from "./measures";
-import { makeConfig, Bounds } from "../components/graph-common";
+import { makeConfig, Bounds, makeLayout } from "../components/graph-common";
 import { isTouchDevice } from "../helpers";
 import { Region, EstimationPoint } from "../models";
 
@@ -10,10 +10,11 @@ const GRAPH_HEIGHT = 600;
 
 let bounds: Bounds = {
   y: [0, 0.099],
-  x: ["2020-01-01", "2020-01-01"]
+  x: ["2020-01-01", "2020-01-01"],
 };
 
-let { config, layout, hook } = makeConfig(bounds);
+let layout = makeLayout(bounds);
+let { config, hook } = makeConfig();
 
 config.responsive = true;
 layout.height = GRAPH_HEIGHT;
@@ -30,9 +31,9 @@ layout.yaxis2 = {
   tickfont: {
     family: "DM Sans, sans-serif",
     size: 14,
-    color: "white"
+    color: "white",
   },
-  automargin: true // FIXME
+  automargin: true, // FIXME
 };
 layout.showlegend = true;
 layout.legend = {
@@ -42,8 +43,8 @@ layout.legend = {
   yanchor: "bottom",
   bgcolor: "#22202888",
   font: {
-    color: "#fff"
-  }
+    color: "#fff",
+  },
 };
 layout.grid = { rows: 2, columns: 1, pattern: "independent" };
 layout.hovermode = "closest";
@@ -55,7 +56,7 @@ if (isTouchDevice()) {
 
 function applyVariance(mean: number, vars: Array<number>, sigma: number) {
   let totalVar = 0;
-  vars.forEach(v => {
+  vars.forEach((v) => {
     totalVar += v * v;
   });
 
@@ -69,7 +70,6 @@ const ONSET_TO_DEATH = 9;
 type Mode = "percentage" | "absolute";
 
 export function addEstimatedCases(
-  gd: Plotly.PlotlyHTMLElement,
   region: Region,
   opts: { mode?: Mode; addCI?: boolean; smoothing?: number }
 ) {
@@ -103,7 +103,7 @@ export function addEstimatedCases(
       color: "white",
       fillcolor: "rgba(255,255,255,0.2)",
       name: "Cumulative Infected (est.)",
-      smoothing
+      smoothing,
     },
     timeseries
   );
@@ -111,10 +111,7 @@ export function addEstimatedCases(
   let traces = [meanTrace];
   if (addCI) traces.push(errorTrace);
 
-  // redraw the lines on the graph
-  Plotly.addTraces(gd, traces);
-
-  return { estimated: timeseries, range: [1, max] };
+  return { traces, estimated: timeseries, range: [1, max] };
 }
 
 export function addHistoricalCases(
@@ -157,7 +154,7 @@ export function addHistoricalCases(
       reported.push({
         date,
         confirmed: confirmed / scaleFactor,
-        deaths: deaths / scaleFactor
+        deaths: deaths / scaleFactor,
       });
       max = Math.max(max, point.confirmed);
     }
@@ -170,12 +167,10 @@ export function addHistoricalCases(
       max = Math.max(max, high);
 
       retrodicted.push({
-        date: moment(date)
-          .subtract(ONSET_TO_DEATH, "days")
-          .toDate(),
+        date: moment(date).subtract(ONSET_TO_DEATH, "days").toDate(),
         low: low / scaleFactor,
         mean: mean / scaleFactor,
-        high: high / scaleFactor
+        high: high / scaleFactor,
       });
     }
   });
@@ -184,7 +179,7 @@ export function addHistoricalCases(
     {
       color: "white",
       fillcolor: "rgba(255,255,255,0.2)",
-      name: "Cumulative Infected (est.)"
+      name: "Cumulative Infected (est.)",
     },
     retrodicted
   );
@@ -208,7 +203,7 @@ export function addHistoricalCases(
     type: "scatter",
     name: "Confirmed",
     marker: { size: 3 },
-    hovertemplate: "Confirmed: %{y:,d}<br />Date: %{x}"
+    hovertemplate: "Confirmed: %{y:,d}<br />Date: %{x}",
   };
 
   let traces = [meanTrace];
@@ -271,7 +266,7 @@ function makeErrorTrace(
     fill: "tozerox",
     type: "scatter",
     showlegend: false,
-    hoverinfo: "skip"
+    hoverinfo: "skip",
   };
 
   let shape: "spline" | "linear" = smoothing > 0 ? "spline" : "linear";
@@ -293,10 +288,10 @@ function makeErrorTrace(
           {
             year: "numeric",
             month: "short",
-            day: "numeric"
+            day: "numeric",
           }
         )}`
-    )
+    ),
   };
 
   return { meanTrace, errorTrace };
@@ -331,10 +326,11 @@ export class CurrentChart {
   }
 
   updateHistorical(region: Region) {
-    addEstimatedCases(this.$container, region, { mode: this.mode });
+    let traces = addEstimatedCases(region, { mode: this.mode })?.traces;
+    if (traces) Plotly.addTraces(this.$container, traces);
 
     let data = addHistoricalCases(this.$container, region, {
-      mode: this.mode
+      mode: this.mode,
     });
 
     if (!data) return;
@@ -392,22 +388,25 @@ export class CurrentChart {
     let endDate = moment().toDate();
 
     bounds.x = [startDate, endDate];
-    bounds.y = yrange.map(n => Math.log(n) / Math.log(10)) as [number, number];
+    bounds.y = yrange.map((n) => Math.log(n) / Math.log(10)) as [
+      number,
+      number
+    ];
 
     Plotly.relayout(this.$container, {
       "xaxis.range": [bounds.x[0], bounds.x[1]],
-      "yaxis.range": [bounds.y[0], bounds.y[1]]
+      "yaxis.range": [bounds.y[0], bounds.y[1]],
     });
   }
 
   initEvents() {
     this.$container.on("plotly_unhover", () => {
       Plotly.relayout(this.$container, {
-        shapes: []
+        shapes: [],
       });
     });
 
-    this.$container.on("plotly_hover", evt => {
+    this.$container.on("plotly_hover", (evt) => {
       let hit = evt.points[0] as { customdata?: MeasureItem } | undefined;
       let measure = hit?.customdata;
       let measureShapes: Array<Partial<Plotly.Shape>> = [];
@@ -423,27 +422,23 @@ export class CurrentChart {
         x1: moment(start).valueOf(),
         y1: 1,
         line: { color: "white" },
-        opacity: 0.5
+        opacity: 0.5,
       });
 
       measureShapes.push({
         type: "rect",
         yref: "paper",
-        x0: moment(start)
-          .add(INCUBATION_PERIOD, "days")
-          .toDate(),
+        x0: moment(start).add(INCUBATION_PERIOD, "days").toDate(),
         y0: this.graphDomain[0],
-        x1: moment(end)
-          .add(INCUBATION_PERIOD, "days")
-          .toDate(),
+        x1: moment(end).add(INCUBATION_PERIOD, "days").toDate(),
         y1: this.graphDomain[1],
         fillcolor: "white",
         line: { color: "transparent" },
-        opacity: 0.1
+        opacity: 0.1,
       });
 
       Plotly.relayout(this.$container, {
-        shapes: measureShapes
+        shapes: measureShapes,
       });
     });
   }
@@ -463,16 +458,14 @@ export class CurrentChart {
       type: "bar",
       orientation: "h",
       marker: { color: [] } as Partial<Plotly.ScatterMarker>,
-      customdata: [] as Array<any>
+      customdata: [] as Array<any>,
     };
 
-    measures.periods.forEach(info => {
+    measures.periods.forEach((info) => {
       let { measure, color, label, start, replaced } = info;
 
       let x0 = moment(start).valueOf();
-      let x1 = moment(replaced)
-        .add({ days: 1 })
-        .valueOf(); // add a day to prevent non overlap
+      let x1 = moment(replaced).add({ days: 1 }).valueOf(); // add a day to prevent non overlap
 
       measureTrace.base.push(x1);
       measureTrace.x.push(x0 - x1);
@@ -521,7 +514,7 @@ export class CurrentChart {
       "legend.y": this.graphDomain[0],
       "yaxis.domain": this.graphDomain,
       "yaxis2.domain": this.measureDomain,
-      height
+      height,
     });
   }
 }

@@ -1,9 +1,11 @@
+import "bootstrap/js/dist/collapse";
+
 import "./page_case_map";
 
 import "./page_mitigation_map";
 
-import "./page_models";
+import "./page_models/ModelsPage";
 
-import "./page_models/consulting-alert";
+import "./page_measures/MeasuresPage";
 
-import "./page_measures";
+import "./components/DismissableAlert";

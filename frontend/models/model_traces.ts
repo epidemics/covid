@@ -15,10 +15,10 @@ const SCENARIO_COLORS: { [key: string]: string } = {
   "LOWER-WEAK": "#e97f0f",
   "HIGHER-STRONG": "#9ac9d9",
   "EXPECTED-STRONG": "#5abbdb",
-  "LOWER-STRONG": "#007ca6"
+  "LOWER-STRONG": "#007ca6",
 };
 
-interface Trace {
+export interface Trace {
   x: string[];
   y: number[];
   text: string[];
@@ -46,6 +46,46 @@ function show(date: Date) {
   )}`;
 }
 
+export function getModelTraces(obj: v4.Model, population: number) {
+  let dates = obj.date_index;
+  let length = dates.length;
+  let xrange: [string, string] = [dates[0], dates[length - 1]];
+
+  let maxY = -Infinity;
+  function makeTrace(obj: v4.ModelTrace) {
+    let { name, group } = obj;
+
+    let trace: Trace = {
+      type: "scatter",
+      name,
+      scenario: group,
+      text: [],
+      x: dates,
+      y: [],
+      line: {
+        shape: "spline",
+        smoothing: 0,
+        color: SCENARIO_COLORS[obj.key.replace("_", "-")],
+      },
+      hovertemplate: "%{text}<br />%{y:.2p}",
+      hoverlabel: { namelength: -1 },
+    };
+
+    for (let i = 1; i < length - 1; i++) {
+      let value = +obj.active[i];
+      trace.y.push(value);
+      trace.text.push(formatPop(value * population));
+    }
+    maxY = Math.max(maxY, ...trace.y);
+
+    return trace;
+  }
+
+  let traces = obj.traces.map(makeTrace);
+
+  return { traces, maxY, xrange };
+}
+
 export class ModelTraces {
   constructor(
     public traces: Trace[],
@@ -53,56 +93,21 @@ export class ModelTraces {
     public xrange: [string, string]
   ) {}
 
-  static fromv4(obj: v4.ModelTraces, region: Region): ModelTraces {
-    let dates = obj.date_index;
-    let length = dates.length;
-    let xrange: [string, string] = [dates[0], dates[length - 1]];
-
-    let maxY = -Infinity;
-    function makeTrace(obj: v4.ModelTrace) {
-      let { name, group } = obj;
-
-      let trace: Trace = {
-        type: "scatter",
-        name,
-        scenario: group,
-        text: [],
-        x: dates,
-        y: [],
-        line: {
-          shape: "spline",
-          smoothing: 0,
-          color: SCENARIO_COLORS[obj.key.replace("_", "-")]
-        },
-        hovertemplate: "%{text}<br />%{y:.2p}",
-        hoverlabel: { namelength: -1 }
-      };
-
-      for (let i = 1; i < length - 1; i++) {
-        let value = +obj.active[i];
-        trace.y.push(value);
-        trace.text.push(formatPop(value * region.population));
-      }
-      maxY = Math.max(maxY, ...trace.y);
-
-      return trace;
-    }
-
-    let traces = obj.traces.map(makeTrace);
-
+  static fromv4(obj: v4.Model, region: Region): ModelTraces {
+    let { traces, maxY, xrange } = getModelTraces(obj, region.population);
     return new ModelTraces(traces, maxY, xrange);
   }
 
   static fromv3(obj: v3.ModelTraces, region: Region): ModelTraces {
     let traces: Trace[] = [];
     let maxY = -Infinity;
-    Object.keys(obj).forEach(mitigation => {
+    Object.keys(obj).forEach((mitigation) => {
       let group = obj[mitigation];
       group.forEach((obj: v3.ModelTrace) => {
         let trace: Trace = {
           scenario: mitigation,
           text: [],
-          ...obj
+          ...obj,
         };
 
         trace.legendgroup = obj.line.color as string | undefined;
@@ -136,7 +141,7 @@ export class ModelTraces {
 
     let xrange: [string, string] = [
       traces[0].x[0],
-      traces[0].x[traces[0].x.length - 1]
+      traces[0].x[traces[0].x.length - 1],
     ];
     return { traces, maxY, xrange };
   }
