@@ -142,6 +142,8 @@ export function RegionSelector({ id, regions, selected, onSelect }: Props) {
     </>
   );
 
+  let currentInfected = selected?.current.infected;
+
   return (
     <div className="top-row">
       <Dropdown show={show} id={id} button={button} onToggle={onToggle}>
@@ -174,8 +176,8 @@ export function RegionSelector({ id, regions, selected, onSelect }: Props) {
         <div className="active-infections">
           Active Infections:{" "}
           <span className="infections-estimated" id="infections-estimated">
-            {selected ? (
-              formatCurrentInfected(selected.current.infected)
+            {currentInfected ? (
+              formatCurrentInfected(currentInfected)
             ) : (
               <>&mdash;</>
             )}
