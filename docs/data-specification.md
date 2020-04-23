@@ -81,4 +81,3 @@ The region estimates are stored in the following way:
 ```
 
 The date closest to today (e.g. latest before tomorrow) should get displayed (with a last-updated note). (Now just one date is reported.)
-

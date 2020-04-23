@@ -10,9 +10,9 @@
     "Mathijs Henquet <mathijs.henquet@gmail.com>"
   ],
   "scripts": {
-    "lint": "yarn run lint-check",
-    "lint-write": "prettier --write \"frontend/**\" \"server/*\" \"static/css/**\"",
-    "lint-check": "prettier --check \"frontend/**\" \"server/*\" \"static/css/**\"",
+    "lint": "prettier --check ./",
+    "lint-write": "prettier --write ./",
+    "lint-check": "prettier --check ./",
     "build": "env NODE_ENV=production ts-node build.ts",
     "build-dev": "env NODE_ENV=development ts-node build.ts",
     "serve": "ts-node server/server.ts",
