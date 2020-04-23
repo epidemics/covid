@@ -352,17 +352,26 @@ span.infections-confirmed {
   .mitigation-strength-buttons {
     flex-direction: row;
     width: 100%;
+    justify-content: stretch;
+    margin-right: 0;
     border: none;
+    overflow-x: auto;
   }
   .mitigation-strength-explanation {
     display: none;
   }
   .mitigation-strength-button {
-    width: 25%;
+    flex-grow: 1;
+    flex-basis: min-content;
   }
   .mitigation-strength-button .btn-secondary {
     width: 100%;
     text-align: center;
+    padding-left: 2px;
+    padding-right: 5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-right: 0;
   }
   .mitigation-strength-button .active {
     background-color: white !important;
