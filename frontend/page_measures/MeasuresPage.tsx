@@ -78,7 +78,8 @@ export function MeasuresPage({ data }: { data: Datastore }) {
     });
 
     // pick an initial region to display
-    let initialRegion = paramRegion ?? timezoneRegion ?? fallbackRegion;
+    let initialRegion =
+      paramRegion ?? timezoneRegion ?? fallbackRegion ?? regions[0];
     if (initialRegion)
       dispatch({ action: "switch_region", region: initialRegion });
   }, [regions]);
