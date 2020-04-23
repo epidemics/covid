@@ -48,7 +48,7 @@ export function makeConfig(
       linecolor: "#fff"
     },
     yaxis: {
-      title: "Active infections (% of population)",
+      title: "Active spreaders (% of population)",
       titlefont: {
         family: "DM Sans, sans-serif",
         size: 16,
