@@ -55,7 +55,7 @@ export class ModelPage {
 
     layout.margin!.r = 20;
     layout.xaxis!.type = "date";
-    layout.yaxis!.title = "Active infections (% of population)";
+    layout.yaxis!.title = "Active spreaders (% of population)";
     layout.yaxis!.tickformat = ".1%";
     layout.yaxis!.range = [...bounds.y];
     layout.showlegend = true;
