@@ -1,10 +1,10 @@
 import * as moment from "moment";
 import * as d3 from "d3";
 import * as Plotly from "plotly.js";
-import { parseMeasures, MeasureItem } from "./measures";
+import { parseMeasures, MeasureItem } from "../models/measures";
 import { makeConfig, Bounds, makeLayout } from "../components/graph-common";
 import { isTouchDevice } from "../helpers";
-import { Region, EstimationPoint } from "../models";
+import { Region, EstimationPoint, MeasureInfo } from "../models";
 
 const GRAPH_HEIGHT = 600;
 
@@ -311,7 +311,7 @@ export class CurrentChart {
     this.initEvents();
   }
 
-  update(region: Region, measureData: any) {
+  update(region: Region, measureTags: MeasureInfo) {
     Plotly.react(this.$container, [], layout, config);
 
     this.updateHistorical(region);
@@ -322,7 +322,7 @@ export class CurrentChart {
     //   //addCriticalCareTrace(currentGraph, d3.extent(traces[0].x));
     // })
 
-    if (measureData) this.updateMeasures(measureData);
+    if (measureTags) this.updateMeasures(region, measureTags);
   }
 
   updateHistorical(region: Region) {
@@ -443,8 +443,8 @@ export class CurrentChart {
     });
   }
 
-  updateMeasures(measureData: any) {
-    let measures = parseMeasures(measureData);
+  updateMeasures(region: Region, measureInfo: MeasureInfo) {
+    let measures = parseMeasures(region.measures, measureInfo);
 
     let measureTrace = {
       base: [] as Array<number>,

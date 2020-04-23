@@ -1,6 +1,6 @@
-import { Thunk, Datastore } from "./models/datastore";
+import { Thunk } from "./models/datastore";
 import { v4 } from "../common/spec";
-import { Regions } from "./models";
+import { Regions, MeasureInfo } from "./models";
 import { STATIC_ROOT } from "../common/constants";
 
 const CHANNEL_PARAM = "channel";
@@ -17,7 +17,11 @@ export function makeDataStore(
     `${STATIC_ROOT}/data-${channel}-v4.json`
   );
 
-  return new Datastore({
+  return {
+    countermeasureTags: mainv4.map(
+      "parse_countermeasure_tags",
+      ({ countermeasures: countermeasureTags }) => new MeasureInfo(countermeasureTags)
+    ),
     regions: mainv4.map("parse_regions", ({ regions }) =>
       Regions.fromv4(regions)
     ),
@@ -25,5 +29,5 @@ export function makeDataStore(
     containments: Thunk.fetchJson(
       `${STATIC_ROOT}/data-testing-containments.json`
     ),
-  });
+  };
 }

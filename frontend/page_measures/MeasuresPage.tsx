@@ -1,15 +1,21 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Regions, Region, useThunk, Datastore } from "../models";
+import {
+  Regions,
+  Region,
+  useThunk,
+  Datastore,
+  Measure,
+} from "../models";
 import { getTimezone, getUrlParam } from "../helpers";
 import { RegionSelector } from "../components/RegionSelector";
 import { makeDataStore } from "../ds";
-import { DismissableAlert } from "../components/DismissableAlert";
 import {
   LocationContext,
   makeFragmentLocationContext,
 } from "../components/LocationContext";
 import { CurrentChart } from "./current-chart";
+import { MeasureInfo } from "../models/countermeasures";
 
 const REGION_FALLBACK = "united kingdom";
 
@@ -34,9 +40,25 @@ const reducer: PageReducer = (state: PageState, obj: PageActions) => {
 };
 export function MeasuresPage({ data }: { data: Datastore }) {
   const regions = useThunk<Regions>([], data.regions);
-  const measures = useThunk([], data.containments);
+  const measureInfo = useThunk<MeasureInfo | null>(
+    null,
+    data.countermeasureTags
+  );
 
   const [{ region }, dispatch] = React.useReducer(reducer, { region: null });
+
+  React.useEffect(() => {
+    if (!region || !measureInfo) return;
+
+    console.log("measureInfo", measureInfo);
+
+    let iso3 = region.iso3;
+    if (!iso3) return;
+
+    console.log("measures", region.measures);
+
+    currentChart?.update(region, measureInfo);
+  }, [measureInfo, region]);
 
   const [currentChart, setCurrentChart] = React.useState<CurrentChart>();
 
@@ -44,14 +66,6 @@ export function MeasuresPage({ data }: { data: Datastore }) {
     if (!node) return;
     setCurrentChart(new CurrentChart(node));
   }, []);
-
-  React.useEffect(() => {
-    if (!region) return;
-    currentChart?.update(
-      region,
-      region.iso3 ? measures[region.iso3] : undefined
-    );
-  }, [region]);
 
   // select a region to show upon receiving a list of regions
   React.useEffect(() => {
@@ -89,26 +103,6 @@ export function MeasuresPage({ data }: { data: Datastore }) {
 
   return (
     <LocationContext.Provider value={locationContext}>
-      <DismissableAlert
-        className="pro-bono-banner"
-        storage={window.sessionStorage}
-        dismissalDuration={{ days: 1 }}
-        id="consultingAlert"
-        revision="0"
-      >
-        <p>
-          We're offering pro bono consulting services and custom forecasts for
-          decision-makers. Please reach out{" "}
-          <a
-            href="http://epidemicforecasting.org/request-calculation"
-            className="alert-link"
-          >
-            here
-          </a>
-          .
-        </p>
-      </DismissableAlert>
-
       <RegionSelector
         regions={regions}
         selected={region}

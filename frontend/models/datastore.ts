@@ -1,27 +1,13 @@
 import { Regions } from "./regions";
 import * as React from "react";
+import { MeasureInfo } from "./countermeasures";
 
-export type DatastoreThunks = {
+export type Datastore = {
+  countermeasureTags: Thunk<MeasureInfo>;
   regions: Thunk<Regions>;
   geoData: Thunk<any>;
   containments: Thunk<any>;
 };
-
-export class Datastore {
-  constructor(private thunks: DatastoreThunks) {}
-
-  get containments() {
-    return this.thunks.containments;
-  }
-
-  get regions() {
-    return this.thunks.regions;
-  }
-
-  get geoData() {
-    return this.thunks.geoData;
-  }
-}
 
 let i = 0;
 

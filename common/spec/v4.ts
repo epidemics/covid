@@ -6,7 +6,25 @@ export namespace v4 {
     comment?: string;
     date_resample: string;
     regions: Regions;
+    countermeasures: CountermeasureTags;
   }
+
+  export type CountermeasureTags = { [tag: string]: CountermeasureTag };
+
+  export interface CountermeasureTag {
+    category: string;
+    feature: string;
+    name: string;
+    description: string;
+    aggregation: CountermeasureAggregation;
+  }
+
+  export type CountermeasureAggregation =
+    | "max"
+    | "min"
+    | "sum unique"
+    | "check notes"
+    | null;
 
   export type Regions = { [code: string]: Region };
 
@@ -22,6 +40,7 @@ export namespace v4 {
       Timezones: string[];
       AgeDist?: { [bracket: string]: number };
       TracesV3?: string;
+      Countermeasures: Array<Countermeasure>;
     };
     data_url: string;
     Name: string;
@@ -100,4 +119,13 @@ export namespace v4 {
   };
 
   export type ScenarioStats = { [variable: string]: Stat };
+
+  export interface Countermeasure {
+    tag: string;
+    description: string;
+    source: string;
+    start_date: string;
+    end_date: string | null;
+    quantity: NumberLike | null;
+  }
 }

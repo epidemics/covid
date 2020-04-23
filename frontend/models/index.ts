@@ -5,3 +5,4 @@ export * from "./region";
 export * from "./regions";
 export * from "./scenario";
 export * from "./datastore";
+export * from "./countermeasures";

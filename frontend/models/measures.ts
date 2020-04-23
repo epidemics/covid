@@ -1,6 +1,11 @@
 import * as d3 from "d3";
 import * as chroma from "chroma-js";
+import { Region, Measure } from "./region";
+import { MeasureInfo } from ".";
+import { MeasureFeature, MeasureTag } from "./countermeasures";
+import * as moment from "moment";
 
+/*
 type MeasureParser = (v: any) => { intensity: number; label: string } | null;
 
 interface Measure {
@@ -85,6 +90,7 @@ registerMeasure("social", "Social", (v) => {
 
   return null;
 });
+*/
 
 export type MeasureItem = {
   start: string;
@@ -96,56 +102,98 @@ export type MeasureItem = {
   color: chroma.Color;
 };
 
+type Thing = MeasureFeature & { measures: Array<Measure & MeasureTag> };
+
 export function parseMeasures(
-  measureData: any
+  measures: Array<Measure>,
+  measureInfo: MeasureInfo
 ): { count: number; periods: Array<MeasureItem> } {
+  let dict: { [key: string]: Thing } = {};
+  let list: Array<Thing> = [];
+
+  measures.forEach((measureRaw) => {
+    let { tag } = measureRaw;
+    let measure = { ...measureRaw, ...measureInfo.byTag[tag] };
+
+    let thing = dict[measure.feature.name];
+    if (!thing) {
+      thing = { ...measure.feature, measures: [] };
+      dict[measure.feature.name] = thing;
+      list.push(thing);
+    }
+
+    thing.measures.push(measure);
+  });
+
   let count = 0;
   let periods: Array<MeasureItem> = [];
-  measureKeys.forEach((key) => {
-    // let _hue = Math.round(Math.random() * 360);
 
-    let { name, parser, scale } = measureTypes[key];
-    let data = measureData[key];
-    let category: Array<MeasureItem> = [];
+  list.forEach((feature) => {
+    if (feature.aggregation === "max") {
+      feature.measures.sort(({ start_date: left }, { start_date: right }) => {
+        if (left < right) {
+          return -1;
+        } else if (left > right) {
+          return 1;
+        }
+        return 0;
+      });
 
-    let item: MeasureItem | null = null;
-    data.forEach(({ date, value }: any) => {
-      if (item) {
-        item.replaced = date;
-        category.push(item);
+      const maxQuantity =
+        feature.measures[feature.measures.length - 1].quantity;
+      if (maxQuantity === undefined) {
+        console.error(feature);
+        throw new Error();
       }
 
-      let tmp = parser(value);
-      if (tmp) {
-        let { intensity, label } = tmp;
+      // let _hue = Math.round(Math.random() * 360);
+
+      let scale = feature.scale;
+
+      let item: MeasureItem | null = null;
+      let category: Array<MeasureItem> = [];
+      feature.measures.forEach((measure) => {
+        let quantity = measure.quantity ?? 0;
+        let date = measure.start_date;
+
+        if (item) {
+          item.replaced = date.toString();
+          category.push(item);
+        }
+
+        let intensity = quantity / maxQuantity;
         item = {
-          label,
+          label: quantity.toString(),
           intensity,
           color: scale(intensity),
-          measure: name,
-          start: date,
+          measure: feature.name,
+          start: date.toString(),
         };
-      }
-    });
+      });
 
-    if (item) {
-      item!.replaced = "2021-01-01";
-      category.push(item);
-      count += 1;
-    }
-
-    periods.push(...category);
-    for (let i = 0; i < category.length; i++) {
-      let j = i;
-      while (
-        j < category.length - 1 &&
-        category[j].intensity >= category[i].intensity
-      ) {
-        j += 1;
+      if (item) {
+        item!.replaced = "2021-01-01";
+        category.push(item);
+        count += 1;
       }
-      category[i].end = category[j].replaced;
+
+      periods.push(...category);
+      for (let i = 0; i < category.length; i++) {
+        let j = i;
+        while (
+          j < category.length - 1 &&
+          category[j].intensity >= category[i].intensity
+        ) {
+          j += 1;
+        }
+        category[i].end = category[j].replaced;
+      }
+
+      console.log("category max", category, feature);
     }
   });
+
+  console.log({ count, periods });
 
   return { count, periods };
 }

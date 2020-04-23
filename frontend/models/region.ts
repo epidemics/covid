@@ -5,26 +5,69 @@ import { v4 } from "../../common/spec";
 import { STATIC_ROOT } from "../../common/constants";
 import { Thunk } from "./datastore";
 import { Scenarios } from "./scenario";
+import * as moment from "moment";
 
 type Current = { infected?: number; beta0?: number; beta1?: number };
 
+export interface Measure {
+  tag: string;
+  description: string;
+  source: string;
+  start_date: string;
+  end_date: string | null;
+  quantity?: number;
+}
+
 export class Region {
   public scenarios: Thunk<Scenarios>;
+  public current: Current;
+  public iso2: string | undefined;
+  public iso3: string | undefined;
+  public timezones: string[];
+  public name: string;
+  public population: number;
+  public officialName: string | undefined;
+  public rates?: Rates;
+  public estimates?: Estimation;
+  public reported?: Reported;
 
-  private constructor(
-    public code: string,
-    public current: Current,
-    public iso2: string | undefined,
-    public iso3: string | undefined,
-    public timezones: string[],
-    public name: string,
-    public population: number,
-    public officialName: string | undefined,
-    public externalData: Thunk<ExternalData>,
-    public rates: Rates | undefined,
-    public estimates: Estimation | undefined,
-    public reported: Reported | undefined
-  ) {
+  private externalData: Thunk<ExternalData>;
+  public measures: Measure[]; // TODO make private
+
+  private constructor(public code: string, obj: v4.Region) {
+    this.population = +obj.Population;
+    this.current = parseCurrent(obj?.CurrentEstimate);
+    this.iso2 = obj.CountryCode;
+    this.iso3 = obj.CountryCodeISOa3;
+    this.timezones = obj.data.Timezones;
+    this.name = obj.Name;
+    this.officialName = obj.OfficialName;
+
+    let { Foretold, JohnsHopkins, Rates: rates, Countermeasures } = obj.data;
+
+    this.measures = (Countermeasures ?? []).map(
+      ({ tag, description, source, start_date, end_date, quantity }) => {
+        return {
+          tag,
+          description,
+          source,
+          start_date,
+          end_date: end_date ? end_date : null,
+          quantity: quantity !== null ? +quantity : undefined,
+        };
+      }
+    );
+
+    this.rates = rates ? Rates.fromv4(rates) : undefined;
+    this.estimates = Foretold ? Estimation.fromv4(Foretold) : undefined;
+    this.reported = JohnsHopkins ? Reported.fromv4(JohnsHopkins) : undefined;
+
+    this.externalData = Thunk.fetchThen(
+      `${STATIC_ROOT}/${obj.data_url}`,
+      (res) =>
+        res.json().then((obj) => ExternalData.fromv4(obj, this.population))
+    );
+
     this.scenarios = this.externalData.map(
       `scenarios ${this.code}, ${this.name}`,
       (obj) => {
@@ -34,6 +77,12 @@ export class Region {
       }
     );
   }
+
+  // async getCountermeasures(
+  //   tags: CountermeasureTags
+  // ): Promise<Countermeasure[]> {
+  //   return this.countermeasures;
+  // }
 
   get customModelDescription() {
     return this.externalData.then((obj) => obj.modelDescription);
@@ -48,27 +97,7 @@ export class Region {
   }
 
   static fromv4(code: string, obj: v4.Region) {
-    let { Foretold, JohnsHopkins, Rates: rates } = obj.data;
-    let population = +obj.Population;
-    return new Region(
-      code,
-      parseCurrent(obj?.CurrentEstimate),
-      obj.CountryCode,
-      obj.CountryCodeISOa3,
-      obj.data.Timezones,
-      obj.Name,
-      population, // obj.Population
-      obj.OfficialName,
-      // Thunk.fetchThen(`${STATIC_ROOT}/${obj.data.TracesV3}`, res =>
-      //   res.json().then(ExternalData.fromv3)
-      // ),
-      Thunk.fetchThen(`${STATIC_ROOT}/${obj.data_url}`, (res) =>
-        res.json().then((obj) => ExternalData.fromv4(obj, population))
-      ),
-      rates ? Rates.fromv4(rates) : undefined,
-      Foretold ? Estimation.fromv4(Foretold) : undefined,
-      JohnsHopkins ? Reported.fromv4(JohnsHopkins) : undefined
-    );
+    return new Region(code, obj);
   }
 }
 
