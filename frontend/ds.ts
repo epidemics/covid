@@ -24,6 +24,6 @@ export function makeDataStore(
     geoData: Thunk.fetchJson(`${STATIC_ROOT}/casemap-geo.json`),
     containments: Thunk.fetchJson(
       `${STATIC_ROOT}/data-testing-containments.json`
-    )
+    ),
   });
 }

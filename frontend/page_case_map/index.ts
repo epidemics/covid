@@ -155,7 +155,7 @@ function makeMap(caseMap: HTMLElement, regions: Regions, geoData: any) {
     if (isTouchDevice()) {
       document
         .querySelectorAll(".case-map-nav-action")
-        .forEach(elem => (elem.innerHTML = "Tap twice"));
+        .forEach((elem) => (elem.innerHTML = "Tap twice"));
 
       let last: null | string = null;
 

@@ -26,7 +26,7 @@ app.use(morgan(app.get("env") === "development" ? "dev" : "short"));
 // set up nunjucks as templating engine
 nunjucks.configure(path.join(__dirname, "templates"), {
   autoescape: true,
-  express: app
+  express: app,
 });
 
 app.locals.DEFAULT_EPIFOR_CHANNEL =
@@ -76,11 +76,11 @@ app.get("/status", (_req, res) =>
     app: APP_NAME,
     nodeEnv: app.get("env"),
     version: process.env.APP_VERSION,
-    epiforChannel: process.env.DEFAULT_EPIFOR_CHANNEL
+    epiforChannel: process.env.DEFAULT_EPIFOR_CHANNEL,
   })
 );
 
 // finally serve
-export let server = app.listen(PORT, function() {
+export let server = app.listen(PORT, function () {
   console.log(`Running ${APP_NAME} on *:${PORT} with mode ${app.get("env")}`);
 });

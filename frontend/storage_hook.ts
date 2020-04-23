@@ -11,7 +11,7 @@ export function useStorage<T>(
   { key, serialize, deserialize }: StorageDescriptor<T>
 ): [T | undefined, React.Dispatch<React.SetStateAction<T>>] {
   if (!storage_) {
-    return [undefined, _ => {}];
+    return [undefined, (_) => {}];
   }
 
   // so that Typescript realize that it is can not be undefined

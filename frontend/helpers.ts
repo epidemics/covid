@@ -4,13 +4,13 @@ export function classNames(
   ...names: Array<{ [name: string]: boolean } | string>
 ) {
   let set: { [name: string]: boolean } = {};
-  names.forEach(obj => {
+  names.forEach((obj) => {
     if (typeof obj === "string") {
       set[obj] = true;
       return;
     }
 
-    Object.keys(obj).forEach(name => {
+    Object.keys(obj).forEach((name) => {
       if (obj[name]) set[name] = true;
     });
   });
@@ -30,7 +30,7 @@ const monthNames = [
   "Sep",
   "Oct",
   "Nov",
-  "Dec"
+  "Dec",
 ];
 
 export const formatDate = (date: Date = new Date()) =>
@@ -58,7 +58,7 @@ export function isTouchDevice() {
 export const formatBigInteger = d3.format(".2s");
 export const formatPercentNumber = d3.format(".2p");
 
-export const formatStatisticsLine = function(
+export const formatStatisticsLine = function (
   q05: number,
   q95: number,
   population: number
@@ -72,7 +72,7 @@ export const formatStatisticsLine = function(
   );
 };
 
-export const formatRange = function(lower: string, upper: string) {
+export const formatRange = function (lower: string, upper: string) {
   if (lower == upper) {
     return "~" + lower;
   } else {
@@ -95,7 +95,7 @@ export function formatSIInteger(precision: number): (n: number) => string {
   };
 }
 
-export const formatAbsoluteInteger = function(number: number | undefined) {
+export const formatAbsoluteInteger = function (number: number | undefined) {
   if (typeof number !== "number" || isNaN(number)) {
     return "\u2014";
   }

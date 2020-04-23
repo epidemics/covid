@@ -1,6 +1,6 @@
 import * as Plotly from "plotly.js";
 
-export const saveImage = (function() {
+export const saveImage = (function () {
   let $offscreenElem: HTMLElement | null = null;
   let $canvas: HTMLCanvasElement | null = null;
   const VECTOR_EFFECT_REGEX = /vector-effect: non-scaling-stroke;/g;
@@ -84,7 +84,7 @@ export const saveImage = (function() {
     let background = opts.background ?? "black";
     let compose =
       opts.compose ??
-      function($canvas, plot, width, height) {
+      function ($canvas, plot, width, height) {
         $canvas.width = width;
         $canvas.height = height;
         let ctx = $canvas.getContext("2d")!;
@@ -100,7 +100,7 @@ export const saveImage = (function() {
       paper_bgcolor: background,
       plot_bgcolor: background,
       width,
-      height
+      height,
     });
 
     if ($offscreenElem === null) {
@@ -116,11 +116,11 @@ export const saveImage = (function() {
 
     let config: Partial<Plotly.Config> = {
       ...plotlyElement.config,
-      staticPlot: true
+      staticPlot: true,
     };
 
     Plotly.newPlot($offscreenElem, plotlyElement.data, layout, config).then(
-      gd => {
+      (gd) => {
         let svg = Plotly.Snapshot.toSVG(gd, "svg", scale);
 
         // fixes the lines becoming thin
@@ -128,7 +128,7 @@ export const saveImage = (function() {
         let img = new window.Image();
         let filename = `${name}.${format}`;
 
-        img.onload = function() {
+        img.onload = function () {
           if (!$canvas) return;
 
           compose($canvas, img, width * scale, height * scale);
@@ -138,7 +138,7 @@ export const saveImage = (function() {
           if ($offscreenElem) Plotly.purge($offscreenElem);
         };
 
-        img.onerror = function(_err) {
+        img.onerror = function (_err) {
           // TODO better error handling, for now try to fallback to Plotly code
           if ($offscreenElem)
             Plotly.downloadImage($offscreenElem, {
@@ -146,7 +146,7 @@ export const saveImage = (function() {
               width,
               height,
               filename,
-              format
+              format,
             });
         };
 

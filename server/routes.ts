@@ -16,7 +16,7 @@ let navigation = [
   MITIGATION_MAP,
   MITIGATION,
   REQUEST_MODEL,
-  ABOUT
+  ABOUT,
 ];
 
 type NavBarEntry = { path: string; id: string; caption: string };
@@ -68,7 +68,7 @@ add(MITIGATION, { path: "/containment", caption: "Mitigation" }, (req, res) =>
 
 router.get("/request-calculation-submitted", (req, res) =>
   res.render("request-calculation-submitted.html", {
-    message: "Form submitted"
+    message: "Form submitted",
   })
 );
 
@@ -76,7 +76,9 @@ add(
   REQUEST_MODEL,
   { path: "/request-calculation", caption: "Request model" },
   (req, res) =>
-    res.render("request-calculation.html", { message: "Please provide data" })
+    res.render("request-calculation.html", {
+      message: "Please provide data",
+    })
 );
 
 add(ABOUT, { path: "/about", caption: "About" }, (req, res) =>
@@ -90,4 +92,4 @@ router.get("/about-submitted", (req, res) =>
 // Not sure why, but we had a lot of 404 in access log for this URL
 router.get("/containment.", (req, res) => res.redirect("/containment"));
 
-export let navigation_bar = navigation.map(key => pages[key]);
+export let navigation_bar = navigation.map((key) => pages[key]);

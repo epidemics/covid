@@ -24,13 +24,13 @@ export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
       titlefont: {
         family: "DM Sans, sans-serif",
         size: 16,
-        color: "white"
+        color: "white",
       },
       ticks: "outside",
       tickfont: {
         family: "DM Sans, sans-serif",
         size: 14,
-        color: "white"
+        color: "white",
       },
       tick0: 0,
       dtick: 0.0,
@@ -41,19 +41,19 @@ export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
       rangeselector: { visible: true },
       showline: true,
       linewidth: 1,
-      linecolor: "#fff"
+      linecolor: "#fff",
     },
     yaxis: {
       title: "Active spreaders (% of population)",
       titlefont: {
         family: "DM Sans, sans-serif",
         size: 16,
-        color: "white"
+        color: "white",
       },
       tickfont: {
         family: "DM Sans, sans-serif",
         size: 14,
-        color: "white"
+        color: "white",
       },
       ticks: "outside",
       tick0: 0,
@@ -65,7 +65,7 @@ export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
       showline: true,
       linecolor: "#fff",
       linewidth: 1,
-      showgrid: false
+      showgrid: false,
     },
     showlegend: true,
     legend: {
@@ -75,9 +75,9 @@ export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
       yanchor: "top",
       bgcolor: "#22202888",
       font: {
-        color: "#fff"
-      }
-    }
+        color: "#fff",
+      },
+    },
   };
 }
 
@@ -95,7 +95,7 @@ export function makeConfig(screenshotInfo?: ScreenshotInfo): ChartInfo {
 
     if (shouldUpdate) {
       Plotly.relayout(gd, {
-        "yaxis.range": range
+        "yaxis.range": range,
       });
     }
   }
@@ -110,7 +110,7 @@ export function makeConfig(screenshotInfo?: ScreenshotInfo): ChartInfo {
     name: "Download plot",
     title: "Download plot",
     icon: Plotly.Icons.camera,
-    click: gd => {
+    click: (gd) => {
       if (!screenshotInfo) return;
 
       let { name, title } = screenshotInfo();
@@ -149,9 +149,9 @@ export function makeConfig(screenshotInfo?: ScreenshotInfo): ChartInfo {
             "by epidemicforecasting.org",
             12 * DOWNLOAD_PLOT_SCALE
           );
-        }
+        },
       });
-    }
+    },
   };
 
   let modeBarButtonsToAdd: Array<Plotly.ModeBarButton> = [];
@@ -163,7 +163,7 @@ export function makeConfig(screenshotInfo?: ScreenshotInfo): ChartInfo {
     name: "Reset view",
     title: "Reset axis",
     icon: Plotly.Icons.autoscale,
-    click: gd => {
+    click: (gd) => {
       // @ts-ignore
       let bounds = gd?.bounds;
 
@@ -171,9 +171,9 @@ export function makeConfig(screenshotInfo?: ScreenshotInfo): ChartInfo {
 
       Plotly.relayout(gd, {
         "yaxis.range": bounds.y.slice(),
-        "xaxis.range": bounds.x.slice()
+        "xaxis.range": bounds.x.slice(),
       });
-    }
+    },
   };
 
   modeBarButtonsToAdd.push(customResetView);
@@ -183,7 +183,7 @@ export function makeConfig(screenshotInfo?: ScreenshotInfo): ChartInfo {
     responsive: false,
     displayModeBar: true,
     modeBarButtonsToAdd,
-    modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"]
+    modeBarButtonsToRemove: ["toImage", "resetScale2d", "autoScale2d"],
   };
 
   return { config, hook };

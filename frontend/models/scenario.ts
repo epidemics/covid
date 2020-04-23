@@ -33,11 +33,11 @@ export class Scenarios {
   }
 
   forEach(f: (scenario: Scenario, key: string) => void) {
-    this.keys.forEach(key => f(this.dict[key], key));
+    this.keys.forEach((key) => f(this.dict[key], key));
   }
 
   map(f: (scenario: Scenario, key: string) => void) {
-    return this.keys.map(key => f(this.dict[key], key));
+    return this.keys.map((key) => f(this.dict[key], key));
   }
 
   static fromv4(objs: Array<v4.Scenario>, data: v4.Model, population: number) {
@@ -60,7 +60,7 @@ export class Scenarios {
             data.statistics[scenario.group],
             "MaxActiveInfected"
           ),
-          totalInfected: readStat(statistics[scenario.group], "TotalInfected")
+          totalInfected: readStat(statistics[scenario.group], "TotalInfected"),
         };
       }
 
@@ -72,10 +72,10 @@ export class Scenarios {
 
     let bounds: Bounds = {
       x: xrange,
-      y: [0, maxY * 1.01]
+      y: [0, maxY * 1.01],
     };
 
-    traces.forEach(trace => {
+    traces.forEach((trace) => {
       dict[trace.scenario].traces.push(trace);
     });
 

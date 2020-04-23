@@ -49,13 +49,13 @@ export class Thunk<T> implements PromiseLike<T> {
 
   static fetchJson<T = any>(input: RequestInfo, init?: RequestInit): Thunk<T> {
     let name = typeof input === "string" ? input : undefined;
-    return new Thunk(() => fetch(input, init).then(res => res.json()), name);
+    return new Thunk(() => fetch(input, init).then((res) => res.json()), name);
   }
 
   poll(): Promise<T> {
     if (this.promise === null) {
       console.info(`Loading thunk ${this.name}`);
-      this.promise = this.thunk().then(value => {
+      this.promise = this.thunk().then((value) => {
         this.result = value;
         return value;
       });

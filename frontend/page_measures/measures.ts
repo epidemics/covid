@@ -15,7 +15,7 @@ let measureKeys = Array<string>();
 let i = 0;
 let scales = [
   chroma.scale(["#9ac9d9", "#007ca6"]),
-  chroma.scale(["#edcdab", "#e97f0f"])
+  chroma.scale(["#edcdab", "#e97f0f"]),
 ];
 
 function registerMeasure(key: string, name: string, parser: MeasureParser) {
@@ -24,7 +24,7 @@ function registerMeasure(key: string, name: string, parser: MeasureParser) {
   measureKeys.push(key);
 }
 
-registerMeasure("mask-wearing", "Mask usage", percent => {
+registerMeasure("mask-wearing", "Mask usage", (percent) => {
   if (percent <= 0.05) {
     return null;
   }
@@ -32,7 +32,7 @@ registerMeasure("mask-wearing", "Mask usage", percent => {
   return { intensity: percent, label: d3.format(".2p")(percent) };
 });
 
-registerMeasure("curfew", "Curfew", v => {
+registerMeasure("curfew", "Curfew", (v) => {
   if (v === "general") {
     return { intensity: 0.5, label: "General curfew" };
   } else if (v === "strict") {
@@ -42,7 +42,7 @@ registerMeasure("curfew", "Curfew", v => {
   return null;
 });
 
-registerMeasure("isolation", "Isolation", v => {
+registerMeasure("isolation", "Isolation", (v) => {
   if (v === "cases") {
     return { intensity: 0.5, label: "Symptomatic" };
   } else if (v === "contacts") {
@@ -52,7 +52,7 @@ registerMeasure("isolation", "Isolation", v => {
   return null;
 });
 
-registerMeasure("gatherings", "Gatherings", count => {
+registerMeasure("gatherings", "Gatherings", (count) => {
   if (count == 0) {
     return null;
   }
@@ -73,13 +73,13 @@ registerMeasure("gatherings", "Gatherings", count => {
   return { intensity, label: `No more than ${count}` };
 });
 
-registerMeasure("schools", "Schools", v => {
+registerMeasure("schools", "Schools", (v) => {
   if (v < 1) return null;
 
   return { intensity: v / 3, label: "" };
 });
 
-registerMeasure("social", "Social", v => {
+registerMeasure("social", "Social", (v) => {
   if (v === "stay-at-home") return { intensity: 1, label: "Stay at home" };
   else if (v === "distancing") return { intensity: 0.5, label: "Distancing" };
 
@@ -101,7 +101,7 @@ export function parseMeasures(
 ): { count: number; periods: Array<MeasureItem> } {
   let count = 0;
   let periods: Array<MeasureItem> = [];
-  measureKeys.forEach(key => {
+  measureKeys.forEach((key) => {
     // let _hue = Math.round(Math.random() * 360);
 
     let { name, parser, scale } = measureTypes[key];
@@ -123,7 +123,7 @@ export function parseMeasures(
           intensity,
           color: scale(intensity),
           measure: name,
-          start: date
+          start: date,
         };
       }
     });
