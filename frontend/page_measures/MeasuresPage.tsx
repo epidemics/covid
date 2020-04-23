@@ -126,6 +126,5 @@ export function MeasuresPage({ data }: { data: Datastore }) {
 
 let $root = document.getElementById("react-measures");
 if ($root) {
-  console.log($root);
   ReactDOM.render(<MeasuresPage data={makeDataStore()} />, $root);
 }

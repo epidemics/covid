@@ -52,7 +52,6 @@ export function DismissableAlert(props: React.PropsWithChildren<Props>) {
   if (!shouldDisplay) return null;
 
   function dismiss() {
-    console.log("Dismiss");
     setDismissed({
       date: moment(),
       revision: revision

@@ -67,7 +67,7 @@ export function RegionSelector({ id, regions, selected, onSelect }: Props) {
         score: 0,
         href: location({ region: region.code })
       })),
-    [regions]
+    [regions, location]
   );
 
   // whenever `list` and `query` changes we sort the list

@@ -14,6 +14,12 @@ export function makeFragmentLocationContext() {
   return function(changes: LocationChange) {
     let url = new URL(window.location.href);
 
+    let selection = url.searchParams.get("selection");
+    if (selection) {
+      url.searchParams.set("region", selection);
+      url.searchParams.delete("selection");
+    }
+
     function update(target: string, value?: string | null) {
       if (value) {
         url.searchParams.set(target, value);

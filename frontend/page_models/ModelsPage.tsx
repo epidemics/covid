@@ -91,8 +91,10 @@ export function Page() {
     let timezoneRegion: Region | null = null;
 
     let paramRegion: Region | null = null;
+    // we previously used `selection` as url param
+    let urlParam = getUrlParam("region") ?? getUrlParam("selection");
     regions.forEach(region => {
-      if (region.code === getUrlParam("region")) paramRegion = region;
+      if (region.code === urlParam) paramRegion = region;
 
       if (region.code === REGION_FALLBACK) fallbackRegion = region;
 
