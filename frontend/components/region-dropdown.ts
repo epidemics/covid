@@ -172,7 +172,6 @@ export class RegionDropdown {
 
   updateInfectionTotals(region: Region) {
     const { population, reported } = region;
-    if (!reported) return;
 
     let current = region.current.infected;
     if (current) {
@@ -183,9 +182,11 @@ export class RegionDropdown {
       d3.select("#infections-estimated").html("&mdash;");
     }
 
-    d3.select("#infections-confirmed").html(
-      formatAbsoluteInteger(reported.last.confirmed)
-    );
+    if (reported) {
+      d3.select("#infections-confirmed").html(
+        formatAbsoluteInteger(reported.last.confirmed)
+      );
+    }
     /* Temporarily swithed off - we do not have confidence intervals for non-FT estimates
     d3.select("#infections-estimated-ci").html(
       `${formatInfectionTotal(
@@ -193,10 +194,11 @@ export class RegionDropdown {
       )} - ${formatInfectionTotal(infections["FT_Infected_q95"])}`
     );
     */
-    if (population)
+    if (population) {
       d3.select("#infections-population").html(
         formatAbsoluteInteger(population)
       );
+    }
   }
 
   // the dropdown items are restorted depending on a search query
