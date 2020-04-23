@@ -34,9 +34,13 @@ class Controller {
 
     // the region which has our timezone
     let tzRegion: Region | null = null;
+    let initialRegion: Region | null = null;
     // populate the dropdown menu with countries from received data
     Object.keys(this.regions).forEach(key => {
       let region = this.regions[key];
+
+      if (!initialRegion) initialRegion = region;
+
       this.dropdown.addRegionDropdown(
         key,
         this.getRegionUrl(region),
@@ -48,18 +52,26 @@ class Controller {
       }
     });
 
-    // default region selection, start with the fallback
-    let region: Region = this.regions[REGION_FALLBACK];
-    if (params.region && params.region in this.regions) {
-      // prefer a valid region from param (from url)
-      region = this.regions[params.region];
-    } else if (tzRegion) {
-      // otherwise use the region infered from the timezone
-      region = tzRegion;
+    // default region selection
+
+    // try the fallback
+    if (REGION_FALLBACK in this.regions) {
+      initialRegion = this.regions[REGION_FALLBACK];
     }
 
-    this.dropdown.update(region);
-    this.modelPage = new ModelPage($pageContainer, { mitigation, region });
+    if (params.region && params.region in this.regions) {
+      // prefer a valid region from param (from url)
+      initialRegion = this.regions[params.region];
+    } else if (tzRegion) {
+      // otherwise use the region infered from the timezone
+      initialRegion = tzRegion;
+    }
+
+    this.dropdown.update(initialRegion!);
+    this.modelPage = new ModelPage($pageContainer, {
+      mitigation,
+      region: initialRegion!
+    });
 
     // initialize the select picker
     $('[data-toggle="tooltip"]').tooltip();
