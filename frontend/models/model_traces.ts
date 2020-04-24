@@ -32,19 +32,6 @@ export interface Trace {
 
 const formatPop = formatSIInteger(3);
 
-function pad(number: number) {
-  if (number < 10) {
-    return `0${number}`;
-  }
-  return number;
-}
-
-function show(date: Date) {
-  return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(
-    date.getUTCDate()
-  )}`;
-}
-
 type Group = {
   max: number;
   traces: Array<Trace>;
@@ -54,8 +41,6 @@ export function getModelTraces(obj: v4.Model, population: number) {
   let dates = obj.date_index;
   let length = dates.length;
   let xrange: [string, string] = [dates[0], dates[length - 1]];
-
-  let traces: Array<Trace> = [];
 
   let cumulative: Group = {
     max: -Infinity,
