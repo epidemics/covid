@@ -55,7 +55,7 @@ export function Page() {
     init
   );
 
-  const scenarios = useThunk<Scenarios | null>(null, region?.scenarios);
+  const scenarios = useThunk<Scenarios | null>(null, region?.scenariosDaily);
 
   let scenario = scenarios?.get(scenarioID ?? 0) ?? null;
 

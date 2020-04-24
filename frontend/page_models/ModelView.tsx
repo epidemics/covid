@@ -13,6 +13,13 @@ const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;
 const MIN_CHART_SIZE = 500;
 
+type PlotKind = "cumulative" | "active";
+
+const plotKinds: { cumulative: string; active: string } = {
+  active: "Active",
+  cumulative: "Total",
+};
+
 type ModelViewProps = {
   region: Region | null;
   scenario: Scenario | null;
@@ -31,6 +38,8 @@ export function ModelView(props: ModelViewProps) {
   let { scenario, region, scenarios } = props;
   const showEstimates = props.showEstimates ?? false;
   const showHealthcareCapacity = props.showHealthcareCapacity ?? false;
+
+  const [plotKind, setPlotKind] = React.useState<PlotKind>("active");
 
   let location = React.useContext(LocationContext);
 
@@ -71,14 +80,22 @@ export function ModelView(props: ModelViewProps) {
     Plotly.PlotlyHTMLElement
   >();
 
+  // pick the bounds depending on the type of plot
+  let bounds: Bounds | undefined;
+  if (plotKind == "cumulative") {
+    bounds = scenarios?.boundsCumulative;
+  } else if (plotKind == "active") {
+    bounds = scenarios?.boundsActive;
+  }
+
   // attach the bounds to the plotly HTML element, this is then used
   // by the reset axis button.
   React.useEffect(() => {
     if (plotlyHtmlElement) {
       // @ts-ignore
-      plotlyHtmlElement.bounds = scenarios?.bounds;
+      plotlyHtmlElement.bounds = bounds;
     }
-  }, [plotlyHtmlElement, scenarios]);
+  }, [plotlyHtmlElement, bounds]);
 
   // create a plotly config for the plot
   let { config, hook } = React.useMemo(
@@ -113,14 +130,14 @@ export function ModelView(props: ModelViewProps) {
   };
 
   // create a layout and customize
-  let layout = makeLayout(scenarios?.bounds ?? initialBounds);
+  let layout = makeLayout(bounds ?? initialBounds);
 
   layout.width = width;
   layout.height = height;
 
   layout.margin!.r = 20;
   layout.xaxis!.type = "date";
-  layout.yaxis!.title = "Active infections (% of population)";
+  layout.yaxis!.title = `${plotKinds[plotKind]} infections (% of population)`;
   layout.yaxis!.tickformat = ".1%";
   layout.showlegend = true;
   layout.legend = {
@@ -139,7 +156,16 @@ export function ModelView(props: ModelViewProps) {
     layout.dragmode = "pan";
   }
 
-  let data: Array<Plotly.Data> = (scenario?.traces as any) ?? [];
+  let data: Array<Plotly.Data>;
+  if (!scenario) {
+    data = [];
+  } else if (plotKind === "active") {
+    data = scenario.tracesActive.slice();
+  } else if (plotKind == "cumulative") {
+    data = scenario.tracesCumulative.slice();
+  } else {
+    throw new Error("Unreachable");
+  }
 
   if (showEstimates && region) {
     let out = addEstimatedCases(region, {
@@ -159,17 +185,49 @@ export function ModelView(props: ModelViewProps) {
     // if (lastTrace && lastTrace.name === line_title) return;
   }
 
+  const plotKindPicker = (
+    <div
+      className="plot-kind btn-group btn-group-sm"
+      role="group"
+      aria-label="Plot kind"
+    >
+      {Object.keys(plotKinds).map((kind: PlotKind) => (
+        <button
+          type="button"
+          onClick={() => setPlotKind(kind)}
+          className={classNames("btn btn-secondary", {
+            active: plotKind === kind,
+          })}
+          style={{ fontSize: "12px" }}
+        >
+          {plotKinds[kind]}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <>
-      <h5 className="mitigation-strength-heading">
-        Explore global and national mitigation strength:
-        <a
-          href="#mitigation-measures-explanation"
-          aria-label="Explanation about mitigation strength"
-        >
-          <QuestionTooltip />
-        </a>
-      </h5>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h5 className="mitigation-strength-heading">
+          Explore global and national mitigation strength:
+          <a
+            href="#mitigation-measures-explanation"
+            aria-label="Explanation about mitigation strength"
+          >
+            <QuestionTooltip />
+          </a>
+        </h5>
+
+        {plotKindPicker}
+      </div>
 
       <div className="mitigation-strength" id="mitigation">
         <div className="mitigation-strength-buttons">

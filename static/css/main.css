@@ -554,10 +554,6 @@ input {
   border-radius: 0px !important;
 }
 
-.btn-secondary {
-  margin-right: -10px;
-}
-
 label.btn-secondary > input {
   display: none;
 }
