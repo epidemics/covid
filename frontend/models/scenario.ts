@@ -52,15 +52,11 @@ export class Scenarios {
         return stat;
       }
 
-      let { statistics } = data;
-
-      if (data.statistics) {
+      let stats = data.statistics?.[scenario.group];
+      if (stats) {
         scenario.statistics = {
-          maxActiveInfected: readStat(
-            data.statistics[scenario.group],
-            "MaxActiveInfected"
-          ),
-          totalInfected: readStat(statistics[scenario.group], "TotalInfected"),
+          maxActiveInfected: readStat(stats, "MaxActiveInfected"),
+          totalInfected: readStat(stats, "TotalInfected"),
         };
       }
 
