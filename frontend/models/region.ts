@@ -9,7 +9,7 @@ import { Scenarios } from "./scenario";
 type Current = { infected?: number; beta0?: number; beta1?: number };
 
 export class Region {
-  public scenarios: Thunk<Scenarios>;
+  public scenariosDaily: Thunk<Scenarios>;
 
   private constructor(
     public code: string,
@@ -25,7 +25,7 @@ export class Region {
     public estimates: Estimation | undefined,
     public reported: Reported | undefined
   ) {
-    this.scenarios = this.externalData.map(
+    this.scenariosDaily = this.externalData.map(
       `scenarios ${this.code}, ${this.name}`,
       (obj) => {
         let out = obj.scenarios;
@@ -40,7 +40,7 @@ export class Region {
   }
 
   async getScenario(identifier: string | null | undefined | number) {
-    return (await this.scenarios).get(identifier ?? 0);
+    return (await this.scenariosDaily).get(identifier ?? 0);
   }
 
   async statistics(idx: string | null | undefined | number) {
