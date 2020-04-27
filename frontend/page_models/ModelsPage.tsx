@@ -120,7 +120,8 @@ export function Page() {
         revision="0"
       >
         <p>
-          Are you a decision maker? We're offering pro bono custom forecasting and modelling. Please reach out{" "}
+          Are you a decision maker? We're offering pro bono custom forecasting
+          and modelling. Please reach out{" "}
           <a
             href="http://epidemicforecasting.org/request-calculation"
             className="alert-link"
