@@ -48,13 +48,13 @@ add(MODELS, { path: "/", caption: "Models" }, (req, res) =>
   res.render("model.html")
 );
 
-add(CASE_MAP, { path: "/case-map", caption: "Case Map" }, (req, res) =>
+add(CASE_MAP, { path: "/case-map", caption: "Case map" }, (req, res) =>
   res.render("case-map.html")
 );
 
 add(
   MITIGATION_MAP,
-  { path: "/mitigation-map", caption: "Mitigation Map" },
+  { path: "/mitigation-map", caption: "Mitigation map" },
   (req, res) => res.render("mitigation-map.html")
 );
 
@@ -62,7 +62,7 @@ add(MEASURES, { path: "/measures", caption: "Measures" }, (req, res) =>
   res.render("measures.html")
 );
 
-add(MITIGATION, { path: "/containment", caption: "Mitigation Measures" }, (req, res) =>
+add(MITIGATION, { path: "/containment", caption: "Mitigation" }, (req, res) =>
   res.render("containment.html")
 );
 
@@ -74,7 +74,7 @@ router.get("/request-calculation-submitted", (req, res) =>
 
 add(
   REQUEST_MODEL,
-  { path: "/request-calculation", caption: "Request a Model" },
+  { path: "/request-calculation", caption: "Request custom modelling" },
   (req, res) =>
     res.render("request-calculation.html", {
       message: "Please provide data",
