@@ -74,7 +74,7 @@ router.get("/request-calculation-submitted", (req, res) =>
 
 add(
   REQUEST_MODEL,
-  { path: "/request-calculation", caption: "Request model" },
+  { path: "/request-calculation", caption: "Request a model" },
   (req, res) =>
     res.render("request-calculation.html", {
       message: "Please provide data",

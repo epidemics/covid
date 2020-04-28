@@ -546,12 +546,6 @@ label {
 .btn-primary,
 .btn-secondary {
   padding: 11px 20px;
-  border-radius: 0px;
-}
-
-select,
-input {
-  border-radius: 0px !important;
 }
 
 label.btn-secondary > input {
