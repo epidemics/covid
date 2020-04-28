@@ -119,26 +119,32 @@ block additional_js_pre -%}
         If you'd like to volunteer to extend the dataset, or have any questions
         about usage, please reach out using this form.
       </p>
+
       <form action="https://formspree.io/moqnwzlb" method="POST">
-          <label class="fill-available-width">Your email</label>
           <div class="row">
               <div class="col-lg-6">
-                  <input class="fill-available-width" type="text" name="_replyto" />
+                  <input 
+                    class="form-control form-control-md" 
+                    type="text" 
+                    name="_replyto" 
+                    placeholder="Your email address"
+                  />
               </div>
           </div>
           <br />
-          <label class="fill-available-width">Message</label>
           <div class="row">
               <div class="col-lg-6">
-                  <textarea class="fill-available-width" name="message"></textarea>
+                  <textarea 
+                    class="form-control form-control-md"
+                    rows="5"
+                    name="message"
+                    placeholder="Your message"
+                  ></textarea>
               </div>
           </div>
-
-        <!-- your other form fields go here -->
         <br />
-
         <button type="submit" class="btn btn-primary">
-          Send
+          Submit
         </button>
       </form>
 
