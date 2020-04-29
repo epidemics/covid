@@ -36,7 +36,10 @@ export function Dropdown(props: PropsWithChildren<Props>) {
   });
 
   return (
-    <div className={classNames({ show, dropdown: true })} ref={containerRef}>
+    <div
+      className={classNames("dropdown", "region-dropdown-container", { show })}
+      ref={containerRef}
+    >
       <button
         className="btn btn-primary dropdown-toggle medium dropdown-caret-styling region-dropdown"
         type="button"

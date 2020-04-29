@@ -7,7 +7,8 @@ export interface Scenario {
   name?: string;
   description?: string;
   statistics?: ScenarioStatatistics;
-  traces: Trace[];
+  tracesActive: Trace[];
+  tracesCumulative: Trace[];
 }
 
 export type Stat = v4.Stat;
@@ -21,7 +22,8 @@ export class Scenarios {
   private constructor(
     public keys: Array<string>,
     private dict: { [key: string]: Scenario },
-    public bounds: Bounds
+    public boundsActive: Bounds,
+    public boundsCumulative: Bounds
   ) {}
 
   get(keyOrIdx: string | number) {
@@ -44,7 +46,8 @@ export class Scenarios {
     let dict: { [key: string]: Scenario } = {};
     let keys: Array<string> = [];
     objs.forEach((scenario: Scenario) => {
-      scenario.traces = [];
+      scenario.tracesActive = [];
+      scenario.tracesCumulative = [];
 
       function readStat(obj: v4.ScenarioStats, key: string): Stat {
         let stat = obj[key];
@@ -52,15 +55,11 @@ export class Scenarios {
         return stat;
       }
 
-      let { statistics } = data;
-
-      if (data.statistics) {
+      let stats = data.statistics?.[scenario.group];
+      if (stats) {
         scenario.statistics = {
-          maxActiveInfected: readStat(
-            data.statistics[scenario.group],
-            "MaxActiveInfected"
-          ),
-          totalInfected: readStat(statistics[scenario.group], "TotalInfected"),
+          maxActiveInfected: readStat(stats, "MaxActiveInfected"),
+          totalInfected: readStat(stats, "TotalInfected"),
         };
       }
 
@@ -68,17 +67,27 @@ export class Scenarios {
       keys.push(scenario.group);
     });
 
-    let { traces, maxY, xrange } = getModelTraces(data, population);
+    let { active, cumulative, xrange } = getModelTraces(data, population);
 
-    let bounds: Bounds = {
-      x: xrange,
-      y: [0, maxY * 1.01],
+    let bounds = {
+      cumulative: <Bounds>{
+        x: xrange,
+        y: [0, cumulative.max * 1.01],
+      },
+      active: <Bounds>{
+        x: xrange,
+        y: [0, active.max * 1.01],
+      },
     };
 
-    traces.forEach((trace) => {
-      dict[trace.scenario].traces.push(trace);
+    active.traces.forEach((trace) => {
+      dict[trace.scenario].tracesActive.push(trace);
     });
 
-    return new Scenarios(keys, dict, bounds);
+    cumulative.traces.forEach((trace) => {
+      dict[trace.scenario].tracesCumulative.push(trace);
+    });
+
+    return new Scenarios(keys, dict, bounds.active, bounds.cumulative);
   }
 }

@@ -146,15 +146,24 @@ header h1:before {
   width: inherit !important;
 }
 
+.region-dropdown-container {
+  max-width: 50%;
+}
+
 .region-dropdown .dropdown-label {
   font-size: 48px;
   font-weight: 600;
   text-transform: none;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 .region-dropdown {
   padding-left: 24px;
   padding-right: 24px;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .dropdown-caret-styling:after {
@@ -328,6 +337,9 @@ span.infections-confirmed {
 }
 
 @media only screen and (max-width: 991px) {
+  .region-dropdown-container {
+    max-width: 100%;
+  }
   .central-column {
     padding: 24px;
   }
@@ -534,16 +546,6 @@ label {
 .btn-primary,
 .btn-secondary {
   padding: 11px 20px;
-  border-radius: 0px;
-}
-
-select,
-input {
-  border-radius: 0px !important;
-}
-
-.btn-secondary {
-  margin-right: -10px;
 }
 
 label.btn-secondary > input {
