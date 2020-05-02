@@ -138,7 +138,11 @@ export function ModelView(props: ModelViewProps) {
   layout.margin!.r = 20;
   layout.xaxis!.type = "date";
   layout.yaxis!.title = `${plotKinds[plotKind]} infections (% of population)`;
-  layout.yaxis!.tickformat = ".2p";
+  layout.yaxis!.tickformatstops = [
+    { enabled: true, dtickrange: [null, 0.001], value: ".2%" },
+    { enabled: true, dtickrange: [0.001, 0.01], value: ".1%" },
+    { enabled: true, dtickrange: [0.01, null], value: ".0%" },
+  ];
   layout.showlegend = true;
   layout.legend = {
     x: 1,
@@ -194,6 +198,7 @@ export function ModelView(props: ModelViewProps) {
       {Object.keys(plotKinds).map((kind: PlotKind) => (
         <button
           type="button"
+          key={kind}
           onClick={() => setPlotKind(kind)}
           className={classNames("btn btn-secondary", {
             active: plotKind === kind,

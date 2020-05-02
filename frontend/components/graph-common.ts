@@ -15,7 +15,21 @@ export type Bounds = {
   y: Plotly.Range;
 };
 
-export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
+export type TickFormatStops = {
+  enabled: boolean;
+  dtickrange: (number | null)[];
+  value: string;
+};
+
+export interface YAxis extends Plotly.LayoutAxis {
+  tickformatstops: TickFormatStops[];
+}
+
+export interface Layout extends Plotly.Layout {
+  yaxis: Partial<YAxis>;
+}
+
+export function makeLayout(bounds?: Bounds): Partial<Layout> {
   return {
     margin: { t: 40 },
     paper_bgcolor: "#222028",
@@ -44,6 +58,13 @@ export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
       linecolor: "#fff",
     },
     yaxis: {
+      tickformatstops: [
+        {
+          enabled: true,
+          dtickrange: [null, null],
+          value: "",
+        },
+      ],
       title: "Active spreaders (% of population)",
       titlefont: {
         family: "DM Sans, sans-serif",
