@@ -16,7 +16,7 @@ const MIN_CHART_SIZE = 500;
 type PlotKind = "cumulative" | "active";
 
 const plotKinds: { cumulative: string; active: string } = {
-  active: "Active",
+  active: "Actively-spreading",
   cumulative: "Total",
 };
 
