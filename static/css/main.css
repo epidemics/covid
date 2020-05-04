@@ -248,6 +248,7 @@ span.infections-confirmed {
   text-align: left;
   border-left: 3px solid transparent;
   font-size: 14px;
+  border-radius: 0;
 }
 
 .map-footnote {
