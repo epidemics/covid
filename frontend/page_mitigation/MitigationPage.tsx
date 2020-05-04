@@ -345,7 +345,7 @@ function GroupedMeasures(
           gridRow: `${row + 1} / span ${measures.length - 1}`,
         }}
       >
-        The effectivity of these measures is cumulative
+        The effectivity of these measures are cumulative
       </div>
     </>
   );
@@ -476,17 +476,31 @@ export function Page({
 
   return (
     <>
+      <h1>Mitigation calculator</h1>
+
+      <hr />
+      <p>
+        The following tool can be used to calculate the estimated effect of
+        various combinations of measures. On the left measures and measure
+        groups can be toggled to factor into the calculation. On the right the
+        estimated impact on growth is displayed, this can be further adjusted
+        using slider. In measure groups more stingent measures indicate the{" "}
+        <em>additional effect</em> on top of less stingent measures.{" "}
+      </p>
+
+      <hr />
       <div className="measure-calculator">
         <div style={{ gridColumn: "1 / span 2" }}>Measures</div>
         <div style={{ gridColumn: "3 / span 2" }}>Impact</div>
         {elems}
-        <div style={{ gridColumn: "total", gridRow: row + 1 }}>
-          <p>
-            The measures above result in a total growth rate reduction of{" "}
-            <em>{totalValue.toFixed(3)}</em>.
-          </p>
+        <div style={{ gridColumn: "3", gridRow: row + 1 }}>
+          <p>The measures above result in a total growth rate reduction of </p>
+        </div>
+        <div style={{ gridColumn: "4", gridRow: row + 1, justifySelf: "end" }}>
+          {totalValue.toFixed(3)}
         </div>
       </div>
+      <hr />
     </>
   );
 }
