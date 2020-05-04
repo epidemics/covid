@@ -138,7 +138,7 @@ export function ModelView(props: ModelViewProps) {
   layout.margin!.r = 20;
   layout.xaxis!.type = "date";
   layout.yaxis!.title = `${plotKinds[plotKind]} infections (% of population)`;
-  layout.yaxis!.tickformat = ".1%";
+  layout.yaxis!.tickformat = ".2p";
   layout.showlegend = true;
   layout.legend = {
     x: 1,
