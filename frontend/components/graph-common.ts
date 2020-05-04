@@ -15,21 +15,7 @@ export type Bounds = {
   y: Plotly.Range;
 };
 
-export type TickFormatStops = {
-  enabled: boolean;
-  dtickrange: (number | null)[];
-  value: string;
-};
-
-export interface YAxis extends Plotly.LayoutAxis {
-  tickformatstops: TickFormatStops[];
-}
-
-export interface Layout extends Plotly.Layout {
-  yaxis: Partial<YAxis>;
-}
-
-export function makeLayout(bounds?: Bounds): Partial<Layout> {
+export function makeLayout(bounds?: Bounds): Partial<Plotly.Layout> {
   return {
     margin: { t: 40 },
     paper_bgcolor: "#222028",

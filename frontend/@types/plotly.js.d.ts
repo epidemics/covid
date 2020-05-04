@@ -20,6 +20,16 @@ declare module "plotly.js" {
 
   type Range<T = number> = [T, T];
 
+  type TickFormatStops = {
+    enabled: boolean;
+    dtickrange: (number | null)[];
+    value: string;
+  };
+
+  interface LayoutAxis {
+    tickformatstops: TickFormatStops[];
+  }
+
   interface Layout {
     "legend.y": number;
     "yaxis.domain": Range;
