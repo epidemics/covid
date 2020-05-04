@@ -19,7 +19,7 @@ export function makeDataStore(
 
   return new Datastore({
     regions: mainv4.map("parse_regions", ({ regions }) =>
-      Regions.fromv4(regions)
+      Regions.from(regions)
     ),
     geoData: Thunk.fetchJson(`${STATIC_ROOT}/casemap-geo.json`),
     containments: Thunk.fetchJson(
