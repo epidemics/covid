@@ -88,9 +88,17 @@ function calculateBackground(
   let light = scale(0.5).desaturate().css();
   if (max - min < 2) {
     addTicks(0.05, 0.2, dark, light);
+    addTicks(0.1, 0.5, dark, light);
+    addTicks(1, 1, dark, scale(0.4).desaturate().css());
+  } else if (max - min < 10) {
+    addTicks(0.1, 0.2, dark, light);
+    addTicks(0.5, 0.5, dark, light);
+    addTicks(1, 1, dark, scale(0.4).desaturate().css());
+  } else {
+    addTicks(0.5, 0.2, dark, light);
+    addTicks(5, 0.5, dark, light);
+    addTicks(10, 1, dark, scale(0.4).desaturate().css());
   }
-  addTicks(0.1, 0.5, dark, light);
-  addTicks(1, 1, dark, scale(0.4).desaturate().css());
 
   return backgrounds.reverse().join(", ");
 }
@@ -500,11 +508,15 @@ export function Page(props: Props) {
     setGrowthRate(1 + Math.log(R) / serialInterval);
   }
 
+  function growthToR(growth: number) {
+    return Math.exp(serialInterval * (growth - 1));
+  }
+
   let defaultR = Math.exp(
     serialInterval * (props.defaultOriginalGrowthRate - 1)
   );
-  let originalR = Math.exp(serialInterval * (growthRate - 1));
-  let finalR = Math.exp(serialInterval * (growthRate * growthRateMult - 1));
+  let originalR = growthToR(growthRate);
+  let finalR = growthToR(growthRate * growthRateMult);
   let reducitonR = 1 - finalR / originalR;
 
   return (
@@ -551,13 +563,13 @@ export function Page(props: Props) {
         </div>
 
         <FancySlider
-          min={serialInterval / 5}
+          min={growthToR(1)}
           row={row + 2}
           value={originalR}
           onChange={setR}
           mean={defaultR}
           sd={serialInterval / 20}
-          max={serialInterval * 1.2}
+          max={growthToR(1.5)}
         ></FancySlider>
         <div style={{ gridColumn: "3", gridRow: row + 3 }}>
           The measures result in an R of <b>{finalR.toFixed(2)}</b> which is a
