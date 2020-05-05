@@ -552,8 +552,7 @@ export function Page(props: Props) {
           With serial interval of{" "}
           <input
             className="form-control"
-            min={1}
-            max={10}
+            min={0}
             step={0.2}
             type="number"
             onChange={(evt) => setSerialInterval(+evt.target.value)}
@@ -563,12 +562,12 @@ export function Page(props: Props) {
         </div>
 
         <FancySlider
-          min={growthToR(1)}
+          min={growthToR(0)}
           row={row + 2}
           value={originalR}
           onChange={setR}
           mean={defaultR}
-          sd={serialInterval / 20}
+          sd={growthToR(1.3) - defaultR}
           max={growthToR(1.5)}
         ></FancySlider>
         <div style={{ gridColumn: "3", gridRow: row + 3 }}>
