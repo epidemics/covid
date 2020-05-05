@@ -10,6 +10,7 @@ import {
   MeasureGroup,
   defaultOriginalGrowthRate,
 } from "./measures";
+import * as d3 from "d3";
 
 let scale = chroma.scale("YlGnBu");
 //let scale = chroma.scale("PuBu");
@@ -18,7 +19,7 @@ let scale = chroma.scale("YlGnBu");
 //   .correctLightness();
 
 function p(v: number): string {
-  return `${(100 * v).toFixed(1)}%`;
+  return `${(100 * v).toFixed(3)}%`;
 }
 
 function calculateBackground(
@@ -43,7 +44,7 @@ function calculateBackground(
   };
 
   for (let z = -4; z < 4; z += 0.25) {
-    addStop(mean - z * sd, z);
+    addStop(mean + z * sd, z);
   }
 
   let rulerGradient = `linear-gradient(to right, ${stops.join(",")})`;
@@ -85,38 +86,46 @@ function calculateBackground(
 
   let dark = scale(1).desaturate().css();
   let light = scale(0.5).desaturate().css();
-  addTicks(0.05, 0.2, dark, light);
+  if (max - min < 2) {
+    addTicks(0.05, 0.2, dark, light);
+  }
   addTicks(0.1, 0.5, dark, light);
   addTicks(1, 1, dark, scale(0.4).desaturate().css());
 
   return backgrounds.reverse().join(", ");
 }
 
-namespace MeasureSlider {
+namespace FancySlider {
   export interface Props {
-    measure: Measure;
-    checked: boolean;
+    mean: number;
+    sd: number;
+    disabled?: boolean;
+    initial?: number;
     row: number;
+    min: number;
+    max: number;
     value: number;
     onChange: (value: number) => void;
   }
 }
 
-function MeasureSlider({
+function FancySlider({
   onChange,
-  measure,
+  mean,
+  sd,
+  initial: initialProp,
+  min,
+  max,
   row,
-  checked,
+  disabled: propDisabled,
   value,
-}: MeasureSlider.Props) {
-  const { min, max } = range;
+}: FancySlider.Props) {
+  let initial = initialProp ?? mean;
+  let disabled = propDisabled ?? false;
 
   const background = React.useMemo(() => {
-    const { min, max } = range;
-    let { median, p90 } = measure;
-    let sd = (p90 - median) / 1.65;
-    return calculateBackground(median, sd, min, max);
-  }, [measure]);
+    return calculateBackground(mean, Math.abs(sd), min, max);
+  }, [mean, sd, min, max]);
 
   return (
     <>
@@ -125,7 +134,7 @@ function MeasureSlider({
         style={{
           gridColumn: 3,
           gridRow: row,
-          filter: !checked ? "brightness(50%)" : "none",
+          filter: disabled ? "brightness(50%)" : "none",
         }}
       >
         <span className="ruler-label">{min.toFixed(1)}</span>
@@ -152,7 +161,7 @@ function MeasureSlider({
           // @ts-ignore
           gridColumn: 4,
           gridRow: row,
-          filter: !checked ? "brightness(50%)" : "none",
+          filter: disabled ? "brightness(50%)" : "none",
         }}
       >
         <div className="input-group">
@@ -160,7 +169,7 @@ function MeasureSlider({
             <button
               type="button"
               className="btn btn-secondary"
-              onClick={() => onChange(measure.guess)}
+              onClick={() => onChange(initial)}
             >
               ↻
             </button>
@@ -231,6 +240,10 @@ function SingleMeasure(
 
   const subMeasure = props.subMeasure ?? false;
 
+  const { min, max } = range;
+  let { median: mean, p90 } = measure;
+  let sd = (p90 - mean) / 1.65;
+
   return (
     <>
       <div
@@ -249,11 +262,15 @@ function SingleMeasure(
           onChange={() => dispatch({ checked: checked ? 0 : 1 })}
         />
       </div>
-      <MeasureSlider
+      <FancySlider
         row={row}
-        measure={measure}
+        min={min}
+        max={max}
+        mean={mean}
+        sd={sd}
+        initial={measure.guess}
         value={value}
-        checked={checked}
+        disabled={!checked}
         onChange={(value) => {
           if (disabled) return;
           dispatch({ value });
@@ -356,15 +373,15 @@ type SliderState = {
   checked: number;
 };
 
-export function Page({
-  measures,
-  serialInterval,
-  originalGrowthRate,
-}: {
+type Props = {
   measures: Array<Measure | MeasureGroup>;
-  serialInterval: number;
-  originalGrowthRate: number;
-}) {
+  defaultSerialInterval: number;
+  defaultOriginalGrowthRate: number;
+};
+
+export function Page(props: Props) {
+  let measures = props.measures;
+
   function reducer<T>(
     state: Array<SliderState>,
     action: { idx: number } & Partial<SliderState>
@@ -424,20 +441,25 @@ export function Page({
     }
   );
 
-  let totalValue = 1;
+  let [serialInterval, setSerialInterval] = React.useState(
+    props.defaultSerialInterval
+  );
+
+  let [growthRate, setGrowthRate] = React.useState(
+    props.defaultOriginalGrowthRate
+  );
+  let growthRateMult = 1;
   let row = 2;
 
   let elems = measures.map((measureOrGroup, i) => {
     let { checked, value } = state[i];
 
-    if (checked >= 0) {
-      if (value instanceof Array) {
-        totalValue = value
-          .slice(0, checked)
-          .reduce((prev, cur) => prev * cur, totalValue);
-      } else {
-        totalValue *= value;
-      }
+    if (value instanceof Array) {
+      growthRateMult = value
+        .slice(0, checked)
+        .reduce((prev, cur) => prev * cur, growthRateMult);
+    } else if (checked > 0) {
+      growthRateMult *= value;
     }
 
     if ("items" in measureOrGroup) {
@@ -474,6 +496,17 @@ export function Page({
     }
   });
 
+  function setR(R: number) {
+    setGrowthRate(1 + Math.log(R) / serialInterval);
+  }
+
+  let defaultR = Math.exp(
+    serialInterval * (props.defaultOriginalGrowthRate - 1)
+  );
+  let originalR = Math.exp(serialInterval * (growthRate - 1));
+  let finalR = Math.exp(serialInterval * (growthRate * growthRateMult - 1));
+  let reducitonR = 1 - finalR / originalR;
+
   return (
     <>
       <h1>Mitigation calculator</h1>
@@ -494,10 +527,44 @@ export function Page({
         <div style={{ gridColumn: "3 / span 2" }}>Impact</div>
         {elems}
         <div style={{ gridColumn: "3", gridRow: row + 1 }}>
-          <p>The measures above result in a total growth rate reduction of </p>
+          <p>The measures result in a total growth rate reduction of </p>
         </div>
         <div style={{ gridColumn: "4", gridRow: row + 1, justifySelf: "end" }}>
-          {totalValue.toFixed(3)}
+          <b>{d3.format(".1%")(growthRateMult - 1)}</b>
+        </div>
+
+        <div
+          className="outcome"
+          style={{ gridColumn: "1 / span 2", gridRow: row + 2, maxWidth: 300 }}
+        >
+          With serial interval of{" "}
+          <input
+            className="form-control"
+            min={1}
+            max={10}
+            step={0.2}
+            type="number"
+            onChange={(evt) => setSerialInterval(+evt.target.value)}
+            value={serialInterval.toFixed(2)}
+          ></input>{" "}
+          and R of
+        </div>
+
+        <FancySlider
+          min={serialInterval / 5}
+          row={row + 2}
+          value={originalR}
+          onChange={setR}
+          mean={defaultR}
+          sd={serialInterval / 20}
+          max={serialInterval * 1.2}
+        ></FancySlider>
+        <div style={{ gridColumn: "3", gridRow: row + 3 }}>
+          The measures result in an R of <b>{finalR.toFixed(2)}</b> which is a
+          reduction of
+        </div>
+        <div style={{ gridColumn: "4", gridRow: row + 3, justifySelf: "end" }}>
+          <b>{d3.format(".1%")(-reducitonR)}</b>
         </div>
       </div>
       <hr />
@@ -510,8 +577,8 @@ if ($root) {
   ReactDOM.render(
     <Page
       measures={measures}
-      serialInterval={4}
-      originalGrowthRate={defaultOriginalGrowthRate}
+      defaultSerialInterval={5}
+      defaultOriginalGrowthRate={defaultOriginalGrowthRate}
     />,
     $root
   );

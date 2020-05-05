@@ -60,6 +60,15 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.measure-calculator .outcome input {
+  width: 4.75em;
+  box-shadow: none;
+  padding: 0.375rem 0.375rem 0.375rem 0.5rem;
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
+  display: inline-block;
+}
+
 input[type="range"].measure-slider {
   -webkit-appearance: none;
   width: 100%;
