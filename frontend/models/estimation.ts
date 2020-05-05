@@ -17,7 +17,22 @@ export class Estimation {
   now(): EstimationPoint | null {
     return this.at(new Date());
   }
-  private constructor(public points: EstimationPoint[]) {}
+
+  public points: EstimationPoint[] = [];
+
+  public constructor(obj: v4.Foretold) {
+    let length = obj.Date.length;
+    for (let i = 0; i < length; i++) {
+      this.points.push({
+        date: new Date(obj.Date[i]),
+        mean: +obj.Mean[i],
+        variance: +obj.Variance[i],
+        median: +obj["0.50"][i],
+        p05: +obj["0.05"][i],
+        p95: +obj["0.95"][i],
+      });
+    }
+  }
 
   get last() {
     let i = this.points.length - 1;
@@ -61,23 +76,5 @@ export class Estimation {
     }
 
     return null;
-  }
-
-  static fromv4(obj: v4.Foretold): Estimation | undefined {
-    if (!obj) return;
-
-    let points: EstimationPoint[] = [];
-    let length = obj.Date.length;
-    for (let i = 0; i < length; i++) {
-      points.push({
-        date: new Date(obj.Date[i]),
-        mean: +obj.Mean[i],
-        variance: +obj.Variance[i],
-        median: +obj["0.50"][i],
-        p05: +obj["0.05"][i],
-        p95: +obj["0.95"][i],
-      });
-    }
-    return new Estimation(points);
   }
 }
