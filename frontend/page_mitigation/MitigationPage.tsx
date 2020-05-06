@@ -110,6 +110,7 @@ namespace FancySlider {
     disabled?: boolean;
     initial?: number;
     row: number;
+    step: number;
     min: number;
     max: number;
     value: number;
@@ -121,15 +122,19 @@ function FancySlider({
   onChange,
   mean,
   sd,
-  initial: initialProp,
-  min,
-  max,
+  initial: propInitial,
+  min: propMin,
+  max: propMax,
+  step,
   row,
   disabled: propDisabled,
-  value,
+  value: propValue,
 }: FancySlider.Props) {
-  let initial = initialProp ?? mean;
+  let initial = propInitial ?? mean;
   let disabled = propDisabled ?? false;
+  let min = Math.floor(propMin / step) * step;
+  let max = Math.ceil(propMax / step) * step;
+  let value = Math.round(propValue / step) * step;
 
   const background = React.useMemo(() => {
     return calculateBackground(mean, Math.abs(sd), min, max);
@@ -153,7 +158,7 @@ function FancySlider({
           value={value ?? undefined}
           min={min}
           max={max}
-          step="any"
+          step={step}
           onChange={(evt) => onChange(+evt.target.value)}
           style={{
             // @ts-ignore
@@ -186,10 +191,10 @@ function FancySlider({
             className="form-control"
             min={min}
             max={max}
-            step={0.01}
+            step={step}
             type="number"
             onChange={(evt) => onChange(+evt.target.value)}
-            value={value.toFixed(2)}
+            value={value.toFixed(-Math.floor(Math.log10(step)))}
           ></input>
         </div>
       </div>
@@ -275,6 +280,7 @@ function SingleMeasure(
         min={min}
         max={max}
         mean={mean}
+        step={0.01}
         sd={sd}
         initial={measure.guess}
         value={value}
@@ -517,7 +523,7 @@ export function Page(props: Props) {
   );
   let originalR = growthToR(growthRate);
   let finalR = growthToR(growthRate * growthRateMult);
-  let reducitonR = 1 - finalR / originalR;
+  let reductionR = 1 - finalR / originalR;
 
   return (
     <>
@@ -546,36 +552,41 @@ export function Page(props: Props) {
         </div>
 
         <div
-          className="outcome"
           style={{ gridColumn: "1 / span 2", gridRow: row + 2, maxWidth: 300 }}
         >
-          With serial interval of{" "}
-          <input
-            className="form-control"
-            min={0}
-            step={0.2}
-            type="number"
-            onChange={(evt) => setSerialInterval(+evt.target.value)}
-            value={serialInterval.toFixed(2)}
-          ></input>{" "}
-          and R of
+          Original R
         </div>
 
         <FancySlider
           min={growthToR(0)}
           row={row + 2}
           value={originalR}
+          step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
           onChange={setR}
           mean={defaultR}
           sd={growthToR(1.3) - defaultR}
           max={growthToR(1.5)}
         ></FancySlider>
-        <div style={{ gridColumn: "3", gridRow: row + 3 }}>
-          The measures result in an R of <b>{finalR.toFixed(2)}</b> which is a
-          reduction of
+        <div
+          className="outcome"
+          style={{ gridColumn: "1 / span 3", gridRow: row + 3 }}
+        >
+          With serial interval of{" "}
+          <input
+            className="form-control"
+            min={0}
+            max={10}
+            step={0.1}
+            type="number"
+            onChange={(evt) => setSerialInterval(+evt.target.value)}
+            value={serialInterval.toFixed(1)}
+            style={{ width: "4.25em" }}
+          ></input>{" "}
+          days the measures result in an R of <b>{finalR.toFixed(2)}</b> which
+          is a reduction of
         </div>
         <div style={{ gridColumn: "4", gridRow: row + 3, justifySelf: "end" }}>
-          <b>{d3.format(".1%")(-reducitonR)}</b>
+          <b>{d3.format(".1%")(-reductionR)}</b>
         </div>
       </div>
       <hr />
