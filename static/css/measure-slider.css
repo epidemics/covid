@@ -109,6 +109,7 @@ input[type="range"][disabled].measure-slider::-webkit-slider-thumb {
   border-radius: 1px;
   background: #ffffff;
   cursor: pointer;
+  margin-top: -1px;
 }
 
 input[type="range"].measure-slider::-moz-range-track {

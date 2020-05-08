@@ -77,7 +77,7 @@ export const measures: Array<Measure | MeasureGroup> = [
   },
   {
     name: "Schools and universities closed",
-    guess: 0.667,
+    guess: 0.95,
     median: 0.942,
     p90: 0.858,
   },

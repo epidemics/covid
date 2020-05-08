@@ -18,7 +18,7 @@ import * as d3 from "d3";
 //   .correctLightness();
 
 function p(v: number): string {
-  return `${(100 * v).toFixed(3)}%`;
+  return `${(100 * v).toFixed(5)}%`;
 }
 
 function calculateBackground(
@@ -59,9 +59,10 @@ function calculateBackground(
     height: number,
     color: string,
     color2: string,
-    w: number = 1
+    pos?: number
   ) {
-    let firstTick = Math.ceil(min / interval) * interval;
+    let w = 1;
+    let firstTick = pos ?? Math.ceil(min / interval) * interval;
     let offset = p((firstTick - min) / (max - min));
 
     let tickSpace = p(interval / (max - min));
@@ -69,7 +70,9 @@ function calculateBackground(
     //   ${color}, ${color} 1px,
     //   transparent 1px, transparent ${tickSpace}
     // )`;
-    let tickGradient = `repeating-linear-gradient(to right, 
+    let tickGradient = `${
+      pos === undefined ? "repeating-linear-gradient" : "linear-gradient"
+    }(to right, 
       transparent calc(${offset}), ${color} calc(${offset}),
       ${color} calc(${offset} + ${w}px), ${color2} calc(${offset} + ${w}px), 
       ${color2} calc(${offset} + ${2 * w}px), transparent calc(${offset} + ${
@@ -86,19 +89,18 @@ function calculateBackground(
 
   let dark = scale(1).desaturate().css();
   let light = scale(0.5).desaturate().css();
-  if (max - min < 2) {
+  if (max < 2) {
     addTicks(0.05, 0.2, dark, light);
     addTicks(0.1, 0.5, dark, light);
-    addTicks(1, 1, dark, scale(0.4).desaturate().css());
-  } else if (max - min < 10) {
+  } else if (max - min < 4) {
     addTicks(0.1, 0.2, dark, light);
-    addTicks(0.5, 0.5, dark, light);
-    addTicks(1, 1, dark, scale(0.4).desaturate().css());
+    addTicks(1, 0.5, dark, light);
   } else {
     addTicks(0.5, 0.2, dark, light);
-    addTicks(5, 0.5, dark, light);
-    addTicks(10, 1, dark, scale(0.4).desaturate().css());
+    addTicks(1, 0.5, dark, light);
   }
+
+  addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1);
 
   return backgrounds.reverse().join(", ");
 }
