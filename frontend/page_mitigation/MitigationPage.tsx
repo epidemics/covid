@@ -119,6 +119,7 @@ namespace FancySlider {
     value: number;
     scale?: chroma.Scale;
     onChange?: (value: number) => void;
+    format?: (input: number) => string;
   }
 }
 
@@ -133,8 +134,10 @@ function FancySlider({
   row,
   disabled: propDisabled,
   value: propValue,
+  format: propFormat,
   scale,
 }: FancySlider.Props) {
+  let format = propFormat ?? ((x) => x.toFixed(1));
   let initial = propInitial ?? mean;
   let disabled = propDisabled ?? false;
   let min = Math.floor(propMin / step) * step;
@@ -161,7 +164,7 @@ function FancySlider({
           filter: disabled ? "brightness(50%)" : "none",
         }}
       >
-        <span className="ruler-label">{min.toFixed(1)}</span>
+        <span className="ruler-label">{format(min)}</span>
         <input
           className="ruler measure-slider"
           type="range"
@@ -176,7 +179,7 @@ function FancySlider({
             "--ruler-background": background,
           }}
         ></input>
-        <span className="ruler-label">{max.toFixed(1)}</span>
+        <span className="ruler-label">{format(max)}</span>
       </div>
       <div
         key={`value-${row}`}
@@ -295,6 +298,7 @@ function SingleMeasure(
         row={row}
         min={min}
         max={max}
+        format={(num) => d3.format("+.0%")(num - 1)}
         mean={mean}
         step={0.01}
         sd={sd}
@@ -603,6 +607,7 @@ export function Page(props: Props) {
         <FancySlider
           min={growthToR(0)}
           row={row + 3}
+          // format={(num) => `R = ${d3.format(".1f")(num)}`}
           value={beforeR}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
           onChange={setR}
