@@ -101,6 +101,15 @@ input[type="range"].measure-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   margin-top: -7.5px;
 }
+input[type="range"][disabled].measure-slider::-webkit-slider-thumb {
+  box-shadow: none;
+  border: none;
+  height: calc(var(--track-height) + 2px);
+  width: 3px;
+  border-radius: 1px;
+  background: #ffffff;
+  cursor: pointer;
+}
 
 input[type="range"].measure-slider::-moz-range-track {
   width: 100%;
@@ -116,7 +125,16 @@ input[type="range"].measure-slider::-moz-range-thumb {
   border: 1.8px solid #00001e;
   height: 26px;
   width: var(--thumb-width);
-  border-radius: 15px;
+  border-radius: calc(var(--thumb-width) / 2);
+  background: #ffffff;
+  cursor: pointer;
+}
+input[type="range"][disabled].measure-slider::-moz-range-thumb {
+  box-shadow: none;
+  border: none;
+  height: calc(var(--track-height) * 1.1);
+  width: 3px;
+  border-radius: 1px;
   background: #ffffff;
   cursor: pointer;
 }
@@ -156,4 +174,13 @@ input[type="range"].measure-slider::-ms-thumb {
   background: #ffffff;
   cursor: pointer;
   height: 11.4px;
+}
+input[type="range"][disabled].measure-slider::-ms-thumb {
+  box-shadow: none;
+  border: none;
+  height: calc(var(--track-height) + 2px);
+  width: 3px;
+  border-radius: 1px;
+  background: #ffffff;
+  cursor: pointer;
 }

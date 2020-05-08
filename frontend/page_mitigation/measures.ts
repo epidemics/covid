@@ -16,7 +16,10 @@ export const range = { min: 0.6, max: 1.1 };
 
 export const serialInterval = 5;
 
-export const defaultOriginalGrowthRate = 1.24;
+export const defaultOriginalGrowthRate = {
+  mean: 1.24,
+  ci: [1.21, 1.27] as [number, number],
+};
 
 // the measures
 export const measures: Array<Measure | MeasureGroup> = [
@@ -74,7 +77,7 @@ export const measures: Array<Measure | MeasureGroup> = [
   },
   {
     name: "Schools and universities closed",
-    guess: 0.94,
+    guess: 0.667,
     median: 0.942,
     p90: 0.858,
   },

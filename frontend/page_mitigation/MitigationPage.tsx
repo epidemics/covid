@@ -12,7 +12,6 @@ import {
 } from "./measures";
 import * as d3 from "d3";
 
-let scale = chroma.scale("YlGnBu");
 //let scale = chroma.scale("PuBu");
 // let scale = chroma
 //   .scale(["black", "red", "yellow", "white"])
@@ -26,7 +25,8 @@ function calculateBackground(
   mean: number,
   sd: number,
   min: number,
-  max: number
+  max: number,
+  scale: chroma.Scale
 ): string {
   function getColor(z: number) {
     return scale(Math.exp((z * z) / -2)).css();
@@ -114,7 +114,8 @@ namespace FancySlider {
     min: number;
     max: number;
     value: number;
-    onChange: (value: number) => void;
+    scale?: chroma.Scale;
+    onChange?: (value: number) => void;
   }
 }
 
@@ -129,6 +130,7 @@ function FancySlider({
   row,
   disabled: propDisabled,
   value: propValue,
+  scale,
 }: FancySlider.Props) {
   let initial = propInitial ?? mean;
   let disabled = propDisabled ?? false;
@@ -137,7 +139,13 @@ function FancySlider({
   let value = Math.round(propValue / step) * step;
 
   const background = React.useMemo(() => {
-    return calculateBackground(mean, Math.abs(sd), min, max);
+    return calculateBackground(
+      mean,
+      Math.abs(sd),
+      min,
+      max,
+      scale ?? chroma.scale("YlGnBu")
+    );
   }, [mean, sd, min, max]);
 
   return (
@@ -154,12 +162,12 @@ function FancySlider({
         <input
           className="ruler measure-slider"
           type="range"
-          disabled={value == null}
-          value={value ?? undefined}
+          disabled={onChange === undefined || value == null}
+          value={propValue ?? undefined}
           min={min}
           max={max}
-          step={step}
-          onChange={(evt) => onChange(+evt.target.value)}
+          step="any"
+          onChange={onChange ? (evt) => onChange(+evt.target.value) : undefined}
           style={{
             // @ts-ignore
             "--ruler-background": background,
@@ -177,26 +185,30 @@ function FancySlider({
           filter: disabled ? "brightness(50%)" : "none",
         }}
       >
-        <div className="input-group">
-          <div className="input-group-prepend">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => onChange(initial)}
-            >
-              ↻
-            </button>
+        {onChange ? (
+          <div className="input-group">
+            <div className="input-group-prepend">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => onChange(initial)}
+              >
+                ↻
+              </button>
+            </div>
+            <input
+              className="form-control"
+              min={min}
+              max={max}
+              step={step}
+              type="number"
+              onChange={(evt) => onChange(+evt.target.value)}
+              value={value.toFixed(-Math.floor(Math.log10(step)))}
+            ></input>
           </div>
-          <input
-            className="form-control"
-            min={min}
-            max={max}
-            step={step}
-            type="number"
-            onChange={(evt) => onChange(+evt.target.value)}
-            value={value.toFixed(-Math.floor(Math.log10(step)))}
-          ></input>
-        </div>
+        ) : (
+          <b>{value.toFixed(-Math.floor(Math.log10(step)))}</b>
+        )}
       </div>
     </>
   );
@@ -390,7 +402,7 @@ type SliderState = {
 type Props = {
   measures: Array<Measure | MeasureGroup>;
   defaultSerialInterval: number;
-  defaultOriginalGrowthRate: number;
+  defaultOriginalGrowthRate: { mean: number; ci: [number, number] };
 };
 
 export function Page(props: Props) {
@@ -460,7 +472,7 @@ export function Page(props: Props) {
   );
 
   let [growthRate, setGrowthRate] = React.useState(
-    props.defaultOriginalGrowthRate
+    props.defaultOriginalGrowthRate.mean
   );
   let growthRateMult = 1;
   let row = 2;
@@ -518,12 +530,12 @@ export function Page(props: Props) {
     return Math.exp(serialInterval * (growth - 1));
   }
 
-  let defaultR = Math.exp(
-    serialInterval * (props.defaultOriginalGrowthRate - 1)
-  );
-  let originalR = growthToR(growthRate);
+  let defaultR = growthToR(props.defaultOriginalGrowthRate.mean);
+  let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
+  let defaultRsd = (defaultRp95 - defaultR) / 1.5;
+  let beforeR = growthToR(growthRate);
   let finalR = growthToR(growthRate * growthRateMult);
-  let reductionR = 1 - finalR / originalR;
+  let reductionR = 1 - finalR / beforeR;
 
   return (
     <>
@@ -541,8 +553,12 @@ export function Page(props: Props) {
 
       <hr />
       <div className="measure-calculator">
-        <div style={{ gridColumn: "1 / span 2" }}>Measures</div>
-        <div style={{ gridColumn: "3 / span 2" }}>Impact</div>
+        <div style={{ gridColumn: "1 / span 2" }}>
+          <b>Measures</b>
+        </div>
+        <div style={{ gridColumn: "3 / span 2" }}>
+          <b>Impact on growth</b>
+        </div>
         {elems}
         <div style={{ gridColumn: "3", gridRow: row + 1 }}>
           <p>The measures result in a total growth rate reduction of </p>
@@ -551,30 +567,17 @@ export function Page(props: Props) {
           <b>{d3.format(".1%")(growthRateMult - 1)}</b>
         </div>
 
-        <div
-          style={{ gridColumn: "1 / span 2", gridRow: row + 2, maxWidth: 300 }}
-        >
-          Original R
+        <div style={{ gridColumn: "1 / span 2", gridRow: row + 2 }}>
+          <b>Effect on R</b>
         </div>
-
-        <FancySlider
-          min={growthToR(0)}
-          row={row + 2}
-          value={originalR}
-          step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
-          onChange={setR}
-          mean={defaultR}
-          sd={growthToR(1.3) - defaultR}
-          max={growthToR(1.5)}
-        ></FancySlider>
         <div
           className="outcome"
-          style={{ gridColumn: "1 / span 3", gridRow: row + 3 }}
+          style={{ gridColumn: "3 / span 2", gridRow: row + 2 }}
         >
-          With serial interval of{" "}
+          Compute the effect on R assuming a serial interval of{" "}
           <input
             className="form-control"
-            min={0}
+            min={0.1}
             max={10}
             step={0.1}
             type="number"
@@ -582,10 +585,48 @@ export function Page(props: Props) {
             value={serialInterval.toFixed(1)}
             style={{ width: "4.25em" }}
           ></input>{" "}
-          days the measures result in an R of <b>{finalR.toFixed(2)}</b> which
-          is a reduction of
+          days
         </div>
-        <div style={{ gridColumn: "4", gridRow: row + 3, justifySelf: "end" }}>
+
+        <div
+          style={{ gridColumn: "1 / span 2", gridRow: row + 3, maxWidth: 300 }}
+        >
+          R before the above measures
+        </div>
+
+        <FancySlider
+          min={growthToR(0)}
+          row={row + 3}
+          value={beforeR}
+          step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
+          onChange={setR}
+          mean={defaultR}
+          scale={chroma.scale("YlOrRd")}
+          sd={defaultRsd}
+          max={defaultR + 4 * defaultRsd}
+        ></FancySlider>
+
+        <div
+          style={{ gridColumn: "1 / span 2", gridRow: row + 4, maxWidth: 300 }}
+        >
+          R with the above measures
+        </div>
+
+        <FancySlider
+          min={growthToR(0)}
+          row={row + 4}
+          value={finalR}
+          step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 3)}
+          mean={finalR}
+          scale={chroma.scale("YlOrRd")}
+          sd={defaultRsd}
+          max={defaultR + 4 * defaultRsd}
+        ></FancySlider>
+
+        <div className="outcome" style={{ gridColumn: "3", gridRow: row + 5 }}>
+          The measures result in a reduction in R of
+        </div>
+        <div style={{ gridColumn: "4", gridRow: row + 5, justifySelf: "end" }}>
           <b>{d3.format(".1%")(-reductionR)}</b>
         </div>
       </div>
