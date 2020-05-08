@@ -40,7 +40,7 @@ function calculateBackground(
   let stops: Array<string> = [];
   let addStop = (loc: number, z: number) => {
     let offset = (loc - min) / (max - min);
-    stops.push(`${getColor(z)} ${(offset * 100).toFixed(0)}%`);
+    stops.push(`${getColor(z)} ${(offset * 100).toFixed(2)}%`);
   };
 
   for (let z = -4; z < 4; z += 0.25) {
@@ -144,8 +144,8 @@ function FancySlider({
     return calculateBackground(
       mean,
       Math.abs(sd),
-      min,
-      max,
+      propMin,
+      propMax,
       scale ?? chroma.scale("YlGnBu")
     );
   }, [mean, sd, min, max]);
@@ -166,8 +166,8 @@ function FancySlider({
           type="range"
           disabled={onChange === undefined || value == null}
           value={propValue ?? undefined}
-          min={min}
-          max={max}
+          min={propMin}
+          max={propMax}
           step="any"
           onChange={onChange ? (evt) => onChange(+evt.target.value) : undefined}
           style={{
