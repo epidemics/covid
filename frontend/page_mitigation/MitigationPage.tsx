@@ -77,8 +77,10 @@ function calculateBackground(
       ${color} calc(${offset} + ${w}px), ${color2} calc(${offset} + ${w}px), 
       ${color2} calc(${offset} + ${2 * w}px), transparent calc(${offset} + ${
       2 * w
-    }px), 
-      transparent calc(${offset} + ${tickSpace})
+    }px)
+      ${
+        pos !== undefined ? "" : `, transparent calc(${offset} + ${tickSpace})`
+      } 
     )`;
     backgrounds.push(
       `no-repeat ${tickGradient} 
@@ -86,9 +88,9 @@ function calculateBackground(
       / calc(100% - var(--thumb-width)) ${p(height)}`
     );
   }
-
   let dark = scale(1).desaturate().css();
   let light = scale(0.5).desaturate().css();
+
   if (max < 2) {
     addTicks(0.05, 0.2, dark, light);
     addTicks(0.1, 0.5, dark, light);
@@ -99,7 +101,6 @@ function calculateBackground(
     addTicks(0.5, 0.2, dark, light);
     addTicks(1, 0.5, dark, light);
   }
-
   addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1);
 
   return backgrounds.reverse().join(", ");
