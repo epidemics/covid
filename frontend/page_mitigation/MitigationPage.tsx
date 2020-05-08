@@ -185,6 +185,7 @@ function FancySlider({
           gridColumn: 4,
           gridRow: row,
           filter: disabled ? "brightness(50%)" : "none",
+          justifySelf: "end",
         }}
       >
         {onChange ? (
