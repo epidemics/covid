@@ -551,7 +551,7 @@ export function Page(props: Props) {
         various combinations of measures. On the left measures and measure
         groups can be toggled to factor into the calculation. On the right the
         estimated impact on growth is displayed, this can be further adjusted
-        using slider. In measure groups more stingent measures indicate the{" "}
+        using the slider. In measure groups more stingent measures indicate the{" "}
         <em>additional effect</em> on top of less stingent measures.{" "}
       </p>
 
