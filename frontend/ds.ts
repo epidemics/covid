@@ -13,13 +13,13 @@ export function makeDataStore(
 ) {
   console.info(`Using channel ${channel}`);
 
-  let mainv4 = Thunk.fetchJson<v4.Main>(
-    `${STATIC_ROOT}/v4/${channel}/data-v4.json`
-  );
+  let data_root = `${STATIC_ROOT}/v4/${channel}`;
+
+  let mainv4 = Thunk.fetchJson<v4.Main>(`${data_root}/data-v4.json`);
 
   return new Datastore({
     regions: mainv4.map("parse_regions", ({ regions }) =>
-      Regions.from(regions)
+      Regions.from(regions, data_root)
     ),
     geoData: Thunk.fetchJson(`${STATIC_ROOT}/casemap-geo.json`),
     containments: Thunk.fetchJson(

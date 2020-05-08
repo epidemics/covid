@@ -2,7 +2,6 @@ import { Rates } from "./rates";
 import { Estimation } from "./estimation";
 import { Reported } from "./reported";
 import { v4 } from "../../common/spec";
-import { STATIC_ROOT } from "../../common/constants";
 import { Thunk } from "./datastore";
 import { Scenarios } from "./scenario";
 
@@ -22,7 +21,7 @@ export class Region {
   public estimates?: Estimation;
   public reported?: Reported;
 
-  public constructor(public code: string, obj: v4.Region) {
+  public constructor(data_root: string, public code: string, obj: v4.Region) {
     let data = obj.data;
 
     this.population = +obj.Population;
@@ -32,9 +31,8 @@ export class Region {
     this.timezones = obj.data.Timezones;
     this.name = obj.Name;
     this.officialName = obj.OfficialName;
-    this.externalData = Thunk.fetchThen(
-      `${STATIC_ROOT}/${obj.data_url}`,
-      (res) => res.json().then((obj) => new ExternalData(obj, this.population))
+    this.externalData = Thunk.fetchThen(`${data_root}/${obj.data_url}`, (res) =>
+      res.json().then((obj) => new ExternalData(obj, this.population))
     );
 
     if (data.Rates) this.rates = new Rates(data.Rates);
