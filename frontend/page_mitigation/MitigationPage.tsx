@@ -471,9 +471,11 @@ export function Page(props: Props) {
     }
   );
 
-  let [serialInterval, setSerialInterval] = React.useState(
+  let [serialInterval_, setSerialInterval] = React.useState(
     props.defaultSerialInterval
   );
+
+  let serialInterval = Math.max(serialInterval_, 0.1);
 
   let [growthRate, setGrowthRate] = React.useState(
     props.defaultOriginalGrowthRate.mean
