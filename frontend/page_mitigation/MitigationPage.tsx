@@ -8,7 +8,6 @@ import {
   range,
   Measure,
   MeasureGroup,
-  defaultOriginalGrowthRate,
   serialInterval,
 } from "./measures";
 import * as d3 from "d3";
@@ -441,7 +440,6 @@ type SliderState = {
 type Props = {
   measures: Array<Measure | MeasureGroup>;
   serialInterval: number;
-  defaultOriginalGrowthRate: { mean: number; ci: [number, number] };
 };
 
 export function Page(props: Props) {
@@ -646,11 +644,7 @@ export function Page(props: Props) {
 let $root = document.getElementById("react-mitigation-calculator");
 if ($root) {
   ReactDOM.render(
-    <Page
-      measures={measures}
-      serialInterval={serialInterval}
-      defaultOriginalGrowthRate={defaultOriginalGrowthRate}
-    />,
+    <Page measures={measures} serialInterval={serialInterval} />,
     $root
   );
 }
