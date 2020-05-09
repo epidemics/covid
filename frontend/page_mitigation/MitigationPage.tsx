@@ -445,6 +445,10 @@ type Props = {
 export function Page(props: Props) {
   let { measures, serialInterval } = props;
 
+  React.useEffect(() => {
+    document.getElementById("containmentContent")?.classList.remove("d-none");
+  });
+
   function reducer<T>(
     state: Array<SliderState>,
     action: { idx: number } & Partial<SliderState>
