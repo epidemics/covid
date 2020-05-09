@@ -66,7 +66,7 @@ in `common/spec/v4.ts`. The `epimodel` repository can be used to [generate and u
 The `channel` corresponds to the `-c` argument of the `epimodel` commmand `./do web_upload`.
 
 In the `frontend` the current `channel` is accessible as a global variable `DEFAULT_EPIFOR_CHANNEL`
-(see [`frontend/@types/epifor.d.ts`][https://github.com/epidemics/covid/blob/master/frontend/%40types/epifor.d.ts]).
+(see [`frontend/@types/epifor.d.ts`](https://github.com/epidemics/covid/blob/master/frontend/%40types/epifor.d.ts).
 
 ### Development flow
 The whole dev project management is [described here](https://www.notion.so/Development-project-management-476f3c53b0f24171a78146365072d82e). What follows below is specific to this repository.
