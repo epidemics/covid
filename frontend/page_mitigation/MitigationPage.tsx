@@ -221,7 +221,7 @@ function FancySlider({
         <input
           className="ruler measure-slider"
           type="range"
-          disabled={onChange === undefined || value == null}
+          disabled={onChange === undefined}
           value={propValue ?? undefined}
           min={propMin}
           max={propMax}
