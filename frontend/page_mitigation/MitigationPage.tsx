@@ -597,15 +597,11 @@ export function Page(props: Props) {
           <b>Impact on R, the reproductive number</b>
         </div>
         {elems}
-        <div style={{ gridColumn: "3", gridRow: row }}>
-          <p>The measures result in a total growth rate reduction of </p>
+        <div style={{ gridColumn: "1 / span 2", gridRow: row++ }}>
+          <b>Outcome</b>
         </div>
-        <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
-          <b>{d3.format(".1%")(multiplier - 1)}</b>
-        </div>
-
         <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
-          R before the above measures
+          R without any measures
         </div>
 
         <FancySlider
@@ -635,6 +631,13 @@ export function Page(props: Props) {
           sd={defaultRsd}
           max={defaultR + 4 * defaultRsd}
         ></FancySlider>
+
+        <div style={{ gridColumn: "3", gridRow: row }}>
+          <p>The measures result in a reduction in R of </p>
+      </div>
+        <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
+          <b>{d3.format(".1%")(multiplier - 1)}</b>
+        </div>
       </div>
       <hr />
     </>
