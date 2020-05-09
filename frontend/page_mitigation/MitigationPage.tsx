@@ -9,6 +9,7 @@ import {
   Measure,
   MeasureGroup,
   defaultOriginalGrowthRate,
+  serialInterval,
 } from "./measures";
 import * as d3 from "d3";
 
@@ -139,7 +140,7 @@ function FancySlider({
 }: FancySlider.Props) {
   let format =
     propFormat == "percentage"
-      ? (x: number) => d3.format(".0%")(1 - x)
+      ? (x: number) => d3.format("+.0%")(x - 1)
       : (x: number) => x.toFixed(1);
   let initial = propInitial ?? mean;
   let disabled = propDisabled ?? false;
@@ -301,7 +302,7 @@ function SingleMeasure(
   const subMeasure = props.subMeasure ?? false;
 
   const { min, max } = range;
-  let { median: mean, p90 } = measure;
+  let { mean, p90 } = measure;
   let sd = (p90 - mean) / 1.65;
 
   return (
@@ -330,7 +331,7 @@ function SingleMeasure(
         mean={mean}
         step={0.01}
         sd={sd}
-        initial={measure.guess}
+        initial={measure.mean}
         value={value}
         disabled={!checked}
         onChange={(value) => {
@@ -437,12 +438,12 @@ type SliderState = {
 
 type Props = {
   measures: Array<Measure | MeasureGroup>;
-  defaultSerialInterval: number;
+  serialInterval: number;
   defaultOriginalGrowthRate: { mean: number; ci: [number, number] };
 };
 
 export function Page(props: Props) {
-  let measures = props.measures;
+  let { measures, serialInterval } = props;
 
   function reducer<T>(
     state: Array<SliderState>,
@@ -490,12 +491,12 @@ export function Page(props: Props) {
       return measures.map((measureOrGroup) => {
         if ("items" in measureOrGroup) {
           return {
-            value: measureOrGroup.items.map((measure) => measure.guess),
+            value: measureOrGroup.items.map((measure) => measure.mean),
             checked: measureOrGroup.items.length,
           };
         } else {
           return {
-            value: measureOrGroup.guess,
+            value: measureOrGroup.mean,
             checked: 1,
           };
         }
@@ -503,27 +504,21 @@ export function Page(props: Props) {
     }
   );
 
-  let [serialInterval_, setSerialInterval] = React.useState(
-    props.defaultSerialInterval
-  );
-
-  let serialInterval = Math.max(serialInterval_, 0.1);
-
   let [growthRate, setGrowthRate] = React.useState(
     props.defaultOriginalGrowthRate.mean
   );
-  let growthRateMult = 1;
-  let row = 2;
+  let multiplier = 1;
+  let row = 3;
 
   let elems = measures.map((measureOrGroup, i) => {
     let { checked, value } = state[i];
 
     if (value instanceof Array) {
-      growthRateMult = value
+      multiplier = value
         .slice(0, checked)
-        .reduce((prev, cur) => prev * cur, growthRateMult);
+        .reduce((prev, cur) => prev * cur, multiplier);
     } else if (checked > 0) {
-      growthRateMult *= value;
+      multiplier *= value;
     }
 
     if ("items" in measureOrGroup) {
@@ -572,8 +567,7 @@ export function Page(props: Props) {
   let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
   let defaultRsd = (defaultRp95 - defaultR) / 1.5;
   let beforeR = growthToR(growthRate);
-  let finalR = growthToR(growthRate * growthRateMult);
-  let reductionR = 1 - finalR / beforeR;
+  let finalR = growthToR(growthRate) * multiplier;
 
   return (
     <>
@@ -582,11 +576,14 @@ export function Page(props: Props) {
       <hr />
       <p>
         The following tool can be used to calculate the estimated effect of
-        various combinations of measures. On the left measures and measure
-        groups can be toggled to factor into the calculation. On the right the
-        estimated impact on growth is displayed, this can be further adjusted
-        using the slider. In measure groups more stingent measures indicate the{" "}
-        <em>additional effect</em> on top of less stingent measures.{" "}
+        various combinations of COVID countermeasures. On the left measures and
+        measure groups can be toggled to factor into the calculation. On the
+        right our estimated impact on growth is displayed using coloured bands
+        based. This is based on our countermeasure dataset and the observed
+        growth reduction. The impact of each measure can be customized by the
+        sliders to e.g. factor in non-complience. In measure groups more
+        stingent measures indicate the <em>additional effect</em> on top of less
+        stingent measures.{" "}
       </p>
 
       <hr />
@@ -595,46 +592,23 @@ export function Page(props: Props) {
           <b>Measures</b>
         </div>
         <div style={{ gridColumn: "3 / span 2" }}>
-          <b>Impact on growth</b>
+          <b>Impact on R, the reproductive number</b>
         </div>
         {elems}
-        <div style={{ gridColumn: "3", gridRow: row + 1 }}>
+        <div style={{ gridColumn: "3", gridRow: row }}>
           <p>The measures result in a total growth rate reduction of </p>
         </div>
-        <div style={{ gridColumn: "4", gridRow: row + 1, justifySelf: "end" }}>
-          <b>{d3.format(".1%")(growthRateMult - 1)}</b>
+        <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
+          <b>{d3.format(".1%")(multiplier - 1)}</b>
         </div>
 
-        <div style={{ gridColumn: "1 / span 2", gridRow: row + 2 }}>
-          <b>Effect on R</b>
-        </div>
-        <div
-          className="outcome"
-          style={{ gridColumn: "3 / span 2", gridRow: row + 2 }}
-        >
-          Compute the effect on R assuming a serial interval of{" "}
-          <input
-            className="form-control"
-            min={0.1}
-            max={10}
-            step={0.1}
-            type="number"
-            onChange={(evt) => setSerialInterval(+evt.target.value)}
-            value={serialInterval.toFixed(1)}
-            style={{ width: "4.25em" }}
-          ></input>{" "}
-          days
-        </div>
-
-        <div
-          style={{ gridColumn: "1 / span 2", gridRow: row + 3, maxWidth: 300 }}
-        >
+        <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
           R before the above measures
         </div>
 
         <FancySlider
           min={growthToR(0)}
-          row={row + 3}
+          row={row++}
           // format={(num) => `R = ${d3.format(".1f")(num)}`}
           value={beforeR}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
@@ -645,15 +619,13 @@ export function Page(props: Props) {
           max={defaultR + 4 * defaultRsd}
         ></FancySlider>
 
-        <div
-          style={{ gridColumn: "1 / span 2", gridRow: row + 4, maxWidth: 300 }}
-        >
+        <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
           R with the above measures
         </div>
 
         <FancySlider
           min={growthToR(0)}
-          row={row + 4}
+          row={row++}
           value={finalR}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 3)}
           mean={finalR}
@@ -661,13 +633,6 @@ export function Page(props: Props) {
           sd={defaultRsd}
           max={defaultR + 4 * defaultRsd}
         ></FancySlider>
-
-        <div className="outcome" style={{ gridColumn: "3", gridRow: row + 5 }}>
-          The measures result in a reduction in R of
-        </div>
-        <div style={{ gridColumn: "4", gridRow: row + 5, justifySelf: "end" }}>
-          <b>{d3.format(".1%")(-reductionR)}</b>
-        </div>
       </div>
       <hr />
     </>
@@ -679,7 +644,7 @@ if ($root) {
   ReactDOM.render(
     <Page
       measures={measures}
-      defaultSerialInterval={5}
+      serialInterval={serialInterval}
       defaultOriginalGrowthRate={defaultOriginalGrowthRate}
     />,
     $root
