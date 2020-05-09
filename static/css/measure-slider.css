@@ -93,19 +93,19 @@ input[type="range"].measure-slider::-webkit-slider-runnable-track {
   cursor: pointer;
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
   background: var(--ruler-background);
-  border-radius: 1.3px;
+  border-radius: 0;
   border: 0.2px solid #010101;
 }
 input[type="range"].measure-slider::-webkit-slider-thumb {
   box-shadow: 0.9px 0.9px 1px #000031, 0px 0px 0.9px #00004b;
   border: 1.8px solid #00001e;
   height: 26px;
-  width: var(--thumb-width);
-  border-radius: calc(var(--thumb-width) / 2);
+  width: calc(1.75 * var(--thumb-width));
+  border-radius: calc(var(--thumb-width) * 0.75);
   background: #ffffff;
   cursor: pointer;
   -webkit-appearance: none;
-  margin-top: -7.5px;
+  margin-top: calc((var(--track-height) - 26px) / 2);
 }
 input[type="range"][disabled].measure-slider::-webkit-slider-thumb {
   box-shadow: none;
@@ -124,7 +124,7 @@ input[type="range"].measure-slider::-moz-range-track {
   cursor: pointer;
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
   background: var(--ruler-background);
-  border-radius: 1.3px;
+  border-radius: 0;
   border: 0.2px solid #010101;
 }
 input[type="range"].measure-slider::-moz-range-thumb {
@@ -141,6 +141,7 @@ input[type="range"][disabled].measure-slider::-moz-range-thumb {
   border: none;
   height: calc(var(--track-height) * 1.1);
   width: 3px;
+  padding: 0 calc(var(--thumb-width) / 2 - 3px);
   border-radius: 1px;
   background: #ffffff;
   cursor: pointer;
@@ -148,7 +149,7 @@ input[type="range"][disabled].measure-slider::-moz-range-thumb {
 
 input[type="range"].measure-slider::-ms-track {
   width: 100%;
-  height: 11.4px;
+  height: var(--track-height);
   cursor: pointer;
   background: transparent;
   border-color: transparent;
@@ -176,11 +177,10 @@ input[type="range"].measure-slider::-ms-thumb {
   box-shadow: 0.9px 0.9px 1px #000031, 0px 0px 0.9px #00004b;
   border: 1.8px solid #00001e;
   height: 26px;
-  width: 26px;
+  width: var(--thumb-width);
   border-radius: 15px;
   background: #ffffff;
   cursor: pointer;
-  height: 11.4px;
 }
 input[type="range"][disabled].measure-slider::-ms-thumb {
   box-shadow: none;
