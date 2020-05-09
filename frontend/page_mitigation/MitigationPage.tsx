@@ -506,9 +506,6 @@ export function Page(props: Props) {
     }
   );
 
-  let [growthRate, setGrowthRate] = React.useState(
-    props.defaultOriginalGrowthRate.mean
-  );
   let multiplier = 1;
   let row = 3;
 
@@ -557,19 +554,21 @@ export function Page(props: Props) {
     }
   });
 
-  function setR(R: number) {
-    setGrowthRate(1 + Math.log(R) / serialInterval);
-  }
+  let [baselineR, setR] = React.useState(3.6);
 
-  function growthToR(growth: number) {
-    return Math.exp(serialInterval * (growth - 1));
-  }
+  // function setR(R: number) {
+  //   setGrowthRate(1 + Math.log(R) / serialInterval);
+  // }
 
-  let defaultR = growthToR(props.defaultOriginalGrowthRate.mean);
-  let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
-  let defaultRsd = (defaultRp95 - defaultR) / 1.5;
-  let beforeR = growthToR(growthRate);
-  let finalR = growthToR(growthRate) * multiplier;
+  // function growthToR(growth: number) {
+  //   return Math.exp(serialInterval * (growth - 1));
+  // }
+
+  let defaultR = 3.6; //growthToR(props.defaultOriginalGrowthRate.mean);
+  //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
+  let defaultRsd = 1.4; //(defaultRp95 - defaultR) / 1.5;
+  let beforeR = baselineR;
+  let finalR = baselineR * multiplier;
 
   return (
     <>
@@ -605,7 +604,7 @@ export function Page(props: Props) {
         </div>
 
         <FancySlider
-          min={growthToR(0)}
+          min={0}
           row={row++}
           // format={(num) => `R = ${d3.format(".1f")(num)}`}
           value={beforeR}
@@ -614,7 +613,7 @@ export function Page(props: Props) {
           mean={defaultR}
           scale={chroma.scale("YlOrRd")}
           sd={defaultRsd}
-          max={defaultR + 4 * defaultRsd}
+          max={defaultR + 3 * defaultRsd}
         ></FancySlider>
 
         <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
@@ -622,14 +621,14 @@ export function Page(props: Props) {
         </div>
 
         <FancySlider
-          min={growthToR(0)}
+          min={0}
           row={row++}
           value={finalR}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 3)}
           mean={finalR}
           scale={chroma.scale("YlOrRd")}
           sd={defaultRsd}
-          max={defaultR + 4 * defaultRsd}
+          max={defaultR + 3 * defaultRsd}
         ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>

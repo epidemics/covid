@@ -15,11 +15,6 @@ export const range = { min: 0.25, max: 1.25 };
 
 export const serialInterval = 6.5;
 
-export const defaultOriginalGrowthRate = {
-  mean: 1.24,
-  ci: [1.21, 1.27] as [number, number],
-};
-
 // the measures
 export const measures: Array<Measure | MeasureGroup> = [
   {
