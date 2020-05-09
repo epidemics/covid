@@ -100,8 +100,8 @@ input[type="range"].measure-slider::-webkit-slider-thumb {
   box-shadow: 0.9px 0.9px 1px #000031, 0px 0px 0.9px #00004b;
   border: 1.8px solid #00001e;
   height: 26px;
-  width: calc(1.75 * var(--thumb-width));
-  border-radius: calc(var(--thumb-width) * 0.75);
+  width: calc(1.6 * var(--thumb-width));
+  border-radius: calc(var(--thumb-width) * 0.6);
   background: #ffffff;
   cursor: pointer;
   -webkit-appearance: none;
@@ -141,7 +141,6 @@ input[type="range"][disabled].measure-slider::-moz-range-thumb {
   border: none;
   height: calc(var(--track-height) * 1.1);
   width: 3px;
-  padding: 0 calc(var(--thumb-width) / 2 - 3px);
   border-radius: 1px;
   background: #ffffff;
   cursor: pointer;

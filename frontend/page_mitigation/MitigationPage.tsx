@@ -632,7 +632,7 @@ export function Page(props: Props) {
 
         <div style={{ gridColumn: "3", gridRow: row }}>
           <p>The measures result in a reduction in R of </p>
-      </div>
+        </div>
         <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
           <b>{d3.format(".1%")(multiplier - 1)}</b>
         </div>
