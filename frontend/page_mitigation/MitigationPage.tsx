@@ -556,8 +556,6 @@ export function Page(props: Props) {
     }
   });
 
-  let [baselineR, setR] = React.useState(3.6);
-
   // function setR(R: number) {
   //   setGrowthRate(1 + Math.log(R) / serialInterval);
   // }
@@ -569,8 +567,7 @@ export function Page(props: Props) {
   let defaultR = 3.6; //growthToR(props.defaultOriginalGrowthRate.mean);
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
   let defaultRsd = 1.4; //(defaultRp95 - defaultR) / 1.5;
-  let beforeR = baselineR;
-  let finalR = baselineR * multiplier;
+  let [baselineR, setR] = React.useState(defaultR);
 
   return (
     <>
@@ -609,7 +606,7 @@ export function Page(props: Props) {
           min={0}
           row={row++}
           // format={(num) => `R = ${d3.format(".1f")(num)}`}
-          value={beforeR}
+          value={baselineR}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
           onChange={setR}
           mean={defaultR}
@@ -625,9 +622,9 @@ export function Page(props: Props) {
         <FancySlider
           min={0}
           row={row++}
-          value={finalR}
+          value={baselineR * multiplier}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 3)}
-          mean={finalR}
+          mean={defaultR * multiplier}
           scale={chroma.scale("YlOrRd")}
           sd={defaultRsd}
           max={defaultR + 3 * defaultRsd}
