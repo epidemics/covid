@@ -119,7 +119,7 @@ namespace FancySlider {
     value: number;
     scale?: chroma.Scale;
     onChange?: (value: number) => void;
-    format?: (input: number) => string;
+    format?: "percentage" | "absolute";
   }
 }
 
@@ -137,7 +137,10 @@ function FancySlider({
   format: propFormat,
   scale,
 }: FancySlider.Props) {
-  let format = propFormat ?? ((x) => x.toFixed(1));
+  let format =
+    propFormat == "percentage"
+      ? (x: number) => d3.format(".0%")(1 - x)
+      : (x: number) => x.toFixed(1);
   let initial = propInitial ?? mean;
   let disabled = propDisabled ?? false;
   let min = Math.floor(propMin / step) * step;
@@ -153,6 +156,54 @@ function FancySlider({
       scale ?? chroma.scale("YlGnBu")
     );
   }, [mean, sd, min, max]);
+
+  let input: JSX.Element;
+  if (onChange) {
+    let lin: (x: number) => number = (x) => x;
+    let inv: (x: number) => number = (x) => x;
+    let aff: (x: number) => number = (x) => x;
+    if (propFormat == "percentage") {
+      lin = (x) => 100 * (x - 1);
+      inv = (x) => 1 + x / 100;
+      aff = (x) => 100 * x;
+    }
+
+    input = (
+      <div className="input-group">
+        <div className="input-group-prepend">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => onChange(initial)}
+          >
+            ↻
+          </button>
+        </div>
+        <input
+          className="form-control"
+          min={lin(min)}
+          max={lin(max)}
+          step={aff(step)}
+          type="number"
+          onChange={(evt) => onChange(inv(+evt.target.value))}
+          value={
+            propFormat == "percentage"
+              ? lin(value).toFixed(0)
+              : value.toFixed(-Math.floor(Math.log10(step)))
+          }
+        ></input>
+        {propFormat == "percentage" ? (
+          <div className="input-group-append">
+            <span className="input-group-text">%</span>
+          </div>
+        ) : (
+          ""
+        )}
+      </div>
+    );
+  } else {
+    input = <b>{value.toFixed(-Math.floor(Math.log10(step)))}</b>;
+  }
 
   return (
     <>
@@ -192,30 +243,7 @@ function FancySlider({
           justifySelf: "end",
         }}
       >
-        {onChange ? (
-          <div className="input-group">
-            <div className="input-group-prepend">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => onChange(initial)}
-              >
-                ↻
-              </button>
-            </div>
-            <input
-              className="form-control"
-              min={min}
-              max={max}
-              step={step}
-              type="number"
-              onChange={(evt) => onChange(+evt.target.value)}
-              value={value.toFixed(-Math.floor(Math.log10(step)))}
-            ></input>
-          </div>
-        ) : (
-          <b>{value.toFixed(-Math.floor(Math.log10(step)))}</b>
-        )}
+        {input}
       </div>
     </>
   );
@@ -298,7 +326,7 @@ function SingleMeasure(
         row={row}
         min={min}
         max={max}
-        format={(num) => d3.format("+.0%")(num - 1)}
+        format="percentage"
         mean={mean}
         step={0.01}
         sd={sd}
