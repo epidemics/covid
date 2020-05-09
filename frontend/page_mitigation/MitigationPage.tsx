@@ -27,6 +27,7 @@ function calculateBackground(
   sd: number,
   min: number,
   max: number,
+  thumbWidth: string,
   scale: chroma.Scale
 ): string {
   function getColor(z: number) {
@@ -51,8 +52,8 @@ function calculateBackground(
   let rulerGradient = `linear-gradient(to right, ${stops.join(",")})`;
   backgrounds.push(
     `no-repeat ${rulerGradient} 
-      calc(var(--thumb-width) / 2) 0 
-    / calc(100% - var(--thumb-width)) auto`
+      calc(${thumbWidth}/2) 0 
+    / calc(100% - ${thumbWidth}) auto`
   );
 
   function addTicks(
@@ -85,8 +86,8 @@ function calculateBackground(
     )`;
     backgrounds.push(
       `no-repeat ${tickGradient} 
-        calc(var(--thumb-width) / 2) bottom 
-      / calc(100% - var(--thumb-width)) ${p(height)}`
+        calc(${thumbWidth} / 2) bottom 
+      / calc(100% - ${thumbWidth}) ${p(height)}`
     );
   }
   let dark = scale(1).desaturate().css();
@@ -154,9 +155,10 @@ function FancySlider({
       Math.abs(sd),
       propMin,
       propMax,
+      onChange !== undefined ? "var(--thumb-width)" : "3px",
       scale ?? chroma.scale("YlGnBu")
     );
-  }, [mean, sd, min, max]);
+  }, [onChange, mean, sd, min, max]);
 
   let input: JSX.Element;
   if (onChange) {
