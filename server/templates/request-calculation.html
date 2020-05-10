@@ -46,6 +46,7 @@ block additional_js_pre -%} {%- endblock -%} {%- block content -%}
             type="text"
             placeholder="Full Name"
             name="name"
+            required="true"
           />
         </div>
       </div>
@@ -57,6 +58,7 @@ block additional_js_pre -%} {%- endblock -%} {%- block content -%}
             class="form-control form-control-md"
             name="email"
             placeholder="Email Address"
+            required="true"
           />
         </div>
       </div>
@@ -68,6 +70,7 @@ block additional_js_pre -%} {%- endblock -%} {%- block content -%}
             type="text"
             name="affiliation"
             placeholder="Affiliation or Company"
+            required="true"
           />
         </div>
       </div>
@@ -90,6 +93,7 @@ block additional_js_pre -%} {%- endblock -%} {%- block content -%}
             name="problem"
             placeholder="What decision or problem are you facing?"
             rows="5"
+            required="true"
           ></textarea>
         </div>
       </div>
@@ -102,6 +106,17 @@ block additional_js_pre -%} {%- endblock -%} {%- block content -%}
             placeholder="Are you are already using epidemic modelling to support your decisions? How?"
             rows="5"
           ></textarea>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <input
+            class="form-control form-control-md"
+            name="trafficsource"
+            type="text"
+            placeholder="How did you hear about us?"
+          />
         </div>
       </div>
     </div>

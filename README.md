@@ -62,13 +62,14 @@ There can be overridden manually by using the url param `?channel=`. The website
 file at https://storage.googleapis.com/static-covid/static/data-${channel}-v4.json
 This file has to conform to our [data format][https://github.com/epidemics/covid/blob/master/common/spec/v4.ts]
 so the frontend knows how to visualize it. This data format is formalized as typescript definitions
-in `common/spec/v4.ts`. The `epimodel` repository can be used to [generate and upload these files][https://github.com/epidemics/epimodel#running-pipeline-to-get-web-export].
+in `common/spec/v4.ts`. The `epimodel` repository can be used to [generate and upload these files](https://github.com/epidemics/epimodel#running-pipeline-to-get-web-export).
 The `channel` corresponds to the `-c` argument of the `epimodel` commmand `./do web_upload`.
 
 In the `frontend` the current `channel` is accessible as a global variable `DEFAULT_EPIFOR_CHANNEL`
-(see [`frontend/@types/epifor.d.ts`][https://github.com/epidemics/covid/blob/master/frontend/%40types/epifor.d.ts]).
+(see [`frontend/@types/epifor.d.ts`](https://github.com/epidemics/covid/blob/master/frontend/%40types/epifor.d.ts).
 
 ### Development flow
+The whole dev project management is [described here](https://www.notion.so/Development-project-management-476f3c53b0f24171a78146365072d82e). What follows below is specific to this repository.
 
 It's the author responsibility to do the merge, ideally after having it reviewed. That is:
 
