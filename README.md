@@ -43,6 +43,8 @@ by running `git config core.hooksPath hooks`.
 
 ## Architecture & Contributing
 
+For the contribution details and project management, please see [this specification](https://www.notion.so/Development-project-management-476f3c53b0f24171a78146365072d82e).
+
 - `server` - a express.js webserver using nunjucks for templating
 - `frontend` - client-side code, written in typescript and bundled by webpack.
 - `common` - shared code between the frontend and server
