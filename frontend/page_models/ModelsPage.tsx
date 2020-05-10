@@ -1,6 +1,13 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Regions, Region, Scenario, Scenarios, useThunk } from "../models";
+import {
+  Regions,
+  Region,
+  Scenario,
+  Scenarios,
+  useThunk,
+  Datastore,
+} from "../models";
 import { getTimezone, getUrlParam } from "../helpers";
 import { RegionSelector } from "../components/RegionSelector";
 import { ModelView } from "./ModelView";
@@ -37,8 +44,6 @@ const reducer: PageReducer = (state: PageState, obj: PageActions) => {
   }
 };
 
-const data = makeDataStore();
-
 function init(): PageState {
   return {
     region: null,
@@ -46,7 +51,7 @@ function init(): PageState {
   };
 }
 
-export function Page() {
+export function Page({ data }: { data: Datastore }) {
   const regions = useThunk<Regions>([], data.regions);
 
   const [{ region, scenarioID }, dispatch] = React.useReducer(
@@ -155,5 +160,5 @@ export function Page() {
 
 let $root = document.getElementById("react-models");
 if ($root) {
-  ReactDOM.render(<Page />, $root);
+  ReactDOM.render(<Page data={makeDataStore()} />, $root);
 }

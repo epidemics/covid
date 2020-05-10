@@ -1,5 +1,6 @@
 {% extends "base.html" %} {% set title = 'Containment Measures Database' %} {%-
 block additional_js_pre -%}
+<link href="{{ASSET_ROOT}}/css/measure-slider.css" rel="stylesheet" />
 <style type="text/css">
   label {
     margin-bottom: 15spx;
@@ -13,9 +14,10 @@ block additional_js_pre -%}
 </style>
 {% endblock %} {% block content %}
 <div class="container main">
-    <div class="row">
+    <div id="react-mitigation-calculator"></div>
+    <div class="row justify-content-center d-none" id="containmentContent">
         <div class="col-lg-9 col-md-12">
-            <h1 class="title-form">Dataset of COVID-19 containment and mitigation measures v0.2</h1>
+            <h2 class="title-form">Dataset of COVID-19 containment and mitigation measures v0.2</h1>
 
             <h5>Background</h5>
             <p>The dataset attempts to cover all measures of national significance intended to reduce the transmission
