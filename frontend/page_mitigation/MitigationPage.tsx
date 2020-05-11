@@ -576,12 +576,12 @@ export function Page(props: Props) {
       <hr />
       <p>
         The following tool can be used to calculate the estimated effect of
-        various combinations of COVID countermeasures. On the left measures and
+        various combinations of COVID countermeasures. On the left, measures and
         measure groups can be toggled to factor into the calculation. On the
-        right our estimated impact on growth is displayed using coloured bands
-        based. This is based on our countermeasure dataset and the observed
+        right, the impact on growth is displayed using coloured bands.
+        The impact estimates are based on our model combining a countermeasures dataset and their empirically observed
         growth reduction. The impact of each measure can be customized by the
-        sliders to e.g. factor in non-complience. In measure groups more
+        sliders to e.g. factor in non-complience. In measure groups, more
         stingent measures indicate the <em>additional effect</em> on top of less
         stingent measures.{" "}
       </p>
