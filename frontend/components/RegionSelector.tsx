@@ -1,4 +1,4 @@
-import { Region } from "../models";
+import { Region, MainInfo } from "../models";
 import * as React from "react";
 import { string_score } from "../string_score";
 import {
@@ -14,13 +14,20 @@ import { QuestionTooltip } from "./QuestionTooltip";
 type Props = {
   regions: Array<Region>;
   selected: Region | null;
+  mainInfo: MainInfo;
   id: string;
   onSelect: (region: Region, url: string) => void;
 };
 
 let formatCurrentInfected = formatSIInteger(3);
 
-export function RegionSelector({ id, regions, selected, onSelect }: Props) {
+export function RegionSelector({
+  id,
+  regions,
+  mainInfo,
+  selected,
+  onSelect,
+}: Props) {
   const [query, setQuery] = React.useState<string>("");
   const [focused, setFocused] = React.useState<number>(-1);
   const [show, setShow] = React.useState<boolean>(false);
@@ -142,7 +149,8 @@ export function RegionSelector({ id, regions, selected, onSelect }: Props) {
     </>
   );
 
-  let currentInfected = selected?.current.infected;
+  let current = selected?.current;
+  let generated = current?.date ?? mainInfo.generated;
 
   return (
     <div className="top-row">
@@ -170,27 +178,34 @@ export function RegionSelector({ id, regions, selected, onSelect }: Props) {
         </div>
       </Dropdown>
       <div className="active-infections-block">
-        <span className="number-subheader" id="infections-date">
-          {formatDate(selected?.reported?.last?.date)}
-        </span>
-        <div className="active-infections">
-          Active Infections:{" "}
-          <span className="infections-estimated" id="infections-estimated">
-            {currentInfected ? (
-              formatCurrentInfected(currentInfected)
-            ) : (
-              <>&mdash;</>
-            )}
-          </span>
-          <a
-            href="#case-count-explanation"
-            aria-label="Explanation about the case count"
-          >
-            <QuestionTooltip />
-          </a>
-        </div>
+        {current ? (
+          <>
+            <span className="number-subheader" id="infections-date">
+              <span style={{ color: "#aaa" }}>Model last updated on</span>{" "}
+              {generated ? formatDate(generated) : <>&mdash;</>}
+            </span>
+            <div className="active-infections">
+              Active Infections:{" "}
+              <span className="infections-estimated" id="infections-estimated">
+                {current.infected ? (
+                  formatCurrentInfected(current.infected)
+                ) : (
+                  <>&mdash;</>
+                )}
+              </span>
+              <a
+                href="#case-count-explanation"
+                aria-label="Explanation about the case count"
+              >
+                <QuestionTooltip />
+              </a>
+            </div>
+          </>
+        ) : (
+          ""
+        )}
         <div className="infections-confirmed">
-          Confirmed Infections:{" "}
+          <span style={{ color: "#aaa" }}>Confirmed Infections:</span>{" "}
           <span id="infections-confirmed">
             {formatAbsoluteInteger(selected?.reported?.last?.confirmed)}
           </span>

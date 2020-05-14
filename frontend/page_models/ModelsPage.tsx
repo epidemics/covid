@@ -7,6 +7,7 @@ import {
   Scenarios,
   useThunk,
   Datastore,
+  MainInfo,
 } from "../models";
 import { getTimezone, getUrlParam } from "../helpers";
 import { RegionSelector } from "../components/RegionSelector";
@@ -53,6 +54,8 @@ function init(): PageState {
 
 export function Page({ data }: { data: Datastore }) {
   const regions = useThunk<Regions>([], data.regions);
+
+  const mainInfo = useThunk<MainInfo>({}, data.mainInfo);
 
   const [{ region, scenarioID }, dispatch] = React.useReducer(
     reducer,
@@ -138,6 +141,7 @@ export function Page({ data }: { data: Datastore }) {
       </DismissableAlert>
 
       <RegionSelector
+        mainInfo={mainInfo}
         regions={regions}
         selected={region}
         id="regionDropdown"

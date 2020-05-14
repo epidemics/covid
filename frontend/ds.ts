@@ -1,4 +1,4 @@
-import { Thunk, Datastore } from "./models/datastore";
+import { Thunk, MainInfo, Datastore } from "./models/datastore";
 import { v4 } from "../common/spec";
 import { Regions } from "./models";
 import { STATIC_ROOT } from "../common/constants";
@@ -10,14 +10,26 @@ let paramChannel = url.searchParams.get(CHANNEL_PARAM);
 
 export function makeDataStore(
   channel: string = paramChannel ?? DEFAULT_EPIFOR_CHANNEL
-) {
+): Datastore {
   console.info(`Using channel ${channel}`);
 
   let data_root = `${STATIC_ROOT}/v4/${channel}`;
 
   let mainv4 = Thunk.fetchJson<v4.Main>(`${data_root}/data-v4.json`);
 
-  return new Datastore({
+  return {
+    mainInfo: mainv4.map<MainInfo>(
+      "info",
+      ({ generated, created, created_by, date_resample, comment }) => {
+        return {
+          generated: generated ? new Date(generated) : undefined,
+          created: created ? new Date(created) : undefined,
+          created_by,
+          date_resample,
+          comment: comment ?? undefined,
+        };
+      }
+    ),
     regions: mainv4.map("parse_regions", ({ regions }) =>
       Regions.from(regions, data_root)
     ),
@@ -25,5 +37,5 @@ export function makeDataStore(
     containments: Thunk.fetchJson(
       `${STATIC_ROOT}/data-testing-containments.json`
     ),
-  });
+  };
 }

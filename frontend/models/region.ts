@@ -5,7 +5,27 @@ import { v4 } from "../../common/spec";
 import { Thunk } from "./datastore";
 import { Scenarios } from "./scenario";
 
-type Current = { infected?: number; beta0?: number; beta1?: number };
+type Current = {
+  infected?: number;
+  beta0?: number;
+  beta1?: number;
+  date?: Date;
+};
+
+function parseCurrent(obj: v4.CurrentEstimate | null) {
+  if (obj == null) {
+    return {};
+  } else if (typeof obj == "object") {
+    return {
+      infected: obj.Infectious_mean,
+      beta0: obj.Beta0,
+      beta1: obj.Beta1,
+      date: obj.Date ? new Date(obj.Date) : undefined,
+    };
+  } else {
+    return { infected: obj };
+  }
+}
 
 export class Region {
   public scenariosDaily: Thunk<Scenarios>;
@@ -61,20 +81,6 @@ export class Region {
 
   async statistics(idx: string | null | undefined | number) {
     return (await this.getScenario(idx)).statistics;
-  }
-}
-
-function parseCurrent(obj: v4.CurrentEstimate | null) {
-  if (obj == null) {
-    return {};
-  } else if (typeof obj == "object") {
-    return {
-      infected: obj.Infectious_mean,
-      beta0: obj.Beta0,
-      beta1: obj.Beta1,
-    };
-  } else {
-    return { infected: obj };
   }
 }
 
