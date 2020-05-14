@@ -13,11 +13,11 @@ import { getTimezone, getUrlParam } from "../helpers";
 import { RegionSelector } from "../components/RegionSelector";
 import { ModelView } from "./ModelView";
 import { makeDataStore } from "../ds";
-import { DismissableAlert } from "../components/DismissableAlert";
 import {
   LocationContext,
   makeFragmentLocationContext,
 } from "../components/LocationContext";
+import { Alerts } from "../components/alerts";
 
 const REGION_FALLBACK = "united kingdom";
 
@@ -120,26 +120,7 @@ export function Page({ data }: { data: Datastore }) {
 
   return (
     <LocationContext.Provider value={locationContext}>
-      <DismissableAlert
-        className="pro-bono-banner"
-        storage={window.sessionStorage}
-        dismissalDuration={{ days: 1 }}
-        id="consultingAlert"
-        revision="0"
-      >
-        <p>
-          Are you a decision maker? We're offering pro bono custom forecasting
-          and modelling. Please reach out{" "}
-          <a
-            href="http://epidemicforecasting.org/request-calculation"
-            className="alert-link"
-          >
-            here
-          </a>
-          .
-        </p>
-      </DismissableAlert>
-
+      <Alerts />
       <RegionSelector
         mainInfo={mainInfo}
         regions={regions}

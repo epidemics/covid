@@ -120,6 +120,7 @@ endset -%}
     <script>
     var DEFAULT_EPIFOR_CHANNEL = "{{ DEFAULT_EPIFOR_CHANNEL }}";
     var REACT_BUILD = "{{ REACT_BUILD }}";
+    var ALERTS = {{ ALERTS | dump | safe  }};
     </script>    
     
     {% if REACT_BUILD == "development" %}

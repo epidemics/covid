@@ -3,15 +3,20 @@ import * as React from "react";
 import { StorageDescriptor, useStorage } from "../storage_hook";
 import { Moment } from "moment";
 
+export interface Alert {
+  id: string;
+  dismissalDuration: moment.DurationInputObject;
+}
+
 type Props = {
   /** The storage object to save the dismissal state */
   storage: Storage | null;
   /** A unique identifier used as the key for the local storage and HTML id */
   id: string;
   /** The alert is displayed regradless of dismissal state if the revision number increases */
-  revision: number | string | null;
+  revision: string | null;
   /** Any object accepted by moment.js Moment.add() */
-  dismissalDuration: any;
+  dismissalDuration: moment.DurationInputObject;
   /** HTML class */
   className?: string;
 };
@@ -47,7 +52,7 @@ export function DismissableAlert(props: React.PropsWithChildren<Props>) {
   let shouldDisplay =
     !dismissed ||
     dismissed.revision !== revision ||
-    dismissed.date.add(dismissalDuration).isBefore(moment());
+    moment().subtract(dismissalDuration).isAfter(dismissed.date);
 
   if (!shouldDisplay) return null;
 

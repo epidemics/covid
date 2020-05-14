@@ -11,6 +11,7 @@ import {
   serialInterval,
 } from "./measures";
 import * as d3 from "d3";
+import { Alerts } from "../components/alerts";
 
 //let scale = chroma.scale("PuBu");
 // let scale = chroma
@@ -571,6 +572,8 @@ export function Page(props: Props) {
 
   return (
     <>
+      <Alerts />
+
       <h1>Mitigation calculator</h1>
 
       <hr />

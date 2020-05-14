@@ -6,6 +6,7 @@ import compression from "compression";
 import nunjucks from "nunjucks";
 import morgan from "morgan";
 import constants from "../common/constants";
+import { Alert } from "../common/alert";
 
 import webpack from "webpack";
 import webpackDev from "webpack-dev-middleware";
@@ -50,6 +51,27 @@ if (!process.env.STATIC_URL) {
 for (let key in constants) {
   app.locals[key] = constants[key];
 }
+
+let proBonoAlert: Alert = {
+  id: "consultingAlert",
+  dismissalDuration: { days: 1 },
+  revision: "0",
+  content: `Are you a decision maker? We're offering pro bono custom forecasting and
+  modelling. Please reach out <a href="http://epidemicforecasting.org/request-calculation" 
+  class="alert-link">here</a>.`,
+};
+
+app.use(function (req, res, next) {
+  let channel = req.query.channel ?? constants["DEFAULT_EPIFOR_CHANNEL"];
+  res.locals.CHANNEL = channel;
+
+  res.locals.ALERTS = [];
+  if (channel !== "balochistan") {
+    res.locals.ALERTS.push(proBonoAlert);
+  }
+
+  next();
+});
 
 if (app.get("env") === "development") {
   // on development we run webpack for serving bundles

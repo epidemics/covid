@@ -322,14 +322,14 @@ span.infections-confirmed {
   margin-top: 64px;
 }
 
-.pro-bono-banner {
+.alert-banner {
   font-size: 20px;
   padding: 16px;
   margin-bottom: 32px;
   border: 1px solid white;
 }
 
-.pro-bono-banner p:last-child {
+.alert-banner p:last-child {
   margin-bottom: 0px;
 }
 

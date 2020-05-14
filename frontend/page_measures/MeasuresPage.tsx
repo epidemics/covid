@@ -91,7 +91,7 @@ export function MeasuresPage({ data }: { data: Datastore }) {
   return (
     <LocationContext.Provider value={locationContext}>
       <DismissableAlert
-        className="pro-bono-banner"
+        className="alert-banner"
         storage={window.sessionStorage}
         dismissalDuration={{ days: 1 }}
         id="consultingAlert"
@@ -129,5 +129,6 @@ export function MeasuresPage({ data }: { data: Datastore }) {
 
 let $root = document.getElementById("react-measures");
 if ($root) {
-  ReactDOM.render(<MeasuresPage data={makeDataStore()} />, $root);
+  let data = makeDataStore();
+  ReactDOM.render(<MeasuresPage data={data} />, $root);
 }

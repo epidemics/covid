@@ -1,4 +1,5 @@
 import { Router, RequestHandler } from "express";
+import { Alert } from "../common/alert";
 
 // identifiers for the pages
 const MODELS = "models";
@@ -25,27 +26,40 @@ let pages: { [key: string]: NavBarEntry } = {};
 function add(
   id: string,
   opts: { path: string; caption: string },
-  handler: RequestHandler
-) {
+  handler_: RequestHandler
+): RequestHandler {
   let { path, caption } = opts;
   pages[id] = { path, id, caption };
 
-  router.get(
-    path,
-    (req, res, next) => {
-      res.locals.active_page = id;
-      next();
-    },
-    handler
-  );
-  return id;
+  let handler: RequestHandler = (req, res, next) => {
+    res.locals.active_page = id;
+    handler_(req, res, next);
+  };
+
+  router.get(path, handler);
+  return handler;
 }
 
 export let router = Router();
 
+let updatingModels: Alert = {
+  id: "updatingAlert",
+  dismissalDuration: { seconds: 1 },
+  revision: "0",
+  content: `Please note that the forecasts below are currently outdated and do not reflect the most recent data. We are updating our models and will post new predictions by Wednesday May 20.`,
+};
+
 // serve the main model visualization
-add(MODELS, { path: "/", caption: "Models" }, (req, res) =>
-  res.render("model.html")
+let handleModels = add(
+  MODELS,
+  { path: "/models", caption: "Models" },
+  (req, res) => {
+    if (res.locals.CHANNEL !== "balochistan") {
+      res.locals.ALERTS = [updatingModels];
+    }
+
+    res.render("model.html");
+  }
 );
 
 add(CASE_MAP, { path: "/case-map", caption: "Case map" }, (req, res) =>
@@ -62,8 +76,12 @@ add(MEASURES, { path: "/measures", caption: "Measures" }, (req, res) =>
   res.render("measures.html")
 );
 
-add(MITIGATION, { path: "/containment", caption: "Mitigation" }, (req, res) =>
-  res.render("containment.html")
+let handleMitigation = add(
+  MITIGATION,
+  { path: "/containment", caption: "Mitigation" },
+  (req, res) => {
+    res.render("containment.html");
+  }
 );
 
 router.get("/request-calculation-submitted", (req, res) =>
@@ -91,5 +109,13 @@ router.get("/about-submitted", (req, res) =>
 
 // Not sure why, but we had a lot of 404 in access log for this URL
 router.get("/containment.", (req, res) => res.redirect("/containment"));
+
+router.get("/", (req, res, next) => {
+  if (res.locals.CHANNEL === "balochistan") {
+    handleModels(req, res, next);
+  } else {
+    handleMitigation(req, res, next);
+  }
+});
 
 export let navigation_bar = navigation.map((key) => pages[key]);
