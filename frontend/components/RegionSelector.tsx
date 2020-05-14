@@ -181,7 +181,7 @@ export function RegionSelector({
         {current ? (
           <>
             <span className="number-subheader" id="infections-date">
-              <span style={{ color: "#aaa" }}>Model last updated on</span>{" "}
+              <span style={{ color: "#aaa" }}>Model last updated on:</span>{" "}
               {generated ? formatDate(generated) : <>&mdash;</>}
             </span>
             <div className="active-infections">
