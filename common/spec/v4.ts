@@ -3,7 +3,8 @@ export namespace v4 {
   export interface Main {
     created: string;
     created_by: string;
-    comment?: string;
+    generated?: string;
+    comment: string | null;
     date_resample: string;
     regions: Regions;
   }
@@ -12,7 +13,12 @@ export namespace v4 {
 
   export type CurrentEstimate =
     | number
-    | { Infectious_mean: number; Beta0: number; Beta1: number };
+    | {
+        Infectious_mean: number;
+        Beta0?: number;
+        Beta1?: number;
+        Date?: string;
+      };
 
   export interface Region {
     data: {

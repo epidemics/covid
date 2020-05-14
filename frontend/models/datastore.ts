@@ -1,27 +1,19 @@
 import { Regions } from "./regions";
 import * as React from "react";
 
-export type DatastoreThunks = {
+export type MainInfo = {
+  generated?: Date;
+  comment?: string;
+  created?: Date;
+  created_by?: string;
+};
+
+export type Datastore = {
+  mainInfo: Thunk<MainInfo>;
   regions: Thunk<Regions>;
   geoData: Thunk<any>;
   containments: Thunk<any>;
 };
-
-export class Datastore {
-  constructor(private thunks: DatastoreThunks) {}
-
-  get containments() {
-    return this.thunks.containments;
-  }
-
-  get regions() {
-    return this.thunks.regions;
-  }
-
-  get geoData() {
-    return this.thunks.geoData;
-  }
-}
 
 let i = 0;
 

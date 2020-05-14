@@ -2,11 +2,30 @@ import { Rates } from "./rates";
 import { Estimation } from "./estimation";
 import { Reported } from "./reported";
 import { v4 } from "../../common/spec";
-import { STATIC_ROOT } from "../../common/constants";
 import { Thunk } from "./datastore";
 import { Scenarios } from "./scenario";
 
-type Current = { infected?: number; beta0?: number; beta1?: number };
+type Current = {
+  infected?: number;
+  beta0?: number;
+  beta1?: number;
+  date?: Date;
+};
+
+function parseCurrent(obj: v4.CurrentEstimate | null) {
+  if (obj == null) {
+    return {};
+  } else if (typeof obj == "object") {
+    return {
+      infected: obj.Infectious_mean,
+      beta0: obj.Beta0,
+      beta1: obj.Beta1,
+      date: obj.Date ? new Date(obj.Date) : undefined,
+    };
+  } else {
+    return { infected: obj };
+  }
+}
 
 export class Region {
   public scenariosDaily: Thunk<Scenarios>;
@@ -22,7 +41,7 @@ export class Region {
   public estimates?: Estimation;
   public reported?: Reported;
 
-  public constructor(public code: string, obj: v4.Region) {
+  public constructor(data_root: string, public code: string, obj: v4.Region) {
     let data = obj.data;
 
     this.population = +obj.Population;
@@ -32,9 +51,8 @@ export class Region {
     this.timezones = obj.data.Timezones;
     this.name = obj.Name;
     this.officialName = obj.OfficialName;
-    this.externalData = Thunk.fetchThen(
-      `${STATIC_ROOT}/${obj.data_url}`,
-      (res) => res.json().then((obj) => new ExternalData(obj, this.population))
+    this.externalData = Thunk.fetchThen(`${data_root}/${obj.data_url}`, (res) =>
+      res.json().then((obj) => new ExternalData(obj, this.population))
     );
 
     if (data.Rates) this.rates = new Rates(data.Rates);
@@ -63,20 +81,6 @@ export class Region {
 
   async statistics(idx: string | null | undefined | number) {
     return (await this.getScenario(idx)).statistics;
-  }
-}
-
-function parseCurrent(obj: v4.CurrentEstimate | null) {
-  if (obj == null) {
-    return {};
-  } else if (typeof obj == "object") {
-    return {
-      infected: obj.Infectious_mean,
-      beta0: obj.Beta0,
-      beta1: obj.Beta1,
-    };
-  } else {
-    return { infected: obj };
   }
 }
 

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Regions, Region, useThunk, Datastore } from "../models";
+import { Regions, Region, useThunk, Datastore, MainInfo } from "../models";
 import { getTimezone, getUrlParam } from "../helpers";
 import { RegionSelector } from "../components/RegionSelector";
 import { makeDataStore } from "../ds";
@@ -35,6 +35,7 @@ const reducer: PageReducer = (state: PageState, obj: PageActions) => {
 export function MeasuresPage({ data }: { data: Datastore }) {
   const regions = useThunk<Regions>([], data.regions);
   const measures = useThunk([], data.containments);
+  const mainInfo = useThunk<MainInfo>({}, data.mainInfo);
 
   const [{ region }, dispatch] = React.useReducer(reducer, { region: null });
 
@@ -110,6 +111,7 @@ export function MeasuresPage({ data }: { data: Datastore }) {
       </DismissableAlert>
 
       <RegionSelector
+        mainInfo={mainInfo}
         regions={regions}
         selected={region}
         id="regionDropdown"
