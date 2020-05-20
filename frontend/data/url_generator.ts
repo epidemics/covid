@@ -26,12 +26,12 @@ export function dataToURL(object: Record<string, any>): string {
     return `/?${query}`
 }
 
-const url_generator = ((scenarios_raw as unknown) as Record<string, any>);
-export const scenarioNames = Object.keys(url_generator);
+const scenarios = ((scenarios_raw as unknown) as Record<string, any>);
+export const scenarioNames = Object.keys(scenarios);
 
 export function mitigationIntervalsToURL(preset: string, mitigationIntervals: MitigationInterval[]): string {
     //no need to clone since the mitigations are always overwritten, but it might be cleaner to do so
-    let base_scenario = url_generator[preset];
+    let base_scenario = scenarios[preset];
     base_scenario['scenarioData']['data']['mitigation']['mitigationIntervals'] = mitigationIntervals;
     return dataToURL(base_scenario)
 }
