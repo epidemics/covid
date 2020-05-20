@@ -5,7 +5,10 @@
 /* Links */
 a,
 a:focus,
-a:hover {
+a:hover,
+.btn-link,
+.btn-link:focus,
+.btn-link:hover {
   color: #ef6c00;
 }
 
@@ -872,4 +875,12 @@ table td {
 
 .alert-dismissible .close:hover {
   color: white;
+}
+
+.react-datepicker-wrapper {
+  display: block !important;
+}
+
+.mitigation-item {
+  margin-top: 8px;
 }
