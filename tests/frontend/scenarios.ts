@@ -1,16 +1,16 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
 
-import { scenarioNames, mitigationIntervalsToURL, MitigationInterval } from "../../frontend/data/scenarios";
+import * as url_generator from "../../frontend/data/url_generator";
 
 describe('scenarios', () => {
     describe('scenarioNames', () => {
-        expect(scenarioNames).to.contain("Czechia");
+        expect(url_generator.scenarioNames).to.contain("Czechia");
     });
     describe('mitigationIntervalsToURL', () => {
         it('with mitigation intervals', () => {
-            const interventionName = "Intervention #1";
-            const mitigationIntervals: MitigationInterval[] = [
+            const interventionName = "Intervention";
+            const mitigationIntervals: url_generator.MitigationInterval[] = [
                 {
                     color: "black",
                     name: interventionName,
@@ -18,13 +18,12 @@ describe('scenarios', () => {
                     transmissionReduction: {begin: 50, end: 70}
                 }
             ];
-            const urlString = mitigationIntervalsToURL("Czechia", mitigationIntervals);
-            console.log(urlString);
+            const urlString = url_generator.mitigationIntervalsToURL("Czechia", mitigationIntervals);
             expect(urlString).to.be.an('string').that.includes(interventionName);
         });
         it('with empty intervals', () => {
-            const mitigationIntervals: MitigationInterval[] = [];
-            const urlString = mitigationIntervalsToURL("Czechia", mitigationIntervals);
+            const mitigationIntervals: url_generator.MitigationInterval[] = [];
+            const urlString = url_generator.mitigationIntervalsToURL("Czechia", mitigationIntervals);
             expect(urlString).to.be.an('string');
         })
     })

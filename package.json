@@ -17,7 +17,7 @@
     "build-dev": "env NODE_ENV=development ts-node build.ts",
     "serve": "ts-node server/server.ts",
     "dev": "nodemon",
-    "test": "env NODE_ENV=test mocha --full-trace --reporter tap -r ts-node/register tests/**/*.ts"
+    "test": "mocha --package package.json --full-trace --reporter tap --require ts-node/register tests/**/*.ts"
   },
   "repository": {
     "type": "git",
