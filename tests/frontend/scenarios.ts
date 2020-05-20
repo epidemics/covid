@@ -1,9 +1,12 @@
 import { expect } from "chai";
-
 import { describe, it } from "mocha";
-import { mitigationIntervalsToURL, MitigationInterval } from "../../frontend/data/scenarios";
+
+import { scenarioNames, mitigationIntervalsToURL, MitigationInterval } from "../../frontend/data/scenarios";
 
 describe('scenarios', () => {
+    describe('scenarioNames', () => {
+        expect(scenarioNames).to.contain("Czechia");
+    });
     describe('mitigationIntervalsToURL', () => {
         it('with mitigation intervals', () => {
             const interventionName = "Intervention #1";

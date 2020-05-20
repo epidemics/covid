@@ -26,8 +26,10 @@ export function dataToURL(object: Record<string, any>): string {
     return `/?${query}`
 }
 
+const scenarios = ((scenarios_raw as unknown) as Record<string, any>);
+export const scenarioNames = Object.keys(scenarios);
+
 export function mitigationIntervalsToURL(preset: string, mitigationIntervals: MitigationInterval[]): string {
-    const scenarios = ((scenarios_raw as unknown) as Record<string, any>);
     //no need to clone since the mitigations are always overwritten, but it might be cleaner to do so
     let base_scenario = scenarios[preset];
     base_scenario['scenarioData']['data']['mitigation']['mitigationIntervals'] = mitigationIntervals;
