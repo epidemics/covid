@@ -1,12 +1,18 @@
 import { Form, Formik } from 'formik';
+import * as Moment from 'moment';
 import * as React from 'react';
 
 import { MitigationTable } from './MitigationTable';
 
+export const END_DATE_OFFSET = 7;
+
 export type Values = {
   mitigations: {
     name: string;
-    date: Date;
+    timeRange: {
+      begin: Date;
+      end: Date;
+    };
     transmissionReduction: {
       begin: number;
       end: number;
@@ -14,11 +20,21 @@ export type Values = {
   }[];
 };
 
-export const createInitialMitigation = () => ({
-  name: "",
-  date: new Date(),
-  transmissionReduction: { begin: 0, end: 0 },
-});
+export const createInitialMitigation = (
+  date: Date = new Date(),
+  index: number = -1
+) => {
+  const endDate = Moment(date).add(END_DATE_OFFSET, "days").toDate();
+
+  return {
+    name: `#${index + 2}`,
+    timeRange: {
+      begin: date,
+      end: endDate,
+    },
+    transmissionReduction: { begin: 0, end: 0 },
+  };
+};
 
 const MitigationForm = () => {
   const initialValues: Values = {
@@ -30,8 +46,19 @@ const MitigationForm = () => {
     let mitigations = [] as any;
 
     values.mitigations.forEach((mitigation, index) => {
+      mitigations[index] = {};
       if (mitigation.name.length === 0) {
-        mitigations[index] = { name: "Intervention name is required" };
+        mitigations[index].name = "Intervention name is required";
+      }
+
+      const momentBegin = Moment(mitigation.timeRange.begin);
+      const momentEnd = Moment(mitigation.timeRange.end);
+
+      if (momentBegin.isSameOrAfter(momentEnd)) {
+        mitigations[index].timeRange = {
+          begin: "Invalid interval",
+          end: "Invalid interval",
+        };
       }
     });
 

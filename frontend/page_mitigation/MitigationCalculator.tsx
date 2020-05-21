@@ -619,37 +619,6 @@ const MitigationCalculator = (props: Props) => {
         <div style={{ gridColumn: "1 / span 2", gridRow: row++ }}>
           <b>Outcome</b>
         </div>
-        <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
-          R without any measures
-        </div>
-
-        <FancySlider
-          min={0}
-          row={row++}
-          // format={(num) => `R = ${d3.format(".1f")(num)}`}
-          value={baselineR}
-          step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
-          onChange={setR}
-          mean={defaultR}
-          scale={chroma.scale("YlOrRd")}
-          sd={defaultRsd}
-          max={defaultR + 3 * defaultRsd}
-        ></FancySlider>
-
-        <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
-          R with the above measures
-        </div>
-
-        <FancySlider
-          min={0}
-          row={row++}
-          value={baselineR * multiplier}
-          step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 3)}
-          mean={defaultR * multiplier}
-          scale={chroma.scale("YlOrRd")}
-          sd={defaultRsd}
-          max={defaultR + 3 * defaultRsd}
-        ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
           <p>The measures result in a reduction in R of </p>

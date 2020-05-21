@@ -1,12 +1,13 @@
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { ErrorMessage, FastField, FieldArrayRenderProps, useFormikContext } from 'formik';
+import * as Moment from 'moment';
 import * as React from 'react';
 import DatePicker from 'react-datepicker';
 
 import { measures, serialInterval } from './measures';
 import MitigationCalculator from './MitigationCalculator';
-import { createInitialMitigation, Values } from './MitigationForm';
+import { createInitialMitigation, END_DATE_OFFSET, Values } from './MitigationForm';
 
 export interface Props {
   index: number;
@@ -21,7 +22,7 @@ function MitigationIntervalItem({
   setCalculatorForIndex,
   arrayHelpers,
 }: Props) {
-  const { setFieldValue, values } = useFormikContext<Values>();
+  const { setFieldValue, values, handleBlur } = useFormikContext<Values>();
 
   const showCalculator = calculatorForIndex === index;
   const isLastItem = index === values.mitigations.length - 1;
@@ -49,6 +50,24 @@ function MitigationIntervalItem({
     setFieldValue(`mitigations.[${index}].transmissionReduction.end`, value);
   };
 
+  const handleTimeRangeBeginChange = (value: Date | null) => {
+    if (value === null) {
+      return;
+    }
+    const endDate = Moment(value).add(END_DATE_OFFSET, "days").toDate();
+
+    setFieldValue(`mitigations.[${index}].timeRange.begin`, value);
+    setFieldValue(`mitigations.[${index}].timeRange.end`, endDate);
+
+    if (!isFirstItem) {
+      setFieldValue(`mitigations.[${index - 1}].timeRange.end`, value);
+    }
+  };
+
+  const handleTimeRangeEndChange = (value: Date | null) => {
+    setFieldValue(`mitigations.[${index}].timeRange.end`, value);
+  };
+
   return (
     <>
       <div className="mitigation-item form-row">
@@ -62,29 +81,33 @@ function MitigationIntervalItem({
           />
           <ErrorMessage name={`mitigations.[${index}].name`} />
         </div>
-        <div className="col-md-3">
+        <div className="col-md-2">
           <DatePicker
-            id={`mitigations.[${index}].date`}
-            name={`mitigations.[${index}].date`}
-            selected={values.mitigations[index].date}
-            onChange={(date) =>
-              setFieldValue(`mitigations.[${index}].date`, date)
-            }
+            id={`mitigations.[${index}].timeRange.begin`}
+            name={`mitigations.[${index}].timeRange.begin`}
+            selected={values.mitigations[index].timeRange.begin}
+            onChange={handleTimeRangeBeginChange}
             className="form-control"
+            onBlur={handleBlur}
           />
+          <ErrorMessage name={`mitigations.[${index}].timeRange.begin`} />
         </div>
-        <div className="col-md-3">
+        <div className="col-md-2">
+          <DatePicker
+            id={`mitigations.[${index}].timeRange.end`}
+            name={`mitigations.[${index}].timeRange.end`}
+            selected={values.mitigations[index].timeRange.end}
+            onChange={handleTimeRangeEndChange}
+            className="form-control"
+            onBlur={handleBlur}
+          />
+          <ErrorMessage name={`mitigations.[${index}].timeRange.begin`} />
+        </div>
+        <div className="col-md-2">
           <div className="input-group">
             <FastField
               id={`mitigations.[${index}].transmissionReduction.begin`}
               name={`mitigations.[${index}].transmissionReduction.begin`}
-              type="text"
-              className="form-control"
-              disabled={true}
-            />
-            <FastField
-              id={`mitigations.[${index}].transmissionReduction.end`}
-              name={`mitigations.[${index}].transmissionReduction.end`}
               type="text"
               className="form-control"
               disabled={true}
@@ -116,7 +139,14 @@ function MitigationIntervalItem({
             <button
               type="button"
               className="btn btn-link"
-              onClick={() => arrayHelpers.push(createInitialMitigation())}
+              onClick={() =>
+                arrayHelpers.push(
+                  createInitialMitigation(
+                    values.mitigations[index].timeRange.end,
+                    index
+                  )
+                )
+              }
             >
               Add new
             </button>

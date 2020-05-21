@@ -18,8 +18,10 @@ export function MitigationTable({ mitigationIntervals }: MitigationTableProps) {
     <>
       <div className="form-row">
         <div className="col-md-3">Intervention name</div>
-        <div className="col-md-3">Start date</div>
-        <div className="col-md-2">R interval</div>
+        <div className="col-md-2">Begin date</div>
+        <div className="col-md-2">End date</div>
+        <div className="col-md-2">R value</div>
+        <div className="col-md-3"></div>
       </div>
       <FieldArray
         name="mitigations"
