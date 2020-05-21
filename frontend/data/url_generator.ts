@@ -20,7 +20,8 @@ export interface MitigationInterval {
 }
 
 export function dataToURL(object: Record<string, any>): string {
-    const q = url_encode(object);
+    const json_object = JSON.parse(JSON.stringify(object));
+    const q = url_encode(json_object);
     const v = '1';
     const query = query_encode({ v, q });
     return `/?${query}`

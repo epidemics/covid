@@ -12,9 +12,12 @@ describe('scenarios', () => {
             const interventionName = "Intervention";
             const mitigationIntervals: url_generator.MitigationInterval[] = [
                 {
-                    color: "black",
+                    color: "#fff",
                     name: interventionName,
-                    timeRange: {begin: new Date("2020-03-04"), end: new Date("2020-04-04")},
+                    timeRange: {
+                        begin: new Date("2020-03-04"),
+                        end: new Date("2020-04-04")
+                    },
                     transmissionReduction: {begin: 50, end: 70}
                 }
             ];
