@@ -46,8 +46,14 @@ function MitigationIntervalItem({
   };
 
   const handleCalculatorChange = (value: number) => {
-    setFieldValue(`mitigations.[${index}].transmissionReduction.begin`, value);
-    setFieldValue(`mitigations.[${index}].transmissionReduction.end`, value);
+    setFieldValue(
+      `mitigations.[${index}].transmissionReduction.begin`,
+      100 + value - 1
+    );
+    setFieldValue(
+      `mitigations.[${index}].transmissionReduction.end`,
+      100 + value + 1
+    );
   };
 
   const handleTimeRangeBeginChange = (value: Date | null) => {
@@ -101,7 +107,7 @@ function MitigationIntervalItem({
             className="form-control"
             onBlur={handleBlur}
           />
-          <ErrorMessage name={`mitigations.[${index}].timeRange.begin`} />
+          <ErrorMessage name={`mitigations.[${index}].timeRange.end`} />
         </div>
         <div className="col-md-2">
           <div className="input-group">

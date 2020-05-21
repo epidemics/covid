@@ -2,12 +2,15 @@ import { Form, Formik } from 'formik';
 import * as Moment from 'moment';
 import * as React from 'react';
 
+import { MitigationInterval } from '../data/url_generator';
+import MitigationSchema from './MitigationSchema';
 import { MitigationTable } from './MitigationTable';
 
 export const END_DATE_OFFSET = 7;
 
 export type Values = {
   mitigations: {
+    color: string;
     name: string;
     timeRange: {
       begin: Date;
@@ -20,6 +23,10 @@ export type Values = {
   }[];
 };
 
+type Props = {
+  onResult: (result: MitigationInterval[]) => void;
+};
+
 export const createInitialMitigation = (
   date: Date = new Date(),
   index: number = -1
@@ -27,6 +34,7 @@ export const createInitialMitigation = (
   const endDate = Moment(date).add(END_DATE_OFFSET, "days").toDate();
 
   return {
+    color: "#fffff",
     name: `#${index + 2}`,
     timeRange: {
       begin: date,
@@ -36,44 +44,20 @@ export const createInitialMitigation = (
   };
 };
 
-const MitigationForm = () => {
+const MitigationForm: React.FC<Props> = ({ onResult }) => {
   const initialValues: Values = {
     mitigations: [createInitialMitigation()],
   };
 
-  const validate = (values: Values) => {
-    let errors: any = {};
-    let mitigations = [] as any;
-
-    values.mitigations.forEach((mitigation, index) => {
-      mitigations[index] = {};
-      if (mitigation.name.length === 0) {
-        mitigations[index].name = "Intervention name is required";
-      }
-
-      const momentBegin = Moment(mitigation.timeRange.begin);
-      const momentEnd = Moment(mitigation.timeRange.end);
-
-      if (momentBegin.isSameOrAfter(momentEnd)) {
-        mitigations[index].timeRange = {
-          begin: "Invalid interval",
-          end: "Invalid interval",
-        };
-      }
-    });
-
-    errors.mitigations = mitigations;
-
-    return errors;
+  const handleSubmit = (values: Values) => {
+    onResult(values.mitigations);
   };
 
   return (
     <Formik
       initialValues={initialValues}
-      validate={validate}
-      onSubmit={(values) => {
-        console.log(values);
-      }}
+      validationSchema={MitigationSchema}
+      onSubmit={handleSubmit}
     >
       {({ values }) => (
         <Form>
