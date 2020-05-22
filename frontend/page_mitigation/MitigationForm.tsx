@@ -1,5 +1,5 @@
 import { Form, Formik } from 'formik';
-import * as Moment from 'moment';
+import * as moment from 'moment';
 import * as React from 'react';
 
 import { MitigationInterval } from '../data/url_generator';
@@ -31,16 +31,16 @@ export const createInitialMitigation = (
   date: Date = new Date(),
   index: number = -1
 ) => {
-  const endDate = Moment(date).add(END_DATE_OFFSET, "days").toDate();
+  const endDate = moment(date).add(END_DATE_OFFSET, "days").toDate();
 
   return {
-    color: "#fffff",
+    color: "#fff",
     name: `#${index + 2}`,
     timeRange: {
       begin: date,
       end: endDate,
     },
-    transmissionReduction: { begin: 0, end: 0 },
+    transmissionReduction: { begin: 13, end: 23 },
   };
 };
 

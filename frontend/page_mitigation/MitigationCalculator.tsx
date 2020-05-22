@@ -457,7 +457,7 @@ type Props = {
 };
 
 const MitigationCalculator = (props: Props) => {
-  let { measures, serialInterval, onChange } = props;
+  let { measures, onChange } = props;
 
   React.useEffect(() => {
     document.getElementById("containmentContent")?.classList.remove("d-none");
@@ -584,10 +584,10 @@ const MitigationCalculator = (props: Props) => {
   //   return Math.exp(serialInterval * (growth - 1));
   // }
 
-  let defaultR = 3.6; //growthToR(props.defaultOriginalGrowthRate.mean);
+  //let defaultR = 3.6; //growthToR(props.defaultOriginalGrowthRate.mean);
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
-  let defaultRsd = 1.4; //(defaultRp95 - defaultR) / 1.5;
-  let [baselineR, setR] = React.useState(defaultR);
+  //let defaultRsd = 1.4; //(defaultRp95 - defaultR) / 1.5;
+  //let [baselineR, setR] = React.useState(defaultR);
 
   return (
     <>

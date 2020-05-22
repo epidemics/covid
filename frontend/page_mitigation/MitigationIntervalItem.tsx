@@ -1,13 +1,12 @@
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { ErrorMessage, FastField, FieldArrayRenderProps, useFormikContext } from 'formik';
-import * as Moment from 'moment';
 import * as React from 'react';
 import DatePicker from 'react-datepicker';
 
 import { measures, serialInterval } from './measures';
 import MitigationCalculator from './MitigationCalculator';
-import { createInitialMitigation, END_DATE_OFFSET, Values } from './MitigationForm';
+import { createInitialMitigation, Values } from './MitigationForm';
 
 export interface Props {
   index: number;
@@ -46,28 +45,20 @@ function MitigationIntervalItem({
   };
 
   const handleCalculatorChange = (value: number) => {
+    const intervalOffset = 5;
+
     setFieldValue(
       `mitigations.[${index}].transmissionReduction.begin`,
-      100 + value - 1
+      Math.round(100 + value - intervalOffset)
     );
     setFieldValue(
       `mitigations.[${index}].transmissionReduction.end`,
-      100 + value + 1
+      Math.round(100 + value + intervalOffset)
     );
   };
 
   const handleTimeRangeBeginChange = (value: Date | null) => {
-    if (value === null) {
-      return;
-    }
-    const endDate = Moment(value).add(END_DATE_OFFSET, "days").toDate();
-
     setFieldValue(`mitigations.[${index}].timeRange.begin`, value);
-    setFieldValue(`mitigations.[${index}].timeRange.end`, endDate);
-
-    if (!isFirstItem) {
-      setFieldValue(`mitigations.[${index - 1}].timeRange.end`, value);
-    }
   };
 
   const handleTimeRangeEndChange = (value: Date | null) => {
@@ -95,6 +86,9 @@ function MitigationIntervalItem({
             onChange={handleTimeRangeBeginChange}
             className="form-control"
             onBlur={handleBlur}
+            minDate={
+              !isFirstItem ? values.mitigations[index - 1].timeRange.end : null
+            }
           />
           <ErrorMessage name={`mitigations.[${index}].timeRange.begin`} />
         </div>
@@ -106,6 +100,9 @@ function MitigationIntervalItem({
             onChange={handleTimeRangeEndChange}
             className="form-control"
             onBlur={handleBlur}
+            maxDate={
+              !isLastItem ? values.mitigations[index + 1].timeRange.begin : null
+            }
           />
           <ErrorMessage name={`mitigations.[${index}].timeRange.end`} />
         </div>
@@ -114,6 +111,13 @@ function MitigationIntervalItem({
             <FastField
               id={`mitigations.[${index}].transmissionReduction.begin`}
               name={`mitigations.[${index}].transmissionReduction.begin`}
+              type="text"
+              className="form-control"
+              disabled={true}
+            />
+            <FastField
+              id={`mitigations.[${index}].transmissionReduction.end`}
+              name={`mitigations.[${index}].transmissionReduction.end`}
               type="text"
               className="form-control"
               disabled={true}
