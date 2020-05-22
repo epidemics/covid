@@ -150,7 +150,7 @@ export function RegionSelector({
   );
 
   let current = selected?.current;
-  let generated = current?.date ?? mainInfo.generated;
+  let created = current?.date ?? mainInfo.created;
 
   return (
     <div className="top-row">
@@ -182,7 +182,7 @@ export function RegionSelector({
           <>
             <span className="number-subheader" id="infections-date">
               <span style={{ color: "#aaa" }}>Model last updated on:</span>{" "}
-              {generated ? formatDate(generated) : <>&mdash;</>}
+              {created ? formatDate(created) : <>&mdash;</>}
             </span>
             <div className="active-infections">
               Active Infections:{" "}

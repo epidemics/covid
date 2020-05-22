@@ -2,7 +2,6 @@ import { Regions } from "./regions";
 import * as React from "react";
 
 export type MainInfo = {
-  generated?: Date;
   comment?: string;
   created?: Date;
   created_by?: string;
