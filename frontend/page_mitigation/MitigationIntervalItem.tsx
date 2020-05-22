@@ -4,6 +4,7 @@ import { ErrorMessage, FastField, FieldArrayRenderProps, useFormikContext } from
 import * as React from 'react';
 import DatePicker from 'react-datepicker';
 
+import Modal from '../components/Modal';
 import { measures, serialInterval } from './measures';
 import MitigationCalculator from './MitigationCalculator';
 import { createInitialMitigation, Values } from './MitigationForm';
@@ -45,15 +46,9 @@ function MitigationIntervalItem({
   };
 
   const handleCalculatorChange = (value: number) => {
-    const intervalOffset = 5;
-
     setFieldValue(
-      `mitigations.[${index}].transmissionReduction.begin`,
-      Math.round(100 + value - intervalOffset)
-    );
-    setFieldValue(
-      `mitigations.[${index}].transmissionReduction.end`,
-      Math.round(100 + value + intervalOffset)
+      `mitigations.[${index}].transmissionReduction`,
+      `${Math.round(Math.abs(value))} %`
     );
   };
 
@@ -111,15 +106,8 @@ function MitigationIntervalItem({
         <div className="col-md-2">
           <div className="input-group">
             <FastField
-              id={`mitigations.[${index}].transmissionReduction.begin`}
-              name={`mitigations.[${index}].transmissionReduction.begin`}
-              type="text"
-              className="form-control"
-              disabled={true}
-            />
-            <FastField
-              id={`mitigations.[${index}].transmissionReduction.end`}
-              name={`mitigations.[${index}].transmissionReduction.end`}
+              id={`mitigations.[${index}].transmissionReduction`}
+              name={`mitigations.[${index}].transmissionReduction`}
               type="text"
               className="form-control"
               disabled={true}
@@ -164,15 +152,19 @@ function MitigationIntervalItem({
         </div>
       </div>
 
-      {showCalculator && (
+      <Modal
+        isOpen={showCalculator}
+        onCloseRequest={() => handleShowCalculatorClick(index)}
+      >
         <MitigationCalculator
           measures={measures}
           serialInterval={serialInterval}
           onChange={(value) => {
             handleCalculatorChange(value);
+            handleShowCalculatorClick(index);
           }}
         />
-      )}
+      </Modal>
     </>
   );
 }

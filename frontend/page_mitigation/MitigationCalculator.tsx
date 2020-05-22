@@ -570,12 +570,6 @@ const MitigationCalculator = (props: Props) => {
     }
   });
 
-  React.useEffect(() => {
-    onChange(
-      Math.round((calculateMultiplier(state, measures) - 1) * 100 * 10) / 10
-    );
-  }, [state, measures]);
-
   // function setR(R: number) {
   //   setGrowthRate(1 + Math.log(R) / serialInterval);
   // }
@@ -591,23 +585,6 @@ const MitigationCalculator = (props: Props) => {
 
   return (
     <>
-      <h1>Mitigation calculator</h1>
-
-      <hr />
-      <p>
-        The following tool can be used to calculate the estimated effect of
-        various combinations of COVID countermeasures. On the left, measures and
-        measure groups can be toggled to factor into the calculation. On the
-        right, the impact on growth is displayed using coloured bands. The
-        impact estimates are based on our model combining a countermeasures
-        dataset and their empirically observed growth reduction. The impact of
-        each measure can be customized by the sliders to e.g. factor in
-        non-compliance. In measure groups, more stingent measures indicate the{" "}
-        <em>additional effect</em> on top of less stingent measures.{" "}
-      </p>
-
-      <hr />
-
       <div className="measure-calculator">
         <div style={{ gridColumn: "1 / span 2" }}>
           <b>Measures</b>
@@ -627,6 +604,18 @@ const MitigationCalculator = (props: Props) => {
           <b>{d3.format(".1%")(multiplier - 1)}</b>
         </div>
       </div>
+      <button
+        type="button"
+        className="btn btn-primary mr-2"
+        onClick={() =>
+          onChange(
+            Math.round((calculateMultiplier(state, measures) - 1) * 100 * 10) /
+              10
+          )
+        }
+      >
+        Calculate
+      </button>
       <hr />
     </>
   );

@@ -336,8 +336,10 @@ span.infections-confirmed {
   margin-bottom: 0px;
 }
 
-.alert-dismissible .close {
+.alert-dismissible .close,
+.custom-modal .close {
   padding: 0.25rem 0.5rem;
+  color: inherit;
 }
 
 @media only screen and (max-width: 991px) {
@@ -870,7 +872,8 @@ table td {
   text-transform: uppercase;
 }
 
-.alert-dismissible .close:hover {
+.alert-dismissible .close:hover,
+.custom-modal .close:hover {
   color: white;
 }
 
@@ -880,4 +883,30 @@ table td {
 
 .mitigation-item {
   margin-top: 8px;
+}
+
+.custom-modal {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  right: 40px;
+  bottom: 40px;
+  background-color: #222028;
+  overflow: auto;
+  border-radius: 4px;
+  outline: none;
+  padding: 20px;
+}
+
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.custom-modal-inner {
+  margin: 20px;
 }

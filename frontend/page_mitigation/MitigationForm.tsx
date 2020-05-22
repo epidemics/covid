@@ -17,10 +17,7 @@ export type Values = {
       begin: Date;
       end: Date;
     };
-    transmissionReduction: {
-      begin: number;
-      end: number;
-    };
+    transmissionReduction: string;
   }[];
 };
 
@@ -35,13 +32,13 @@ export const createInitialMitigation = (
   const endDate = moment(date).add(END_DATE_OFFSET, "days").toDate();
 
   return {
-    color: "#fff",
+    color: "#000",
     name: `#${index + 2}`,
     timeRange: {
       begin: date,
       end: endDate,
     },
-    transmissionReduction: { begin: 13, end: 23 },
+    transmissionReduction: "82 %",
   };
 };
 
@@ -82,7 +79,7 @@ const MitigationForm: React.FC<Props> = ({ onResult }) => {
           </div>
           <MitigationTable mitigationIntervals={values.mitigations} />
           <button type="submit" className="btn btn-primary">
-            Calculate
+            Go to simulation
           </button>
         </Form>
       )}
