@@ -89,6 +89,7 @@ function MitigationIntervalItem({
             minDate={
               !isFirstItem ? values.mitigations[index - 1].timeRange.end : null
             }
+            maxDate={values.mitigations[index].timeRange.end}
           />
           <ErrorMessage name={`mitigations.[${index}].timeRange.begin`} />
         </div>
@@ -100,6 +101,7 @@ function MitigationIntervalItem({
             onChange={handleTimeRangeEndChange}
             className="form-control"
             onBlur={handleBlur}
+            minDate={values.mitigations[index].timeRange.begin}
             maxDate={
               !isLastItem ? values.mitigations[index + 1].timeRange.begin : null
             }
@@ -129,9 +131,7 @@ function MitigationIntervalItem({
               className="btn btn-link p-0"
               onClick={() => handleShowCalculatorClick(index)}
             >
-              {showCalculator
-                ? "Hide mitigation Calculator"
-                : "Show mitigation Calculator"}
+              {showCalculator ? "Hide R calculator" : "Show R calculator"}
             </button>
           </p>
         </div>

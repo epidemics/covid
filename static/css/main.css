@@ -543,9 +543,6 @@ span.infections-confirmed {
 /*
 * Form
 */
-label {
-  text-transform: uppercase;
-}
 
 .btn-primary,
 .btn-secondary {

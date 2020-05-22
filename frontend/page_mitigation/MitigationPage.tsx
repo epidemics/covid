@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { Alerts } from '../components/alerts';
-import { MitigationInterval, mitigationIntervalsToURL } from '../data/url_generator';
-import MitigationForm from './MitigationForm';
+import { mitigationIntervalsToURL } from '../data/url_generator';
+import MitigationForm, { Values } from './MitigationForm';
 import Result from './Result';
 
 export function Page() {
@@ -14,8 +14,10 @@ export function Page() {
     document.getElementById("containmentContent")?.classList.remove("d-none");
   });
 
-  const handleFormResult = (mitigations: MitigationInterval[]) => {
-    setScenarioUrl(mitigationIntervalsToURL("Czechia", mitigations));
+  const handleFormResult = (result: Values) => {
+    setScenarioUrl(
+      mitigationIntervalsToURL(result.scenarioName, result.mitigations)
+    );
   };
 
   return (
