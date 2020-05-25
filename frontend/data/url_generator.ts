@@ -41,6 +41,20 @@ export function mitigationIntervalsToURL(
   let base_scenario = scenarios[preset];
   base_scenario["scenarioData"]["data"]["mitigation"][
     "mitigationIntervals"
-  ] = mitigationIntervals;
+  ] = mitigationIntervals
+      .map((interval) => {
+        return {
+          color: interval.color,
+          name: interval.name,
+          timeRange: {
+            begin: interval.timeRange.begin,
+            end: interval.timeRange.end,
+          },
+          transmissionReduction: {
+            begin: interval.transmissionReduction.begin,
+            end: interval.transmissionReduction.end,
+          }
+        }
+      });
   return dataToURL(base_scenario);
 }
