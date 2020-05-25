@@ -5,8 +5,8 @@ import * as React from 'react';
 import DatePicker from 'react-datepicker';
 
 import Modal from '../components/Modal';
-import { measures, serialInterval } from './measures';
-import MitigationCalculator from './MitigationCalculator';
+import { Measure, MeasureGroup, serialInterval } from './measures';
+import MitigationCalculator, { SliderState } from './MitigationCalculator';
 import { createInitialMitigation, Values } from './MitigationForm';
 
 export interface Props {
@@ -45,11 +45,38 @@ function MitigationIntervalItem({
     arrayHelpers.remove(index);
   };
 
-  const handleCalculatorChange = (value: number) => {
+  const handleCalculatorChange = (value: number, state: SliderState[]) => {
     setFieldValue(
       `mitigations.[${index}].transmissionReduction`,
       `${Math.round(Math.abs(value))} %`
     );
+
+    const newMeasures = values.mitigations[index].measures.map(
+      (measureOrGroup, measureIndex) => {
+        if ("items" in measureOrGroup) {
+          const group = measureOrGroup as MeasureGroup;
+          const newItems = group.items.map((item, itemIndex) => ({
+            ...item,
+            check: itemIndex <= state[measureIndex].checked - 1 ? 1 : 0,
+            mean: (state[measureIndex].value as number[])[itemIndex],
+          }));
+
+          return {
+            ...group,
+            items: newItems,
+          };
+        } else {
+          const measure = measureOrGroup as Measure;
+          return {
+            ...measure,
+            check: state[measureIndex].checked,
+            mean: state[measureIndex].value as number,
+          };
+        }
+      }
+    );
+
+    setFieldValue(`mitigations.[${index}].measures`, newMeasures);
   };
 
   const handleTimeRangeBeginChange = (value: Date | null) => {
@@ -157,10 +184,10 @@ function MitigationIntervalItem({
         onCloseRequest={() => handleShowCalculatorClick(index)}
       >
         <MitigationCalculator
-          measures={measures}
+          measures={values.mitigations[index].measures}
           serialInterval={serialInterval}
-          onChange={(value) => {
-            handleCalculatorChange(value);
+          onChange={(value, state) => {
+            handleCalculatorChange(value, state);
             handleShowCalculatorClick(index);
           }}
         />

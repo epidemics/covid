@@ -3,6 +3,7 @@ export interface Measure {
   mean: number;
   p90: number;
   implies?: Array<{ key: number; value?: number }>;
+  check: number;
 }
 
 export interface MeasureGroup {
@@ -21,11 +22,13 @@ export const measures: Array<Measure | MeasureGroup> = [
     name: "Over 60% of the population wears masks",
     mean: 0.908,
     p90: 0.735,
+    check: 1,
   },
   {
     name: "Symptomatic testing",
     mean: 0.904,
     p90: 0.772,
+    check: 1,
   },
   {
     name: "Gatherings limited to...",
@@ -34,16 +37,19 @@ export const measures: Array<Measure | MeasureGroup> = [
         name: "1000 people",
         mean: 0.991,
         p90: 0.8,
+        check: 1,
       },
       {
         name: "100 people",
         mean: 0.954,
         p90: 0.758,
+        check: 1,
       },
       {
         name: "10 people",
         mean: 0.761,
         p90: 0.627,
+        check: 1,
       },
     ],
   },
@@ -54,11 +60,13 @@ export const measures: Array<Measure | MeasureGroup> = [
         name: "Some",
         mean: 0.66,
         p90: 0.528,
+        check: 1,
       },
       {
         name: "Many",
         mean: 0.831,
         p90: 0.694,
+        check: 1,
       },
     ],
   },
@@ -66,11 +74,13 @@ export const measures: Array<Measure | MeasureGroup> = [
     name: "Schools and universities closed",
     mean: 0.667,
     p90: 0.524,
+    check: 1,
   },
   {
     name: "Stay-at-home order",
     mean: 0.824,
     p90: 0.685,
     implies: [{ key: 2, value: 3 }, { key: 3, value: 2 }, { key: 4 }],
+    check: 1,
   },
 ];

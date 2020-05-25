@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import * as React from 'react';
 
 import { scenarioNames } from '../data/url_generator';
+import { Measure, MeasureGroup, measures } from './measures';
 import MitigationSchema from './MitigationSchema';
 import { MitigationTable } from './MitigationTable';
 
@@ -18,6 +19,7 @@ export type Values = {
       end: Date;
     };
     transmissionReduction: string;
+    measures: (Measure | MeasureGroup)[];
   }[];
 };
 
@@ -39,6 +41,7 @@ export const createInitialMitigation = (
       end: endDate,
     },
     transmissionReduction: "82 %",
+    measures,
   };
 };
 

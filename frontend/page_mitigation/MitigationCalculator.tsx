@@ -445,14 +445,14 @@ function GroupedMeasures(
   );
 }
 
-type SliderState = {
+export type SliderState = {
   value: number | number[];
   checked: number;
 };
 
 type Props = {
   measures: Array<Measure | MeasureGroup>;
-  onChange: (value: number) => void;
+  onChange: (value: number, state: SliderState[]) => void;
   serialInterval: number;
 };
 
@@ -510,12 +510,12 @@ const MitigationCalculator = (props: Props) => {
         if ("items" in measureOrGroup) {
           return {
             value: measureOrGroup.items.map((measure) => measure.mean),
-            checked: measureOrGroup.items.length,
+            checked: measureOrGroup.items.filter((item) => item.check).length,
           };
         } else {
           return {
             value: measureOrGroup.mean,
-            checked: 1,
+            checked: measureOrGroup.check,
           };
         }
       });
@@ -610,7 +610,8 @@ const MitigationCalculator = (props: Props) => {
         onClick={() =>
           onChange(
             Math.round((calculateMultiplier(state, measures) - 1) * 100 * 10) /
-              10
+              10,
+            state
           )
         }
       >
