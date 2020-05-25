@@ -1,6 +1,6 @@
 import 'react-datepicker/dist/react-datepicker.css';
 
-import { ErrorMessage, FastField, FieldArrayRenderProps, useFormikContext } from 'formik';
+import { ErrorMessage, FastField, Field, FieldArrayRenderProps, useFormikContext } from 'formik';
 import * as React from 'react';
 import DatePicker from 'react-datepicker';
 
@@ -132,12 +132,13 @@ function MitigationIntervalItem({
         </div>
         <div className="col-md-2">
           <div className="input-group">
-            <FastField
+            <Field
               id={`mitigations.[${index}].transmissionReduction`}
               name={`mitigations.[${index}].transmissionReduction`}
               type="text"
               className="form-control"
-              disabled={true}
+              readOnly="readonly"
+              onClick={() => handleShowCalculatorClick(index)}
             />
           </div>
           <p>

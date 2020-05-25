@@ -74,7 +74,7 @@ const MitigationForm: React.FC<Props> = ({ onResult }) => {
                   className="form-control"
                 >
                   {scenarioNames.map((scenarioName) => (
-                    <option>{scenarioName}</option>
+                    <option key={scenarioName}>{scenarioName}</option>
                   ))}
                 </Field>
               </div>

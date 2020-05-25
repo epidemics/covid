@@ -13,6 +13,7 @@ const Modal: React.FC<Props> = ({ isOpen, onCloseRequest, children }) => {
       onRequestClose={onCloseRequest}
       className="custom-modal"
       overlayClassName="custom-modal-overlay"
+      ariaHideApp={false}
     >
       <button
         type="button"
