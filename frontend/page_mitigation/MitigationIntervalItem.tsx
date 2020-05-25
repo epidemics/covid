@@ -1,13 +1,19 @@
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-datepicker/dist/react-datepicker.css";
 
-import { ErrorMessage, FastField, Field, FieldArrayRenderProps, useFormikContext } from 'formik';
-import * as React from 'react';
-import DatePicker from 'react-datepicker';
+import {
+  ErrorMessage,
+  FastField,
+  Field,
+  FieldArrayRenderProps,
+  useFormikContext,
+} from "formik";
+import * as React from "react";
+import DatePicker from "react-datepicker";
 
-import Modal from '../components/Modal';
-import { Measure, MeasureGroup, serialInterval } from './measures';
-import MitigationCalculator, { SliderState } from './MitigationCalculator';
-import { createInitialMitigation, Values } from './MitigationForm';
+import Modal from "../components/Modal";
+import { Measure, MeasureGroup, serialInterval } from "./measures";
+import MitigationCalculator, { SliderState } from "./MitigationCalculator";
+import { createInitialMitigation, Values } from "./MitigationForm";
 
 export interface Props {
   index: number;

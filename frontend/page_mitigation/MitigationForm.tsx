@@ -1,11 +1,11 @@
-import { Field, Form, Formik } from 'formik';
-import * as moment from 'moment';
-import * as React from 'react';
+import { Field, Form, Formik } from "formik";
+import * as moment from "moment";
+import * as React from "react";
 
-import { scenarioNames } from '../data/url_generator';
-import { Measure, MeasureGroup, measures } from './measures';
-import MitigationSchema from './MitigationSchema';
-import { MitigationTable } from './MitigationTable';
+import { scenarioNames } from "../data/url_generator";
+import { Measure, MeasureGroup, measures } from "./measures";
+import MitigationSchema from "./MitigationSchema";
+import { MitigationTable } from "./MitigationTable";
 
 export const END_DATE_OFFSET = 7;
 

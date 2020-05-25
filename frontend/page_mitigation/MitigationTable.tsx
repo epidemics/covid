@@ -1,9 +1,9 @@
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-datepicker/dist/react-datepicker.css";
 
-import { FieldArray } from 'formik';
-import * as React from 'react';
+import { FieldArray } from "formik";
+import * as React from "react";
 
-import MitigationIntervalItem from './MitigationIntervalItem';
+import MitigationIntervalItem from "./MitigationIntervalItem";
 
 export interface MitigationTableProps {
   mitigationIntervals: any[];

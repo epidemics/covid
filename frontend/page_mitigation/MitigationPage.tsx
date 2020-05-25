@@ -1,9 +1,9 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
-import { Alerts } from '../components/alerts';
-import { mitigationIntervalsToURL } from '../data/url_generator';
-import MitigationForm, { Values } from './MitigationForm';
+import { Alerts } from "../components/alerts";
+import { mitigationIntervalsToURL } from "../data/url_generator";
+import MitigationForm, { Values } from "./MitigationForm";
 
 export function Page() {
   const [scenarioUrl, setScenarioUrl] = React.useState<string | undefined>(

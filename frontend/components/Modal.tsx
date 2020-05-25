@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactModal from 'react-modal';
+import * as React from "react";
+import * as ReactModal from "react-modal";
 
 type Props = {
   isOpen: boolean;

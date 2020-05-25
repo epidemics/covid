@@ -1,8 +1,8 @@
-import * as chroma from 'chroma-js';
-import * as d3 from 'd3';
-import * as React from 'react';
+import * as chroma from "chroma-js";
+import * as d3 from "d3";
+import * as React from "react";
 
-import { Measure, MeasureGroup, range } from './measures';
+import { Measure, MeasureGroup, range } from "./measures";
 
 //let scale = chroma.scale("PuBu");
 // let scale = chroma

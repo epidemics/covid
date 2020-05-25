@@ -1,7 +1,7 @@
-import { stringify as url_encode } from 'jsurl';
-import { stringify as query_encode } from 'query-string';
+import { stringify as url_encode } from "jsurl";
+import { stringify as query_encode } from "query-string";
 
-import scenarios_raw from './scenarios.json';
+import scenarios_raw from "./scenarios.json";
 
 export const COVID19_SCENARIO_DOMAIN = "https://covid19-scenarios.org";
 
@@ -41,20 +41,19 @@ export function mitigationIntervalsToURL(
   let base_scenario = scenarios[preset];
   base_scenario["scenarioData"]["data"]["mitigation"][
     "mitigationIntervals"
-  ] = mitigationIntervals
-      .map((interval) => {
-        return {
-          color: interval.color,
-          name: interval.name,
-          timeRange: {
-            begin: interval.timeRange.begin,
-            end: interval.timeRange.end,
-          },
-          transmissionReduction: {
-            begin: interval.transmissionReduction.begin,
-            end: interval.transmissionReduction.end,
-          }
-        }
-      });
+  ] = mitigationIntervals.map((interval) => {
+    return {
+      color: interval.color,
+      name: interval.name,
+      timeRange: {
+        begin: interval.timeRange.begin,
+        end: interval.timeRange.end,
+      },
+      transmissionReduction: {
+        begin: interval.transmissionReduction.begin,
+        end: interval.transmissionReduction.end,
+      },
+    };
+  });
   return dataToURL(base_scenario);
 }
