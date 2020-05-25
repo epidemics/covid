@@ -18,6 +18,7 @@ import {
   makeFragmentLocationContext,
 } from "../components/LocationContext";
 import { Alerts } from "../components/alerts";
+import { ReproductionSeriesView } from "./ReproductionSeriesView";
 
 const REGION_FALLBACK = "united kingdom";
 
@@ -133,6 +134,13 @@ export function Page({ data }: { data: Datastore }) {
 
       <hr />
       <ModelView
+        region={region}
+        scenario={scenario}
+        scenarios={scenarios}
+        dispatch={dispatch}
+      />
+      <hr />
+      <ReproductionSeriesView
         region={region}
         scenario={scenario}
         scenarios={scenarios}
