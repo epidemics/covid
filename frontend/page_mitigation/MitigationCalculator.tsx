@@ -604,19 +604,22 @@ const MitigationCalculator = (props: Props) => {
           <b>{d3.format(".1%")(multiplier - 1)}</b>
         </div>
       </div>
-      <button
-        type="button"
-        className="btn btn-primary mr-2"
-        onClick={() =>
-          onChange(
-            Math.round((calculateMultiplier(state, measures) - 1) * 100 * 10) /
-              10,
-            state
-          )
-        }
-      >
-        Calculate
-      </button>
+      <div className="d-flex justify-content-end">
+        <button
+          type="button"
+          className="btn btn-primary mr-2"
+          onClick={() =>
+            onChange(
+              Math.round(
+                (calculateMultiplier(state, measures) - 1) * 100 * 10
+              ) / 10,
+              state
+            )
+          }
+        >
+          Apply
+        </button>
+      </div>
       <hr />
     </>
   );

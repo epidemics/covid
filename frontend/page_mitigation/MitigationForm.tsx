@@ -1,13 +1,10 @@
 import { Field, Form, Formik } from "formik";
-import * as moment from "moment";
 import * as React from "react";
 
 import { scenarioNames } from "../data/url_generator";
 import { Measure, MeasureGroup, measures } from "./measures";
 import MitigationSchema from "./MitigationSchema";
 import { MitigationTable } from "./MitigationTable";
-
-export const END_DATE_OFFSET = 7;
 
 export type Values = {
   scenarioName: string;
@@ -16,7 +13,6 @@ export type Values = {
     name: string;
     timeRange: {
       begin: Date;
-      end: Date;
     };
     transmissionReduction: string;
     measures: (Measure | MeasureGroup)[];
@@ -31,14 +27,11 @@ export const createInitialMitigation = (
   date: Date = new Date(),
   index: number = -1
 ) => {
-  const endDate = moment(date).add(END_DATE_OFFSET, "days").toDate();
-
   return {
     color: "#000",
     name: `#${index + 2}`,
     timeRange: {
       begin: date,
-      end: endDate,
     },
     transmissionReduction: "82 %",
     measures,
@@ -66,7 +59,7 @@ const MitigationForm: React.FC<Props> = ({ onResult }) => {
           <div className="form-row mb-4">
             <div className="col-md-3">
               <div className="form-group">
-                <label htmlFor="scenarioName">Select scenario</label>
+                <label htmlFor="scenarioName">Select region</label>
                 <Field
                   as="select"
                   id="scenarioName"
@@ -82,7 +75,7 @@ const MitigationForm: React.FC<Props> = ({ onResult }) => {
           </div>
           <MitigationTable mitigationIntervals={values.mitigations} />
           <button type="submit" className="btn btn-primary">
-            Go to simulation
+            Run simulation
           </button>
         </Form>
       )}

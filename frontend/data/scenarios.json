@@ -23,7 +23,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.12, "end": 2.59 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -149,7 +149,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.42, "end": 1.73 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -275,7 +275,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.46, "end": 3.01 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -401,7 +401,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.02, "end": 1.25 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -527,7 +527,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.48, "end": 3.03 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -653,7 +653,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.45, "end": 1.77 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -779,7 +779,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.41, "end": 2.94 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -905,7 +905,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 3.45, "end": 4.21 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -1031,7 +1031,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.89, "end": 2.32 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -1157,7 +1157,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1, "end": 1.2 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -1283,7 +1283,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.01, "end": 1.23 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -1409,7 +1409,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 3.4, "end": 4.15 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -1535,7 +1535,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1, "end": 1.2 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -1661,7 +1661,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.34, "end": 2.86 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -1787,7 +1787,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.26, "end": 2.76 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -1913,7 +1913,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -2039,7 +2039,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.36, "end": 1.66 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -2165,7 +2165,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.04, "end": 1.27 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -2291,7 +2291,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.4, "end": 1.71 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -2417,7 +2417,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.41, "end": 1.72 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -2543,7 +2543,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.09, "end": 1.33 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -2669,7 +2669,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.73, "end": 3.33 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -2795,7 +2795,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1, "end": 1.2 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -2921,7 +2921,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.17, "end": 1.43 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -3047,7 +3047,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.06, "end": 1.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -3173,7 +3173,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.2, "end": 1.47 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -3299,7 +3299,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.51, "end": 1.84 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -3425,7 +3425,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.02, "end": 1.25 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -3551,7 +3551,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.29, "end": 1.58 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -3677,7 +3677,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.98, "end": 3.64 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -3803,7 +3803,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.33, "end": 1.62 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -3929,7 +3929,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.57, "end": 3.14 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -4055,7 +4055,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 4.45, "end": 5.44 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -4181,7 +4181,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.84, "end": 2.25 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -4307,7 +4307,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -4433,7 +4433,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.33, "end": 2.85 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -4559,7 +4559,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.32, "end": 2.84 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -4685,7 +4685,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.74, "end": 2.12 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -4811,7 +4811,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.36, "end": 1.67 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -4937,7 +4937,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.46, "end": 3.01 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -5063,7 +5063,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.02, "end": 2.47 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -5189,7 +5189,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.41, "end": 2.95 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -5315,7 +5315,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.21, "end": 1.48 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -5441,7 +5441,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.63, "end": 1.99 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -5567,7 +5567,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.89, "end": 2.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -5693,7 +5693,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.13, "end": 1.38 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -5819,7 +5819,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.21, "end": 1.48 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -5945,7 +5945,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.11, "end": 1.36 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -6071,7 +6071,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.31, "end": 1.6 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -6197,7 +6197,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.01, "end": 1.23 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -6323,7 +6323,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -6449,7 +6449,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.59, "end": 1.95 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -6575,7 +6575,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 3.12, "end": 3.81 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -6701,7 +6701,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.19, "end": 1.45 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -6827,7 +6827,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.12, "end": 1.37 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -6953,7 +6953,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.12, "end": 1.37 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -7079,7 +7079,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.9, "end": 3.55 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -7205,7 +7205,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.48, "end": 1.81 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -7331,7 +7331,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.69, "end": 2.06 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -7457,7 +7457,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1, "end": 1.23 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -7583,7 +7583,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.66, "end": 2.03 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -7709,7 +7709,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.44, "end": 1.76 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -7835,7 +7835,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.91, "end": 2.34 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -7961,7 +7961,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.01, "end": 1.23 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -8087,7 +8087,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.25, "end": 1.53 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -8213,7 +8213,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.86, "end": 2.28 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -8339,7 +8339,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -8465,7 +8465,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.68, "end": 2.06 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -8591,7 +8591,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.07, "end": 2.53 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -8717,7 +8717,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.23, "end": 2.73 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -8843,7 +8843,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.66, "end": 2.03 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -8969,7 +8969,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 3.69, "end": 4.51 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -9095,7 +9095,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.49, "end": 1.83 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -9221,7 +9221,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.51, "end": 3.06 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -9347,7 +9347,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 3.16, "end": 3.87 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -9473,7 +9473,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.42, "end": 2.96 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -9599,7 +9599,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.03, "end": 1.26 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -9725,7 +9725,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.55, "end": 1.9 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -9851,7 +9851,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1, "end": 1.18 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -9977,7 +9977,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.33, "end": 2.85 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -10103,7 +10103,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.19, "end": 1.45 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -10229,7 +10229,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -10355,7 +10355,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 5.26, "end": 6.42 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -10481,7 +10481,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.13, "end": 1.38 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -10607,7 +10607,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.46, "end": 1.79 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -10733,7 +10733,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.07, "end": 1.31 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -10859,7 +10859,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -10985,7 +10985,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.51, "end": 1.85 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -11111,7 +11111,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.06, "end": 1.29 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -11237,7 +11237,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.15, "end": 1.4 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -11363,7 +11363,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.11, "end": 1.36 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -11489,7 +11489,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.15, "end": 1.4 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -11615,7 +11615,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.16, "end": 2.64 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -11741,7 +11741,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.11, "end": 1.35 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -11867,7 +11867,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.21, "end": 1.48 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -11993,7 +11993,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.68, "end": 3.27 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -12119,7 +12119,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.13, "end": 2.6 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -12245,7 +12245,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.58, "end": 1.93 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -12371,7 +12371,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.02, "end": 1.25 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -12497,7 +12497,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1, "end": 1.16 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -12623,7 +12623,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.18, "end": 2.66 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -12749,7 +12749,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -12875,7 +12875,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.25, "end": 2.75 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -13001,7 +13001,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.12, "end": 1.37 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -13127,7 +13127,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.04, "end": 1.27 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -13253,7 +13253,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.04, "end": 2.5 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -13379,7 +13379,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.23, "end": 1.5 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -13505,7 +13505,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.54, "end": 1.89 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -13631,7 +13631,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -13757,7 +13757,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.36, "end": 1.66 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -13883,7 +13883,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.29, "end": 2.8 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -14009,7 +14009,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.84, "end": 2.25 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -14135,7 +14135,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.13, "end": 1.38 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -14261,7 +14261,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.37, "end": 1.67 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -14387,7 +14387,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.07, "end": 2.53 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -14513,7 +14513,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.66, "end": 2.03 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -14639,7 +14639,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.93, "end": 3.58 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -14765,7 +14765,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.09, "end": 2.55 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -14891,7 +14891,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1, "end": 1.21 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -15017,7 +15017,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.61, "end": 1.96 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -15143,7 +15143,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.25, "end": 2.75 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -15269,7 +15269,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.1, "end": 2.57 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -15395,7 +15395,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 3.73, "end": 4.56 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -15521,7 +15521,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.04, "end": 1.27 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -15647,7 +15647,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.85, "end": 2.27 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -15773,7 +15773,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.76, "end": 3.37 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -15899,7 +15899,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -16025,7 +16025,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -16151,7 +16151,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.17, "end": 1.43 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -16277,7 +16277,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.64, "end": 2.01 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -16403,7 +16403,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.5, "end": 1.83 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -16529,7 +16529,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.41, "end": 2.95 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -16655,7 +16655,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -16781,7 +16781,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.09, "end": 1.33 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -16907,7 +16907,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.1, "end": 1.34 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -17033,7 +17033,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.16, "end": 1.42 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -17159,7 +17159,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -17285,7 +17285,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.31, "end": 1.61 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -17411,7 +17411,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.7, "end": 2.08 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -17537,7 +17537,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 3.94, "end": 4.81 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -17663,7 +17663,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1, "end": 1.18 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -17789,7 +17789,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.73, "end": 2.11 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -17915,7 +17915,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -18041,7 +18041,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.08, "end": 2.54 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -18167,7 +18167,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.87, "end": 3.5 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -18293,7 +18293,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.1, "end": 1.34 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -18419,7 +18419,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1, "end": 1.14 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -18545,7 +18545,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.66, "end": 2.03 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -18671,7 +18671,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.74, "end": 2.13 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -18797,7 +18797,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.61, "end": 3.19 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -18923,7 +18923,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.03, "end": 1.26 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -19049,7 +19049,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.06, "end": 1.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -19175,7 +19175,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -19301,7 +19301,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1, "end": 1.12 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -19427,7 +19427,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.66, "end": 2.03 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -19553,7 +19553,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.65, "end": 3.24 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -19679,7 +19679,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.7, "end": 3.3 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -19805,7 +19805,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.11, "end": 1.36 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -19931,7 +19931,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.08, "end": 2.54 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -20057,7 +20057,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.84, "end": 2.25 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -20183,7 +20183,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 2.9, "end": 3.54 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -20309,7 +20309,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 4.08, "end": 4.98 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -20435,7 +20435,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.08, "end": 1.32 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -20561,7 +20561,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.53, "end": 1.86 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -20687,7 +20687,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1, "end": 1.16 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -20813,7 +20813,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.11, "end": 1.36 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -20939,7 +20939,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.55, "end": 1.89 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -21065,7 +21065,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.17, "end": 1.42 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },
@@ -21191,7 +21191,7 @@
           "latencyDays": 3,
           "overflowSeverity": 2,
           "peakMonth": 0,
-          "r0": { "begin": 1.11, "end": 1.36 },
+          "r0": { "begin": 2.2, "end": 5 },
           "seasonalForcing": 0
         },
         "mitigation": { "mitigationIntervals": [] },

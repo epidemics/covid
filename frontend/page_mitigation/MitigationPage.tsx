@@ -1,9 +1,11 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-
+import * as moment from "moment";
 import { Alerts } from "../components/alerts";
 import { mitigationIntervalsToURL } from "../data/url_generator";
 import MitigationForm, { Values } from "./MitigationForm";
+
+export const INTERVENTION_INTERVAL_IN_MONTHS = 1;
 
 export function Page() {
   const [scenarioUrl, setScenarioUrl] = React.useState<string | undefined>(
@@ -22,8 +24,17 @@ export function Page() {
         ...mitigation,
         transmissionReduction: parseInt(mitigation.transmissionReduction),
       }))
-      .map((mitigation) => ({
+      .map((mitigation, index) => ({
         ...mitigation,
+        timeRange: {
+          begin: mitigation.timeRange.begin,
+          end:
+            index + 1 === result.mitigations.length
+              ? moment(mitigation.timeRange.begin)
+                  .add(INTERVENTION_INTERVAL_IN_MONTHS, "months")
+                  .toDate()
+              : result.mitigations[index + 1].timeRange.begin,
+        },
         transmissionReduction: {
           begin: mitigation.transmissionReduction - intervalOffset,
           end: mitigation.transmissionReduction + intervalOffset,
@@ -50,7 +61,7 @@ export function Page() {
         interventions is configured, you can simulate the intervention timeline
         using the{" "}
         <a href="https://covid19-scenarios.org/">neherlab simulator</a> by
-        clicking on the Go to simulation button.
+        clicking on the Run simulation button.
       </p>
       <p>
         To configure a single intervention select the date range during which it

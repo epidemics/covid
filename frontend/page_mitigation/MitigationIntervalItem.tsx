@@ -9,6 +9,8 @@ import {
 } from "formik";
 import * as React from "react";
 import DatePicker from "react-datepicker";
+import * as moment from "moment";
+import { INTERVENTION_INTERVAL_IN_MONTHS } from "./MitigationPage";
 
 import Modal from "../components/Modal";
 import { Measure, MeasureGroup, serialInterval } from "./measures";
@@ -89,84 +91,93 @@ function MitigationIntervalItem({
     setFieldValue(`mitigations.[${index}].timeRange.begin`, value);
   };
 
-  const handleTimeRangeEndChange = (value: Date | null) => {
-    setFieldValue(`mitigations.[${index}].timeRange.end`, value);
-  };
-
   return (
     <>
       <div className="mitigation-item form-row">
         <div className="col-md-3">
-          <FastField
-            className={`form-control`}
-            id={`mitigations.[${index}].name`}
-            name={`mitigations.[${index}].name`}
-            type="text"
-            placeholder="Intervention name"
-          />
-          <ErrorMessage name={`mitigations.[${index}].name`} />
-        </div>
-        <div className="col-md-2">
-          <DatePicker
-            id={`mitigations.[${index}].timeRange.begin`}
-            name={`mitigations.[${index}].timeRange.begin`}
-            selected={values.mitigations[index].timeRange.begin}
-            onChange={handleTimeRangeBeginChange}
-            className="form-control"
-            onBlur={handleBlur}
-            minDate={
-              !isFirstItem ? values.mitigations[index - 1].timeRange.end : null
-            }
-            maxDate={values.mitigations[index].timeRange.end}
-          />
-          <ErrorMessage name={`mitigations.[${index}].timeRange.begin`} />
-        </div>
-        <div className="col-md-2">
-          <DatePicker
-            id={`mitigations.[${index}].timeRange.end`}
-            name={`mitigations.[${index}].timeRange.end`}
-            selected={values.mitigations[index].timeRange.end}
-            onChange={handleTimeRangeEndChange}
-            className="form-control"
-            onBlur={handleBlur}
-            minDate={values.mitigations[index].timeRange.begin}
-            maxDate={
-              !isLastItem ? values.mitigations[index + 1].timeRange.begin : null
-            }
-          />
-          <ErrorMessage name={`mitigations.[${index}].timeRange.end`} />
-        </div>
-        <div className="col-md-2">
-          <div className="input-group">
-            <Field
-              id={`mitigations.[${index}].transmissionReduction`}
-              name={`mitigations.[${index}].transmissionReduction`}
+          <div className="form-group">
+            <label
+              className="d-md-none"
+              htmlFor={`mitigations.[${index}].name`}
+            >
+              Period name
+            </label>
+            <FastField
+              className={`form-control`}
+              id={`mitigations.[${index}].name`}
+              name={`mitigations.[${index}].name`}
               type="text"
-              className="form-control"
-              readOnly="readonly"
-              onClick={() => handleShowCalculatorClick(index)}
+              placeholder="Period name"
             />
+            <ErrorMessage name={`mitigations.[${index}].name`} />
           </div>
-          <p>
-            <button
-              type="button"
-              className="btn btn-link p-0"
-              onClick={() => handleShowCalculatorClick(index)}
-            >
-              {showCalculator ? "Hide R calculator" : "Show R calculator"}
-            </button>
-          </p>
         </div>
-        <div className="col-md-3">
-          {!isFirstItem && (
-            <button
-              type="button"
-              className="btn btn-link"
-              onClick={() => handleRemoveItemClick(index)}
+        <div className="col-md-2">
+          <div className="form-group">
+            <label
+              className="d-md-none"
+              htmlFor={`mitigations.[${index}].timeRange.begin`}
             >
-              Remove
-            </button>
-          )}
+              Begin date
+            </label>
+            <DatePicker
+              id={`mitigations.[${index}].timeRange.begin`}
+              name={`mitigations.[${index}].timeRange.begin`}
+              selected={values.mitigations[index].timeRange.begin}
+              onChange={handleTimeRangeBeginChange}
+              className="form-control"
+              onBlur={handleBlur}
+              minDate={
+                !isFirstItem
+                  ? values.mitigations[index - 1].timeRange.begin
+                  : null
+              }
+              maxDate={
+                !isLastItem
+                  ? values.mitigations[index + 1].timeRange.begin
+                  : null
+              }
+            />
+            <ErrorMessage name={`mitigations.[${index}].timeRange.begin`} />
+          </div>
+        </div>
+        <div className="col-md-2">
+          <div className="form-group">
+            <label
+              className="d-md-none"
+              htmlFor={`mitigations.[${index}].transmissionReduction`}
+            >
+              R value reduction
+            </label>
+            <div className="input-group">
+              <Field
+                id={`mitigations.[${index}].transmissionReduction`}
+                name={`mitigations.[${index}].transmissionReduction`}
+                type="text"
+                className="form-control"
+                readOnly="readonly"
+                onClick={() => handleShowCalculatorClick(index)}
+              />
+            </div>
+            <p>
+              <button
+                type="button"
+                className="btn btn-link p-0"
+                onClick={() => handleShowCalculatorClick(index)}
+              >
+                {showCalculator ? "Hide R calculator" : "Show R calculator"}
+              </button>
+            </p>
+          </div>
+        </div>
+        <div className="col-md-4">
+          <button
+            type="button"
+            className="btn btn-link"
+            onClick={() => handleRemoveItemClick(index)}
+          >
+            Remove
+          </button>
           {isLastItem && (
             <button
               type="button"
@@ -174,7 +185,9 @@ function MitigationIntervalItem({
               onClick={() =>
                 arrayHelpers.push(
                   createInitialMitigation(
-                    values.mitigations[index].timeRange.end,
+                    moment(values.mitigations[index].timeRange.begin)
+                      .add(INTERVENTION_INTERVAL_IN_MONTHS, "months")
+                      .toDate(),
                     index
                   )
                 )

@@ -888,14 +888,22 @@ table td {
 .custom-modal {
   position: absolute;
   top: 40px;
-  left: 40px;
-  right: 40px;
   bottom: 40px;
   background-color: #222028;
   overflow: auto;
   border-radius: 4px;
   outline: none;
-  padding: 20px;
+
+  width: 100%;
+  transform: translate(-50%, 0);
+  max-width: 1000px;
+  left: 50%;
+}
+
+@media (min-width: 768px) {
+  .custom-modal {
+    padding: 20px;
+  }
 }
 
 .custom-modal-overlay {
