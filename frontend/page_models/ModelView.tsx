@@ -221,7 +221,7 @@ export function ModelView(props: ModelViewProps) {
           alignItems: "center",
         }}
       >
-        <h5 className="mitigation-strength-heading">
+        <h5 className="mitigation-heading">
           Explore global and national mitigation strength:
           <a
             href="#mitigation-measures-explanation"
