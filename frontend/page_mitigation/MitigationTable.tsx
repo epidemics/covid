@@ -28,13 +28,15 @@ export function MitigationTable({ mitigationIntervals }: MitigationTableProps) {
           <>
             {mitigationIntervals.length === 0 && (
               <div className="mb-2">
-                <button
-                  type="button"
-                  className="btn btn-link"
-                  onClick={() => arrayHelpers.push(createInitialMitigation())}
-                >
-                  Add new
-                </button>
+                <p>
+                  <button
+                    type="button"
+                    className="btn btn-link p-0"
+                    onClick={() => arrayHelpers.push(createInitialMitigation())}
+                  >
+                    Add new
+                  </button>
+                </p>
               </div>
             )}
             {mitigationIntervals.map((_: any, index: number) => (

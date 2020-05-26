@@ -171,31 +171,33 @@ function MitigationIntervalItem({
           </div>
         </div>
         <div className="col-md-4">
-          <button
-            type="button"
-            className="btn btn-link"
-            onClick={() => handleRemoveItemClick(index)}
-          >
-            Remove
-          </button>
-          {isLastItem && (
+          <p>
             <button
               type="button"
-              className="btn btn-link"
-              onClick={() =>
-                arrayHelpers.push(
-                  createInitialMitigation(
-                    moment(values.mitigations[index].timeRange.begin)
-                      .add(INTERVENTION_INTERVAL_IN_MONTHS, "months")
-                      .toDate(),
-                    index
-                  )
-                )
-              }
+              className="btn btn-link p-0"
+              onClick={() => handleRemoveItemClick(index)}
             >
-              Add new
+              Remove
             </button>
-          )}
+            {isLastItem && (
+              <button
+                type="button"
+                className="btn btn-link"
+                onClick={() =>
+                  arrayHelpers.push(
+                    createInitialMitigation(
+                      moment(values.mitigations[index].timeRange.begin)
+                        .add(INTERVENTION_INTERVAL_IN_MONTHS, "months")
+                        .toDate(),
+                      index
+                    )
+                  )
+                }
+              >
+                Add new
+              </button>
+            )}
+          </p>
         </div>
       </div>
 
