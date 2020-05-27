@@ -601,7 +601,9 @@ const MitigationCalculator = (props: Props) => {
           <p>The measures result in a reduction in R of </p>
         </div>
         <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
-          <b>{d3.format(".1%")(multiplier - 1)}</b>
+          <p className="mitigation-calculator-result">
+            {d3.format(".1%")(multiplier - 1)}
+          </p>
         </div>
       </div>
       <div className="d-flex justify-content-end">
@@ -620,7 +622,6 @@ const MitigationCalculator = (props: Props) => {
           Apply
         </button>
       </div>
-      <hr />
     </>
   );
 };

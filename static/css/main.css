@@ -888,12 +888,10 @@ table td {
 .custom-modal {
   position: absolute;
   top: 40px;
-  bottom: 40px;
   background-color: #222028;
   overflow: auto;
   border-radius: 4px;
   outline: none;
-
   width: 100%;
   transform: translate(-50%, 0);
   max-width: 1000px;
@@ -912,9 +910,15 @@ table td {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.65);
 }
 
 .custom-modal-inner {
   margin: 20px;
+}
+
+.mitigation-calculator-result {
+  color: #fff;
+  font-size: 3rem;
+  margin-bottom: 16px;
 }
