@@ -5,6 +5,7 @@ import { Alert } from "../common/alert";
 const MODELS = "models";
 const CASE_MAP = "case-map";
 const MITIGATION = "mitigation";
+const MITIGATION_SCENARIOS = "mitigation-scenarios";
 const MITIGATION_MAP = "mitigation-map";
 const REQUEST_MODEL = "request-model";
 const ABOUT = "about";
@@ -14,6 +15,7 @@ const MEASURES = "measures";
 let navigation = [
   MODELS,
   CASE_MAP,
+  MITIGATION_SCENARIOS,
   MITIGATION_MAP,
   MITIGATION,
   REQUEST_MODEL,
@@ -74,6 +76,12 @@ add(
 
 add(MEASURES, { path: "/measures", caption: "Measures" }, (req, res) =>
   res.render("measures.html")
+);
+
+add(
+  MITIGATION_SCENARIOS,
+  { path: "/mitigation-scenarios", caption: "Mitigation scenarios" },
+  (req, res) => res.render("mitigation-scenarios.html")
 );
 
 let handleMitigation = add(

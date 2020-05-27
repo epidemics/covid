@@ -10,7 +10,7 @@ import {
 import * as React from "react";
 import DatePicker from "react-datepicker";
 import * as moment from "moment";
-import { INTERVENTION_INTERVAL_IN_MONTHS } from "./MitigationPage";
+import { INTERVENTION_INTERVAL_IN_MONTHS } from "./MitigationScenariosPage";
 
 import Modal from "../components/Modal";
 import { Measure, MeasureGroup, serialInterval } from "./measures";
