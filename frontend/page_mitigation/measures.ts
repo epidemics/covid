@@ -75,9 +75,9 @@ export const measures: Array<Measure | MeasureGroup> = [
   },
 ];
 
-export function calculateHighCompliment(measures: Array<Measure | MeasureGroup>): Array<Measure | MeasureGroup> {
-  let highComplimentMeasures = measures;
-  highComplimentMeasures.forEach(function (measure: Measure | MeasureGroup) {
+export function calculateHighCompliance(measures: Array<Measure | MeasureGroup>): Array<Measure | MeasureGroup> {
+  let highComplianceMeasures = measures;
+  highComplianceMeasures.forEach(function (measure: Measure | MeasureGroup) {
     if ("items" in measure) {
       measure.items.forEach(function (item: Measure) {
         item.mean = item.mean * 0.9
@@ -86,12 +86,12 @@ export function calculateHighCompliment(measures: Array<Measure | MeasureGroup>)
       measure.mean = measure.mean * 0.9
     }
   })
-  return highComplimentMeasures;
+  return highComplianceMeasures;
 }
 
-export function calculateLowCompliment(measures: Array<Measure | MeasureGroup>): Array<Measure | MeasureGroup> {
-  let lowComplimentMeasures = measures;
-  lowComplimentMeasures.forEach(function (measure: Measure | MeasureGroup) {
+export function calculateLowCompliance(measures: Array<Measure | MeasureGroup>): Array<Measure | MeasureGroup> {
+  let lowComplianceMeasures = measures;
+  lowComplianceMeasures.forEach(function (measure: Measure | MeasureGroup) {
     if ("items" in measure) {
       measure.items.forEach(function (item: Measure) {
         item.mean = 1 - (1 - item.mean) * 0.9
@@ -100,5 +100,5 @@ export function calculateLowCompliment(measures: Array<Measure | MeasureGroup>):
       measure.mean = 1 - (1 - measure.mean) * 0.9
     }
   })
-  return lowComplimentMeasures;
+  return lowComplianceMeasures;
 }
