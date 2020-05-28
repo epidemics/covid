@@ -25,7 +25,10 @@ SKIP_NAMES = {
     "wuhan",
 }
 
-SUBST_NAMES = {"united kingdon": "United Kingdom", "ivory coast": "Cote d'Ivoire"}
+SUBST_NAMES = {
+    "united kingdon": "United Kingdom",
+    "ivory coast": "Cote d'Ivoire",
+}
 
 QUANTILES = np.arange(0.01, 1.0, 0.01)
 QUANTILE_COLS = [f"{x:.2f}" for x in QUANTILES]
