@@ -16,6 +16,7 @@ import Modal from "../components/Modal";
 import { Measure, MeasureGroup, serialInterval } from "./measures";
 import MitigationCalculator, { SliderState } from "./MitigationCalculator";
 import { createInitialMitigation, Values } from "./MitigationForm";
+import MeasureDropdown from "./MeasureDropdown";
 
 export interface Props {
   index: number;
@@ -31,6 +32,7 @@ function MitigationIntervalItem({
   arrayHelpers,
 }: Props) {
   const { setFieldValue, values, handleBlur } = useFormikContext<Values>();
+  const [showMeasuresDropdown, setShowMeasuresDropdown] = React.useState(false);
 
   const showCalculator = calculatorForIndex === index;
   const isLastItem = index === values.mitigations.length - 1;
@@ -94,7 +96,7 @@ function MitigationIntervalItem({
   return (
     <>
       <div className="mitigation-item form-row">
-        <div className="col-md-3">
+        <div className="col-md-2">
           <div className="form-group">
             <label
               className="d-md-none"
@@ -110,6 +112,16 @@ function MitigationIntervalItem({
               placeholder="Period name"
             />
             <ErrorMessage name={`mitigations.[${index}].name`} />
+          </div>
+        </div>
+        <div className="col-md-2">
+          <div className="form-group">
+            <MeasureDropdown
+              measures={values.mitigations[index].measures}
+              onToggle={setShowMeasuresDropdown}
+              show={showMeasuresDropdown}
+              intervalIndex={index}
+            />
           </div>
         </div>
         <div className="col-md-2">

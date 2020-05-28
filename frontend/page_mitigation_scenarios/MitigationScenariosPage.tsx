@@ -82,7 +82,6 @@ export function Page() {
       >
         link
       </a>
-      <hr />
     </>
   );
 }

@@ -185,7 +185,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
         let pt = (d.points || [])[0] as any;
         let target = pt.customdata;
         if (target && last === target) {
-          window.open("/?selection=" + target);
+          window.location.assign("/models?region=" + target);
         }
         last = target;
       });
@@ -194,7 +194,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
         let pt = (d.points || [])[0] as any;
         let target = pt.customdata;
         if (target) {
-          window.open("/?selection=" + target);
+          window.location.assign("/models?region=" + target);
         }
       });
     }

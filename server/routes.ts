@@ -10,6 +10,7 @@ const MITIGATION_MAP = "mitigation-map";
 const REQUEST_MODEL = "request-model";
 const ABOUT = "about";
 const MEASURES = "measures";
+const DATASETS = "datasets";
 
 // order of the pages as diplayed in the navigation bar
 let navigation = [
@@ -19,6 +20,7 @@ let navigation = [
   MITIGATION_MAP,
   MITIGATION,
   REQUEST_MODEL,
+  DATASETS,
   ABOUT,
 ];
 
@@ -105,6 +107,10 @@ add(
     res.render("request-calculation.html", {
       message: "Please provide data",
     })
+);
+
+add(DATASETS, { path: "/datasets", caption: "Datasets" }, (req, res) =>
+  res.render("datasets.html")
 );
 
 add(ABOUT, { path: "/about", caption: "About" }, (req, res) =>

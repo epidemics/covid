@@ -162,14 +162,14 @@ header h1:before {
 }
 
 .region-dropdown {
-  padding-left: 24px;
   padding-right: 24px;
   display: flex;
   align-items: center;
+  padding-left: 24px;
   width: 100%;
 }
 
-.dropdown-caret-styling:after {
+.region-dropdown.dropdown-caret-styling:after {
   margin-left: 16px;
   vertical-align: 0.4em;
 }
@@ -546,11 +546,6 @@ span.infections-confirmed {
 * Form
 */
 
-.btn-primary,
-.btn-secondary {
-  padding: 11px 20px;
-}
-
 label.btn-secondary > input {
   display: none;
 }
@@ -559,6 +554,7 @@ label.btn-secondary > input {
   background-color: white !important;
   color: black !important;
   text-transform: uppercase;
+  border-color: #fff;
 }
 
 .vertical-buttons {
@@ -922,4 +918,8 @@ table td {
   color: #fff;
   font-size: 3rem;
   margin-bottom: 16px;
+}
+.dropdown-item.checkbox-item:active {
+  background-color: #fff;
+  color: #000;
 }
