@@ -1,5 +1,11 @@
 import * as React from "react";
-import { Measure, MeasureGroup } from "./measures";
+import {
+  Measure,
+  MeasureGroup,
+  calculateLowCompliance,
+  calculateHighCompliance,
+  calculateMediumCompliance,
+} from "./measures";
 import { useFormikContext } from "formik";
 import { Values } from "./MitigationForm";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -93,12 +99,37 @@ const changeMeasureOrMeasureGroup = (
   }
 };
 
+const calculateMultiplier = (measures: (Measure | MeasureGroup)[]) => {
+  let multiplier = 1;
+
+  measures.forEach((measureOrGroup, i) => {
+    if ("items" in measureOrGroup) {
+      const measure = measureOrGroup as MeasureGroup;
+      const checked = measure.items.filter((item) => item.check).length;
+      const value = measure.items.map((item) => item.mean);
+      multiplier = value
+        .slice(0, checked)
+        .reduce((prev, cur) => prev * cur, multiplier);
+    } else {
+      const measure = measureOrGroup as Measure;
+      const checked = measure.check;
+
+      if (checked > 0) {
+        multiplier *= measure.mean;
+      }
+    }
+  });
+
+  return Math.abs(Math.round((multiplier - 1) * 100 * 10) / 10);
+};
+
 type Props = {
   intervalIndex: number;
   measures: Array<Measure | MeasureGroup>;
+  compliance: "low" | "medium" | "high";
 };
 
-const MeasureDropdown = ({ measures, intervalIndex }: Props) => {
+const MeasureDropdown = ({ measures, intervalIndex, compliance }: Props) => {
   const { setFieldValue } = useFormikContext<Values>();
 
   const handleChange = (checked: number, index: number) => {
@@ -137,6 +168,36 @@ const MeasureDropdown = ({ measures, intervalIndex }: Props) => {
     }
 
     setFieldValue(`mitigations.[${intervalIndex}].measures`, newMeasures);
+    setFieldValue(
+      `mitigations.[${intervalIndex}].transmissionReduction`,
+      `${Math.round(calculateMultiplier(newMeasures))} %`
+    );
+  };
+
+  const handleComplianceClick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    let newMeasures: (Measure | MeasureGroup)[] = [];
+
+    if (value === "low") {
+      newMeasures = calculateLowCompliance(measures);
+    }
+
+    if (value === "high") {
+      newMeasures = calculateHighCompliance(measures);
+    }
+
+    if (value === "medium") {
+      newMeasures = calculateMediumCompliance(measures);
+    }
+
+    setFieldValue(
+      `mitigations.[${intervalIndex}].transmissionReduction`,
+      `${Math.round(calculateMultiplier(newMeasures))} %`
+    );
+
+    setFieldValue(`mitigations.[${intervalIndex}].measures`, newMeasures);
+
+    setFieldValue(`mitigations.[${intervalIndex}].compliance`, value);
   };
 
   return (
@@ -173,10 +234,12 @@ const MeasureDropdown = ({ measures, intervalIndex }: Props) => {
               className="form-check-input"
               type="radio"
               name="inlineRadioOptions"
-              id="inlineRadio1"
-              value="option1"
+              id="low-compliance"
+              value="low"
+              checked={compliance === "low"}
+              onChange={handleComplianceClick}
             />
-            <label className="form-check-label" htmlFor="inlineRadio1">
+            <label className="form-check-label" htmlFor="low-compliance">
               Low
             </label>
           </div>
@@ -185,10 +248,12 @@ const MeasureDropdown = ({ measures, intervalIndex }: Props) => {
               className="form-check-input"
               type="radio"
               name="inlineRadioOptions"
-              id="inlineRadio2"
-              value="option2"
+              id="medium-compliance"
+              checked={compliance === "medium"}
+              value="medium"
+              onChange={handleComplianceClick}
             />
-            <label className="form-check-label" htmlFor="inlineRadio2">
+            <label className="form-check-label" htmlFor="medium-compliance">
               Medium
             </label>
           </div>
@@ -197,10 +262,12 @@ const MeasureDropdown = ({ measures, intervalIndex }: Props) => {
               className="form-check-input"
               type="radio"
               name="inlineRadioOptions"
-              id="inlineRadio3"
-              value="option3"
+              id="high-compliance"
+              checked={compliance === "high"}
+              value="high"
+              onChange={handleComplianceClick}
             />
-            <label className="form-check-label" htmlFor="inlineRadio3">
+            <label className="form-check-label" htmlFor="high-compliance">
               High
             </label>
           </div>

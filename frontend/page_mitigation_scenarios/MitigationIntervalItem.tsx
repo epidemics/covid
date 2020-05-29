@@ -32,7 +32,6 @@ function MitigationIntervalItem({
   arrayHelpers,
 }: Props) {
   const { setFieldValue, values, handleBlur } = useFormikContext<Values>();
-  const [showMeasuresDropdown, setShowMeasuresDropdown] = React.useState(false);
 
   const showCalculator = calculatorForIndex === index;
   const isLastItem = index === values.mitigations.length - 1;
@@ -118,8 +117,7 @@ function MitigationIntervalItem({
           <div className="form-group">
             <MeasureDropdown
               measures={values.mitigations[index].measures}
-              onToggle={setShowMeasuresDropdown}
-              show={showMeasuresDropdown}
+              compliance={values.mitigations[index].compliance}
               intervalIndex={index}
             />
           </div>

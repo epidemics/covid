@@ -923,3 +923,7 @@ table td {
   background-color: #fff;
   color: #000;
 }
+
+.mitigation-calculator-result-label {
+  font-size: 1.2rem;
+}

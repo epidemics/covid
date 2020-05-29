@@ -84,3 +84,72 @@ export const measures: Array<Measure | MeasureGroup> = [
     check: 1,
   },
 ];
+
+export function calculateHighCompliance(
+  measuresToUpdate: Array<Measure | MeasureGroup>
+): Array<Measure | MeasureGroup> {
+  return measuresToUpdate.map((measure, measureIndex) => {
+    if ("items" in measure) {
+      return {
+        ...measure,
+        items: measure.items.map((item, itemIndex) => ({
+          ...item,
+          mean:
+            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean *
+            0.9,
+        })),
+      };
+    } else {
+      return {
+        ...measure,
+        mean: (measures[measureIndex] as Measure).mean * 0.9,
+      };
+    }
+  });
+}
+
+export function calculateMediumCompliance(
+  measuresToUpdate: Array<Measure | MeasureGroup>
+): Array<Measure | MeasureGroup> {
+  return measuresToUpdate.map((measure, measureIndex) => {
+    if ("items" in measure) {
+      return {
+        ...measure,
+        items: measure.items.map((item, itemIndex) => ({
+          ...item,
+          mean: (measures[measureIndex] as MeasureGroup).items[itemIndex].mean,
+        })),
+      };
+    } else {
+      return {
+        ...measure,
+        mean: (measures[measureIndex] as Measure).mean,
+      };
+    }
+  });
+}
+
+export function calculateLowCompliance(
+  measuresToUpdate: Array<Measure | MeasureGroup>
+): Array<Measure | MeasureGroup> {
+  return measuresToUpdate.map((measure, measureIndex) => {
+    if ("items" in measure) {
+      return {
+        ...measure,
+        items: measure.items.map((item, itemIndex) => ({
+          ...item,
+          mean:
+            1 -
+            (1 -
+              (measures[measureIndex] as MeasureGroup).items[itemIndex].mean) *
+              0.9,
+        })),
+      };
+    } else {
+      return {
+        ...measure,
+        mean: 1 - (1 - (measures[measureIndex] as Measure).mean) * 0.9,
+      };
+    }
+  });
+}

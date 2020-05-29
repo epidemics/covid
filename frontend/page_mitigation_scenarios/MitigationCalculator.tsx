@@ -593,12 +593,14 @@ const MitigationCalculator = (props: Props) => {
           <b>Impact on R, the reproductive number</b>
         </div>
         {elems}
-        <div style={{ gridColumn: "1 / span 2", gridRow: row++ }}>
-          <b>Outcome</b>
+        <div style={{ gridColumn: "1 / span 2", gridRow: row }}>
+          <p className="mitigation-calculator-result-label">Outcome</p>
         </div>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
-          <p>The measures result in a reduction in R of </p>
+          <p className="mitigation-calculator-result-label">
+            The measures result in a reduction in R of{" "}
+          </p>
         </div>
         <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
           <p className="mitigation-calculator-result">

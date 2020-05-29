@@ -74,31 +74,3 @@ export const measures: Array<Measure | MeasureGroup> = [
     implies: [{ key: 2, value: 3 }, { key: 3, value: 2 }, { key: 4 }],
   },
 ];
-
-export function calculateHighCompliance(measures: Array<Measure | MeasureGroup>): Array<Measure | MeasureGroup> {
-  let highComplianceMeasures = measures;
-  highComplianceMeasures.forEach(function (measure: Measure | MeasureGroup) {
-    if ("items" in measure) {
-      measure.items.forEach(function (item: Measure) {
-        item.mean = item.mean * 0.9
-      })
-    } else {
-      measure.mean = measure.mean * 0.9
-    }
-  })
-  return highComplianceMeasures;
-}
-
-export function calculateLowCompliance(measures: Array<Measure | MeasureGroup>): Array<Measure | MeasureGroup> {
-  let lowComplianceMeasures = measures;
-  lowComplianceMeasures.forEach(function (measure: Measure | MeasureGroup) {
-    if ("items" in measure) {
-      measure.items.forEach(function (item: Measure) {
-        item.mean = 1 - (1 - item.mean) * 0.9
-      })
-    } else {
-      measure.mean = 1 - (1 - measure.mean) * 0.9
-    }
-  })
-  return lowComplianceMeasures;
-}

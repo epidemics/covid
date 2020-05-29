@@ -16,6 +16,7 @@ export type Values = {
     };
     transmissionReduction: string;
     measures: (Measure | MeasureGroup)[];
+    compliance: "low" | "medium" | "high";
   }[];
 };
 
@@ -35,6 +36,7 @@ export const createInitialMitigation = (
     },
     transmissionReduction: "82 %",
     measures,
+    compliance: "medium" as "medium",
   };
 };
 
