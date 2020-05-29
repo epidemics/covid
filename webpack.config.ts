@@ -1,5 +1,5 @@
-import * as path from 'path';
-import { Configuration } from 'webpack';
+import * as path from "path";
+import { Configuration } from "webpack";
 
 let config: Configuration = {
   entry: "./frontend/index.ts",
@@ -19,6 +19,10 @@ let config: Configuration = {
       {
         test: /\.css$/i,
         use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.svg$/,
+        use: ["@svgr/webpack"],
       },
     ],
   },

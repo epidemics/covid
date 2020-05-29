@@ -5,6 +5,7 @@ import * as React from "react";
 
 import MitigationIntervalItem from "./MitigationIntervalItem";
 import { createInitialMitigation } from "./MitigationForm";
+import AddIcon from "./../icons/add.svg";
 
 export interface MitigationTableProps {
   mitigationIntervals: any[];
@@ -35,7 +36,7 @@ export function MitigationTable({ mitigationIntervals }: MitigationTableProps) {
                     className="btn btn-link p-0"
                     onClick={() => arrayHelpers.push(createInitialMitigation())}
                   >
-                    Add new
+                    <AddIcon />
                   </button>
                 </p>
               </div>

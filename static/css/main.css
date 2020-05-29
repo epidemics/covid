@@ -916,7 +916,7 @@ table td {
 
 .mitigation-calculator-result {
   color: #fff;
-  font-size: 3rem;
+  font-size: 2rem;
   margin-bottom: 16px;
 }
 .dropdown-item.checkbox-item:active {
@@ -926,4 +926,5 @@ table td {
 
 .mitigation-calculator-result-label {
   font-size: 1.2rem;
+  margin-top: 8px;
 }

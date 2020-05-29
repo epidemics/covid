@@ -17,6 +17,8 @@ import { Measure, MeasureGroup, serialInterval } from "./measures";
 import MitigationCalculator, { SliderState } from "./MitigationCalculator";
 import { createInitialMitigation, Values } from "./MitigationForm";
 import MeasureDropdown from "./MeasureDropdown";
+import AddIcon from "./../icons/add.svg";
+import TrashIcon from "./../icons/trash.svg";
 
 export interface Props {
   index: number;
@@ -166,7 +168,6 @@ function MitigationIntervalItem({
                 type="text"
                 className="form-control"
                 readOnly="readonly"
-                onClick={() => handleShowCalculatorClick(index)}
               />
             </div>
             <p>
@@ -175,7 +176,7 @@ function MitigationIntervalItem({
                 className="btn btn-link p-0"
                 onClick={() => handleShowCalculatorClick(index)}
               >
-                {showCalculator ? "Hide R calculator" : "Show R calculator"}
+                Advanced settings
               </button>
             </p>
           </div>
@@ -184,15 +185,15 @@ function MitigationIntervalItem({
           <p>
             <button
               type="button"
-              className="btn btn-link p-0"
+              className="btn btn-link px-0 mr-1"
               onClick={() => handleRemoveItemClick(index)}
             >
-              Remove
+              <TrashIcon />
             </button>
             {isLastItem && (
               <button
                 type="button"
-                className="btn btn-link"
+                className="btn btn-link px-0 ml-1"
                 onClick={() =>
                   arrayHelpers.push(
                     createInitialMitigation(
@@ -204,7 +205,7 @@ function MitigationIntervalItem({
                   )
                 }
               >
-                Add new
+                <AddIcon />
               </button>
             )}
           </p>
