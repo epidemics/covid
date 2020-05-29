@@ -13,7 +13,7 @@ export function makeDataStore(
 ): Datastore {
   console.info(`Using channel ${channel}`);
 
-  let data_root = `${STATIC_ROOT}/v4/tomas`;
+  let data_root = `${STATIC_ROOT}/v4/${channel}`;
 
   let mainv4 = Thunk.fetchJson<v4.Main>(`${data_root}/data-v4.json`);
 
