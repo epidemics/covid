@@ -55,21 +55,21 @@ export function Page() {
         The following tool can be used to plan a theoretical timeline of
         interventions for a specific country. Each intervention consists of a
         package of measures, such as a ban on gatherings at different levels,
-        that are configured using our <strong>Mitigation Calculator</strong>.
-        The intervention then reduces the effective reproduction number to a
-        certain level over the specified date range. Once a timeline of
-        interventions is configured, you can simulate the intervention timeline
-        using the{" "}
+        that are configured using our Mitigation Calculator. The intervention
+        then reduces the effective reproduction number to a certain level until
+        the next intervention takes place. Once a timeline of interventions is
+        configured, you can simulate the intervention timeline using the{" "}
         <a href="https://covid19-scenarios.org/">neherlab simulator</a> by
-        clicking on the Run simulation button.
+        clicking on the <strong>Run simulation button</strong>.
       </p>
       <p>
-        To configure a single intervention select the date range during which it
-        will take effect. Afterwards by clicking on the R-reduction field our{" "}
-        <strong>Mitigation Calculator</strong> will open and you can configure
-        which measures will take effect during this intervention and what effect
-        they will have. The mitigation calculator estimates what effect these
-        measures will have on the effective reproduction number.
+        To configure a single intervention select the date at which it will
+        start to take effect. Afterwards you can quickly select the measures
+        that will be in effect from the <strong>Select Measures</strong>{" "}
+        dropdown. Alternatively click on the <strong>R value reduction</strong>{" "}
+        field to open our Mitigation Calculator for advanced configuration. The
+        mitigation calculator estimates what effect these measures will have on
+        the effective reproduction number.
       </p>
 
       <hr />
