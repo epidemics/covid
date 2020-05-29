@@ -19,6 +19,13 @@ import {
 } from "../components/LocationContext";
 import { Alerts } from "../components/alerts";
 import { REstimateSeriesView } from "./REstimateSeriesView";
+import { QuestionTooltip } from "../components/QuestionTooltip";
+import {
+  classNames,
+  formatAbsoluteInteger,
+  formatSIInteger,
+  formatDate,
+} from "../helpers";
 
 const REGION_FALLBACK = "united kingdom";
 
@@ -63,6 +70,8 @@ export function Page({ data }: { data: Datastore }) {
     null,
     init
   );
+
+  const formatCurrentInfected = formatSIInteger(3);
 
   const scenarios = useThunk<Scenarios | null>(null, region?.scenariosDaily);
 
@@ -131,7 +140,61 @@ export function Page({ data }: { data: Datastore }) {
           dispatch({ action: "switch_region", region, url })
         }
       />
+      <hr />
+      <REstimateSeriesView region={region} />
+      <hr />
+      <div className="top-row">
+        <div className="active-infections-block">
+          {region?.current ? (
+            <>
+              <span className="number-subheader" id="infections-date">
+                <span style={{ color: "#aaa" }}>Model last updated on:</span>{" "}
+                {region?.current?.date ?? mainInfo.generated ? (
+                  formatDate(region?.current?.date ?? mainInfo.generated)
+                ) : (
+                  <>&mdash;</>
+                )}
+              </span>
+              <div className="active-infections">
+                Active Infections:{" "}
+                <span
+                  className="infections-estimated"
+                  id="infections-estimated"
+                >
+                  {region.current.infected ? (
+                    formatCurrentInfected(region.current.infected)
+                  ) : (
+                    <>&mdash;</>
+                  )}
+                </span>
+                <a
+                  href="#case-count-explanation"
+                  aria-label="Explanation about the case count"
+                >
+                  <QuestionTooltip />
+                </a>
+              </div>
+            </>
+          ) : (
+            ""
+          )}
+          <div className="infections-confirmed">
+            <span style={{ color: "#aaa" }}>Confirmed Infections:</span>{" "}
+            <span id="infections-confirmed">
+              {formatAbsoluteInteger(region?.reported?.last?.confirmed)}
+            </span>
+          </div>
+        </div>
 
+        <div className="population-block">
+          <div className="number-subheader">Population</div>
+          <div className="infections-population">
+            <span id="infections-population">
+              {formatAbsoluteInteger(region?.population)}
+            </span>
+          </div>
+        </div>
+      </div>
       <hr />
       <ModelView
         region={region}
@@ -139,9 +202,6 @@ export function Page({ data }: { data: Datastore }) {
         scenarios={scenarios}
         dispatch={dispatch}
       />
-      <hr />
-      <REstimateSeriesView region={region} />
-      <hr />
     </LocationContext.Provider>
   );
 }

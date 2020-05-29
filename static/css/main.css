@@ -173,7 +173,7 @@ header h1:before {
 
 .top-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -190,10 +190,6 @@ header h1:before {
 span.infections-confirmed {
   font-weight: 500;
   color: rgba(255, 255, 255, 0.6);
-}
-
-.active-infections-block {
-  margin-left: 32px;
 }
 
 .number-subheader {

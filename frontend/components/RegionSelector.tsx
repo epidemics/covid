@@ -150,7 +150,6 @@ export function RegionSelector({
   );
 
   let current = selected?.current;
-  let generated = current?.date ?? mainInfo.generated;
 
   return (
     <div className="top-row">
@@ -177,49 +176,6 @@ export function RegionSelector({
           {dropdownEntries}
         </div>
       </Dropdown>
-      <div className="active-infections-block">
-        {current ? (
-          <>
-            <span className="number-subheader" id="infections-date">
-              <span style={{ color: "#aaa" }}>Model last updated on:</span>{" "}
-              {generated ? formatDate(generated) : <>&mdash;</>}
-            </span>
-            <div className="active-infections">
-              Active Infections:{" "}
-              <span className="infections-estimated" id="infections-estimated">
-                {current.infected ? (
-                  formatCurrentInfected(current.infected)
-                ) : (
-                  <>&mdash;</>
-                )}
-              </span>
-              <a
-                href="#case-count-explanation"
-                aria-label="Explanation about the case count"
-              >
-                <QuestionTooltip />
-              </a>
-            </div>
-          </>
-        ) : (
-          ""
-        )}
-        <div className="infections-confirmed">
-          <span style={{ color: "#aaa" }}>Confirmed Infections:</span>{" "}
-          <span id="infections-confirmed">
-            {formatAbsoluteInteger(selected?.reported?.last?.confirmed)}
-          </span>
-        </div>
-      </div>
-
-      <div className="population-block">
-        <div className="number-subheader">Population</div>
-        <div className="infections-population">
-          <span id="infections-population">
-            {formatAbsoluteInteger(selected?.population)}
-          </span>
-        </div>
-      </div>
     </div>
   );
 }
