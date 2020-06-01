@@ -12,6 +12,7 @@ from luigi.util import inherits
 from epimodel import Level, RegionDataset, algorithms, imports
 from epimodel.exports.epidemics_org import process_export, upload_export
 from epimodel.gleam import Batch
+from epimodel.pymc3_models.cm_effect import run_model
 
 logger = logging.getLogger(__name__)
 
@@ -614,3 +615,37 @@ class WebUpload(luigi.Task):
     # requires httplib2, google-auth, google-api-python-client
     # from luigi.contrib.gcs import GCSTarget; return GCSTarget(self.gs_path)
     # if rewritten, then this task could be a regular luigi.Task
+
+
+class ModelData(luigi.ExternalTask):
+    """
+    The model data - merged JH with countermeasures
+    TODO: have a task that merges JH with countermeasures from another data source
+    """
+
+    data_file: str = luigi.Parameter(
+        description="Path to the input file relative to the configuration input directory",
+    )
+
+    def output(self):
+        return luigi.LocalTarget(self.data_file)
+
+
+class NPIModel(luigi.Task):
+    output_file: str = luigi.Parameter(
+        description="Path to the csv file with the model predictions",
+    )
+
+    def requires(self):
+        return {
+            "model_data": ModelData()
+        }
+
+    def output(self):
+        return luigi.LocalTarget(self.output_file)
+
+    def run(self):
+        run_model(
+            self.input()["model_data"].path,
+            self.output_file
+        )
