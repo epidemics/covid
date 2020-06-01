@@ -752,7 +752,8 @@ strong {
     padding: 15px 15px;
   }
 
-  #my_dataviz {
+  #my_dataviz,
+  #r_estimate_dataviz {
     margin: 0 -24px;
   }
 
@@ -835,7 +836,8 @@ div.tooltip {
   opacity: 0.2;
 }
 
-#my_dataviz {
+#my_dataviz,
+#r_estimate_dataviz {
   vertical-align: top;
   overflow: hidden;
 }

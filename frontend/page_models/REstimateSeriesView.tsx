@@ -33,6 +33,7 @@ export function REstimateSeriesView(props: ModelViewProps) {
     const idealHeight = window.innerHeight * 0.7;
     const maxWidth = idealHeight * MAX_CHART_WIDTH_RATIO;
     const maxHeight = idealWidth * MAX_CHART_HEIGHT_RATIO;
+
     setDimensions({
       node,
       width: Math.max(Math.min(idealWidth, maxWidth), MIN_CHART_SIZE),
@@ -50,7 +51,7 @@ export function REstimateSeriesView(props: ModelViewProps) {
   }, [node]);
 
   // create a plotly config for the plot
-  let { config } = React.useMemo(
+  let { config, hook } = React.useMemo(
     () =>
       makeConfig(() => {
         if (!region) {
@@ -67,6 +68,21 @@ export function REstimateSeriesView(props: ModelViewProps) {
       }),
     []
   );
+
+  let makeResponsive = () => {
+    if (!node) return;
+
+    (node.querySelector(
+      "#r_estimate_dataviz .svg-container"
+    ) as HTMLElement).removeAttribute("style");
+
+    let mainSvg = node.querySelector(
+      "#r_estimate_dataviz .main-svg"
+    ) as SVGSVGElement;
+    mainSvg.removeAttribute("width");
+    mainSvg.removeAttribute("height");
+    mainSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  };
 
   // create a layout and customize
   let layout = makeLayout();
@@ -105,10 +121,17 @@ export function REstimateSeriesView(props: ModelViewProps) {
       <h5 className="mitigation-heading">
         Effective reproduction number estimate:
       </h5>
-      <div>
-        <div ref={rescale}>
-          <Plot style={{}} data={data} layout={layout} config={config as any} />
-        </div>
+      <div id="r_estimate_dataviz" ref={rescale}>
+        <Plot
+          style={{}}
+          data={data}
+          layout={layout}
+          config={config as any}
+          onUpdate={(_: any, gd: Plotly.PlotlyHTMLElement) => makeResponsive()}
+          onInitialized={(_: any, gd: Plotly.PlotlyHTMLElement) => {
+            hook(gd);
+          }}
+        />
       </div>
     </>
   );

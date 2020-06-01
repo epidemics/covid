@@ -20,12 +20,7 @@ import {
 import { Alerts } from "../components/alerts";
 import { REstimateSeriesView } from "./REstimateSeriesView";
 import { QuestionTooltip } from "../components/QuestionTooltip";
-import {
-  classNames,
-  formatAbsoluteInteger,
-  formatSIInteger,
-  formatDate,
-} from "../helpers";
+import { formatAbsoluteInteger, formatSIInteger, formatDate } from "../helpers";
 
 const REGION_FALLBACK = "united kingdom";
 

@@ -1,15 +1,9 @@
 import { Region, MainInfo } from "../models";
 import * as React from "react";
 import { string_score } from "../string_score";
-import {
-  classNames,
-  formatAbsoluteInteger,
-  formatSIInteger,
-  formatDate,
-} from "../helpers";
+import { classNames } from "../helpers";
 import { Dropdown } from "./Dropdown";
 import { LocationContext } from "./LocationContext";
-import { QuestionTooltip } from "./QuestionTooltip";
 
 type Props = {
   regions: Array<Region>;
@@ -18,8 +12,6 @@ type Props = {
   id: string;
   onSelect: (region: Region, url: string) => void;
 };
-
-let formatCurrentInfected = formatSIInteger(3);
 
 export function RegionSelector({
   id,
@@ -148,8 +140,6 @@ export function RegionSelector({
       <span className="caret"></span>
     </>
   );
-
-  let current = selected?.current;
 
   return (
     <div className="top-row">

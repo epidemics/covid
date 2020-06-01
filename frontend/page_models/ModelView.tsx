@@ -119,11 +119,11 @@ export function ModelView(props: ModelViewProps) {
   let makeResponsive = () => {
     if (!node) return;
 
-    (node.querySelector(".svg-container") as HTMLElement).removeAttribute(
-      "style"
-    );
+    (node.querySelector(
+      "#my_dataviz .svg-container"
+    ) as HTMLElement).removeAttribute("style");
 
-    let mainSvg = node.querySelector(".main-svg") as SVGSVGElement;
+    let mainSvg = node.querySelector("#my_dataviz .main-svg") as SVGSVGElement;
     mainSvg.removeAttribute("width");
     mainSvg.removeAttribute("height");
     mainSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
