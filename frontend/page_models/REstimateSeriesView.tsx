@@ -6,56 +6,12 @@ import * as Plotly from "plotly.js";
 import Plot from "react-plotly.js";
 import { createTrace } from "./REstimateSeriesUtils";
 
-const MAX_CHART_WIDTH_RATIO = 2;
-const MAX_CHART_HEIGHT_RATIO = 1;
-const MIN_CHART_SIZE = 500;
-
 type ModelViewProps = {
   region: Region | null;
 };
 
 export function REstimateSeriesView(props: ModelViewProps) {
   let { region } = props;
-
-  let [{ width, height, node }, setDimensions] = React.useState<{
-    node?: HTMLElement;
-    width?: number;
-    height?: number;
-  }>({});
-
-  let [plotlyHtmlElement, setPlotlyHtmlElement] = React.useState<
-    Plotly.PlotlyHTMLElement
-  >();
-
-  // the rescale callback, will be used as an callback ref
-  const rescale = React.useCallback((node: HTMLElement | null) => {
-    if (!node || !plotlyHtmlElement) {
-      setDimensions({ width, height });
-      return;
-    }
-    const idealWidth = node.clientWidth;
-    const idealHeight = window.innerHeight * 0.7;
-    const maxWidth = idealHeight * MAX_CHART_WIDTH_RATIO;
-    const maxHeight = idealWidth * MAX_CHART_HEIGHT_RATIO;
-    setDimensions({
-      node,
-      width: Math.max(Math.min(idealWidth, maxWidth), MIN_CHART_SIZE),
-      height: Math.max(Math.min(idealHeight, maxHeight), MIN_CHART_SIZE),
-    });
-    Plotly.relayout(plotlyHtmlElement, {
-      "xaxis.autorange": true,
-      "yaxis.autorange": true,
-    });
-  }, []);
-
-  // call rescale on window resize
-  React.useEffect(() => {
-    let resizeHandler = () => {
-      if (node) rescale(node);
-    };
-    window.addEventListener("resize", resizeHandler);
-    return () => window.removeEventListener("resize", resizeHandler);
-  }, [node]);
 
   // create a plotly config for the plot
   let { config } = React.useMemo(
@@ -65,11 +21,13 @@ export function REstimateSeriesView(props: ModelViewProps) {
           return {
             name: "plot",
             title: "COVID-19 Forecast",
+            responsive: true,
           };
         } else {
           return {
             name: region.name,
             title: `COVID-19 Forecast for ${region.name}`,
+            responsive: true,
           };
         }
       }),
@@ -78,10 +36,7 @@ export function REstimateSeriesView(props: ModelViewProps) {
 
   // create a layout and customize
   let layout = makeLayout();
-
-  layout.width = width;
-  layout.height = height;
-  layout.autosize = true; // set autosize to rescale
+  layout.autosize = true;
   layout.margin!.r = 20;
   layout.xaxis!.type = "date";
   layout.yaxis!.title = "R estimation";
@@ -114,15 +69,13 @@ export function REstimateSeriesView(props: ModelViewProps) {
         Effective reproduction number estimate:
       </h5>
       <div>
-        <div id="r_estimate_dataviz" ref={rescale}>
+        <div id="r_estimate_dataviz">
           <Plot
-            style={{}}
+            style={{ width: "100%", height: "100%" }}
             data={data}
             layout={layout}
             config={config as any}
-            onInitialized={(_: any, gd: Plotly.PlotlyHTMLElement) => {
-              setPlotlyHtmlElement(gd);
-            }}
+            useResizeHandler={true}
           />
         </div>
       </div>
