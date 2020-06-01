@@ -148,7 +148,7 @@ export function calculateLowCompliance(
     } else {
       return {
         ...measure,
-        mean: 1 - (1 - (measures[measureIndex] as Measure).mean) * 0.9,
+        mean: Math.min((measures[measureIndex] as Measure).mean * 1.1, 1),
       };
     }
   });
