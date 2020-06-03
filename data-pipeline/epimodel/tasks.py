@@ -533,6 +533,7 @@ class WebExport(luigi.Task):
             "country_estimates": CountryEstimates(),
             "r_estimates": EstimateR(),
             "hospital_capacity": HospitalCapacity(),
+            "npi_model": NPIModel(),
             **RegionsDatasetSubroutine.requires(),
         }
         if self.automatic:
