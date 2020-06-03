@@ -5,7 +5,10 @@
 /* Links */
 a,
 a:focus,
-a:hover {
+a:hover,
+.btn-link,
+.btn-link:focus,
+.btn-link:hover {
   color: #ef6c00;
 }
 
@@ -159,14 +162,14 @@ header h1:before {
 }
 
 .region-dropdown {
-  padding-left: 24px;
   padding-right: 24px;
   display: flex;
   align-items: center;
+  padding-left: 24px;
   width: 100%;
 }
 
-.dropdown-caret-styling:after {
+.region-dropdown.dropdown-caret-styling:after {
   margin-left: 16px;
   vertical-align: 0.4em;
 }
@@ -333,8 +336,10 @@ span.infections-confirmed {
   margin-bottom: 0px;
 }
 
-.alert-dismissible .close {
+.alert-dismissible .close,
+.custom-modal .close {
   padding: 0.25rem 0.5rem;
+  color: inherit;
 }
 
 @media only screen and (max-width: 991px) {
@@ -540,14 +545,6 @@ span.infections-confirmed {
 /*
 * Form
 */
-label {
-  text-transform: uppercase;
-}
-
-.btn-primary,
-.btn-secondary {
-  padding: 11px 20px;
-}
 
 label.btn-secondary > input {
   display: none;
@@ -557,6 +554,7 @@ label.btn-secondary > input {
   background-color: white !important;
   color: black !important;
   text-transform: uppercase;
+  border-color: #fff;
 }
 
 .vertical-buttons {
@@ -870,6 +868,63 @@ table td {
   text-transform: uppercase;
 }
 
-.alert-dismissible .close:hover {
+.alert-dismissible .close:hover,
+.custom-modal .close:hover {
   color: white;
+}
+
+.react-datepicker-wrapper {
+  display: block !important;
+}
+
+.mitigation-item {
+  margin-top: 8px;
+}
+
+.custom-modal {
+  position: absolute;
+  top: 40px;
+  background-color: #222028;
+  overflow: auto;
+  border-radius: 4px;
+  outline: none;
+  width: 100%;
+  transform: translate(-50%, 0);
+  max-width: 1000px;
+  left: 50%;
+}
+
+@media (min-width: 768px) {
+  .custom-modal {
+    padding: 20px;
+  }
+}
+
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  overflow: auto;
+}
+
+.custom-modal-inner {
+  margin: 20px;
+}
+
+.mitigation-calculator-result {
+  color: #fff;
+  font-size: 2rem;
+  margin-bottom: 16px;
+}
+.dropdown-item.checkbox-item:active {
+  background-color: #fff;
+  color: #000;
+}
+
+.mitigation-calculator-result-label {
+  font-size: 1.2rem;
+  margin-top: 8px;
 }
