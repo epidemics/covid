@@ -16,9 +16,9 @@ def run_model(data_file: str, output_file: str):
         model.trace = pm.sample(2000, chains=2, cores=8, target_accept=0.95)
 
     results = []
-    for region in {"CZ"}:
+    for region in model.data.Rs:
         region_results = model.region_forward_pass(region)
-        region_results["region"] = region
+        region_results["Code"] = region
         results.append(region_results)
     result = pd.concat(results, axis="index")
     result.to_csv(output_file)

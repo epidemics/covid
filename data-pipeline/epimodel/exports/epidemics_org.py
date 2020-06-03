@@ -58,6 +58,7 @@ class WebExport:
         un_age_dist: Optional[pd.DataFrame],
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.DataFrame],
+        npi_model: Optional[pd.DataFrame],
     ):
         export_region = WebExportRegion(
             region,
@@ -73,6 +74,7 @@ class WebExport:
             un_age_dist,
             r_estimates,
             hospital_capacity,
+            npi_model,
         )
         self.export_regions[region.Code] = export_region
         return export_region
@@ -148,6 +150,7 @@ class WebExportRegion:
         un_age_dist: Optional[pd.DataFrame],
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.DataFrame],
+        npi_model: Optional[pd.DataFrame],
     ):
         log.debug(f"Prepare WebExport: {region.Code}, {region.Name}")
 
@@ -166,6 +169,7 @@ class WebExportRegion:
             un_age_dist,
             r_estimates,
             hospital_capacity,
+            npi_model,
         )
         # Extended data to be written in a separate per-region file
         if not models.empty and not simulation_specs.empty:
@@ -184,6 +188,7 @@ class WebExportRegion:
         un_age_dist: Optional[pd.DataFrame],
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.Series],
+        npi_model: Optional[pd.DataFrame],
     ) -> Dict[str, Dict[str, Any]]:
         data = {}
 
@@ -222,6 +227,9 @@ class WebExportRegion:
                 "Date": [x.isoformat() for x in r_estimates.index],
                 **r_estimates[["MeanR", "StdR"]].to_dict(orient="list"),
             }
+
+        if npi_model is not None:
+            data["NPIModel"] = npi_model.to_dict()
 
         if hospital_capacity is not None:
             data["Capacity"] = hospital_capacity.dropna().to_dict()
@@ -586,6 +594,15 @@ def process_export(
             foretold_df,
         )
 
+    npi_model_results = inputs["npi_model"].path
+    npi_model_results_df: pd.DataFrame = pd.read_csv(
+        npi_model_results,
+        index_col=["Code", "Date"],
+        parse_dates=["Date"],
+        keep_default_na=False,
+        na_values=[""],
+    )
+
     for code in export_regions:
         reg: Region = rds[code]
         m49 = int(reg["M49Code"]) if pd.notnull(reg["M49Code"]) else -1
@@ -607,5 +624,6 @@ def process_export(
             get_df_else_none(un_age_dist_df, m49),
             get_df_else_none(r_estimates_df, code),
             get_df_else_none(hospital_capacity_df, code),
+            get_df_else_none(npi_model_results_df, code),
         )
     return ex
