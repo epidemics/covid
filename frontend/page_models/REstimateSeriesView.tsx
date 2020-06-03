@@ -1,9 +1,10 @@
-import * as React from "react";
-import { Region } from "../models";
-import { isTouchDevice } from "../helpers";
-import { makeConfig, makeLayout } from "../components/graph-common";
 import * as Plotly from "plotly.js";
+import * as React from "react";
 import Plot from "react-plotly.js";
+
+import { makeConfig, makeLayout } from "../components/graph-common";
+import { isTouchDevice } from "../helpers";
+import { Region } from "../models";
 import { createTrace } from "./REstimateSeriesUtils";
 
 type ModelViewProps = {
@@ -59,8 +60,8 @@ export function REstimateSeriesView(props: ModelViewProps) {
   }
 
   let data: Array<Plotly.Data> = [];
-  if (region) {
-    data = createTrace(region?.rEstimates!);
+  if (region && region.rEstimates) {
+    data = createTrace(region?.rEstimates);
   }
 
   return (

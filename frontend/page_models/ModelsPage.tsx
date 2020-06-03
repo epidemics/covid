@@ -1,23 +1,24 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {
-  Regions,
-  Region,
-  Scenario,
-  Scenarios,
-  useThunk,
-  Datastore,
-  MainInfo,
-} from "../models";
-import { getTimezone, getUrlParam } from "../helpers";
-import { RegionSelector } from "../components/RegionSelector";
-import { ModelView } from "./ModelView";
-import { makeDataStore } from "../ds";
+
+import { Alerts } from "../components/alerts";
 import {
   LocationContext,
   makeFragmentLocationContext,
 } from "../components/LocationContext";
-import { Alerts } from "../components/alerts";
+import { RegionSelector } from "../components/RegionSelector";
+import { makeDataStore } from "../ds";
+import { getTimezone, getUrlParam } from "../helpers";
+import {
+  Datastore,
+  MainInfo,
+  Region,
+  Regions,
+  Scenario,
+  Scenarios,
+  useThunk,
+} from "../models";
+import { ModelView } from "./ModelView";
 import { REstimateSeriesView } from "./REstimateSeriesView";
 
 const REGION_FALLBACK = "united kingdom";
@@ -131,9 +132,14 @@ export function Page({ data }: { data: Datastore }) {
           dispatch({ action: "switch_region", region, url })
         }
       />
+
       <hr />
-      <REstimateSeriesView region={region} />
-      <hr />
+      {region && region.rEstimates && (
+        <>
+          <REstimateSeriesView region={region} />
+          <hr />
+        </>
+      )}
       <ModelView
         region={region}
         scenario={scenario}

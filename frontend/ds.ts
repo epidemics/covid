@@ -1,7 +1,7 @@
-import { Thunk, MainInfo, Datastore } from "./models/datastore";
+import { STATIC_ROOT } from "../common/constants";
 import { v4 } from "../common/spec";
 import { Regions } from "./models";
-import { STATIC_ROOT } from "../common/constants";
+import { Datastore, MainInfo, Thunk } from "./models/datastore";
 
 const CHANNEL_PARAM = "channel";
 

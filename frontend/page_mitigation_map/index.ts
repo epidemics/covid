@@ -1,12 +1,17 @@
 import * as Plotly from "plotly.js";
-import * as d3 from "d3";
-import { isTouchDevice } from "../helpers";
+
 import { makeDataStore } from "../ds";
+import { isTouchDevice } from "../helpers";
+import { Regions } from "../models";
 
 const MAP_ID = "mitigation_mapid";
 const ISO_KEY = "iso_a3";
 
-function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
+function makeMitigationMap(
+  caseMap: HTMLElement,
+  rEstimates: any,
+  geoData: any
+) {
   function value_to_labels(v: number) {
     return v.toString();
   }
@@ -27,21 +32,21 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
   let _zmax = 3.7; // we want the max to start at 3
   let zmin = 0;
 
-  interface BetaDataItem {
+  interface rEstimateItem {
     Name: string;
     iso_a2: string;
     iso_a3: string;
-    Beta: string;
+    rEstimate: string;
   }
 
-  function betaDataItemValid(item: BetaDataItem) {
-    return item.Name != "" && item.Beta != "" && item.iso_a3 != "";
+  function itemValid(item: rEstimateItem) {
+    return item.Name != "" && item.rEstimate != "" && item.iso_a3 != "";
   }
 
-  betaData = betaData.filter(betaDataItemValid);
+  rEstimates = rEstimates.filter(itemValid);
 
-  betaData.map(function (countryData: BetaDataItem) {
-    let reproductionNumber = parseFloat(countryData["Beta"]) * 2;
+  rEstimates.map(function (countryData: rEstimateItem) {
+    let reproductionNumber = parseFloat(countryData["rEstimate"]);
     info_by_iso3[countryData[ISO_KEY]] = {
       name: countryData["Name"],
       code: countryData["iso_a2"],
@@ -55,6 +60,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
   let tick_names = tick_values.map(value_to_labels);
 
   let zmax = zmin + (_zmax - zmin) / (1 - offset);
+
   let value_for_missing = zmax + offset;
 
   let GREEN_RGB = "rgb(0,200,0)";
@@ -185,7 +191,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
         let pt = (d.points || [])[0] as any;
         let target = pt.customdata;
         if (target && last === target) {
-          window.open("/?selection=" + target);
+          window.open("/models?region=" + target);
         }
         last = target;
       });
@@ -194,7 +200,7 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
         let pt = (d.points || [])[0] as any;
         let target = pt.customdata;
         if (target) {
-          window.open("/?selection=" + target);
+          window.open("/models?region=" + target);
         }
       });
     }
@@ -204,12 +210,24 @@ function makeMitigationMap(caseMap: HTMLElement, betaData: any, geoData: any) {
 const mitigationMap = document.getElementById(MAP_ID);
 if (mitigationMap) {
   let data = makeDataStore();
-  Promise.all([
-    d3.csv(
-      "https://storage.googleapis.com/static-covid/static/beta-estimates-2020-04-20-2.csv"
-    ),
-    data.geoData,
-  ]).then(([betaData, geoData]) =>
-    makeMitigationMap(mitigationMap, betaData, geoData)
-  );
+
+  Promise.all([data.regions, data.geoData]).then(([regions, geoData]) => {
+    const rEstimates = (regions as Regions).map((region) => {
+      let rEstimate = "";
+
+      if (region.rEstimates !== undefined) {
+        rEstimate = region.rEstimates.meanR[
+          region.rEstimates.meanR.length - 1
+        ].toFixed(2);
+      }
+
+      return {
+        Name: region.name,
+        rEstimate,
+        iso_a2: region.iso2,
+        iso_a3: region.iso3,
+      };
+    });
+    makeMitigationMap(mitigationMap, rEstimates, geoData);
+  });
 }
