@@ -59,10 +59,6 @@ let handleModels = add(
   MODELS,
   { path: "/models", caption: "Models" },
   (req, res) => {
-    if (res.locals.CHANNEL !== "balochistan") {
-      res.locals.ALERTS = [updatingModels];
-    }
-
     res.render("model.html", { channel: res.locals.CHANNEL });
   }
 );
