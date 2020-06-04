@@ -25,6 +25,7 @@ export namespace v4 {
       Rates?: Rates;
       JohnsHopkins?: JohnsHopkins;
       Foretold?: Foretold;
+      REstimates?: REstimates;
       Timezones: string[];
       AgeDist?: { [bracket: string]: number };
       TracesV3?: string;
@@ -56,6 +57,12 @@ export namespace v4 {
     Confirmed: Array<NumberLike>;
     Deaths: Array<NumberLike>;
     Active: Array<NumberLike>;
+  }
+
+  export interface REstimates {
+    Date: string[];
+    MeanR: number[];
+    StdR: number[];
   }
 
   type NumberLike = string | number;

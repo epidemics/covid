@@ -176,7 +176,7 @@ header h1:before {
 
 .top-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -193,10 +193,6 @@ header h1:before {
 span.infections-confirmed {
   font-weight: 500;
   color: rgba(255, 255, 255, 0.6);
-}
-
-.active-infections-block {
-  margin-left: 32px;
 }
 
 .number-subheader {
@@ -294,7 +290,7 @@ span.infections-confirmed {
   justify-content: space-evenly;
 }
 
-.mitigation-strength-heading {
+.mitigation-heading {
   font-size: 24px;
 }
 
@@ -754,7 +750,8 @@ strong {
     padding: 15px 15px;
   }
 
-  #my_dataviz {
+  #my_dataviz,
+  #r_estimate_dataviz {
     margin: 0 -24px;
   }
 
@@ -837,7 +834,8 @@ div.tooltip {
   opacity: 0.2;
 }
 
-#my_dataviz {
+#my_dataviz,
+#r_estimate_dataviz {
   vertical-align: top;
   overflow: hidden;
 }
