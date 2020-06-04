@@ -1,0 +1,97 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - master
+      - staging
+      - balochistan
+
+env:
+  IMAGE_NAME: covid
+
+jobs:
+  setup-build-publish-deploy:
+    name: Build, Publish, Deploy
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Generate configuration
+        env:
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+          ./deploy/configure.sh
+
+      - name: Export configuration
+        uses: zweitag/github-actions/global-variables@master
+        with:
+          file: 'configuration.env'
+
+      - name: Build
+        run: |
+          yarn install
+          yarn run build
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        name: Setup Google Cloud Platform
+        with:
+          version: '270.0.0'
+          service_account_email: ${{ secrets.SA_EMAIL }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - name: Upload to static
+        run: |
+          gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read dist/* ${STATIC_URL}
+
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |
+          gcloud auth configure-docker
+
+      # Build the Docker image
+      - name: Build Docker
+        run: |
+          docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA .
+
+      # Push the Docker image to Google Container Registry
+      - name: Publish Docker
+        run: |
+          docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+
+      # decrypt secrets
+      # TODO: could be different for staging and production
+      - name: Decrypt secrets
+        env:
+          JSON_KEY: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: |
+          echo "${JSON_KEY}" > key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=key.json
+          gcloud auth activate-service-account --key-file key.json
+
+          wget -q -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
+          chmod +x sops
+          ./sops -d ./deploy/chart/secrets.yaml > secrets.yaml.dec
+
+      - name: Export app version
+        run: |
+          sed -i -e "s/^appVersion: .*$/appVersion: ${{ github.sha }}/g" deploy/chart/Chart.yaml
+
+      - name: Helm deploy
+        #if: github.ref == 'refs/heads/master'
+        uses: hahow/install-helm-chart-action@v1.0.0
+        with:
+          gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          gcloud_project_id: ${{ secrets.GKE_PROJECT }}
+          cluster_name: epidemics
+          cluster_region: us-west1-c
+          release_namespace: ${{ env.RELEASE_NAMESPACE }}
+          release_name: covid
+          chart_name: ./deploy/chart
+          helm_upgrade_args: |
+            --values ./deploy/chart/values.yaml
+            --values ${{ env.VALUES_FILE }}
+            --values secrets.yaml.dec
+            --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            --debug
