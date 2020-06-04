@@ -39,6 +39,8 @@ block additional_js_pre -%}
       <div class="central-column">
         <div id="react-models"></div>
 
+        {% if DEFAULT_EPIFOR_CHANNEL === 'balochistan' %}
+
         <div class="custom-model-explanation"></div>
         <div class="model-explanation">
           <h5 class="mitigation-strength-heading">How the Model Works</h5>
@@ -176,6 +178,7 @@ block additional_js_pre -%}
           caused by the response of us as a society.
         </p>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
