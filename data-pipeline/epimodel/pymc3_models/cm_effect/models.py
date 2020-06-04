@@ -435,7 +435,7 @@ class CMCombinedModel(BaseCMModel):
         new_cases = self.data.NewCases[country_idx, :]
         deaths = self.data.NewDeaths[country_idx, :]
         recorded = pd.DataFrame.from_dict({
-            "date": pd.to_datetime(np.array(self.data.Ds)[self.ObservedDaysIndex]),
+            "Date": pd.to_datetime(np.array(self.data.Ds)[self.ObservedDaysIndex]),
             "RecordedNewCases": new_cases[self.ObservedDaysIndex],
             "RecordedDeaths": deaths[self.ObservedDaysIndex]
         }).set_index("date").sort_index()
