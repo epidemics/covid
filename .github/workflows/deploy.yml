@@ -1,4 +1,4 @@
-name: deploy
+name: Deploy web
 
 on:
   push:
@@ -6,6 +6,8 @@ on:
       - master
       - staging
       - balochistan
+    paths:
+      - 'web/**'
 
 env:
   IMAGE_NAME: covid
@@ -20,6 +22,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Generate configuration
+        working-directory: web
         env:
           GITHUB_REF: ${{ github.ref }}
         run: |
@@ -28,9 +31,10 @@ jobs:
       - name: Export configuration
         uses: zweitag/github-actions/global-variables@master
         with:
-          file: 'configuration.env'
+          file: 'web/configuration.env'
 
       - name: Build
+        working-directory: web
         run: |
           yarn install
           yarn run build
@@ -43,6 +47,7 @@ jobs:
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Upload to static
+        working-directory: web
         run: |
           gsutil -h "Cache-Control:public, max-age=10" cp -r -Z -a public-read dist/* ${STATIC_URL}
 
@@ -52,6 +57,7 @@ jobs:
 
       # Build the Docker image
       - name: Build Docker
+        working-directory: web
         run: |
           docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA .
 
@@ -63,6 +69,7 @@ jobs:
       # decrypt secrets
       # TODO: could be different for staging and production
       - name: Decrypt secrets
+        working-directory: web
         env:
           JSON_KEY: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
@@ -75,11 +82,11 @@ jobs:
           ./sops -d ./deploy/chart/secrets.yaml > secrets.yaml.dec
 
       - name: Export app version
+        working-directory: web
         run: |
           sed -i -e "s/^appVersion: .*$/appVersion: ${{ github.sha }}/g" deploy/chart/Chart.yaml
 
       - name: Helm deploy
-        #if: github.ref == 'refs/heads/master'
         uses: hahow/install-helm-chart-action@v1.0.0
         with:
           gcloud_auth_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
@@ -88,10 +95,10 @@ jobs:
           cluster_region: us-west1-c
           release_namespace: ${{ env.RELEASE_NAMESPACE }}
           release_name: covid
-          chart_name: ./deploy/chart
+          chart_name: ./web/deploy/chart
           helm_upgrade_args: |
-            --values ./deploy/chart/values.yaml
+            --values ./web/deploy/chart/values.yaml
             --values ${{ env.VALUES_FILE }}
-            --values secrets.yaml.dec
+            --values ./web/secrets.yaml.dec
             --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
             --debug

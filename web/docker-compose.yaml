@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  server:
+    image: node:13-slim
+    volumes: 
+      - ./:/usr/app/
+    working_dir: /usr/app
+    ports:
+      - 8000:8000
+    entrypoint: bash -c "yarn install && yarn run dev"

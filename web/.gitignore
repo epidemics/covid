@@ -1,0 +1,20 @@
+.idea
+**/__pycache__
+**/.mypy_cache
+*.pq
+data-prep/data_fixed
+**/*.egg-info
+
+# FE code
+node_modules
+
+# Editors
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+.DS_Store?
+
+dist/
+yarn-error.log

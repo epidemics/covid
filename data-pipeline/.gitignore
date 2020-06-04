@@ -1,0 +1,12 @@
+**/__pycache__
+.DS_store
+/.vscode
+.idea
+/*.egg-info
+.ipynb_checkpoints
+/data-dir/outputs
+/data
+/out
+config-local.yaml
+.mypy_cache
+secrets.cfg

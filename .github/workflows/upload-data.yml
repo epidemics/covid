@@ -1,0 +1,61 @@
+name: Daily new data upload
+
+on:
+  schedule:
+    - cron:  '0 0 * * *'
+
+jobs:
+  upload:
+    name: Upload data
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Checkout data repo
+        uses: actions/checkout@v2
+        with:
+          repository: epidemics/epimodel-covid-data
+          path: data-pipeline/data
+
+      - uses: r-lib/actions/setup-r@v1
+        with:
+          r-version: '4.0.0'
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - name: Install and set up Poetry
+        working-directory: data-pipeline
+        run: |
+          python get-poetry.py --preview -y
+          source $HOME/.poetry/env
+          poetry config virtualenvs.in-project true
+
+      - name: Set up cache
+        uses: actions/cache@v1
+        with:
+          path: data-pipeline/.venv
+
+      - name: Install dependencies
+        run: |
+          source $HOME/.poetry/env
+          poetry install -E 'pymc3 pyro'
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        name: Setup Google Cloud Platform
+        with:
+          version: '270.0.0'
+          service_account_email: ${{ secrets.SA_EMAIL }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - name: Run upload
+        env:
+          FORETOLD_CHANNEL: ${{ secrets.FORETOLD_CHANNEL }}
+        working-directory: data-pipeline
+        run: |
+          ./run_luigi WebExport --export-name main --automatic --UpdateForetold-foretold-channel $FORETOLD_CHANNEL
+          ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/main/ --channel main --overwrite

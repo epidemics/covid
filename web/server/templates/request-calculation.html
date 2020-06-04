@@ -1,0 +1,126 @@
+{% extends "base.html" %} {% set title = 'Request a Custom Forecast' %} {%-
+block additional_js_pre -%} {%- endblock -%} {%- block content -%}
+<div class="container main">
+  <div>
+    <div class="row">
+      <div class="col-lg-9 col-md-12">
+        <h5>Request custom modelling</h5>
+        <p>
+          Are you a decision maker in government, in health care, or at an international organisation?
+        </p>
+        <p>
+          Our team of Oxford researchers and volunteer data scientists can provide you with pro bono custom forecasting and modelling to help inform your decision making.
+        </p>
+        <p>
+          We use <a href="/">a global epidemic model</a>, where we can analyse
+          scenarios like demand for ICUs and hospital beds, as well as how
+          different mitigation strategies implemented in other countries/cities
+          can affect your region. 
+        </p>
+        <p>
+          In the future, we also hope to provide estimates on effectiveness of
+          various containment and mitigation measures, as tracked in our
+          <a href="/containment">public database</a>.
+        </p>
+        <p>To request a consultation, please fill in the form below.</p>
+      </div>
+    </div>
+  </div>
+
+  <form
+    action="https://formspree.io/mrglewyq"
+    id="request-calc-form"
+    ,
+    method="POST"
+  >
+    <input 
+      type="hidden" 
+      name="_next" 
+      value="/request-calculation-submitted"
+    />
+    <div class="form-group">
+      <div class="row">
+        <div class="col-lg-6">
+          <input
+            class="form-control form-control-md"
+            type="text"
+            placeholder="Full Name"
+            name="name"
+            required="true"
+          />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <input
+            type="email"
+            class="form-control form-control-md"
+            name="email"
+            placeholder="Email Address"
+            required="true"
+          />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <input
+            class="form-control form-control-md"
+            type="text"
+            name="affiliation"
+            placeholder="Affiliation or Company"
+            required="true"
+          />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <input
+            type="text"
+            class="form-control form-control-md"
+            name="verify"
+            placeholder="Website"
+          />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <textarea
+            class="form-control form-control-md"
+            name="problem"
+            placeholder="What decision or problem are you facing?"
+            rows="5"
+            required="true"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <textarea
+            class="form-control form-control-md"
+            name="modeling"
+            placeholder="Are you are already using epidemic modelling to support your decisions? How?"
+            rows="5"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <input
+            class="form-control form-control-md"
+            name="trafficsource"
+            type="text"
+            placeholder="How did you hear about us?"
+          />
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+{% endblock %} {% block additional_js %} {% endblock %}

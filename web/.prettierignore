@@ -1,0 +1,6 @@
+node_modules/
+server/templates/
+deploy/
+.github/
+.git/
+dist/
