@@ -22,6 +22,7 @@ import { ModelView } from "./ModelView";
 import { REstimateSeriesView } from "./REstimateSeriesView";
 
 const REGION_FALLBACK = "united kingdom";
+const CHANNEL_PARAM = "channel";
 
 type PageState = {
   region: Region | null;
@@ -56,6 +57,9 @@ function init(): PageState {
 
 export function Page({ data }: { data: Datastore }) {
   const regions = useThunk<Regions>([], data.regions);
+  let url = new URL(window.location.href);
+  let paramChannel = url.searchParams.get(CHANNEL_PARAM);
+  const channel = paramChannel ?? DEFAULT_EPIFOR_CHANNEL;
 
   const mainInfo = useThunk<MainInfo>({}, data.mainInfo);
 
@@ -140,7 +144,7 @@ export function Page({ data }: { data: Datastore }) {
           <hr />
         </>
       )}
-      {DEFAULT_EPIFOR_CHANNEL === "balochistan" && (
+      {channel === "balochistan" && (
         <ModelView
           region={region}
           scenario={scenario}

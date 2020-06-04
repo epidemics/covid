@@ -1,4 +1,5 @@
-import { Router, RequestHandler } from "express";
+import { RequestHandler, Router } from "express";
+
 import { Alert } from "../common/alert";
 
 // identifiers for the pages
@@ -58,7 +59,7 @@ let handleModels = add(
       res.locals.ALERTS = [updatingModels];
     }
 
-    res.render("model.html");
+    res.render("model.html", { channel: res.locals.CHANNEL });
   }
 );
 
