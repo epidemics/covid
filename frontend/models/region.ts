@@ -4,6 +4,7 @@ import { Reported } from "./reported";
 import { v4 } from "../../common/spec";
 import { Thunk } from "./datastore";
 import { Scenarios } from "./scenario";
+import { REstimates } from "./rEstimates";
 
 type Current = {
   infected?: number;
@@ -40,6 +41,7 @@ export class Region {
   public rates?: Rates;
   public estimates?: Estimation;
   public reported?: Reported;
+  public rEstimates?: REstimates;
 
   public constructor(data_root: string, public code: string, obj: v4.Region) {
     let data = obj.data;
@@ -60,6 +62,8 @@ export class Region {
     if (data.Foretold) this.estimates = new Estimation(data.Foretold);
 
     if (data.JohnsHopkins) this.reported = new Reported(data.JohnsHopkins);
+
+    if (data.REstimates) this.rEstimates = new REstimates(data.REstimates);
 
     this.scenariosDaily = this.externalData.map(
       `scenarios ${this.code}, ${this.name}`,

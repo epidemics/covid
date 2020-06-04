@@ -1,6 +1,13 @@
 import * as React from "react";
-import { Scenario, Region, Scenarios, Stat } from "../models";
-import { formatStatisticsLine, classNames, isTouchDevice } from "../helpers";
+import { Scenario, Region, Scenarios, Stat, MainInfo } from "../models";
+import {
+  formatStatisticsLine,
+  classNames,
+  isTouchDevice,
+  formatDate,
+  formatSIInteger,
+  formatAbsoluteInteger,
+} from "../helpers";
 import { PageActions } from "./ModelsPage";
 import { makeConfig, makeLayout, Bounds } from "../components/graph-common";
 import * as Plotly from "plotly.js";
@@ -27,6 +34,7 @@ type ModelViewProps = {
   dispatch: React.Dispatch<PageActions>;
   showEstimates?: boolean;
   showHealthcareCapacity?: boolean;
+  mainInfo: MainInfo;
 };
 
 let initialBounds: Bounds = {
@@ -35,7 +43,7 @@ let initialBounds: Bounds = {
 };
 
 export function ModelView(props: ModelViewProps) {
-  let { scenario, region, scenarios } = props;
+  let { scenario, region, scenarios, mainInfo } = props;
   const showEstimates = props.showEstimates ?? false;
   const showHealthcareCapacity = props.showHealthcareCapacity ?? false;
 
@@ -119,11 +127,11 @@ export function ModelView(props: ModelViewProps) {
   let makeResponsive = () => {
     if (!node) return;
 
-    (node.querySelector(".svg-container") as HTMLElement).removeAttribute(
-      "style"
-    );
+    (node.querySelector(
+      "#my_dataviz .svg-container"
+    ) as HTMLElement).removeAttribute("style");
 
-    let mainSvg = node.querySelector(".main-svg") as SVGSVGElement;
+    let mainSvg = node.querySelector("#my_dataviz .main-svg") as SVGSVGElement;
     mainSvg.removeAttribute("width");
     mainSvg.removeAttribute("height");
     mainSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
@@ -211,6 +219,8 @@ export function ModelView(props: ModelViewProps) {
     </div>
   );
 
+  const formatCurrentInfected = formatSIInteger(3);
+
   return (
     <>
       <div
@@ -221,7 +231,7 @@ export function ModelView(props: ModelViewProps) {
           alignItems: "center",
         }}
       >
-        <h5 className="mitigation-strength-heading">
+        <h5 className="mitigation-heading">
           Explore global and national mitigation strength:
           <a
             href="#mitigation-measures-explanation"
@@ -232,6 +242,58 @@ export function ModelView(props: ModelViewProps) {
         </h5>
 
         {plotKindPicker}
+      </div>
+      <div className="top-row">
+        <div className="active-infections-block">
+          {region?.current ? (
+            <>
+              <span className="number-subheader" id="infections-date">
+                <span style={{ color: "#aaa" }}>Model last updated on:</span>{" "}
+                {region?.current?.date ?? mainInfo.generated ? (
+                  formatDate(region?.current?.date ?? mainInfo.generated)
+                ) : (
+                  <>&mdash;</>
+                )}
+              </span>
+              <div className="active-infections">
+                Active Infections:{" "}
+                <span
+                  className="infections-estimated"
+                  id="infections-estimated"
+                >
+                  {region.current.infected ? (
+                    formatCurrentInfected(region.current.infected)
+                  ) : (
+                    <>&mdash;</>
+                  )}
+                </span>
+                <a
+                  href="#case-count-explanation"
+                  aria-label="Explanation about the case count"
+                >
+                  <QuestionTooltip />
+                </a>
+              </div>
+            </>
+          ) : (
+            ""
+          )}
+          <div className="infections-confirmed">
+            <span style={{ color: "#aaa" }}>Confirmed Infections:</span>{" "}
+            <span id="infections-confirmed">
+              {formatAbsoluteInteger(region?.reported?.last?.confirmed)}
+            </span>
+          </div>
+        </div>
+
+        <div className="population-block">
+          <div className="number-subheader">Population</div>
+          <div className="infections-population">
+            <span id="infections-population">
+              {formatAbsoluteInteger(region?.population)}
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="mitigation-strength" id="mitigation">

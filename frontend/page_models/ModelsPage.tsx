@@ -1,25 +1,28 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {
-  Regions,
-  Region,
-  Scenario,
-  Scenarios,
-  useThunk,
-  Datastore,
-  MainInfo,
-} from "../models";
-import { getTimezone, getUrlParam } from "../helpers";
-import { RegionSelector } from "../components/RegionSelector";
-import { ModelView } from "./ModelView";
-import { makeDataStore } from "../ds";
+
+import { Alerts } from "../components/alerts";
 import {
   LocationContext,
   makeFragmentLocationContext,
 } from "../components/LocationContext";
-import { Alerts } from "../components/alerts";
+import { RegionSelector } from "../components/RegionSelector";
+import { makeDataStore } from "../ds";
+import { getTimezone, getUrlParam } from "../helpers";
+import {
+  Datastore,
+  MainInfo,
+  Region,
+  Regions,
+  Scenario,
+  Scenarios,
+  useThunk,
+} from "../models";
+import { ModelView } from "./ModelView";
+import { REstimateSeriesView } from "./REstimateSeriesView";
 
 const REGION_FALLBACK = "united kingdom";
+const CHANNEL_PARAM = "channel";
 
 type PageState = {
   region: Region | null;
@@ -54,6 +57,9 @@ function init(): PageState {
 
 export function Page({ data }: { data: Datastore }) {
   const regions = useThunk<Regions>([], data.regions);
+  let url = new URL(window.location.href);
+  let paramChannel = url.searchParams.get(CHANNEL_PARAM);
+  const channel = paramChannel ?? DEFAULT_EPIFOR_CHANNEL;
 
   const mainInfo = useThunk<MainInfo>({}, data.mainInfo);
 
@@ -132,13 +138,21 @@ export function Page({ data }: { data: Datastore }) {
       />
 
       <hr />
-      <ModelView
-        region={region}
-        scenario={scenario}
-        scenarios={scenarios}
-        dispatch={dispatch}
-      />
-      <hr />
+      {region && region.rEstimates && (
+        <>
+          <REstimateSeriesView region={region} />
+          <hr />
+        </>
+      )}
+      {channel === "balochistan" && (
+        <ModelView
+          region={region}
+          scenario={scenario}
+          scenarios={scenarios}
+          dispatch={dispatch}
+          mainInfo={mainInfo}
+        />
+      )}
     </LocationContext.Provider>
   );
 }
