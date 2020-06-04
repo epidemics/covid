@@ -229,7 +229,10 @@ class WebExportRegion:
             }
 
         if npi_model is not None:
-            data["NPIModel"] = npi_model.to_dict()
+            data["NPIModel"] = {
+                "Date": [x.isoformat() for x in npi_model.index],
+                **npi_model.replace({np.nan: None}).to_dict(orient="list"),
+            }
 
         if hospital_capacity is not None:
             data["Capacity"] = hospital_capacity.dropna().to_dict()
