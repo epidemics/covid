@@ -6,10 +6,12 @@ import { Alert } from "../common/alert";
 const MODELS = "models";
 const CASE_MAP = "case-map";
 const MITIGATION = "mitigation";
+const MITIGATION_SCENARIOS = "mitigation-scenarios";
 const MITIGATION_MAP = "mitigation-map";
 const REQUEST_MODEL = "request-model";
 const ABOUT = "about";
 const MEASURES = "measures";
+const DATASETS = "datasets";
 
 // order of the pages as diplayed in the navigation bar
 let navigation = [
@@ -17,7 +19,9 @@ let navigation = [
   CASE_MAP,
   MITIGATION_MAP,
   MITIGATION,
+  MITIGATION_SCENARIOS,
   REQUEST_MODEL,
+  DATASETS,
   ABOUT,
 ];
 
@@ -77,6 +81,12 @@ add(MEASURES, { path: "/measures", caption: "Measures" }, (req, res) =>
   res.render("measures.html")
 );
 
+add(
+  MITIGATION_SCENARIOS,
+  { path: "/mitigation-scenarios", caption: "Mitigation scenarios" },
+  (req, res) => res.render("mitigation-scenarios.html")
+);
+
 let handleMitigation = add(
   MITIGATION,
   { path: "/containment", caption: "Mitigation" },
@@ -98,6 +108,10 @@ add(
     res.render("request-calculation.html", {
       message: "Please provide data",
     })
+);
+
+add(DATASETS, { path: "/datasets", caption: "Datasets" }, (req, res) =>
+  res.render("datasets.html")
 );
 
 add(ABOUT, { path: "/about", caption: "About" }, (req, res) =>
