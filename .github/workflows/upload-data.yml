@@ -1,8 +1,9 @@
 name: Daily new data upload
 
 on:
-  schedule:
-    - cron:  '0 0 * * *'
+  push:
+    branches:
+      - test-automatic-pipe
 
 jobs:
   upload:
@@ -59,4 +60,4 @@ jobs:
         working-directory: data-pipeline
         run: |
           ./run_luigi WebExport --export-name main --automatic --UpdateForetold-foretold-channel $FORETOLD_CHANNEL
-          ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/main/ --channel main --overwrite
+          ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/main/ --channel staging --overwrite
