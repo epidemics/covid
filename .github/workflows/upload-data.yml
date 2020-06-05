@@ -1,9 +1,8 @@
 name: Daily new data upload
 
 on:
-  push:
-    branches:
-      - test-automatic-pipe
+  schedule:
+    - cron:  '0 0 * * *'
 
 jobs:
   upload:
@@ -78,4 +77,4 @@ jobs:
         run: |
           source $HOME/.poetry/env
           poetry run ./run_luigi WebExport --EstimateR-r-executable-path /usr/local/bin/Rscript --export-name main --automatic --UpdateForetold-foretold-channel ${{ secrets.FORETOLD_CHANNEL }}
-          poetry run ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/main/ --channel staging --overwrite
+          poetry run ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/main/ --channel main --overwrite
