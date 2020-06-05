@@ -8,7 +8,7 @@ if [[ -z "${BRANCH_NAME}" ]]; then
   >&2 echo "Invalid branch ref ${GITHUB_REF}"; exit 1
 fi
 
-CONFIG_JSON=$(jq -r ".\"${BRANCH_NAME}\"" web/deploy/site_configs.json)
+CONFIG_JSON=$(jq -r ".\"${BRANCH_NAME}\"" deploy/site_configs.json)
 
 if [[ "${CONFIG_JSON}" == "null" ]]; then
   >&2 echo "The branch ${BRANCH_NAME} is not configured to be deployed"; exit 1
