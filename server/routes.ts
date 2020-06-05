@@ -8,12 +8,7 @@ const ABOUT = "about";
 const PUBLIC_SITE = "public";
 
 // order of the pages as diplayed in the navigation bar
-let navigation = [
-  MODELS,
-  PUBLIC_SITE,
-  REQUEST_MODEL,
-  ABOUT,
-];
+let navigation = [MODELS, PUBLIC_SITE, REQUEST_MODEL, ABOUT];
 
 type NavBarEntry = { path: string; id: string; caption: string };
 
@@ -81,9 +76,9 @@ router.get("/about-submitted", (req, res) =>
 );
 
 add(
-    PUBLIC_SITE,
-    { path: "http://epidemicforecasting.org/", caption: "Public site" },
-    (req, res) => {}
+  PUBLIC_SITE,
+  { path: "http://epidemicforecasting.org/", caption: "Public site" },
+  (req, res) => {}
 );
 
 router.get("/", (req, res, next) => {
