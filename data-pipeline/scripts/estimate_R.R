@@ -1,8 +1,9 @@
-requiredPackages <- c('tidyverse','EpiEstim','progress', 'doParallel', 'foreach')
-for(p in requiredPackages){
-  if(!require(p,character.only = TRUE)) install.packages(p)
-  library(p,character.only = TRUE)
-}
+initial.options <- commandArgs(trailingOnly = FALSE)
+file.arg.name <- "--file="
+script.name <- sub(file.arg.name, "", initial.options[grep(file.arg.name, initial.options)])
+script.basename <- dirname(script.name)
+other.name <- file.path(script.basename, "dependencies.R")
+source(other.name)
 
 # the lag on which to compute the incidence vector
 # this can be used as a testing lag constant
