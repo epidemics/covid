@@ -29,6 +29,11 @@ jobs:
         with:
           python-version: 3.7
 
+      - name: Get full python version
+        id: full-python-version
+        run: |
+          echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
+
       - name: Install and set up Poetry
         working-directory: data-pipeline
         run: |
@@ -40,6 +45,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: data-pipeline/.venv
+          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install dependencies
         working-directory: data-pipeline
