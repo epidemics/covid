@@ -16,7 +16,6 @@ const DATASETS = "datasets";
 // order of the pages as diplayed in the navigation bar
 let navigation = [
   MODELS,
-  CASE_MAP,
   MITIGATION_MAP,
   MITIGATION,
   MITIGATION_SCENARIOS,
