@@ -24,6 +24,19 @@ jobs:
         with:
           r-version: '4.0.0'
 
+      - name: Install os R dependencies
+        run: sudo apt install libcurl4-openssl-dev libxml2-dev libssl-dev
+
+      - name: Cache R packages
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-r-${{ hashFiles('**/dependencies.R') }}
+
+      - name: Install R dependencies
+        working-directory: data-pipeline
+        run: Rscript ./scripts/dependencies.R
+
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
