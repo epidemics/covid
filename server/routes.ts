@@ -77,7 +77,7 @@ router.get("/about-submitted", (req, res) =>
 
 add(
   PUBLIC_SITE,
-  { path: "http://epidemicforecasting.org/", caption: "Public site" },
+  { path: "http://epidemicforecasting.org/", caption: "Global site" },
   (req, res) => {}
 );
 
