@@ -99,7 +99,6 @@ class WebExport:
 
         log.info(f"Writing WebExport to {export_directory} ...")
 
-
         for region_code, export_region in tqdm(
             list(self.export_regions.items()), desc="Writing regions"
         ):
