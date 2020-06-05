@@ -1,4 +1,4 @@
-name: Check and test python
+name: Check and test data-pipeline
 
 on:
   push:

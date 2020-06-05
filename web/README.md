@@ -1,5 +1,3 @@
-![covid](https://github.com/epidemics/covid/workflows/covid/badge.svg)
-
 # COVID-19 visualizer
 
 Frontend for http://epidemicforecasting.org/
@@ -85,6 +83,6 @@ Rather overcommunicate what you are working on.
 
 ## Deployment
 
-We use Github Actions. The pipeline is specified in `.github/workflows/main.yml`
+We use Github Actions. The pipeline is specified in `.github/workflows/deploy-web.yml`
 
 You can see in the `gsutil` command that it's setting `Cache-Control`. By default, files are cached under the same name up to 1 hour. So you either want to reduce it to the above (10 seconds) or have to use a different name. Sadly, there is no way to do this via the web console. For that, there is a handy [CI bit here](https://github.com/epidemics/covid/blob/master/.github/workflows/pythonapp.yml#L19-L21) - once a build is triggered (on ANY branch), all files are set to be public and with lower cache. So if you don't wanna mess with gsutil on your machine, just upload the files and trigger a build by random commit.
