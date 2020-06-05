@@ -1,0 +1,17 @@
+{
+  "master": {
+    "values": "./web/deploy/chart/values.production.yaml",
+    "static": "gs://static-covid/static/production/",
+    "namespace": "production"
+  },
+  "staging": {
+    "values": "./web/deploy/chart/values.staging.yaml",
+    "static": "gs://static-covid/static/staging/",
+    "namespace": "staging"
+  },
+  "balochistan": {
+    "values": "./web/deploy/chart/values.balochistan.yaml",
+    "static": "gs://static-covid/static/balochistan/",
+    "namespace": "balochistan"
+  }
+}

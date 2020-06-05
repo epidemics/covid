@@ -1,5 +1,0 @@
-apiVersion: v1
-appVersion: 847d9c9009a12a02e56cb6ac3b88682318414c23
-description: A charting website
-name: covid
-version: 0.2.0

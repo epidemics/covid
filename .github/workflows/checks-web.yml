@@ -1,0 +1,32 @@
+name: Build and test web
+
+on:
+  push:
+    paths:
+      - 'web/**'
+      - '.github/workflows/checks-web.yml'
+
+env:
+  IMAGE_NAME: covid
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Checks
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Build
+      working-directory: web
+      run: |
+        yarn install
+        yarn run build
+
+    - name: Lint
+      working-directory: web
+      run: yarn run lint-check
+
+    - name: Tests
+      working-directory: web
+      run: yarn run test

@@ -1,0 +1,15 @@
+env:
+  enableNotion: "False"
+
+imageName: ""
+
+web:
+  replicasCount: 1
+  memoryLimit: "1Gi"
+  cpuLimit: "2"
+  memoryRequest: "200Mi"
+  cpuRequest: "0.2"
+
+ingress:
+  # reserved in GCP
+  externalIpName: null

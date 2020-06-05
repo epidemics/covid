@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Chart.Name }}
-data:
-  APP_VERSION: {{ .Chart.AppVersion | quote }}
-  STATIC_URL: {{ .Values.env.staticUrl | quote }}
-  DEFAULT_EPIFOR_CHANNEL: {{ .Values.env.defaultEpiforChannel | quote }}

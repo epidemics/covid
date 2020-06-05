@@ -1,0 +1,64 @@
+name: Check and test data-pipeline
+
+on:
+  push:
+    paths:
+      - 'data-pipeline/**'
+      - '.github/workflows/checks-data-pipeline.yml'
+
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        working-directory: data-pipeline
+        run: python -m pip install --upgrade black
+      - name: Check with Black
+        working-directory: data-pipeline
+        run: black . --check --exclude get-poetry.py
+
+  test:
+    needs: Linting
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Get full python version
+        id: full-python-version
+        run: |
+          echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
+      - name: Install and set up Poetry
+        working-directory: data-pipeline
+        run: |
+          python get-poetry.py --preview -y
+          source $HOME/.poetry/env
+          poetry config virtualenvs.in-project true
+      - name: Set up cache
+        uses: actions/cache@v1
+        with:
+          path: data-pipeline/.venv
+          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        working-directory: data-pipeline
+        run: |
+          source $HOME/.poetry/env
+          poetry install -E 'pymc3 pyro'
+      - name: Test
+        working-directory: data-pipeline
+        run: |
+          source $HOME/.poetry/env
+          poetry run pytest
