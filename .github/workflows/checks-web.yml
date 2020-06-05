@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'web/**'
+      - '.github/workflows/checks-web.yml'
 
 env:
   IMAGE_NAME: covid

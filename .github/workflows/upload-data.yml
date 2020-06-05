@@ -41,6 +41,7 @@ jobs:
           path: data-pipeline/.venv
 
       - name: Install dependencies
+        working-directory: data-pipeline
         run: |
           source $HOME/.poetry/env
           poetry install -E 'pymc3 pyro'

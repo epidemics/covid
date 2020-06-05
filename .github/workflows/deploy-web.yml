@@ -8,6 +8,7 @@ on:
       - balochistan
     paths:
       - 'web/**'
+      - '.github/workflows/deploy-web.yml'
 
 env:
   IMAGE_NAME: covid

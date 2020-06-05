@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'data-pipeline/**'
+      - '.github/workflows/checks-data-pipeline.yml'
 
 
 jobs:
@@ -52,6 +53,7 @@ jobs:
           path: data-pipeline/.venv
           key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
+        working-directory: data-pipeline
         run: |
           source $HOME/.poetry/env
           poetry install -E 'pymc3 pyro'
