@@ -61,9 +61,8 @@ jobs:
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Run upload
-        env:
-          FORETOLD_CHANNEL: ${{ secrets.FORETOLD_CHANNEL }}
         working-directory: data-pipeline
         run: |
-          ./run_luigi WebExport --export-name main --automatic --UpdateForetold-foretold-channel $FORETOLD_CHANNEL
-          ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/main/ --channel staging --overwrite
+          source $HOME/.poetry/env
+          poetry run ./run_luigi WebExport --export-name main --automatic --UpdateForetold-foretold-channel ${{ secrets.FORETOLD_CHANNEL }}
+          poetry run ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/main/ --channel staging --overwrite
