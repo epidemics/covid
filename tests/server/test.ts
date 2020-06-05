@@ -8,20 +8,12 @@ describe("server", () => {
     await request(app).get("/").expect(200);
   });
 
-  it("case-map", async () => {
-    await request(app).get("/case-map").expect(200);
-  });
-
   it("about", (done) => {
     request(app).get("/about").expect(200, done);
   });
 
   it("about-submitted", (done) => {
     request(app).get("/about-submitted").expect(200, done);
-  });
-
-  it("containment", async () => {
-    await request(app).get("/containment").expect(200);
   });
 
   it("request-calculation", async () => {
