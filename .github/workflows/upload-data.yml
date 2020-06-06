@@ -2,7 +2,7 @@ name: Daily new data upload
 
 on:
   schedule:
-    - cron:  '0 0 * * *'
+    - cron:  '0 4 * * *'
 
 jobs:
   upload:
