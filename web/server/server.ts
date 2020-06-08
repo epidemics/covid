@@ -67,7 +67,7 @@ app.use(function (req, res, next) {
   res.locals.ALERTS = [proBonoAlert];
 
   if (channel == "balochistan") {
-    res.redirect("http://balochistan.epidemicforecasting.org/")
+    res.redirect("http://balochistan.epidemicforecasting.org/");
   } else {
     next();
   }

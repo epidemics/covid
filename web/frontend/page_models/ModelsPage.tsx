@@ -15,14 +15,11 @@ import {
   Region,
   Regions,
   Scenario,
-  Scenarios,
   useThunk,
 } from "../models";
-import { ModelView } from "./ModelView";
 import { REstimateSeriesView } from "./REstimateSeriesView";
 
 const REGION_FALLBACK = "united kingdom";
-const CHANNEL_PARAM = "channel";
 
 type PageState = {
   region: Region | null;
@@ -57,21 +54,10 @@ function init(): PageState {
 
 export function Page({ data }: { data: Datastore }) {
   const regions = useThunk<Regions>([], data.regions);
-  let url = new URL(window.location.href);
-  let paramChannel = url.searchParams.get(CHANNEL_PARAM);
-  const channel = paramChannel ?? DEFAULT_EPIFOR_CHANNEL;
 
   const mainInfo = useThunk<MainInfo>({}, data.mainInfo);
 
-  const [{ region, scenarioID }, dispatch] = React.useReducer(
-    reducer,
-    null,
-    init
-  );
-
-  const scenarios = useThunk<Scenarios | null>(null, region?.scenariosDaily);
-
-  let scenario = scenarios?.get(scenarioID ?? 0) ?? null;
+  const [{ region }, dispatch] = React.useReducer(reducer, null, init);
 
   React.useEffect(() => {
     jQuery(".selected-region").text(region?.name ?? "the selected region");
