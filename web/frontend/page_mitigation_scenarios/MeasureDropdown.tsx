@@ -229,7 +229,7 @@ const MeasureDropdown = ({ measures, intervalIndex, compliance }: Props) => {
         <div className="dropdown-divider"></div>
         <div className="px-4 py-2">
           <p>Compliance</p>
-          <div className="form-check form-check-inline">
+          <div className="form-check">
             <input
               className="form-check-input"
               type="radio"
@@ -240,10 +240,10 @@ const MeasureDropdown = ({ measures, intervalIndex, compliance }: Props) => {
               onChange={handleComplianceClick}
             />
             <label className="form-check-label" htmlFor="low-compliance">
-              Low
+              Low (20% lower effect)
             </label>
           </div>
-          <div className="form-check form-check-inline">
+          <div className="form-check">
             <input
               className="form-check-input"
               type="radio"
@@ -257,7 +257,7 @@ const MeasureDropdown = ({ measures, intervalIndex, compliance }: Props) => {
               Medium
             </label>
           </div>
-          <div className="form-check form-check-inline">
+          <div className="form-check">
             <input
               className="form-check-input"
               type="radio"
@@ -268,7 +268,7 @@ const MeasureDropdown = ({ measures, intervalIndex, compliance }: Props) => {
               onChange={handleComplianceClick}
             />
             <label className="form-check-label" htmlFor="high-compliance">
-              High
+              High  (10% higher effect)
             </label>
           </div>
         </div>
