@@ -53,15 +53,6 @@ let updatingModels: Alert = {
   content: `Please note that the forecasts below are currently outdated and do not reflect the most recent data. We are updating our models and will post new predictions by Wednesday May 20.`,
 };
 
-// serve the main model visualization
-let handleModels = add(
-  MODELS,
-  { path: "/models", caption: "Models" },
-  (req, res) => {
-    res.render("model.html", { channel: res.locals.CHANNEL });
-  }
-);
-
 add(CASE_MAP, { path: "/case-map", caption: "Case map" }, (req, res) =>
   res.render("case-map.html")
 );
@@ -121,11 +112,7 @@ router.get("/about-submitted", (req, res) =>
 router.get("/containment.", (req, res) => res.redirect("/containment"));
 
 router.get("/", (req, res, next) => {
-  if (res.locals.CHANNEL === "balochistan") {
-    handleModels(req, res, next);
-  } else {
-    handleMitigation(req, res, next);
-  }
+  handleMitigation(req, res, next);
 });
 
 export let navigation_bar = navigation.map((key) => pages[key]);
