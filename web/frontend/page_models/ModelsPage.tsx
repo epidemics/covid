@@ -144,15 +144,6 @@ export function Page({ data }: { data: Datastore }) {
           <hr />
         </>
       )}
-      {channel === "balochistan" && (
-        <ModelView
-          region={region}
-          scenario={scenario}
-          scenarios={scenarios}
-          dispatch={dispatch}
-          mainInfo={mainInfo}
-        />
-      )}
     </LocationContext.Provider>
   );
 }

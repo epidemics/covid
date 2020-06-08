@@ -121,11 +121,7 @@ router.get("/about-submitted", (req, res) =>
 router.get("/containment.", (req, res) => res.redirect("/containment"));
 
 router.get("/", (req, res, next) => {
-  if (res.locals.CHANNEL === "balochistan") {
-    handleModels(req, res, next);
-  } else {
-    handleMitigation(req, res, next);
-  }
+  handleMitigation(req, res, next);
 });
 
 export let navigation_bar = navigation.map((key) => pages[key]);

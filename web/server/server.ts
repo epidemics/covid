@@ -64,13 +64,13 @@ let proBonoAlert: Alert = {
 app.use(function (req, res, next) {
   let channel = req.query.channel ?? constants["DEFAULT_EPIFOR_CHANNEL"];
   res.locals.CHANNEL = channel;
+  res.locals.ALERTS = [proBonoAlert];
 
-  res.locals.ALERTS = [];
-  if (channel !== "balochistan") {
-    res.locals.ALERTS.push(proBonoAlert);
+  if (channel == "balochistan") {
+    res.redirect("http://balochistan.epidemicforecasting.org/")
+  } else {
+    next();
   }
-
-  next();
 });
 
 if (app.get("env") === "development") {
