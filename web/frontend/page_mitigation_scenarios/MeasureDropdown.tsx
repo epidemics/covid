@@ -268,7 +268,7 @@ const MeasureDropdown = ({ measures, intervalIndex, compliance }: Props) => {
               onChange={handleComplianceClick}
             />
             <label className="form-check-label" htmlFor="high-compliance">
-              High  (10% higher effect)
+              High (10% higher effect)
             </label>
           </div>
         </div>

@@ -95,7 +95,8 @@ export function calculateHighCompliance(
         items: measure.items.map((item, itemIndex) => ({
           ...item,
           mean:
-            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean * 0.8,
+            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean *
+            0.8,
         })),
       };
     } else {
@@ -137,7 +138,11 @@ export function calculateLowCompliance(
         ...measure,
         items: measure.items.map((item, itemIndex) => ({
           ...item,
-          mean: Math.min((measures[measureIndex] as MeasureGroup).items[itemIndex].mean * 1.1, 1),
+          mean: Math.min(
+            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean *
+              1.1,
+            1
+          ),
         })),
       };
     } else {
