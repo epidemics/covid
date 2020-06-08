@@ -65,10 +65,7 @@ app.use(function (req, res, next) {
   let channel = req.query.channel ?? constants["DEFAULT_EPIFOR_CHANNEL"];
   res.locals.CHANNEL = channel;
 
-  res.locals.ALERTS = [];
-  if (channel !== "balochistan") {
-    res.locals.ALERTS.push(proBonoAlert);
-  }
+  res.locals.ALERTS = [proBonoAlert];
 
   next();
 });
