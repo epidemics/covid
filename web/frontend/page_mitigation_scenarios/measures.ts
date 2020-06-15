@@ -1,3 +1,5 @@
+import { SliderState } from './MitigationCalculator';
+
 export interface Measure {
   name: string;
   mean: number;
@@ -86,69 +88,66 @@ export const measures: Array<Measure | MeasureGroup> = [
 ];
 
 export function calculateHighCompliance(
-  measuresToUpdate: Array<Measure | MeasureGroup>
-): Array<Measure | MeasureGroup> {
-  return measuresToUpdate.map((measure, measureIndex) => {
-    if ("items" in measure) {
+  stateToUpdate: SliderState[]
+): SliderState[] {
+  return stateToUpdate.map((sliderState, measureIndex) => {
+    if (Array.isArray(sliderState.value)) {
       return {
-        ...measure,
-        items: measure.items.map((item, itemIndex) => ({
-          ...item,
-          mean:
-            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean *
-            0.9,
-        })),
+        ...sliderState,
+        value: sliderState.value.map(
+          (item, itemIndex) =>
+            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean * 0.9
+        ),
       };
     } else {
       return {
-        ...measure,
-        mean: (measures[measureIndex] as Measure).mean * 0.9,
+        ...sliderState,
+        value: (measures[measureIndex] as Measure).mean * 0.9,
       };
     }
   });
 }
 
 export function calculateMediumCompliance(
-  measuresToUpdate: Array<Measure | MeasureGroup>
-): Array<Measure | MeasureGroup> {
-  return measuresToUpdate.map((measure, measureIndex) => {
-    if ("items" in measure) {
+  stateToUpdate: SliderState[]
+): SliderState[] {
+  return stateToUpdate.map((sliderState, measureIndex) => {
+    if (Array.isArray(sliderState.value)) {
       return {
-        ...measure,
-        items: measure.items.map((item, itemIndex) => ({
-          ...item,
-          mean: (measures[measureIndex] as MeasureGroup).items[itemIndex].mean,
-        })),
+        ...sliderState,
+        value: sliderState.value.map(
+          (item, itemIndex) =>
+            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean
+        ),
       };
     } else {
       return {
-        ...measure,
-        mean: (measures[measureIndex] as Measure).mean,
+        ...sliderState,
+        value: (measures[measureIndex] as Measure).mean,
       };
     }
   });
 }
 
 export function calculateLowCompliance(
-  measuresToUpdate: Array<Measure | MeasureGroup>
-): Array<Measure | MeasureGroup> {
-  return measuresToUpdate.map((measure, measureIndex) => {
-    if ("items" in measure) {
+  stateToUpdate: SliderState[]
+): SliderState[] {
+  return stateToUpdate.map((sliderState, measureIndex) => {
+    if (Array.isArray(sliderState.value)) {
       return {
-        ...measure,
-        items: measure.items.map((item, itemIndex) => ({
-          ...item,
-          mean:
+        ...sliderState,
+        value: sliderState.value.map(
+          (item, itemIndex) =>
             1 -
             (1 -
               (measures[measureIndex] as MeasureGroup).items[itemIndex].mean) *
-              0.9,
-        })),
+              0.9
+        ),
       };
     } else {
       return {
-        ...measure,
-        mean: Math.min((measures[measureIndex] as Measure).mean * 1.1, 1),
+        ...sliderState,
+        value: Math.min((measures[measureIndex] as Measure).mean * 1.1, 1),
       };
     }
   });

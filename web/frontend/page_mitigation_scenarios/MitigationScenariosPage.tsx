@@ -1,9 +1,10 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import * as moment from "moment";
-import { Alerts } from "../components/alerts";
-import { mitigationIntervalsToURL } from "../data/url_generator";
-import MitigationForm, { Values } from "./MitigationForm";
+import * as moment from 'moment';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+
+import { Alerts } from '../components/alerts';
+import { mitigationIntervalsToURL } from '../data/url_generator';
+import MitigationForm, { Values } from './MitigationForm';
 
 export const INTERVENTION_INTERVAL_IN_MONTHS = 1;
 
@@ -63,13 +64,12 @@ export function Page() {
         clicking on the <strong>Run simulation button</strong>.
       </p>
       <p>
-        To configure a single intervention select the date at which it will
-        start to take effect. Afterwards you can quickly select the measures
-        that will be in effect from the <strong>Select Measures</strong>{" "}
-        dropdown. Alternatively click on the <strong>R value reduction</strong>{" "}
-        field to open our Mitigation Calculator for advanced configuration. The
-        mitigation calculator estimates what effect these measures will have on
-        the effective reproduction number.
+        For each intervention select the date at which it will start to take
+        effect. Afterwards, you can select the measures in the intervention and
+        their impact on estimated R value by clicking on the Measures & Impact
+        button. The impact on the R values can be selected from the defined
+        pre-sets (corresponding to low, medium and high compliance) or you can
+        set the specific impact per each measure (custom compliance)
       </p>
 
       <hr />
