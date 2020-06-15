@@ -24,7 +24,11 @@ def preprocess_hopkins(
     preprocessed["Population"] = [
         rds.get(x).Population for x in preprocessed.index.get_level_values("Code")
     ]
-    return preprocessed
+    enough_data_mask = preprocessed.groupby('Code') \
+        .last()\
+        .loc[lambda row: row['Confirmed'] > 500]\
+        .index
+    return preprocessed.loc[enough_data_mask]
 
 
 def estimate_r(
