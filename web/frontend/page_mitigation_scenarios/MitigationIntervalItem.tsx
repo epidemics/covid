@@ -121,7 +121,7 @@ function MitigationIntervalItem({
               className="d-md-none"
               htmlFor={`mitigations.[${index}].name`}
             >
-              Measures <MeasuresTooltip />
+              Measures & impact <MeasuresTooltip />
             </label>
             <button
               type="button"
@@ -129,7 +129,7 @@ function MitigationIntervalItem({
               onClick={() => handleShowCalculatorClick(index)}
               style={{ textTransform: "none" }}
             >
-              Open dialog
+              Open configuration
             </button>
           </div>
         </div>

@@ -47,7 +47,7 @@ export function MitigationTable({ mitigationIntervals }: MitigationTableProps) {
       <div className="form-row d-none d-md-flex">
         <div className="col-md-2">Period name</div>
         <div className="col-md-2">
-          Measures <MeasuresTooltip />
+          Measures & impact <MeasuresTooltip />
         </div>
         <div className="col-md-2">Begin date</div>
         <div className="col-md-4">R value reduction</div>
