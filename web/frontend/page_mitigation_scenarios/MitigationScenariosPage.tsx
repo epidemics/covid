@@ -1,10 +1,10 @@
-import * as moment from 'moment';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as moment from "moment";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
-import { Alerts } from '../components/alerts';
-import { mitigationIntervalsToURL } from '../data/url_generator';
-import MitigationForm, { Values } from './MitigationForm';
+import { Alerts } from "../components/alerts";
+import { mitigationIntervalsToURL } from "../data/url_generator";
+import MitigationForm, { Values } from "./MitigationForm";
 
 export const INTERVENTION_INTERVAL_IN_MONTHS = 1;
 

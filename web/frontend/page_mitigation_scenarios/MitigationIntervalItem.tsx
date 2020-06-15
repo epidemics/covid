@@ -1,18 +1,24 @@
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-datepicker/dist/react-datepicker.css";
 
-import { ErrorMessage, FastField, Field, FieldArrayRenderProps, useFormikContext } from 'formik';
-import * as moment from 'moment';
-import * as React from 'react';
-import DatePicker from 'react-datepicker';
+import {
+  ErrorMessage,
+  FastField,
+  Field,
+  FieldArrayRenderProps,
+  useFormikContext,
+} from "formik";
+import * as moment from "moment";
+import * as React from "react";
+import DatePicker from "react-datepicker";
 
-import Modal from '../components/Modal';
-import AddIcon from './../icons/add.svg';
-import TrashIcon from './../icons/trash.svg';
-import { Measure, MeasureGroup, serialInterval } from './measures';
-import MitigationCalculator, { SliderState } from './MitigationCalculator';
-import { createInitialMitigation, Values } from './MitigationForm';
-import { INTERVENTION_INTERVAL_IN_MONTHS } from './MitigationScenariosPage';
-import { MeasuresTooltip } from './MitigationTable';
+import Modal from "../components/Modal";
+import AddIcon from "./../icons/add.svg";
+import TrashIcon from "./../icons/trash.svg";
+import { Measure, MeasureGroup, serialInterval } from "./measures";
+import MitigationCalculator, { SliderState } from "./MitigationCalculator";
+import { createInitialMitigation, Values } from "./MitigationForm";
+import { INTERVENTION_INTERVAL_IN_MONTHS } from "./MitigationScenariosPage";
+import { MeasuresTooltip } from "./MitigationTable";
 
 export interface Props {
   index: number;

@@ -1,14 +1,14 @@
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-datepicker/dist/react-datepicker.css";
 
-import { FieldArray } from 'formik';
-import * as React from 'react';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
+import { FieldArray } from "formik";
+import * as React from "react";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
-import { QuestionTooltip } from '../components/QuestionTooltip';
-import AddIcon from './../icons/add.svg';
-import { createInitialMitigation } from './MitigationForm';
-import MitigationIntervalItem from './MitigationIntervalItem';
+import { QuestionTooltip } from "../components/QuestionTooltip";
+import AddIcon from "./../icons/add.svg";
+import { createInitialMitigation } from "./MitigationForm";
+import MitigationIntervalItem from "./MitigationIntervalItem";
 
 export const MeasuresTooltip = () => {
   return (

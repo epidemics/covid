@@ -1,4 +1,4 @@
-import { SliderState } from './MitigationCalculator';
+import { SliderState } from "./MitigationCalculator";
 
 export interface Measure {
   name: string;
