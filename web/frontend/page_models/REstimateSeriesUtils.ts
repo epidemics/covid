@@ -26,7 +26,9 @@ export const createTrace = (rEstimates: REstimates) => {
       color: "transparent",
     },
     x: rEstimates.date,
-    y: rEstimates.meanR.map((mean, index) => mean - 2 * rEstimates.stdR[index]),
+    y: rEstimates.meanR.map((mean, index) =>
+      Math.max(mean - 2 * rEstimates.stdR[index], 0)
+    ),
     showlegend: false,
     name: "Lower bound",
   } as Plotly.Data;
