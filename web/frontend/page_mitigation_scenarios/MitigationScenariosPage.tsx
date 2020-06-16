@@ -4,6 +4,8 @@ import * as moment from "moment";
 import { Alerts } from "../components/alerts";
 import { mitigationIntervalsToURL } from "../data/url_generator";
 import MitigationForm, { Values } from "./MitigationForm";
+import { Region } from "../models";
+import { makeDataStore } from "../ds";
 
 export const INTERVENTION_INTERVAL_IN_MONTHS = 1;
 
@@ -16,6 +18,11 @@ export function Page() {
   React.useEffect(() => {
     document.getElementById("containmentContent")?.classList.remove("d-none");
   });
+
+  let regionsData: Region[];
+  Promise.all([makeDataStore().regions]).then(
+    ([regions]) => (regionsData = regions)
+  );
 
   const handleFormResult = (result: Values) => {
     const intervalOffset = 5;
@@ -40,8 +47,10 @@ export function Page() {
           end: mitigation.transmissionReduction + intervalOffset,
         },
       }));
-
-    setScenarioUrl(mitigationIntervalsToURL(result.scenarioName, mitigations));
+    let region = regionsData.find((e) => e.name === result.scenarioName);
+    setScenarioUrl(
+      mitigationIntervalsToURL(result.scenarioName, mitigations, region)
+    );
     visualizationAnchorEl.current!.click();
   };
 
