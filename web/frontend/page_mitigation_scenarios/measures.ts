@@ -96,13 +96,13 @@ export function calculateHighCompliance(
         ...sliderState,
         value: sliderState.value.map(
           (item, itemIndex) =>
-            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean * 0.9
+            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean * 0.8
         ),
       };
     } else {
       return {
         ...sliderState,
-        value: (measures[measureIndex] as Measure).mean * 0.9,
+        value: (measures[measureIndex] as Measure).mean * 0.8,
       };
     }
   });
@@ -136,12 +136,12 @@ export function calculateLowCompliance(
     if (Array.isArray(sliderState.value)) {
       return {
         ...sliderState,
-        value: sliderState.value.map(
-          (item, itemIndex) =>
-            1 -
-            (1 -
-              (measures[measureIndex] as MeasureGroup).items[itemIndex].mean) *
-              0.9
+        value: sliderState.value.map((item, itemIndex) =>
+          Math.min(
+            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean *
+              1.1,
+            1
+          )
         ),
       };
     } else {
