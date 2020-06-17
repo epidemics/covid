@@ -2,6 +2,11 @@
  * Globals
  */
 
+@font-face {
+  font-family: emoji_font;
+  src: url("../fonts/emoji_font.otf") format("opentype");
+}
+
 /* Links */
 a,
 a:focus,
