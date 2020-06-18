@@ -23,7 +23,8 @@ describe("scenarios", () => {
       ];
       const urlString = url_generator.mitigationIntervalsToURL(
         "Czechia",
-        mitigationIntervals
+        mitigationIntervals,
+        undefined
       );
       expect(urlString).to.be.an("string").that.includes(interventionName);
     });
@@ -31,7 +32,8 @@ describe("scenarios", () => {
       const mitigationIntervals: url_generator.MitigationInterval[] = [];
       const urlString = url_generator.mitigationIntervalsToURL(
         "Czechia",
-        mitigationIntervals
+        mitigationIntervals,
+        undefined
       );
       expect(urlString).to.be.an("string");
     });

@@ -801,23 +801,6 @@ textarea {
   text-align: center;
 }
 
-div.tooltip {
-  position: absolute;
-  text-align: center;
-  width: 70px !important;
-  height: auto;
-  padding: 2px;
-  font: 12px sans-serif;
-  color: #fff;
-  background: #050547;
-  border: 1px solid #212121;
-  border-radius: 8px;
-  pointer-events: none;
-  background-color: #342e47 !important;
-  margin-left: 16px;
-  margin-top: -8px;
-}
-
 .overlay {
   fill: none;
   stroke: none;

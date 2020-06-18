@@ -7,18 +7,18 @@ import {
   FieldArrayRenderProps,
   useFormikContext,
 } from "formik";
+import * as moment from "moment";
 import * as React from "react";
 import DatePicker from "react-datepicker";
-import * as moment from "moment";
-import { INTERVENTION_INTERVAL_IN_MONTHS } from "./MitigationScenariosPage";
 
 import Modal from "../components/Modal";
+import AddIcon from "./../icons/add.svg";
+import TrashIcon from "./../icons/trash.svg";
 import { Measure, MeasureGroup, serialInterval } from "./measures";
 import MitigationCalculator, { SliderState } from "./MitigationCalculator";
 import { createInitialMitigation, Values } from "./MitigationForm";
-import MeasureDropdown from "./MeasureDropdown";
-import AddIcon from "./../icons/add.svg";
-import TrashIcon from "./../icons/trash.svg";
+import { INTERVENTION_INTERVAL_IN_MONTHS } from "./MitigationScenariosPage";
+import { MeasuresTooltip } from "./MitigationTable";
 
 export interface Props {
   index: number;
@@ -117,11 +117,20 @@ function MitigationIntervalItem({
         </div>
         <div className="col-md-2">
           <div className="form-group">
-            <MeasureDropdown
-              measures={values.mitigations[index].measures}
-              compliance={values.mitigations[index].compliance}
-              intervalIndex={index}
-            />
+            <label
+              className="d-md-none"
+              htmlFor={`mitigations.[${index}].name`}
+            >
+              Measures & impact <MeasuresTooltip />
+            </label>
+            <button
+              type="button"
+              className="btn btn-primary btn-block"
+              onClick={() => handleShowCalculatorClick(index)}
+              style={{ textTransform: "none" }}
+            >
+              Open configuration
+            </button>
           </div>
         </div>
         <div className="col-md-2">
@@ -170,15 +179,6 @@ function MitigationIntervalItem({
                 readOnly="readonly"
               />
             </div>
-            <p>
-              <button
-                type="button"
-                className="btn btn-link p-0"
-                onClick={() => handleShowCalculatorClick(index)}
-              >
-                Advanced settings
-              </button>
-            </p>
           </div>
         </div>
         <div className="col-md-4">
