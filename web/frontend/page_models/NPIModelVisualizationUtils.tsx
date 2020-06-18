@@ -193,10 +193,33 @@ export const createInterventionIcons = (NPIModel: NPIModel) => {
     },
   ];
 
+  // const mapTypeToIcon = (type: string) => {
+  //   const icons = {
+  //     'hospital': '<span style="color: red">\uf7f2</span>',
+  //     'mask': '<span style="color: black">\uf963</span>',
+  //     'vial': '<span style="color: mediumblue">\uf492</span>',
+  //     'ppl1': '\uf0c0',7
+  //     'ppl2': ''
+  //   }
+
+  //   ("\uf7f2", "tab:red"),  # hospital symbol
+  //   ("\uf963", "black"),  # mask
+  //   ("\uf492", "mediumblue"),  # vial
+  //   ("\uf0c0", "lightgrey"),  # ppl
+  //   ("\uf0c0", "grey"),  # ppl
+  //   ("\uf0c0", "black"),  # ppl
+  //   ("\uf07a", "tab:orange"),  # shop 1
+  //   ("\uf07a", "tab:red"),  # shop2
+  //   ("\uf19d", "black"),  # school
+  //   ("\uf965", "black")  # home
+  // }
+
   return {
     x: interventions.map((intervention) => new Date(intervention.date)),
     y: interventions.map((intervention) => maxValue / 2),
-    text: interventions.map((intervention) => "\uf7f2<br>\uf7f2"),
+    text: interventions.map(
+      (intervention) => "<span style='color:red'>\uf7f2</span><br>\uf7f2"
+    ),
     hovertext: interventions.map((intervention) => intervention.type),
     mode: "text",
     textfont: {
@@ -213,7 +236,7 @@ export const createInterventionIcons = (NPIModel: NPIModel) => {
   } as Plotly.Data;
 };
 
-export const createActiveCasesMarker = (reported: Reported) => {
+export const createActiveCasesMarkers = (reported: Reported) => {
   return {
     x: reported.points.map((singleReported) => new Date(singleReported.date)),
     y: reported.points.map((singleReported, index) => {
@@ -227,11 +250,11 @@ export const createActiveCasesMarker = (reported: Reported) => {
       return reported.points[index].confirmed;
     }),
     mode: "markers",
-    showlegend: false,
+    name: "Current cases",
   } as Plotly.Data;
 };
 
-export const createDeathsCasesMarker = (reported: Reported) => {
+export const createDeathsCasesMarkers = (reported: Reported) => {
   return {
     x: reported.points.map((singleReported) => new Date(singleReported.date)),
     y: reported.points.map((singleReported, index) => {
@@ -244,9 +267,9 @@ export const createDeathsCasesMarker = (reported: Reported) => {
       return reported.points[index].deaths;
     }),
     mode: "markers",
-    showlegend: false,
     marker: {
       color: "#c9d918",
     },
+    name: "Current deaths",
   } as Plotly.Data;
 };

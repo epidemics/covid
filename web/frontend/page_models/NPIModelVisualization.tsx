@@ -6,10 +6,10 @@ import { makeConfig, makeLayout } from '../components/graph-common';
 import { isTouchDevice } from '../helpers';
 import { Region } from '../models';
 import {
-  createActiveCasesMarker,
+  createActiveCasesMarkers,
   createDailyInfectedCasesTrace,
   createDailyInfectedDeathsTrace,
-  createDeathsCasesMarker,
+  createDeathsCasesMarkers,
   createInterventionIcons,
   createInterventionLines,
   createPredictedDeathsTrace,
@@ -97,8 +97,8 @@ export function NPIModelVisualization(props: ModelViewProps) {
       ...createPredictedNewCasesTrace(region.NPIModel),
       ...createPredictedDeathsTrace(region.NPIModel),
       createInterventionIcons(region.NPIModel),
-      createActiveCasesMarker(region.reported),
-      createDeathsCasesMarker(region.reported),
+      createActiveCasesMarkers(region.reported),
+      createDeathsCasesMarkers(region.reported),
     ];
   }
 
