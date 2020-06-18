@@ -66,6 +66,6 @@ export const createActiveCasesBars = (reported: Reported) => {
     type: "bar",
     yaxis: "y2",
     marker: { color: "rgba(239,108,0,0.1)" },
-    name: "Current cases",
+    name: "Daily new cases",
   } as Plotly.Data;
 };

@@ -56,7 +56,7 @@ export function REstimateSeriesView(props: ModelViewProps) {
   };
 
   layout.yaxis2 = {
-    title: "Current cases",
+    title: "Daily new cases",
     titlefont: { color: "#fff" },
     tickfont: { color: "#fff" },
     overlaying: "y",
