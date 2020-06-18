@@ -2,7 +2,14 @@ import * as chroma from "chroma-js";
 import * as d3 from "d3";
 import * as React from "react";
 
-import { Measure, MeasureGroup, range } from "./measures";
+import {
+  calculateHighCompliance,
+  calculateLowCompliance,
+  calculateMediumCompliance,
+  Measure,
+  MeasureGroup,
+  range,
+} from "./measures";
 
 //let scale = chroma.scale("PuBu");
 // let scale = chroma
@@ -277,6 +284,7 @@ function LabeledCheckbox({
 
 type CommonMeasureProps = {
   disabled: boolean;
+  sliderDisabled: boolean;
   rowStart: number;
 };
 
@@ -289,7 +297,15 @@ function SingleMeasure(
     dispatch: React.Dispatch<{ value?: number; checked?: number }>;
   }
 ) {
-  const { checked, measure, disabled, rowStart, dispatch, value } = props;
+  const {
+    checked,
+    measure,
+    disabled,
+    rowStart,
+    dispatch,
+    value,
+    sliderDisabled,
+  } = props;
   const row = rowStart;
 
   const subMeasure = props.subMeasure ?? false;
@@ -326,9 +342,9 @@ function SingleMeasure(
         sd={sd}
         initial={measure.mean}
         value={value}
-        disabled={!checked}
+        disabled={!checked || sliderDisabled}
         onChange={(value) => {
-          if (disabled) return;
+          if (disabled || sliderDisabled) return;
           dispatch({ value });
         }}
       />
@@ -370,6 +386,7 @@ function GroupedMeasures(
     group,
     checkCount,
     disabled,
+    sliderDisabled,
     values,
     rowStart: row,
     dispatch,
@@ -388,6 +405,7 @@ function GroupedMeasures(
     return (
       <SingleMeasure
         disabled={disabled}
+        sliderDisabled={sliderDisabled}
         key={i}
         subMeasure
         value={value}
@@ -458,6 +476,9 @@ type Props = {
 
 const MitigationCalculator = (props: Props) => {
   let { measures, onChange } = props;
+  const [compliance, setCompliance] = React.useState<
+    "high" | "medium" | "low" | "custom"
+  >("medium");
 
   React.useEffect(() => {
     document.getElementById("containmentContent")?.classList.remove("d-none");
@@ -544,6 +565,7 @@ const MitigationCalculator = (props: Props) => {
           checked={checked}
           values={value as Array<number>}
           disabled={false}
+          sliderDisabled={compliance !== "custom"}
           group={measureOrGroup}
           checkCount={checked}
           dispatch={(obj) => dispatch({ ...obj, idx: i })}
@@ -558,6 +580,7 @@ const MitigationCalculator = (props: Props) => {
           rowStart={row}
           value={value as number}
           disabled={false}
+          sliderDisabled={compliance !== "custom"}
           measure={measureOrGroup}
           checked={checked != 0}
           dispatch={(obj) => {
@@ -569,6 +592,29 @@ const MitigationCalculator = (props: Props) => {
       return item;
     }
   });
+
+  const handleComplianceClick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value as "high" | "medium" | "low" | "custom";
+    let newState: SliderState[] = [];
+
+    if (value === "low") {
+      newState = calculateLowCompliance(state);
+    }
+
+    if (value === "high") {
+      newState = calculateHighCompliance(state);
+    }
+
+    if (value === "medium") {
+      newState = calculateMediumCompliance(state);
+    }
+
+    newState.forEach((sliderState, idx) => {
+      dispatch({ idx, ...sliderState });
+    });
+
+    setCompliance(value);
+  };
 
   // function setR(R: number) {
   //   setGrowthRate(1 + Math.log(R) / serialInterval);
@@ -591,6 +637,65 @@ const MitigationCalculator = (props: Props) => {
         </div>
         <div style={{ gridColumn: "3 / span 2" }}>
           <b>Impact on R, the reproductive number</b>
+          <div className="py-2" style={{ display: "flex" }}>
+            <span className="pr-3">Compliance</span>
+            <div className="form-check form-check-inline">
+              <input
+                className="form-check-input"
+                type="radio"
+                name="inlineRadioOptions"
+                id="low-compliance"
+                value="low"
+                checked={compliance === "low"}
+                onChange={handleComplianceClick}
+              />
+              <label className="form-check-label" htmlFor="low-compliance">
+                Low
+              </label>
+            </div>
+            <div className="form-check form-check-inline">
+              <input
+                className="form-check-input"
+                type="radio"
+                name="inlineRadioOptions"
+                id="medium-compliance"
+                checked={compliance === "medium"}
+                value="medium"
+                onChange={handleComplianceClick}
+              />
+              <label className="form-check-label" htmlFor="medium-compliance">
+                Medium
+              </label>
+            </div>
+            <div className="form-check form-check-inline">
+              <input
+                className="form-check-input"
+                type="radio"
+                name="inlineRadioOptions"
+                id="high-compliance"
+                checked={compliance === "high"}
+                value="high"
+                onChange={handleComplianceClick}
+              />
+              <label className="form-check-label" htmlFor="high-compliance">
+                High
+              </label>
+            </div>
+            <div className="form-check form-check-inline">
+              <input
+                className="form-check-input"
+                type="radio"
+                name="inlineRadioOptions"
+                id="custom-compliance"
+                checked={compliance === "custom"}
+                value="custom"
+                onChange={handleComplianceClick}
+              />
+              <label className="form-check-label" htmlFor="custom-compliance">
+                Custom
+              </label>
+            </div>
+          </div>
         </div>
         {elems}
         <div style={{ gridColumn: "1 / span 2", gridRow: row }}>

@@ -22,10 +22,20 @@ export class Reported {
         confirmed: +obj.Confirmed[i],
       });
     }
+    this.points.sort(function (a, b): any {
+      return a.date.getTime() - b.date.getTime();
+    });
   }
 
   get last() {
     let i = this.points.length - 1;
     return this.points[i - 1];
+  }
+
+  get lastIncrement() {
+    if (this.points.length < 2) return 0;
+
+    let i = this.points.length - 1;
+    return this.points[i].confirmed - this.points[i - 1].confirmed;
   }
 }
