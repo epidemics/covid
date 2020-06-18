@@ -1,5 +1,6 @@
 import theano.tensor as T
 
+
 def shift_right(t, dist, axis, pad=0.0):
     """
     Return the signal shifted by dist along given axis, padded by `pad`.

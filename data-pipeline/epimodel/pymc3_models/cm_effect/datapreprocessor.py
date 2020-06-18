@@ -37,8 +37,9 @@ class DataPreprocessor:
 
     def preprocess_data(self, data_path):
         # load data
-        df = pd.read_csv(data_path, parse_dates=["Date"], infer_datetime_format=True).set_index(
-            ["Country Code", "Date"])
+        df = pd.read_csv(
+            data_path, parse_dates=["Date"], infer_datetime_format=True
+        ).set_index(["Country Code", "Date"])
         Ds = list(df.index.levels[1])
         nDs = len(Ds)
 
@@ -52,7 +53,7 @@ class DataPreprocessor:
 
         if self.drop_HS:
             logger.info("Dropping Healthcare Infection Control")
-            df = df.drop('Healthcare Infection Control', axis=1)
+            df = df.drop("Healthcare Infection Control", axis=1)
 
         countermeasures = list(df.columns[4:])
         num_countermeasures = len(countermeasures)
@@ -71,7 +72,9 @@ class DataPreprocessor:
                 deaths[r_i, d_i] = df.loc[(r, d)]["Deaths"]
                 active[r_i, d_i] = df.loc[(r, d)]["Active"]
 
-                active_countermeasures[r_i, :, :] = df.loc[r].loc[Ds][countermeasures].values.T
+                active_countermeasures[r_i, :, :] = (
+                    df.loc[r].loc[Ds][countermeasures].values.T
+                )
 
         # preprocess data
         confirmed[confirmed < self.min_confirmed] = np.nan
@@ -87,11 +90,21 @@ class DataPreprocessor:
         logger.info("Performing Smoothing")
         if self.smooth:
             smoothed_new_cases = np.around(
-                ss.convolve2d(new_cases, 1 / self.N_smooth * np.ones(shape=(1, self.N_smooth)), boundary="symm",
-                              mode="same"))
+                ss.convolve2d(
+                    new_cases,
+                    1 / self.N_smooth * np.ones(shape=(1, self.N_smooth)),
+                    boundary="symm",
+                    mode="same",
+                )
+            )
             smoothed_new_deaths = np.around(
-                ss.convolve2d(new_deaths, 1 / self.N_smooth * np.ones(shape=(1, self.N_smooth)), boundary="symm",
-                              mode="same"))
+                ss.convolve2d(
+                    new_deaths,
+                    1 / self.N_smooth * np.ones(shape=(1, self.N_smooth)),
+                    boundary="symm",
+                    mode="same",
+                )
+            )
             for r in range(nRs):
                 # if the country has too few deaths, ignore
                 if deaths[r, -1] < 50:
@@ -117,31 +130,33 @@ class DataPreprocessor:
         deaths = np.ma.masked_invalid(deaths.astype(theano.config.floatX))
         new_deaths = np.ma.masked_invalid(new_deaths.astype(theano.config.floatX))
         new_cases = np.ma.masked_invalid(new_cases.astype(theano.config.floatX))
-        return PreprocessedData(active,
-                                confirmed,
-                                active_countermeasures,
-                                countermeasures,
-                                sorted_regions,
-                                Ds,
-                                deaths,
-                                new_deaths,
-                                new_cases,
-                                region_full_names)
+        return PreprocessedData(
+            active,
+            confirmed,
+            active_countermeasures,
+            countermeasures,
+            sorted_regions,
+            Ds,
+            deaths,
+            new_deaths,
+            new_cases,
+            region_full_names,
+        )
 
 
 class PreprocessedData:
     def __init__(
-            self,
-            Active: np.ndarray,
-            Confirmed: np.ndarray,
-            ActiveCMs: np.ndarray,
-            CMs: List[str],
-            Rs: List[str],
-            Ds: List[Timestamp],
-            Deaths: np.ndarray,
-            NewDeaths: np.ndarray,
-            NewCases: np.ndarray,
-            RNames: np.ndarray
+        self,
+        Active: np.ndarray,
+        Confirmed: np.ndarray,
+        ActiveCMs: np.ndarray,
+        CMs: List[str],
+        Rs: List[str],
+        Ds: List[Timestamp],
+        Deaths: np.ndarray,
+        NewDeaths: np.ndarray,
+        NewCases: np.ndarray,
+        RNames: np.ndarray,
     ):
         self.Active = Active
         self.Confirmed = Confirmed
@@ -167,9 +182,13 @@ class PreprocessedData:
         reduced_regions_index = []
         for index, r in enumerate(self.Rs):
             if self.Deaths.data[index, -1] < min_num_deaths:
-                logger.warning(f"Region {r} removed since it has {self.Deaths[index, -1]} deaths on the last day")
+                logger.warning(
+                    f"Region {r} removed since it has {self.Deaths[index, -1]} deaths on the last day"
+                )
             elif np.isnan(self.Deaths.data[index, -1]):
-                logger.warning(f"Region {r} removed since it has {self.Deaths[index, -1]} deaths on the last day")
+                logger.warning(
+                    f"Region {r} removed since it has {self.Deaths[index, -1]} deaths on the last day"
+                )
             else:
                 reduced_regions.append(r)
                 reduced_regions_index.append(index)
@@ -204,4 +223,6 @@ class PreprocessedData:
                         # if the first day that the feature is on corresponds to a masked day. this is conservative
                         if np.isnan(self.Confirmed.data[r, nz[0]]):
                             self.ActiveCMs[r, f_i, :] = 0
-                            logger.warning(f"Region {self.Rs[r]} has feature {f} removed, since it is too early")
+                            logger.warning(
+                                f"Region {self.Rs[r]} has feature {f} removed, since it is too early"
+                            )

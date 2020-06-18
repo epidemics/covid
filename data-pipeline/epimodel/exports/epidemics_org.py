@@ -59,6 +59,7 @@ class WebExport:
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.DataFrame],
         npi_model: Optional[pd.DataFrame],
+        interventions: list,
     ):
         export_region = WebExportRegion(
             region,
@@ -75,6 +76,7 @@ class WebExport:
             r_estimates,
             hospital_capacity,
             npi_model,
+            interventions,
         )
         self.export_regions[region.Code] = export_region
         return export_region
@@ -151,6 +153,7 @@ class WebExportRegion:
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.DataFrame],
         npi_model: Optional[pd.DataFrame],
+        interventions: list,
     ):
         log.debug(f"Prepare WebExport: {region.Code}, {region.Name}")
 
@@ -170,6 +173,7 @@ class WebExportRegion:
             r_estimates,
             hospital_capacity,
             npi_model,
+            interventions,
         )
         # Extended data to be written in a separate per-region file
         if not models.empty and not simulation_specs.empty:
@@ -189,6 +193,7 @@ class WebExportRegion:
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.Series],
         npi_model: Optional[pd.DataFrame],
+        interventions: list,
     ) -> Dict[str, Dict[str, Any]]:
         data = {}
 
@@ -236,6 +241,8 @@ class WebExportRegion:
 
         if hospital_capacity is not None:
             data["Capacity"] = hospital_capacity.dropna().to_dict()
+
+        data["Interventions"] = interventions
 
         return data
 
@@ -536,6 +543,7 @@ def process_export(
     un_age_dist = inputs["age_distributions"].path
     r_estimates = inputs["r_estimates"].path
     hospital_capacity = inputs["hospital_capacity"].path
+    interventions = inputs["interventions"].path
 
     export_regions = sorted(config["export_regions"])
 
@@ -577,6 +585,8 @@ def process_export(
         keep_default_na=False,
         na_values=[""],
     )
+
+    interventions_dict = json.load(open(interventions))
 
     simulation_specs: pd.DataFrame = pd.DataFrame([])
     cummulative_active_df = pd.DataFrame([])
@@ -628,5 +638,6 @@ def process_export(
             get_df_else_none(r_estimates_df, code),
             get_df_else_none(hospital_capacity_df, code),
             get_df_else_none(npi_model_results_df, code),
+            interventions_dict.get(code, []),
         )
     return ex
