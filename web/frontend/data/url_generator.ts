@@ -57,11 +57,23 @@ export function mitigationIntervalsToURL(
       lastIncrement * (infectiousPeriodDays + testLag);
   }
 
-  let today = new Date();
-  today.setHours(0, 0, 0, 0);
+  base_scenario["scenarioData"]["data"]["epidemiological"][
+    "seasonalForcing"
+  ] = 0.4;
+
+  let start = new Date();
+  start.setHours(0, 0, 0, 0);
   base_scenario["scenarioData"]["data"]["simulation"]["simulationTimeRange"][
     "begin"
-  ] = today;
+  ] = start;
+
+  base_scenario["scenarioData"]["data"]["simulation"]["simulationTimeRange"][
+    "end"
+  ] = mitigationIntervals
+    .map((interval) => interval.timeRange.end)
+    .reduce(function (a, b) {
+      return a > b ? a : b;
+    });
 
   base_scenario["scenarioData"]["data"]["mitigation"][
     "mitigationIntervals"
