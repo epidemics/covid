@@ -1,8 +1,8 @@
-import * as Plotly from "plotly.js";
+import * as Plotly from 'plotly.js';
 
-import { v4 } from "../../common/spec";
-import { Reported } from "../models";
-import { NPIModel } from "../models/NPIModel";
+import { v4 } from '../../common/spec';
+import { Reported } from '../models';
+import { NPIModel } from '../models/NPIModel';
 
 const line = {
   shape: "spline",
@@ -42,6 +42,8 @@ export const createDailyInfectedCasesTrace = (NPIModel: NPIModel) => {
       color: "#41b4d1",
     },
     name: "Daily infected cases",
+    hovertext: "Daily infected cases",
+    hoverinfo: "y+x+text",
   } as Plotly.Data;
 
   return [aboveStdTrace, belowStdTrace, meanTrace];
@@ -73,7 +75,8 @@ export const createDailyInfectedDeathsTrace = (NPIModel: NPIModel) => {
     x: NPIModel.date,
     y: NPIModel.dailyInfectedDeathsMean,
     name: "Daily infected deaths",
-    hoverinfo: "y+name",
+    hovertext: "Daily infected deaths",
+    hoverinfo: "y+text",
   } as Plotly.Data;
 
   return [aboveStdTrace, belowStdTrace, meanTrace];
@@ -105,7 +108,8 @@ export const createPredictedNewCasesTrace = (NPIModel: NPIModel) => {
     x: NPIModel.date,
     y: NPIModel.predictedNewCasesMean,
     name: "Daily predicted new cases",
-    hoverinfo: "y+name",
+    hovertext: "Daily predicted new cases",
+    hoverinfo: "y+text",
   } as Plotly.Data;
 
   return [aboveStdTrace, belowStdTrace, meanTrace];
@@ -137,7 +141,8 @@ export const createPredictedDeathsTrace = (NPIModel: NPIModel) => {
     x: NPIModel.date,
     y: NPIModel.predictedDeathsMean,
     name: "Daily predicted deaths",
-    hoverinfo: "y+name",
+    hovertext: "Daily predicted deaths",
+    hoverinfo: "y+text",
   } as Plotly.Data;
 
   return [aboveStdTrace, belowStdTrace, meanTrace];
@@ -212,7 +217,7 @@ export const createInterventionIcons = (
 
   return {
     x: interventions.map((intervention) => new Date(intervention.dateStart)),
-    y: interventions.map((intervention) => maxValue / 1.5),
+    y: interventions.map((intervention) => maxValue / 1.3),
     text: interventions.map((intervention) =>
       intervention.type.length > 0
         ? intervention.type
@@ -260,7 +265,8 @@ export const createActiveCasesMarkers = (reported: Reported) => {
     }),
     mode: "markers",
     name: "Daily current cases",
-    hoverinfo: "y+name",
+    hovertext: "Daily current cases",
+    hoverinfo: "y+text",
   } as Plotly.Data;
 };
 
@@ -281,6 +287,7 @@ export const createDeathsCasesMarkers = (reported: Reported) => {
       color: "#c9d918",
     },
     name: "Daily current deaths",
-    hoverinfo: "y+name",
+    hovertext: "Daily current deaths",
+    hoverinfo: "y+text",
   } as Plotly.Data;
 };

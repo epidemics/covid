@@ -1,10 +1,10 @@
-import * as Plotly from "plotly.js";
-import * as React from "react";
-import Plot from "react-plotly.js";
+import * as Plotly from 'plotly.js';
+import * as React from 'react';
+import Plot from 'react-plotly.js';
 
-import { makeConfig, makeLayout } from "../components/graph-common";
-import { isTouchDevice } from "../helpers";
-import { Region } from "../models";
+import { makeConfig, makeLayout } from '../components/graph-common';
+import { isTouchDevice } from '../helpers';
+import { Region } from '../models';
 import {
   createActiveCasesMarkers,
   createDailyInfectedCasesTrace,
@@ -14,7 +14,7 @@ import {
   createInterventionLines,
   createPredictedDeathsTrace,
   createPredictedNewCasesTrace,
-} from "./NPIModelVisualizationUtils";
+} from './NPIModelVisualizationUtils';
 
 type ModelViewProps = {
   region: Region | null;
@@ -75,6 +75,8 @@ export function NPIModelVisualization(props: ModelViewProps) {
       region.NPIModel.date[0],
       region.NPIModel.date[region.NPIModel.date.length - 1],
     ];
+
+    layout.yaxis!.rangemode = "nonnegative";
 
     data = [
       ...createDailyInfectedCasesTrace(region.NPIModel),
