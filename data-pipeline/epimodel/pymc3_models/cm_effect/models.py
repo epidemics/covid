@@ -580,7 +580,7 @@ class CMCombinedModel(BaseCMModel):
                     "RecordedDeaths": deaths[self.ObservedDaysIndex],
                 }
             )
-            .set_index("date")
+            .set_index("Date")
             .sort_index()
         )
 
