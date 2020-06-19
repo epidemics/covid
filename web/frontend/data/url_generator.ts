@@ -2,6 +2,7 @@ import { stringify as url_encode } from "jsurl";
 import { stringify as query_encode } from "query-string";
 
 import scenarios_raw from "./scenarios.json";
+import { Region } from "../models";
 
 export const COVID19_SCENARIO_DOMAIN = "https://covid19-scenarios.org";
 
@@ -31,14 +32,49 @@ export function dataToURL(object: Record<string, any>): string {
 }
 
 const scenarios = (scenarios_raw as unknown) as Record<string, any>;
+
+const testLag = 2;
 export const scenarioNames = Object.keys(scenarios);
 
 export function mitigationIntervalsToURL(
   preset: string,
-  mitigationIntervals: MitigationInterval[]
+  mitigationIntervals: MitigationInterval[],
+  region: Region | undefined
 ): string {
   //no need to clone since the mitigations are always overwritten, but it might be cleaner to do so
   let base_scenario = scenarios[preset];
+
+  if (region !== undefined && region.reported !== undefined) {
+    let lastIncrement = region.reported.lastIncrement;
+    let infectiousPeriodDays =
+      base_scenario["scenarioData"]["data"]["epidemiological"][
+        "infectiousPeriodDays"
+      ];
+    base_scenario["scenarioData"]["data"]["population"][
+      "initialNumberOfCases"
+    ] =
+      region.reported.last.active +
+      lastIncrement * (infectiousPeriodDays + testLag);
+  }
+
+  base_scenario["scenarioData"]["data"]["epidemiological"][
+    "seasonalForcing"
+  ] = 0.4;
+
+  let start = new Date();
+  start.setHours(0, 0, 0, 0);
+  base_scenario["scenarioData"]["data"]["simulation"]["simulationTimeRange"][
+    "begin"
+  ] = start;
+
+  base_scenario["scenarioData"]["data"]["simulation"]["simulationTimeRange"][
+    "end"
+  ] = mitigationIntervals
+    .map((interval) => interval.timeRange.end)
+    .reduce(function (a, b) {
+      return a > b ? a : b;
+    });
+
   base_scenario["scenarioData"]["data"]["mitigation"][
     "mitigationIntervals"
   ] = mitigationIntervals.map((interval) => {

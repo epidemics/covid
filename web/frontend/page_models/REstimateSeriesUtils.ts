@@ -1,5 +1,7 @@
-import { REstimates } from "../models/rEstimates";
 import * as Plotly from "plotly.js";
+
+import { Reported } from "../models";
+import { REstimates } from "../models/rEstimates";
 
 export const createTrace = (rEstimates: REstimates) => {
   const aboveStdTrace = {
@@ -46,4 +48,24 @@ export const createTrace = (rEstimates: REstimates) => {
   } as Plotly.Data;
 
   return [aboveStdTrace, belowStdTrace, meanTrace];
+};
+
+export const createActiveCasesBars = (reported: Reported) => {
+  return {
+    x: reported.points.map((singleReported) => new Date(singleReported.date)),
+    y: reported.points.map((singleReported, index) => {
+      if (index >= 1) {
+        return (
+          reported.points[index].confirmed -
+          reported.points[index - 1].confirmed
+        );
+      }
+
+      return reported.points[index].confirmed;
+    }),
+    type: "bar",
+    yaxis: "y2",
+    marker: { color: "rgba(239,108,0,0.1)" },
+    name: "Daily new cases",
+  } as Plotly.Data;
 };
