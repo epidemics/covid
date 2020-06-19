@@ -1,11 +1,11 @@
-import { v4 } from '../../common/spec';
-import { Thunk } from './datastore';
-import { Estimation } from './estimation';
-import { NPIModel } from './NPIModel';
-import { Rates } from './rates';
-import { Reported } from './reported';
-import { REstimates } from './rEstimates';
-import { Scenarios } from './scenario';
+import { v4 } from "../../common/spec";
+import { Thunk } from "./datastore";
+import { Estimation } from "./estimation";
+import { NPIModel } from "./NPIModel";
+import { Rates } from "./rates";
+import { Reported } from "./reported";
+import { REstimates } from "./rEstimates";
+import { Scenarios } from "./scenario";
 
 type Current = {
   infected?: number;

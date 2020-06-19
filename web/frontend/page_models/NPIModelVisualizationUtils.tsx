@@ -1,8 +1,8 @@
-import * as Plotly from 'plotly.js';
+import * as Plotly from "plotly.js";
 
-import { v4 } from '../../common/spec';
-import { Reported } from '../models';
-import { NPIModel } from '../models/NPIModel';
+import { v4 } from "../../common/spec";
+import { Reported } from "../models";
+import { NPIModel } from "../models/NPIModel";
 
 const line = {
   shape: "spline",
