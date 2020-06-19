@@ -73,6 +73,7 @@ export const createDailyInfectedDeathsTrace = (NPIModel: NPIModel) => {
     x: NPIModel.date,
     y: NPIModel.dailyInfectedDeathsMean,
     name: "Daily infected deaths",
+    hoverinfo: "y+name",
   } as Plotly.Data;
 
   return [aboveStdTrace, belowStdTrace, meanTrace];
@@ -104,6 +105,7 @@ export const createPredictedNewCasesTrace = (NPIModel: NPIModel) => {
     x: NPIModel.date,
     y: NPIModel.predictedNewCasesMean,
     name: "Daily predicted new cases",
+    hoverinfo: "y+name",
   } as Plotly.Data;
 
   return [aboveStdTrace, belowStdTrace, meanTrace];
@@ -135,6 +137,7 @@ export const createPredictedDeathsTrace = (NPIModel: NPIModel) => {
     x: NPIModel.date,
     y: NPIModel.predictedDeathsMean,
     name: "Daily predicted deaths",
+    hoverinfo: "y+name",
   } as Plotly.Data;
 
   return [aboveStdTrace, belowStdTrace, meanTrace];
@@ -257,6 +260,7 @@ export const createActiveCasesMarkers = (reported: Reported) => {
     }),
     mode: "markers",
     name: "Daily current cases",
+    hoverinfo: "y+name",
   } as Plotly.Data;
 };
 
@@ -277,5 +281,6 @@ export const createDeathsCasesMarkers = (reported: Reported) => {
       color: "#c9d918",
     },
     name: "Daily current deaths",
+    hoverinfo: "y+name",
   } as Plotly.Data;
 };
