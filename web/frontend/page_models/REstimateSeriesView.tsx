@@ -61,6 +61,7 @@ export function REstimateSeriesView(props: ModelViewProps) {
     tickfont: { color: "#fff" },
     overlaying: "y",
     side: "right",
+    rangemode: "nonnegative",
   };
 
   if (isTouchDevice()) {
