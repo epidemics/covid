@@ -53,8 +53,8 @@ export function NPIModelVisualization(props: ModelViewProps) {
   layout.yaxis!.type = "linear";
   layout.showlegend = true;
   layout.legend = {
-    x: 1,
-    xanchor: "right",
+    x: 0,
+    xanchor: "left",
     y: 1,
     yanchor: "top",
     bgcolor: "#22202888",
@@ -62,21 +62,6 @@ export function NPIModelVisualization(props: ModelViewProps) {
       color: "#fff",
     },
   };
-
-  layout.images = [
-    {
-      x: 0.5,
-      y: 50,
-      sizex: 0.2,
-      sizey: 0.2,
-      source:
-        "https://raw.githubusercontent.com/cldougl/plot_images/add_r_img/vox.png",
-      xanchor: "right",
-      xref: "paper",
-      yanchor: "bottom",
-      yref: "y",
-    },
-  ];
 
   if (isTouchDevice()) {
     config.scrollZoom = true;

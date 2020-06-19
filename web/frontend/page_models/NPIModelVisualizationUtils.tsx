@@ -209,7 +209,7 @@ export const createInterventionIcons = (
 
   return {
     x: interventions.map((intervention) => new Date(intervention.dateStart)),
-    y: interventions.map((intervention) => maxValue / 2),
+    y: interventions.map((intervention) => maxValue / 1.5),
     text: interventions.map((intervention) =>
       intervention.type.length > 0
         ? intervention.type
@@ -256,7 +256,7 @@ export const createActiveCasesMarkers = (reported: Reported) => {
       return reported.points[index].confirmed;
     }),
     mode: "markers",
-    name: "Current cases",
+    name: "Daily current cases",
   } as Plotly.Data;
 };
 
@@ -276,6 +276,6 @@ export const createDeathsCasesMarkers = (reported: Reported) => {
     marker: {
       color: "#c9d918",
     },
-    name: "Current deaths",
+    name: "Daily current deaths",
   } as Plotly.Data;
 };
