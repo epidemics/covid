@@ -1,5 +1,6 @@
 import * as Plotly from 'plotly.js';
 
+import { v4 } from '../../common/spec';
 import { Reported } from '../models';
 import { NPIModel } from '../models/NPIModel';
 
@@ -139,38 +140,26 @@ export const createPredictedDeathsTrace = (NPIModel: NPIModel) => {
   return [aboveStdTrace, belowStdTrace, meanTrace];
 };
 
-export const createInterventionLines = (NPIModel: NPIModel) => {
-  const interventions = [
-    {
-      type: "Gatherings banned (100)",
-      date: "2020-03-22T00:00:00+00:00",
-    },
-    {
-      type: "Gatherings banned (100)",
-      date: "2020-02-22T00:00:00+00:00",
-    },
-    {
-      type: "Gatherings banned (100)",
-      date: "2020-04-22T00:00:00+00:00",
-    },
-  ];
-
+export const createInterventionLines = (interventions: v4.Intervention[]) => {
   return interventions.map((intervention) => ({
     type: "line",
-    x0: new Date(intervention.date),
+    x0: new Date(intervention.dateStart),
     y0: 0,
-    x1: new Date(intervention.date),
+    x1: new Date(intervention.dateStart),
     yref: "paper",
     y1: 1,
     line: {
-      color: "rgb(55, 128, 191)",
-      width: 2,
+      color: "rgba(55, 128, 191, 0.5)",
+      width: 1,
     },
     layer: "below",
   })) as Plotly.Shape[];
 };
 
-export const createInterventionIcons = (NPIModel: NPIModel) => {
+export const createInterventionIcons = (
+  NPIModel: NPIModel,
+  interventions: v4.Intervention[]
+) => {
   const maxValue = [
     ...NPIModel.predictedDeathsUpper,
     ...NPIModel.predictedNewCasesUpper,
@@ -178,49 +167,42 @@ export const createInterventionIcons = (NPIModel: NPIModel) => {
     ...NPIModel.dailyInfectedCasesUpper,
   ].reduce((acc, cur) => Math.max(acc, cur), 0);
 
-  const interventions = [
-    {
-      type: "hospital",
-      date: "2020-03-22T00:00:00+00:00",
-    },
-    {
-      type: "ppl",
-      date: "2020-02-22T00:00:00+00:00",
-    },
-    {
-      type: "school",
-      date: "2020-04-22T00:00:00+00:00",
-    },
-  ];
+  const mapTypeToIcon = (type: string) => {
+    const icons = {
+      "Healthcare Infection Control": '<span style="color: red">\uf7f2</span>',
+      "Mask Wearing": '<span style="color: black">\uf963</span>',
+      "Symptomatic Testing": '<span style="color: mediumblue">\uf492</span>',
+      "Gatherings <1000": '<span style="color: lightgrey">\uf0c0</span>',
+      "Gatherings <100": '<span style="color: grey">\uf0c0</span>',
+      "Gatherings <10": '<span style="color: black">\uf0c0</span>',
+      "Some Businesses Suspended": '<span style="color: orange">\uf07a</span>',
+      "Most Businesses Suspended": '<span style="color: red">\uf07a</span>',
+      "School Closure": '<span style="color: black">\uf19d</span>',
+      "Stay Home Order": '<span style=color: black">\uf965</span>',
+      X: '<span style=color: lightgrey">X</span>',
+    } as {
+      [key: string]: string;
+    };
 
-  // const mapTypeToIcon = (type: string) => {
-  //   const icons = {
-  //     'hospital': '<span style="color: red">\uf7f2</span>',
-  //     'mask': '<span style="color: black">\uf963</span>',
-  //     'vial': '<span style="color: mediumblue">\uf492</span>',
-  //     'ppl1': '\uf0c0',7
-  //     'ppl2': ''
-  //   }
-
-  //   ("\uf7f2", "tab:red"),  # hospital symbol
-  //   ("\uf963", "black"),  # mask
-  //   ("\uf492", "mediumblue"),  # vial
-  //   ("\uf0c0", "lightgrey"),  # ppl
-  //   ("\uf0c0", "grey"),  # ppl
-  //   ("\uf0c0", "black"),  # ppl
-  //   ("\uf07a", "tab:orange"),  # shop 1
-  //   ("\uf07a", "tab:red"),  # shop2
-  //   ("\uf19d", "black"),  # school
-  //   ("\uf965", "black")  # home
-  // }
+    return icons[type];
+  };
 
   return {
-    x: interventions.map((intervention) => new Date(intervention.date)),
+    x: interventions.map((intervention) => new Date(intervention.dateStart)),
     y: interventions.map((intervention) => maxValue / 2),
-    text: interventions.map(
-      (intervention) => "<span style='color:red'>\uf7f2</span><br>\uf7f2"
+    text: interventions.map((intervention) =>
+      intervention.type.length > 0
+        ? intervention.type.reduce(
+            (acc, type) => `${acc}<br>${mapTypeToIcon(type)}`,
+            ""
+          )
+        : mapTypeToIcon("X")
     ),
-    hovertext: interventions.map((intervention) => intervention.type),
+    hovertext: interventions.map((intervention) =>
+      intervention.type.length > 0
+        ? intervention.type.reduce((acc, type) => `${acc}<br>${type}`, "")
+        : "All restriction canceled"
+    ),
     mode: "text",
     textfont: {
       color: "#fff",
@@ -229,7 +211,6 @@ export const createInterventionIcons = (NPIModel: NPIModel) => {
     hoverlabel: {
       font: {
         color: "#fff",
-        family: "emoji_font",
       },
     },
     showlegend: false,

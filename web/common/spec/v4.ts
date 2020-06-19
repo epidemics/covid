@@ -27,6 +27,7 @@ export namespace v4 {
       Foretold?: Foretold;
       REstimates?: REstimates;
       NPIModel?: NPIModel;
+      Interventions?: Intervention[];
       Timezones: string[];
       AgeDist?: { [bracket: string]: number };
       TracesV3?: string;
@@ -82,6 +83,12 @@ export namespace v4 {
     PredictedNewCases_upper: number[];
     RecordedDeaths: (number | null)[];
     RecordedNewCases: (number | null)[];
+  }
+
+  export interface Intervention {
+    type: string[];
+    dateStart: string;
+    dateEnd: string;
   }
 
   type NumberLike = string | number;

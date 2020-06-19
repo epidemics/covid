@@ -84,8 +84,8 @@ export function NPIModelVisualization(props: ModelViewProps) {
   }
 
   let data: Array<Plotly.Data> = [];
-  if (region && region.NPIModel && region.reported) {
-    layout.shapes = createInterventionLines(region?.NPIModel);
+  if (region && region.NPIModel && region.reported && region.interventions) {
+    layout.shapes = createInterventionLines(region.interventions);
     layout.xaxis!.range = [
       region.NPIModel.date[0],
       region.NPIModel.date[region.NPIModel.date.length - 1],
@@ -96,7 +96,7 @@ export function NPIModelVisualization(props: ModelViewProps) {
       ...createDailyInfectedDeathsTrace(region.NPIModel),
       ...createPredictedNewCasesTrace(region.NPIModel),
       ...createPredictedDeathsTrace(region.NPIModel),
-      createInterventionIcons(region.NPIModel),
+      createInterventionIcons(region.NPIModel, region.interventions),
       createActiveCasesMarkers(region.reported),
       createDeathsCasesMarkers(region.reported),
     ];
