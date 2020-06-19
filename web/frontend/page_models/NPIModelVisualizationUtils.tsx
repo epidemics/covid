@@ -187,20 +187,45 @@ export const createInterventionIcons = (
     return icons[type];
   };
 
+  const mapTypeToOrder = (type: string) => {
+    const icons = {
+      "Healthcare Infection Control": 1,
+      "Mask Wearing": 2,
+      "Symptomatic Testing": 3,
+      "Gatherings <1000": 4,
+      "Gatherings <100": 5,
+      "Gatherings <10": 6,
+      "Some Businesses Suspended": 7,
+      "Most Businesses Suspended": 8,
+      "School Closure": 9,
+      "Stay Home Order": 10,
+      X: 11,
+    } as {
+      [key: string]: number;
+    };
+
+    return icons[type];
+  };
+
   return {
     x: interventions.map((intervention) => new Date(intervention.dateStart)),
     y: interventions.map((intervention) => maxValue / 2),
     text: interventions.map((intervention) =>
       intervention.type.length > 0
-        ? intervention.type.reduce(
-            (acc, type) => `${acc}<br>${mapTypeToIcon(type)}`,
-            ""
-          )
+        ? intervention.type
+            .sort((typeA, typeB) =>
+              mapTypeToOrder(typeA) > mapTypeToOrder(typeB) ? 1 : -1
+            )
+            .reduce((acc, type) => `${acc}<br>${mapTypeToIcon(type)}`, "")
         : mapTypeToIcon("X")
     ),
     hovertext: interventions.map((intervention) =>
       intervention.type.length > 0
-        ? intervention.type.reduce((acc, type) => `${acc}<br>${type}`, "")
+        ? intervention.type
+            .sort((typeA, typeB) =>
+              mapTypeToOrder(typeA) > mapTypeToOrder(typeB) ? 1 : -1
+            )
+            .reduce((acc, type) => `${acc}<br>${type}`, "")
         : "All restriction canceled"
     ),
     mode: "text",
