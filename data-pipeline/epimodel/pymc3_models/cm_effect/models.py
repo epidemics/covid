@@ -544,7 +544,7 @@ class CMCombinedModel(BaseCMModel):
             ed_output = dist.random()
         except Exception as ex:
             log.warning(
-                f"Region forward pass for region {region} failed for expected death", ex
+                f"Region forward pass for region {region} failed for expected death. Original exception: {ex}"
             )
             ed_output = np.ones_like(ids) * 10 ** -5
             ids = np.ones_like(ids) * 10 ** -5
