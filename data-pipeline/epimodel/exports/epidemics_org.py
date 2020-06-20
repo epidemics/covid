@@ -58,6 +58,8 @@ class WebExport:
         un_age_dist: Optional[pd.DataFrame],
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.DataFrame],
+        npi_model: Optional[pd.DataFrame],
+        interventions: list,
     ):
         export_region = WebExportRegion(
             region,
@@ -73,6 +75,8 @@ class WebExport:
             un_age_dist,
             r_estimates,
             hospital_capacity,
+            npi_model,
+            interventions,
         )
         self.export_regions[region.Code] = export_region
         return export_region
@@ -148,6 +152,8 @@ class WebExportRegion:
         un_age_dist: Optional[pd.DataFrame],
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.DataFrame],
+        npi_model: Optional[pd.DataFrame],
+        interventions: list,
     ):
         log.debug(f"Prepare WebExport: {region.Code}, {region.Name}")
 
@@ -166,6 +172,8 @@ class WebExportRegion:
             un_age_dist,
             r_estimates,
             hospital_capacity,
+            npi_model,
+            interventions,
         )
         # Extended data to be written in a separate per-region file
         if not models.empty and not simulation_specs.empty:
@@ -184,6 +192,8 @@ class WebExportRegion:
         un_age_dist: Optional[pd.DataFrame],
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.Series],
+        npi_model: Optional[pd.DataFrame],
+        interventions: list,
     ) -> Dict[str, Dict[str, Any]]:
         data = {}
 
@@ -223,8 +233,16 @@ class WebExportRegion:
                 **r_estimates[["MeanR", "StdR"]].to_dict(orient="list"),
             }
 
+        if npi_model is not None:
+            data["NPIModel"] = {
+                "Date": [x.isoformat() for x in npi_model.index],
+                **npi_model.replace({np.nan: None}).to_dict(orient="list"),
+            }
+
         if hospital_capacity is not None:
             data["Capacity"] = hospital_capacity.dropna().to_dict()
+
+        data["Interventions"] = interventions
 
         return data
 
@@ -525,6 +543,7 @@ def process_export(
     un_age_dist = inputs["age_distributions"].path
     r_estimates = inputs["r_estimates"].path
     hospital_capacity = inputs["hospital_capacity"].path
+    interventions = inputs["interventions"].path
 
     export_regions = sorted(config["export_regions"])
 
@@ -567,6 +586,8 @@ def process_export(
         na_values=[""],
     )
 
+    interventions_dict = json.load(open(interventions))
+
     simulation_specs: pd.DataFrame = pd.DataFrame([])
     cummulative_active_df = pd.DataFrame([])
     if batch_file is not None:
@@ -585,6 +606,15 @@ def process_export(
             hopkins_df,
             foretold_df,
         )
+
+    npi_model_results = inputs["npi_model"].path
+    npi_model_results_df: pd.DataFrame = pd.read_csv(
+        npi_model_results,
+        index_col=["Code", "Date"],
+        parse_dates=["Date"],
+        keep_default_na=False,
+        na_values=[""],
+    )
 
     for code in export_regions:
         reg: Region = rds[code]
@@ -607,5 +637,7 @@ def process_export(
             get_df_else_none(un_age_dist_df, m49),
             get_df_else_none(r_estimates_df, code),
             get_df_else_none(hospital_capacity_df, code),
+            get_df_else_none(npi_model_results_df, code),
+            interventions_dict.get(code, []),
         )
     return ex
