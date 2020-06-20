@@ -563,10 +563,10 @@ class CMCombinedModel(BaseCMModel):
                 predicted_cases_result,
                 infected_deaths_result,
                 predicted_deaths_result,
-                pd.Series(pd.to_datetime(self.data.Ds), name="date"),
+                pd.Series(pd.to_datetime(self.data.Ds), name="Date"),
             ],
             axis="columns",
-        ).set_index("date")
+        ).set_index("Date")
 
         new_cases = self.data.NewCases[country_idx, :]
         deaths = self.data.NewDeaths[country_idx, :]
