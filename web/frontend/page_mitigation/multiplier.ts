@@ -13,6 +13,7 @@ function multiplyArrays(npis: Array<Array<number>>): Array<number> {
 }
 
 export function calculateMultiplier(measureNames: Array<string>): number {
+  if (measureNames.length === 0) return 1;
   let npis: Array<Array<number>> = measureNames.map((name) => npi_model[name]);
   let multiplied = multiplyArrays(npis);
   return median(multiplied);

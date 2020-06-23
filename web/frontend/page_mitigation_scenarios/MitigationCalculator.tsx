@@ -521,9 +521,9 @@ const MitigationCalculator = (props: Props) => {
 
     if (value instanceof Array) {
       checkedMeasures = checkedMeasures.concat(
-        (measureOrGroup as MeasureGroup).items.map(
-          (item) => `${measureOrGroup.name}:${item.name}`
-        )
+        (measureOrGroup as MeasureGroup).items
+          .slice(0, checked)
+          .map((item) => `${measureOrGroup.name}:${item.name}`)
       );
     } else if (checked > 0) {
       checkedMeasures.push(measureOrGroup.name);
