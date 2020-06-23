@@ -34,7 +34,7 @@ export const createInitialMitigation = (
     timeRange: {
       begin: date,
     },
-    transmissionReduction: "82 %",
+    transmissionReduction: "81 %",
     measures: measuresCheck,
     compliance: "medium" as "medium",
   };

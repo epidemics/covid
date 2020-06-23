@@ -1,3 +1,8 @@
+import npi_model_raw from "./npi_model.json";
+import { median, quantileSeq } from "mathjs";
+
+const npi_model = (npi_model_raw as unknown) as Record<string, Array<number>>;
+
 export interface Measure {
   name: string;
   median: number;
@@ -19,31 +24,43 @@ export const serialInterval = 6.5;
 export const measures: Array<Measure | MeasureGroup> = [
   {
     name: "Over 60% of the population wears masks",
-    median: 1.0828244724843894,
-    p90: 1.2579105358282887,
+    median: median(npi_model["Over 60% of the population wears masks"]),
+    p90: quantileSeq(
+      npi_model["Over 60% of the population wears masks"],
+      0.9
+    ) as number,
   },
   {
     name: "Symptomatic testing",
-    median: 0.8626712381356705,
-    p90: 0.9541108026778692,
+    median: median(npi_model["Symptomatic testing"]),
+    p90: quantileSeq(npi_model["Symptomatic testing"], 0.9) as number,
   },
   {
     name: "Gatherings limited to...",
     items: [
       {
         name: "1000 people",
-        median: 0.837107546217208,
-        p90: 0.9529527100595532,
+        median: median(npi_model["Gatherings limited to...:1000 people"]),
+        p90: quantileSeq(
+          npi_model["Gatherings limited to...:1000 people"],
+          0.9
+        ) as number,
       },
       {
         name: "100 people",
-        median: 0.9844874790945364,
-        p90: 1.1367275093592248,
+        median: median(npi_model["Gatherings limited to...:100 people"]),
+        p90: quantileSeq(
+          npi_model["Gatherings limited to...:100 people"],
+          0.9
+        ) as number,
       },
       {
         name: "10 people",
-        median: 0.8651432670350723,
-        p90: 0.9801024196663237,
+        median: median(npi_model["Gatherings limited to...:10 people"]),
+        p90: quantileSeq(
+          npi_model["Gatherings limited to...:10 people"],
+          0.9
+        ) as number,
       },
     ],
   },
@@ -52,25 +69,28 @@ export const measures: Array<Measure | MeasureGroup> = [
     items: [
       {
         name: "Some",
-        median: 0.731802101271166,
-        p90: 0.8520416129974865,
+        median: median(npi_model["Business suspended:Some"]),
+        p90: quantileSeq(npi_model["Business suspended:Some"], 0.9) as number,
       },
       {
         name: "Many",
-        median: 0.8985480933781107,
-        p90: 1.019286860321352,
+        median: median(npi_model["Business suspended:Many"]),
+        p90: quantileSeq(npi_model["Business suspended:Many"], 0.9) as number,
       },
     ],
   },
   {
     name: "Schools and universities closed",
-    median: 0.50070331726544,
-    p90: 0.5707762547286482,
+    median: median(npi_model["Schools and universities closed"]),
+    p90: quantileSeq(
+      npi_model["Schools and universities closed"],
+      0.9
+    ) as number,
   },
   {
     name: "Stay-at-home order",
-    median: 0.8564770444879921,
-    p90: 0.9644576331809939,
+    median: median(npi_model["Stay-at-home order"]),
+    p90: quantileSeq(npi_model["Stay-at-home order"], 0.9) as number,
     implies: [{ key: 2, value: 3 }, { key: 3, value: 2 }, { key: 4 }],
   },
 ];

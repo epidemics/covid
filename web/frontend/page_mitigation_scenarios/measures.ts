@@ -19,6 +19,9 @@ export const range = { min: 0.25, max: 1.25 };
 
 export const serialInterval = 6.5;
 
+export const highComplianceCoef = 0.8;
+export const lowComplianceCoef = 1.1;
+
 function mapMeasure(measure: Measure): MeasureCheck {
   return {
     name: measure.name,
@@ -43,7 +46,8 @@ export const measuresCheck: Array<MeasureCheck | MeasureGroup> = measures.map(
   }
 );
 
-export function calculateHighCompliance(
+export function calculateCompliance(
+  coef: number,
   stateToUpdate: SliderState[]
 ): SliderState[] {
   return stateToUpdate.map((sliderState, measureIndex) => {
@@ -53,63 +57,21 @@ export function calculateHighCompliance(
         value: sliderState.value.map(
           (item, itemIndex) =>
             (measuresCheck[measureIndex] as MeasureGroup).items[itemIndex]
-              .median * 0.8
+              .median * coef
         ),
       };
     } else {
       return {
         ...sliderState,
-        value: (measuresCheck[measureIndex] as MeasureCheck).median * 0.8,
+        value: (measuresCheck[measureIndex] as MeasureCheck).median * coef,
       };
     }
   });
 }
 
-export function calculateMediumCompliance(
-  stateToUpdate: SliderState[]
-): SliderState[] {
-  return stateToUpdate.map((sliderState, measureIndex) => {
-    if (Array.isArray(sliderState.value)) {
-      return {
-        ...sliderState,
-        value: sliderState.value.map(
-          (item, itemIndex) =>
-            (measuresCheck[measureIndex] as MeasureGroup).items[itemIndex]
-              .median
-        ),
-      };
-    } else {
-      return {
-        ...sliderState,
-        value: (measuresCheck[measureIndex] as MeasureCheck).median,
-      };
-    }
-  });
-}
-
-export function calculateLowCompliance(
-  stateToUpdate: SliderState[]
-): SliderState[] {
-  return stateToUpdate.map((sliderState, measureIndex) => {
-    if (Array.isArray(sliderState.value)) {
-      return {
-        ...sliderState,
-        value: sliderState.value.map((item, itemIndex) =>
-          Math.min(
-            (measuresCheck[measureIndex] as MeasureGroup).items[itemIndex]
-              .median * 1.1,
-            1
-          )
-        ),
-      };
-    } else {
-      return {
-        ...sliderState,
-        value: Math.min(
-          (measuresCheck[measureIndex] as MeasureCheck).median * 1.1,
-          1
-        ),
-      };
-    }
-  });
-}
+export let calculateLowCompliance = (stateToUpdate: SliderState[]) =>
+  calculateCompliance(lowComplianceCoef, stateToUpdate);
+export let calculateMediumCompliance = (stateToUpdate: SliderState[]) =>
+  calculateCompliance(1, stateToUpdate);
+export let calculateHighCompliance = (stateToUpdate: SliderState[]) =>
+  calculateCompliance(highComplianceCoef, stateToUpdate);

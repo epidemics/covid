@@ -6,10 +6,13 @@ import {
   calculateHighCompliance,
   calculateLowCompliance,
   calculateMediumCompliance,
+  highComplianceCoef,
+  lowComplianceCoef,
   MeasureCheck,
   MeasureGroup,
   range,
 } from "./measures";
+import { calculateMultiplier } from "../page_mitigation/multiplier";
 
 //let scale = chroma.scale("PuBu");
 // let scale = chroma
@@ -284,7 +287,6 @@ function LabeledCheckbox({
 
 type CommonMeasureProps = {
   disabled: boolean;
-  sliderDisabled: boolean;
   rowStart: number;
 };
 
@@ -297,15 +299,7 @@ function SingleMeasure(
     dispatch: React.Dispatch<{ value?: number; checked?: number }>;
   }
 ) {
-  const {
-    checked,
-    measure,
-    disabled,
-    rowStart,
-    dispatch,
-    value,
-    sliderDisabled,
-  } = props;
+  const { checked, measure, disabled, rowStart, dispatch, value } = props;
   const row = rowStart;
 
   const subMeasure = props.subMeasure ?? false;
@@ -342,36 +336,14 @@ function SingleMeasure(
         sd={sd}
         initial={measure.median}
         value={value}
-        disabled={!checked || sliderDisabled}
-        onChange={(value) => {
-          if (disabled || sliderDisabled) return;
-          dispatch({ value });
+        disabled={true}
+        onChange={(_) => {
+          return;
         }}
       />
     </>
   );
 }
-
-const calculateMultiplier = (
-  state: SliderState[],
-  measures: (MeasureCheck | MeasureGroup)[]
-) => {
-  let multiplier = 1;
-
-  measures.forEach((measure, i) => {
-    const { value, checked } = state[i];
-
-    if (value instanceof Array) {
-      multiplier = value
-        .slice(0, checked)
-        .reduce((prev, cur) => prev * cur, multiplier);
-    } else if (checked > 0) {
-      multiplier *= value;
-    }
-  });
-
-  return multiplier;
-};
 
 function GroupedMeasures(
   props: CommonMeasureProps & {
@@ -386,7 +358,6 @@ function GroupedMeasures(
     group,
     checkCount,
     disabled,
-    sliderDisabled,
     values,
     rowStart: row,
     dispatch,
@@ -405,7 +376,6 @@ function GroupedMeasures(
     return (
       <SingleMeasure
         disabled={disabled}
-        sliderDisabled={sliderDisabled}
         key={i}
         subMeasure
         value={value}
@@ -476,9 +446,9 @@ type Props = {
 
 const MitigationCalculator = (props: Props) => {
   let { measures, onChange } = props;
-  const [compliance, setCompliance] = React.useState<
-    "high" | "medium" | "low" | "custom"
-  >("medium");
+  const [compliance, setCompliance] = React.useState<"high" | "medium" | "low">(
+    "medium"
+  );
 
   React.useEffect(() => {
     document.getElementById("containmentContent")?.classList.remove("d-none");
@@ -543,18 +513,20 @@ const MitigationCalculator = (props: Props) => {
     }
   );
 
-  let multiplier = 1;
   let row = 3;
+  let checkedMeasures: Array<string> = [];
 
   let elems = measures.map((measureOrGroup, i) => {
     let { checked, value } = state[i];
 
     if (value instanceof Array) {
-      multiplier = value
-        .slice(0, checked)
-        .reduce((prev, cur) => prev * cur, multiplier);
+      checkedMeasures = checkedMeasures.concat(
+        (measureOrGroup as MeasureGroup).items.map(
+          (item) => `${measureOrGroup.name}:${item.name}`
+        )
+      );
     } else if (checked > 0) {
-      multiplier *= value;
+      checkedMeasures.push(measureOrGroup.name);
     }
 
     if ("items" in measureOrGroup) {
@@ -565,7 +537,6 @@ const MitigationCalculator = (props: Props) => {
           checked={checked}
           values={value as Array<number>}
           disabled={false}
-          sliderDisabled={compliance !== "custom"}
           group={measureOrGroup}
           checkCount={checked}
           dispatch={(obj) => dispatch({ ...obj, idx: i })}
@@ -580,7 +551,6 @@ const MitigationCalculator = (props: Props) => {
           rowStart={row}
           value={value as number}
           disabled={false}
-          sliderDisabled={compliance !== "custom"}
           measure={measureOrGroup}
           checked={checked != 0}
           dispatch={(obj) => {
@@ -594,7 +564,7 @@ const MitigationCalculator = (props: Props) => {
   });
 
   const handleComplianceClick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value as "high" | "medium" | "low" | "custom";
+    const value = e.target.value as "high" | "medium" | "low";
     let newState: SliderState[] = [];
 
     if (value === "low") {
@@ -628,7 +598,18 @@ const MitigationCalculator = (props: Props) => {
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
   //let defaultRsd = 1.4; //(defaultRp95 - defaultR) / 1.5;
   //let [baselineR, setR] = React.useState(defaultR);
-
+  let multiplier = calculateMultiplier(checkedMeasures);
+  console.log(compliance);
+  switch (compliance) {
+    case "high":
+      multiplier *= Math.pow(highComplianceCoef, checkedMeasures.length);
+      break;
+    case "low":
+      multiplier *= Math.pow(lowComplianceCoef, checkedMeasures.length);
+      break;
+    default:
+      break;
+  }
   return (
     <>
       <div className="measure-calculator">
@@ -681,20 +662,6 @@ const MitigationCalculator = (props: Props) => {
                 High
               </label>
             </div>
-            <div className="form-check form-check-inline">
-              <input
-                className="form-check-input"
-                type="radio"
-                name="inlineRadioOptions"
-                id="custom-compliance"
-                checked={compliance === "custom"}
-                value="custom"
-                onChange={handleComplianceClick}
-              />
-              <label className="form-check-label" htmlFor="custom-compliance">
-                Custom
-              </label>
-            </div>
           </div>
         </div>
         {elems}
@@ -718,12 +685,7 @@ const MitigationCalculator = (props: Props) => {
           type="button"
           className="btn btn-primary mr-2"
           onClick={() =>
-            onChange(
-              Math.round(
-                (calculateMultiplier(state, measures) - 1) * 100 * 10
-              ) / 10,
-              state
-            )
+            onChange(Math.round((multiplier - 1) * 100 * 10) / 10, state)
           }
         >
           Apply

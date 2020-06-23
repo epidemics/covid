@@ -12,6 +12,7 @@ import {
 } from "./measures";
 import * as d3 from "d3";
 import { Alerts } from "../components/alerts";
+import { calculateMultiplier } from "./multiplier";
 
 //let scale = chroma.scale("PuBu");
 // let scale = chroma
@@ -335,10 +336,9 @@ function SingleMeasure(
         sd={sd}
         initial={measure.median}
         value={value}
-        disabled={!checked}
-        onChange={(value) => {
-          if (disabled) return;
-          dispatch({ value });
+        disabled={true}
+        onChange={(_) => {
+          return;
         }}
       />
     </>
@@ -509,18 +509,20 @@ export function Page(props: Props) {
     }
   );
 
-  let multiplier = 1;
+  let checkedMeasures: Array<string> = [];
   let row = 3;
 
   let elems = measures.map((measureOrGroup, i) => {
     let { checked, value } = state[i];
 
     if (value instanceof Array) {
-      multiplier = value
-        .slice(0, checked)
-        .reduce((prev, cur) => prev * cur, multiplier);
+      checkedMeasures = checkedMeasures.concat(
+        (measureOrGroup as MeasureGroup).items.map(
+          (item) => `${measureOrGroup.name}:${item.name}`
+        )
+      );
     } else if (checked > 0) {
-      multiplier *= value;
+      checkedMeasures.push(measureOrGroup.name);
     }
 
     if ("items" in measureOrGroup) {
@@ -569,6 +571,7 @@ export function Page(props: Props) {
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
   let defaultRsd = 1.4; //(defaultRp95 - defaultR) / 1.5;
   let [baselineR, setR] = React.useState(defaultR);
+  let multiplier = calculateMultiplier(checkedMeasures);
 
   return (
     <>
