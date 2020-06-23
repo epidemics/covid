@@ -2,7 +2,7 @@ import { Field, Form, Formik } from "formik";
 import * as React from "react";
 
 import { scenarioNames } from "../data/url_generator";
-import { Measure, MeasureGroup, measures } from "./measures";
+import { MeasureCheck, MeasureGroup, measuresCheck } from "./measures";
 import MitigationSchema from "./MitigationSchema";
 import { MitigationTable } from "./MitigationTable";
 
@@ -15,7 +15,7 @@ export type Values = {
       begin: Date;
     };
     transmissionReduction: string;
-    measures: (Measure | MeasureGroup)[];
+    measures: (MeasureCheck | MeasureGroup)[];
     compliance: "low" | "medium" | "high";
   }[];
 };
@@ -35,7 +35,7 @@ export const createInitialMitigation = (
       begin: date,
     },
     transmissionReduction: "82 %",
-    measures,
+    measures: measuresCheck,
     compliance: "medium" as "medium",
   };
 };

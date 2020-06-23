@@ -1,0 +1,10 @@
+ingress:
+  externalIpName: loadbalancer-paper
+
+web:
+  replicasCount: 1
+
+env:
+  staticUrl: "https://storage.googleapis.com/static-covid/static/paper"
+  nodeEnv: "paper"
+  defaultEpiforChannel: "main"

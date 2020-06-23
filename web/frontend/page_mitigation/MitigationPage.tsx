@@ -304,8 +304,8 @@ function SingleMeasure(
   const subMeasure = props.subMeasure ?? false;
 
   const { min, max } = range;
-  let { mean, p90 } = measure;
-  let sd = (p90 - mean) / 1.65;
+  let { median, p90 } = measure;
+  let sd = (p90 - median) / 1.65;
 
   return (
     <>
@@ -330,10 +330,10 @@ function SingleMeasure(
         min={min}
         max={max}
         format="percentage"
-        mean={mean}
+        mean={median}
         step={0.01}
         sd={sd}
-        initial={measure.mean}
+        initial={measure.median}
         value={value}
         disabled={!checked}
         onChange={(value) => {
@@ -496,12 +496,12 @@ export function Page(props: Props) {
       return measures.map((measureOrGroup) => {
         if ("items" in measureOrGroup) {
           return {
-            value: measureOrGroup.items.map((measure) => measure.mean),
+            value: measureOrGroup.items.map((measure) => measure.median),
             checked: measureOrGroup.items.length,
           };
         } else {
           return {
-            value: measureOrGroup.mean,
+            value: measureOrGroup.median,
             checked: 1,
           };
         }
@@ -565,7 +565,7 @@ export function Page(props: Props) {
   //   return Math.exp(serialInterval * (growth - 1));
   // }
 
-  let defaultR = 3.6; //growthToR(props.defaultOriginalGrowthRate.mean);
+  let defaultR = 3.8; //growthToR(props.defaultOriginalGrowthRate.mean);
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
   let defaultRsd = 1.4; //(defaultRp95 - defaultR) / 1.5;
   let [baselineR, setR] = React.useState(defaultR);

@@ -6,7 +6,7 @@ import {
   calculateHighCompliance,
   calculateLowCompliance,
   calculateMediumCompliance,
-  Measure,
+  MeasureCheck,
   MeasureGroup,
   range,
 } from "./measures";
@@ -290,7 +290,7 @@ type CommonMeasureProps = {
 
 function SingleMeasure(
   props: CommonMeasureProps & {
-    measure: Measure;
+    measure: MeasureCheck;
     checked: boolean;
     subMeasure?: boolean;
     value: number;
@@ -311,8 +311,8 @@ function SingleMeasure(
   const subMeasure = props.subMeasure ?? false;
 
   const { min, max } = range;
-  let { mean, p90 } = measure;
-  let sd = (p90 - mean) / 1.65;
+  let { median, p90 } = measure;
+  let sd = (p90 - median) / 1.65;
 
   return (
     <>
@@ -337,10 +337,10 @@ function SingleMeasure(
         min={min}
         max={max}
         format="percentage"
-        mean={mean}
+        mean={median}
         step={0.01}
         sd={sd}
-        initial={measure.mean}
+        initial={measure.median}
         value={value}
         disabled={!checked || sliderDisabled}
         onChange={(value) => {
@@ -354,7 +354,7 @@ function SingleMeasure(
 
 const calculateMultiplier = (
   state: SliderState[],
-  measures: (Measure | MeasureGroup)[]
+  measures: (MeasureCheck | MeasureGroup)[]
 ) => {
   let multiplier = 1;
 
@@ -469,7 +469,7 @@ export type SliderState = {
 };
 
 type Props = {
-  measures: Array<Measure | MeasureGroup>;
+  measures: Array<MeasureCheck | MeasureGroup>;
   onChange: (value: number, state: SliderState[]) => void;
   serialInterval: number;
 };
@@ -530,12 +530,12 @@ const MitigationCalculator = (props: Props) => {
       return measures.map((measureOrGroup) => {
         if ("items" in measureOrGroup) {
           return {
-            value: measureOrGroup.items.map((measure) => measure.mean),
+            value: measureOrGroup.items.map((measure) => measure.median),
             checked: measureOrGroup.items.filter((item) => item.check).length,
           };
         } else {
           return {
-            value: measureOrGroup.mean,
+            value: measureOrGroup.median,
             checked: measureOrGroup.check,
           };
         }

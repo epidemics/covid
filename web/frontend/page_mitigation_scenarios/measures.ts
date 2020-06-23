@@ -1,8 +1,9 @@
 import { SliderState } from "./MitigationCalculator";
+import { Measure, measures } from "../page_mitigation/measures";
 
-export interface Measure {
+export interface MeasureCheck {
   name: string;
-  mean: number;
+  median: number;
   p90: number;
   implies?: Array<{ key: number; value?: number }>;
   check: number;
@@ -10,7 +11,7 @@ export interface Measure {
 
 export interface MeasureGroup {
   name: string;
-  items: Array<Measure>;
+  items: Array<MeasureCheck>;
 }
 
 // the range of all the sliders
@@ -18,74 +19,29 @@ export const range = { min: 0.25, max: 1.25 };
 
 export const serialInterval = 6.5;
 
+function mapMeasure(measure: Measure): MeasureCheck {
+  return {
+    name: measure.name,
+    median: measure.median,
+    p90: measure.p90,
+    implies: measure.implies,
+    check: 1,
+  };
+}
+
 // the measures
-export const measures: Array<Measure | MeasureGroup> = [
-  {
-    name: "Over 60% of the population wears masks",
-    mean: 0.908,
-    p90: 0.735,
-    check: 1,
-  },
-  {
-    name: "Symptomatic testing",
-    mean: 0.904,
-    p90: 0.772,
-    check: 1,
-  },
-  {
-    name: "Gatherings limited to...",
-    items: [
-      {
-        name: "1000 people",
-        mean: 0.991,
-        p90: 0.8,
-        check: 1,
-      },
-      {
-        name: "100 people",
-        mean: 0.954,
-        p90: 0.758,
-        check: 1,
-      },
-      {
-        name: "10 people",
-        mean: 0.761,
-        p90: 0.627,
-        check: 1,
-      },
-    ],
-  },
-  {
-    name: "Business suspended",
-    items: [
-      {
-        name: "Some",
-        mean: 0.66,
-        p90: 0.528,
-        check: 1,
-      },
-      {
-        name: "Many",
-        mean: 0.831,
-        p90: 0.694,
-        check: 1,
-      },
-    ],
-  },
-  {
-    name: "Schools and universities closed",
-    mean: 0.667,
-    p90: 0.524,
-    check: 1,
-  },
-  {
-    name: "Stay-at-home order",
-    mean: 0.824,
-    p90: 0.685,
-    implies: [{ key: 2, value: 3 }, { key: 3, value: 2 }, { key: 4 }],
-    check: 1,
-  },
-];
+export const measuresCheck: Array<MeasureCheck | MeasureGroup> = measures.map(
+  (obj: MeasureCheck | MeasureGroup) => {
+    if ("items" in obj) {
+      return {
+        name: obj.name,
+        items: obj.items.map(mapMeasure),
+      };
+    } else {
+      return mapMeasure(obj);
+    }
+  }
+);
 
 export function calculateHighCompliance(
   stateToUpdate: SliderState[]
@@ -96,13 +52,14 @@ export function calculateHighCompliance(
         ...sliderState,
         value: sliderState.value.map(
           (item, itemIndex) =>
-            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean * 0.8
+            (measuresCheck[measureIndex] as MeasureGroup).items[itemIndex]
+              .median * 0.8
         ),
       };
     } else {
       return {
         ...sliderState,
-        value: (measures[measureIndex] as Measure).mean * 0.8,
+        value: (measuresCheck[measureIndex] as MeasureCheck).median * 0.8,
       };
     }
   });
@@ -117,13 +74,14 @@ export function calculateMediumCompliance(
         ...sliderState,
         value: sliderState.value.map(
           (item, itemIndex) =>
-            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean
+            (measuresCheck[measureIndex] as MeasureGroup).items[itemIndex]
+              .median
         ),
       };
     } else {
       return {
         ...sliderState,
-        value: (measures[measureIndex] as Measure).mean,
+        value: (measuresCheck[measureIndex] as MeasureCheck).median,
       };
     }
   });
@@ -138,8 +96,8 @@ export function calculateLowCompliance(
         ...sliderState,
         value: sliderState.value.map((item, itemIndex) =>
           Math.min(
-            (measures[measureIndex] as MeasureGroup).items[itemIndex].mean *
-              1.1,
+            (measuresCheck[measureIndex] as MeasureGroup).items[itemIndex]
+              .median * 1.1,
             1
           )
         ),
@@ -147,7 +105,10 @@ export function calculateLowCompliance(
     } else {
       return {
         ...sliderState,
-        value: Math.min((measures[measureIndex] as Measure).mean * 1.1, 1),
+        value: Math.min(
+          (measuresCheck[measureIndex] as MeasureCheck).median * 1.1,
+          1
+        ),
       };
     }
   });

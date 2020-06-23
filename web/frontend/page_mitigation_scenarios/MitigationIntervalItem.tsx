@@ -14,7 +14,7 @@ import DatePicker from "react-datepicker";
 import Modal from "../components/Modal";
 import AddIcon from "./../icons/add.svg";
 import TrashIcon from "./../icons/trash.svg";
-import { Measure, MeasureGroup, serialInterval } from "./measures";
+import { MeasureCheck, MeasureGroup, serialInterval } from "./measures";
 import MitigationCalculator, { SliderState } from "./MitigationCalculator";
 import { createInitialMitigation, Values } from "./MitigationForm";
 import { INTERVENTION_INTERVAL_IN_MONTHS } from "./MitigationScenariosPage";
@@ -77,7 +77,7 @@ function MitigationIntervalItem({
             items: newItems,
           };
         } else {
-          const measure = measureOrGroup as Measure;
+          const measure = measureOrGroup as MeasureCheck;
           return {
             ...measure,
             check: state[measureIndex].checked,
