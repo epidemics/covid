@@ -299,6 +299,10 @@ span.infections-confirmed {
   font-size: 24px;
 }
 
+.mitigation-subheading {
+  font-size: 20px;
+}
+
 .graph-column {
   width: 100%;
 }
