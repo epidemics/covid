@@ -11,3 +11,5 @@ import "./page_measures/MeasuresPage";
 import "./page_mitigation_scenarios/MitigationScenariosPage";
 
 import "./page_mitigation/MitigationPage";
+
+import "./page_mitigation_paper/MitigationPaperPage";
