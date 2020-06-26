@@ -1,11 +1,11 @@
-import * as Plotly from 'plotly.js';
-import * as React from 'react';
-import Plot from 'react-plotly.js';
+import * as Plotly from "plotly.js";
+import * as React from "react";
+import Plot from "react-plotly.js";
 
-import { makeConfig, makeLayout } from '../components/graph-common';
-import { isTouchDevice } from '../helpers';
-import { Region } from '../models';
-import { createActiveCasesBars, createTrace } from './REstimateSeriesUtils';
+import { makeConfig, makeLayout } from "../components/graph-common";
+import { isTouchDevice } from "../helpers";
+import { Region } from "../models";
+import { createActiveCasesBars, createTrace } from "./REstimateSeriesUtils";
 
 type ModelViewProps = {
   region: Region | null;
