@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import shutil
@@ -12,6 +13,8 @@ from luigi.util import inherits
 from epimodel import Level, RegionDataset, algorithms, imports
 from epimodel.exports.epidemics_org import process_export, upload_export
 from epimodel.gleam import Batch
+from epimodel.imports.interventions import create_intervetions_dict
+from epimodel.pymc3_models.cm_effect import run_model
 
 logger = logging.getLogger(__name__)
 
@@ -532,6 +535,8 @@ class WebExport(luigi.Task):
             "country_estimates": CountryEstimates(),
             "r_estimates": EstimateR(),
             "hospital_capacity": HospitalCapacity(),
+            "interventions": Interventions(),
+            "npi_model": NPIModel(),
             **RegionsDatasetSubroutine.requires(),
         }
         if self.automatic:
@@ -614,3 +619,55 @@ class WebUpload(luigi.Task):
     # requires httplib2, google-auth, google-api-python-client
     # from luigi.contrib.gcs import GCSTarget; return GCSTarget(self.gs_path)
     # if rewritten, then this task could be a regular luigi.Task
+
+
+class ModelData(luigi.ExternalTask):
+    """
+    The model data - merged JH with countermeasures
+    TODO: have a task that merges JH with countermeasures from another data source
+    """
+
+    data_file: str = luigi.Parameter(
+        description="Path to the input file relative to the configuration input directory",
+    )
+
+    def output(self):
+        return luigi.LocalTarget(self.data_file)
+
+
+class Interventions(luigi.ExternalTask):
+    """
+    Creates interventions json for model graphs visualization
+    """
+
+    path: str = luigi.Parameter(
+        description="Path to the json file with the interventions list",
+    )
+
+    def requires(self):
+        return {"model_data": ModelData()}
+
+    def run(self):
+        interventions = create_intervetions_dict(self.input()["model_data"].path)
+
+        with open(self.path, "wt") as f:
+            json.dump(interventions, f)
+        logger.info(f"Saved interventions to {self.path}")
+
+    def output(self):
+        return luigi.LocalTarget(self.path)
+
+
+class NPIModel(luigi.Task):
+    output_file: str = luigi.Parameter(
+        description="Path to the csv file with the model predictions",
+    )
+
+    def requires(self):
+        return {"model_data": ModelData()}
+
+    def output(self):
+        return luigi.LocalTarget(self.output_file)
+
+    def run(self):
+        run_model(self.input()["model_data"].path, self.output_file)
