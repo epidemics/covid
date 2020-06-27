@@ -412,7 +412,7 @@ function GroupedMeasures(
           label={group.name}
           id={`mitigation-calculator-group-${row}`}
           disabled={disabled}
-          checked={checkCount === group.items.length}
+          checked={checkCount > 0}
           onChange={(newValue) => {
             dispatch({ checked: newValue ? group.items.length : 0 });
           }}
@@ -427,7 +427,7 @@ function GroupedMeasures(
           gridRow: `${row + 1} / span ${measures.length - 1}`,
         }}
       >
-        The effectivity of these measures are cumulative
+        The effects of these measures are cumulative
       </div>
     </>
   );
@@ -581,31 +581,28 @@ export function Page(props: Props) {
 
       <hr />
       <p>
-        The following tool can be used to calculate the estimated effect of
-        various combinations of COVID countermeasures. On the left, measures and
-        measure groups can be toggled to factor into the calculation. On the
-        right, the impact on growth is displayed using coloured bands. The
-        impact estimates are based on our model combining a countermeasures
-        dataset and their empirically observed growth reduction. The impact of
-        each measure can be customized by the sliders to e.g. factor in
-        non-compliance. In measure groups, more stingent measures indicate the{" "}
-        <em>additional effect</em> on top of less stingent measures.{" "}
+        This tool can be used to calculate the estimated effect of various
+        combinations of nonpharmaceutical interventions (NPIs) against COVID-19
+        transmission. On the left, intervention and intervention groups can be
+        toggled on and off. On the right, the percentage reduction in Ris
+        displayed using coloured bands to indicate uncertainty. The NPI
+        effectiveness estimates are derived in [].
       </p>
 
       <hr />
       <div className="measure-calculator">
         <div style={{ gridColumn: "1 / span 2" }}>
-          <b>Measures</b>
+          <b>Nonpharmaceutical interventions</b>
         </div>
         <div style={{ gridColumn: "3 / span 2" }}>
-          <b>Impact on R, the reproductive number</b>
+          <b>Percentage reduction in R, the reproductive number</b>
         </div>
         {elems}
         <div style={{ gridColumn: "1 / span 2", gridRow: row++ }}>
           <b>Outcome</b>
         </div>
         <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
-          R without any measures
+          R without any NPIs (R_0)
         </div>
 
         <FancySlider
@@ -622,7 +619,7 @@ export function Page(props: Props) {
         ></FancySlider>
 
         <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
-          R with the above measures
+          R when the above NPIs are implemented
         </div>
 
         <FancySlider
@@ -637,7 +634,7 @@ export function Page(props: Props) {
         ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
-          <p>The measures result in a reduction in R of </p>
+          <p>The NPIs result in an average change in R of </p>
         </div>
         <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
           <b>{d3.format(".1%")(multiplier - 1)}</b>

@@ -39,26 +39,30 @@ export const measures: Array<Measure | MeasureGroup> = [
     name: "Gatherings limited to...",
     items: [
       {
-        name: "1000 people",
-        median: median(npi_model["Gatherings limited to...:1000 people"]),
+        name: "1000 people or less",
+        median: median(
+          npi_model["Gatherings limited to...:1000 people or less"]
+        ),
         p90: quantileSeq(
-          npi_model["Gatherings limited to...:1000 people"],
+          npi_model["Gatherings limited to...:1000 people or less"],
           0.9
         ) as number,
       },
       {
-        name: "100 people",
-        median: median(npi_model["Gatherings limited to...:100 people"]),
+        name: "100 people or less",
+        median: median(
+          npi_model["Gatherings limited to...:100 people or less"]
+        ),
         p90: quantileSeq(
-          npi_model["Gatherings limited to...:100 people"],
+          npi_model["Gatherings limited to...:100 people or less"],
           0.9
         ) as number,
       },
       {
-        name: "10 people",
-        median: median(npi_model["Gatherings limited to...:10 people"]),
+        name: "10 people or less",
+        median: median(npi_model["Gatherings limited to...:10 people or less"]),
         p90: quantileSeq(
-          npi_model["Gatherings limited to...:10 people"],
+          npi_model["Gatherings limited to...:10 people or less"],
           0.9
         ) as number,
       },
