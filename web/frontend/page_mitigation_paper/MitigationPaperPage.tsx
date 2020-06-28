@@ -584,7 +584,7 @@ export function Page(props: Props) {
         This tool can be used to calculate the estimated effect of various
         combinations of nonpharmaceutical interventions (NPIs) against COVID-19
         transmission. On the left, intervention and intervention groups can be
-        toggled on and off. On the right, the percentage reduction in Ris
+        toggled on and off. On the right, the percentage reduction in R is
         displayed using coloured bands to indicate uncertainty. The NPI
         effectiveness estimates are derived in [].
       </p>
@@ -602,7 +602,7 @@ export function Page(props: Props) {
           <b>Outcome</b>
         </div>
         <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
-          R without any NPIs (R_0)
+          R without any NPIs (R0)
         </div>
 
         <FancySlider
