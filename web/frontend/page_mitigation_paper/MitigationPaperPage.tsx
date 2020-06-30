@@ -29,7 +29,8 @@ function calculateBackground(
   min: number,
   max: number,
   thumbWidth: string,
-  scale: chroma.Scale
+  scale: chroma.Scale,
+  format?: "percentage" | "absolute"
 ): string {
   function getColor(z: number) {
     return scale(Math.exp((z * z) / -2)).css();
@@ -62,11 +63,15 @@ function calculateBackground(
     height: number,
     color: string,
     color2: string,
-    pos?: number
+    pos?: number,
+    w: number = 1
   ) {
-    let w = 1;
     let firstTick = pos ?? Math.ceil(min / interval) * interval;
+
     let offset = p((firstTick - min) / (max - min));
+    if (pos !== undefined) {
+      console.log(min);
+    }
 
     let tickSpace = p(interval / (max - min));
     // let tickGradient = `repeating-linear-gradient(to right,
@@ -104,7 +109,12 @@ function calculateBackground(
     addTicks(0.5, 0.2, dark, light);
     addTicks(1, 0.5, dark, light);
   }
-  addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1);
+
+  if (format === "percentage") {
+    addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1, 2);
+  } else {
+    addTicks(1, 1, dark, scale(0.4).desaturate().css(), 0, 2);
+  }
 
   return backgrounds.reverse().join(", ");
 }
@@ -144,7 +154,7 @@ function FancySlider({
     propFormat == "percentage"
       ? (x: number) => d3.format("+.0%")(x - 1)
       : (x: number) => x.toFixed(1);
-  let initial = propInitial ?? mean;
+  const [initial] = React.useState(propInitial ?? mean);
   let disabled = propDisabled ?? false;
   let min = Math.floor(propMin / step) * step;
   let max = Math.ceil(propMax / step) * step;
@@ -157,7 +167,8 @@ function FancySlider({
       propMin,
       propMax,
       onChange !== undefined ? "var(--thumb-width)" : "3px",
-      scale ?? chroma.scale("YlGnBu")
+      scale ?? chroma.scale("YlGnBu"),
+      propFormat
     );
   }, [onChange, mean, sd, min, max]);
 
@@ -223,8 +234,8 @@ function FancySlider({
         <input
           className="ruler measure-slider"
           type="range"
-          disabled={onChange === undefined}
           value={propValue ?? undefined}
+          disabled={onChange === undefined}
           min={propMin}
           max={propMax}
           step="any"
@@ -305,6 +316,7 @@ function SingleMeasure(
   const subMeasure = props.subMeasure ?? false;
 
   const { min, max } = range;
+
   let { median, p90 } = measure;
   let sd = (p90 - median) / 1.65;
 
@@ -619,7 +631,7 @@ export function Page(props: Props) {
           onChange={setR}
           mean={baselineR}
           sd={0}
-          max={defaultR + 3 * stdR}
+          max={8}
         ></FancySlider>
 
         <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
@@ -634,7 +646,7 @@ export function Page(props: Props) {
           mean={baselineR * multiplier}
           scale={chroma.scale("YlOrRd")}
           sd={stdR}
-          max={defaultR + 3 * stdR}
+          max={5}
         ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
@@ -642,9 +654,17 @@ export function Page(props: Props) {
           <p>
             Standard deviation calculated R when the above NPIs are implemented
           </p>
-          <p>Calculated R CI</p>
+          <p>Calculated R uncertainty interval 95 %</p>
         </div>
-        <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
+        <div
+          style={{
+            gridColumn: "4",
+            gridRow: row++,
+            justifySelf: "end",
+            width: 150,
+            textAlign: "right",
+          }}
+        >
           <p>
             <b>{d3.format(".1%")(multiplier - 1)}</b>
           </p>
