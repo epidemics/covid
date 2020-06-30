@@ -575,12 +575,8 @@ export function Page(props: Props) {
   const [baselineR, setR] = React.useState(defaultR);
 
   const stdR = multiplied ? std(multiplied.map((val) => val * baselineR)) : 0;
-  const ciRPossitive = multiplied
-    ? baselineR * multiplier + 1.96 * (stdR / multiplied.length)
-    : 0;
-  const ciRNegative = multiplied
-    ? baselineR * multiplier - 1.96 * (stdR / multiplied.length)
-    : 0;
+  const ciRPossitive = multiplied ? baselineR * (multiplier + 1.96 * stdR) : 0;
+  const ciRNegative = multiplied ? baselineR * (multiplier - 1.96 * stdR) : 0;
 
   return (
     <>
@@ -643,8 +639,10 @@ export function Page(props: Props) {
 
         <div style={{ gridColumn: "3", gridRow: row }}>
           <p>The NPIs result in an average change in R of </p>
-          <p>Standard deviation of R is</p>
-          <p>CI - TODO</p>
+          <p>
+            Standard deviation calculated R when the above NPIs are implemented
+          </p>
+          <p>Calculated R CI</p>
         </div>
         <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
           <p>
@@ -655,7 +653,7 @@ export function Page(props: Props) {
           </p>
           <p>
             <b>
-              {ciRNegative.toFixed(3)} - {ciRPossitive.toFixed(3)}
+              ({ciRNegative.toFixed(3)}, {ciRPossitive.toFixed(3)})
             </b>
           </p>
         </div>
