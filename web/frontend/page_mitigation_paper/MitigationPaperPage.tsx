@@ -69,9 +69,6 @@ function calculateBackground(
     let firstTick = pos ?? Math.ceil(min / interval) * interval;
 
     let offset = p((firstTick - min) / (max - min));
-    if (pos !== undefined) {
-      console.log(min);
-    }
 
     let tickSpace = p(interval / (max - min));
     // let tickGradient = `repeating-linear-gradient(to right,
