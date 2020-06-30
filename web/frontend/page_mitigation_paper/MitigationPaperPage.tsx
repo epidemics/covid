@@ -649,7 +649,7 @@ export function Page(props: Props) {
             <b>{d3.format(".1%")(multiplier - 1)}</b>
           </p>
           <p>
-            <b>{d3.format(".1")(stdR)}</b>
+            <b>{stdR.toFixed(3)}</b>
           </p>
           <p>
             <b>
