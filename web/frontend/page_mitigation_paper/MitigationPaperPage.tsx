@@ -29,8 +29,7 @@ function calculateBackground(
   min: number,
   max: number,
   thumbWidth: string,
-  scale: chroma.Scale,
-  format?: "percentage" | "absolute"
+  scale: chroma.Scale
 ): string {
   function getColor(z: number) {
     return scale(Math.exp((z * z) / -2)).css();
@@ -107,11 +106,7 @@ function calculateBackground(
     addTicks(1, 0.5, dark, light);
   }
 
-  if (format === "percentage") {
-    addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1, 2);
-  } else {
-    addTicks(1, 1, dark, scale(0.4).desaturate().css(), 0, 2);
-  }
+  addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1, 2);
 
   return backgrounds.reverse().join(", ");
 }
@@ -164,8 +159,7 @@ function FancySlider({
       propMin,
       propMax,
       onChange !== undefined ? "var(--thumb-width)" : "3px",
-      scale ?? chroma.scale("YlGnBu"),
-      propFormat
+      scale ?? chroma.scale("YlGnBu")
     );
   }, [onChange, mean, sd, min, max]);
 
@@ -643,15 +637,12 @@ export function Page(props: Props) {
           mean={baselineR * multiplier}
           scale={chroma.scale("YlOrRd")}
           sd={stdR}
-          max={5}
+          max={8}
         ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
           <p>The NPIs result in an average change in R of </p>
-          <p>
-            Standard deviation calculated R when the above NPIs are implemented
-          </p>
-          <p>Calculated R uncertainty interval 95 %</p>
+          <p>95% uncertainty interval for R</p>
         </div>
         <div
           style={{
@@ -664,9 +655,6 @@ export function Page(props: Props) {
         >
           <p>
             <b>{d3.format(".1%")(multiplier - 1)}</b>
-          </p>
-          <p>
-            <b>{stdR.toFixed(3)}</b>
           </p>
           <p>
             <b>
