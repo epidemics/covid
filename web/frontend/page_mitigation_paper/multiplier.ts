@@ -1,5 +1,6 @@
+import { dotMultiply } from "mathjs";
+
 import npi_model_raw from "./npi_model.json";
-import { dotMultiply, median } from "mathjs";
 
 const npi_model = (npi_model_raw as unknown) as Record<string, Array<number>>;
 
@@ -12,9 +13,11 @@ function multiplyArrays(npis: Array<Array<number>>): Array<number> {
   return result;
 }
 
-export function calculateMultiplier(measureNames: Array<string>): number {
-  if (measureNames.length === 0) return 1;
+export function calculateMultiplied(
+  measureNames: Array<string>
+): number[] | undefined {
+  if (measureNames.length === 0) return undefined;
   let npis: Array<Array<number>> = measureNames.map((name) => npi_model[name]);
   let multiplied = multiplyArrays(npis);
-  return median(multiplied);
+  return multiplied;
 }

@@ -1,18 +1,18 @@
+import * as chroma from "chroma-js";
+import * as d3 from "d3";
+import { median, std } from "mathjs";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import * as chroma from "chroma-js";
-
+import { Alerts } from "../components/alerts";
 import {
-  measures,
-  range,
   Measure,
   MeasureGroup,
+  measures,
+  range,
   serialInterval,
 } from "./measures";
-import * as d3 from "d3";
-import { Alerts } from "../components/alerts";
-import { calculateMultiplier } from "./multiplier";
+import { calculateMultiplied } from "./multiplier";
 
 //let scale = chroma.scale("PuBu");
 // let scale = chroma
@@ -567,11 +567,20 @@ export function Page(props: Props) {
   //   return Math.exp(serialInterval * (growth - 1));
   // }
 
-  let defaultR = 3.8; //growthToR(props.defaultOriginalGrowthRate.mean);
+  const defaultR = 3.8; //growthToR(props.defaultOriginalGrowthRate.mean);
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
-  let defaultRsd = 1.4; //(defaultRp95 - defaultR) / 1.5;
-  let [baselineR, setR] = React.useState(defaultR);
-  let multiplier = calculateMultiplier(checkedMeasures);
+  const multiplied = calculateMultiplied(checkedMeasures);
+  const multiplier = multiplied ? median(multiplied) : 1;
+
+  const [baselineR, setR] = React.useState(defaultR);
+
+  const stdR = multiplied ? std(multiplied.map((val) => val * baselineR)) : 0;
+  const ciRPossitive = multiplied
+    ? baselineR * multiplier + 1.96 * (stdR / multiplied.length)
+    : 0;
+  const ciRNegative = multiplied
+    ? baselineR * multiplier - 1.96 * (stdR / multiplied.length)
+    : 0;
 
   return (
     <>
@@ -612,10 +621,9 @@ export function Page(props: Props) {
           value={baselineR}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
           onChange={setR}
-          mean={defaultR}
-          scale={chroma.scale("YlOrRd")}
-          sd={defaultRsd}
-          max={defaultR + 3 * defaultRsd}
+          mean={baselineR}
+          sd={0}
+          max={defaultR + 3 * stdR}
         ></FancySlider>
 
         <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
@@ -627,17 +635,29 @@ export function Page(props: Props) {
           row={row++}
           value={baselineR * multiplier}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 3)}
-          mean={defaultR * multiplier}
+          mean={baselineR * multiplier}
           scale={chroma.scale("YlOrRd")}
-          sd={defaultRsd}
-          max={defaultR + 3 * defaultRsd}
+          sd={stdR}
+          max={defaultR + 3 * stdR}
         ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
           <p>The NPIs result in an average change in R of </p>
+          <p>Standard deviation of R is</p>
+          <p>CI - TODO</p>
         </div>
         <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
-          <b>{d3.format(".1%")(multiplier - 1)}</b>
+          <p>
+            <b>{d3.format(".1%")(multiplier - 1)}</b>
+          </p>
+          <p>
+            <b>{d3.format(".1")(stdR)}</b>
+          </p>
+          <p>
+            <b>
+              {ciRNegative.toFixed(3)} - {ciRPossitive.toFixed(3)}
+            </b>
+          </p>
         </div>
       </div>
       <hr />
