@@ -575,8 +575,8 @@ export function Page(props: Props) {
   const [baselineR, setR] = React.useState(defaultR);
 
   const stdR = multiplied ? std(multiplied.map((val) => val * baselineR)) : 0;
-  const ciRPossitive = multiplied ? baselineR * (multiplier + 1.96 * stdR) : 0;
-  const ciRNegative = multiplied ? baselineR * (multiplier - 1.96 * stdR) : 0;
+  const ciRPossitive = multiplied ? baselineR * multiplier + 1.96 * stdR : 0;
+  const ciRNegative = multiplied ? baselineR * multiplier - 1.96 * stdR : 0;
 
   return (
     <>
