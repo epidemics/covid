@@ -1,18 +1,18 @@
+import * as chroma from "chroma-js";
+import * as d3 from "d3";
+import { median, std } from "mathjs";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import * as chroma from "chroma-js";
-
+import { Alerts } from "../components/alerts";
 import {
-  measures,
-  range,
   Measure,
   MeasureGroup,
+  measures,
+  range,
   serialInterval,
 } from "./measures";
-import * as d3 from "d3";
-import { Alerts } from "../components/alerts";
-import { calculateMultiplier } from "./multiplier";
+import { calculateMultiplied } from "./multiplier";
 
 //let scale = chroma.scale("PuBu");
 // let scale = chroma
@@ -62,10 +62,11 @@ function calculateBackground(
     height: number,
     color: string,
     color2: string,
-    pos?: number
+    pos?: number,
+    w: number = 1
   ) {
-    let w = 1;
     let firstTick = pos ?? Math.ceil(min / interval) * interval;
+
     let offset = p((firstTick - min) / (max - min));
 
     let tickSpace = p(interval / (max - min));
@@ -104,7 +105,8 @@ function calculateBackground(
     addTicks(0.5, 0.2, dark, light);
     addTicks(1, 0.5, dark, light);
   }
-  addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1);
+
+  addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1, 2);
 
   return backgrounds.reverse().join(", ");
 }
@@ -144,7 +146,7 @@ function FancySlider({
     propFormat == "percentage"
       ? (x: number) => d3.format("+.0%")(x - 1)
       : (x: number) => x.toFixed(1);
-  let initial = propInitial ?? mean;
+  const [initial] = React.useState(propInitial ?? mean);
   let disabled = propDisabled ?? false;
   let min = Math.floor(propMin / step) * step;
   let max = Math.ceil(propMax / step) * step;
@@ -223,8 +225,8 @@ function FancySlider({
         <input
           className="ruler measure-slider"
           type="range"
-          disabled={onChange === undefined}
           value={propValue ?? undefined}
+          disabled={onChange === undefined}
           min={propMin}
           max={propMax}
           step="any"
@@ -305,6 +307,7 @@ function SingleMeasure(
   const subMeasure = props.subMeasure ?? false;
 
   const { min, max } = range;
+
   let { median, p90 } = measure;
   let sd = (p90 - median) / 1.65;
 
@@ -567,11 +570,16 @@ export function Page(props: Props) {
   //   return Math.exp(serialInterval * (growth - 1));
   // }
 
-  let defaultR = 3.8; //growthToR(props.defaultOriginalGrowthRate.mean);
+  const defaultR = 3.8; //growthToR(props.defaultOriginalGrowthRate.mean);
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
-  let defaultRsd = 1.4; //(defaultRp95 - defaultR) / 1.5;
-  let [baselineR, setR] = React.useState(defaultR);
-  let multiplier = calculateMultiplier(checkedMeasures);
+  const multiplied = calculateMultiplied(checkedMeasures);
+  const multiplier = multiplied ? median(multiplied) : 1;
+
+  const [baselineR, setR] = React.useState(defaultR);
+
+  const stdR = multiplied ? std(multiplied.map((val) => val * baselineR)) : 0;
+  const ciRPossitive = multiplied ? baselineR * multiplier + 1.96 * stdR : 0;
+  const ciRNegative = multiplied ? baselineR * multiplier - 1.96 * stdR : 0;
 
   return (
     <>
@@ -612,10 +620,9 @@ export function Page(props: Props) {
           value={baselineR}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
           onChange={setR}
-          mean={defaultR}
-          scale={chroma.scale("YlOrRd")}
-          sd={defaultRsd}
-          max={defaultR + 3 * defaultRsd}
+          mean={baselineR}
+          sd={0}
+          max={8}
         ></FancySlider>
 
         <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
@@ -627,17 +634,33 @@ export function Page(props: Props) {
           row={row++}
           value={baselineR * multiplier}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 3)}
-          mean={defaultR * multiplier}
+          mean={baselineR * multiplier}
           scale={chroma.scale("YlOrRd")}
-          sd={defaultRsd}
-          max={defaultR + 3 * defaultRsd}
+          sd={stdR}
+          max={8}
         ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
           <p>The NPIs result in an average change in R of </p>
+          <p>95% uncertainty interval for R</p>
         </div>
-        <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
-          <b>{d3.format(".1%")(multiplier - 1)}</b>
+        <div
+          style={{
+            gridColumn: "4",
+            gridRow: row++,
+            justifySelf: "end",
+            width: 150,
+            textAlign: "right",
+          }}
+        >
+          <p>
+            <b>{d3.format(".1%")(multiplier - 1)}</b>
+          </p>
+          <p>
+            <b>
+              ({ciRNegative.toFixed(3)}, {ciRPossitive.toFixed(3)})
+            </b>
+          </p>
         </div>
       </div>
       <hr />
