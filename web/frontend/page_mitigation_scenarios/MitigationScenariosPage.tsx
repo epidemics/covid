@@ -4,9 +4,9 @@ import * as ReactDOM from "react-dom";
 
 import { Alerts } from "../components/alerts";
 import { mitigationIntervalsToURL } from "../data/url_generator";
-import MitigationForm, { Values } from "./MitigationForm";
-import { Region } from "../models";
 import { makeDataStore } from "../ds";
+import { Region } from "../models";
+import MitigationForm, { Values } from "./MitigationForm";
 
 export const INTERVENTION_INTERVAL_IN_MONTHS = 1;
 
@@ -95,7 +95,7 @@ export function Page() {
   );
 }
 
-let $root = document.getElementById("react-mitigation-scenarios");
+let $root = document.getElementById("react-country-scenarios");
 if ($root) {
   ReactDOM.render(<Page />, $root);
 }

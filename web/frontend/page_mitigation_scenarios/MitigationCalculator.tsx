@@ -141,7 +141,7 @@ function FancySlider({
     propFormat == "percentage"
       ? (x: number) => d3.format("+.0%")(x - 1)
       : (x: number) => x.toFixed(1);
-  let initial = propInitial ?? mean;
+  const [initial] = React.useState(propInitial ?? mean);
   let disabled = propDisabled ?? false;
   let min = Math.floor(propMin / step) * step;
   let max = Math.ceil(propMax / step) * step;
@@ -154,7 +154,7 @@ function FancySlider({
       propMin,
       propMax,
       onChange !== undefined ? "var(--thumb-width)" : "3px",
-      scale ?? chroma.scale("YlGnBu")
+      scale ?? chroma.scale(["rgb(255, 255, 217)", "rgb(102, 102, 66)"])
     );
   }, [onChange, mean, sd, min, max]);
 
@@ -337,7 +337,7 @@ function SingleMeasure(
         min={min}
         max={max}
         format="percentage"
-        mean={mean}
+        mean={value}
         step={0.01}
         sd={sd}
         initial={measure.mean}
@@ -707,7 +707,15 @@ const MitigationCalculator = (props: Props) => {
             The measures result in a reduction in R of{" "}
           </p>
         </div>
-        <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
+        <div
+          style={{
+            gridColumn: "4",
+            gridRow: row++,
+            justifySelf: "end",
+            width: 150,
+            textAlign: "right",
+          }}
+        >
           <p className="mitigation-calculator-result">
             {d3.format(".1%")(multiplier - 1)}
           </p>

@@ -5,22 +5,36 @@ block additional_js_pre -%} {%- endblock -%} {%- block content -%}
     <div class="row">
       <div class="col-lg-9 col-md-12">
         <h5>Request custom modelling</h5>
+
         <p>
-          Are you a decision maker in government, in health care, or at an international organisation?
+          Epidemic Forecasting offers the following services via its nonprofit
+          consulting arm, the Quantified Uncertainty Research Institute (QURI):
         </p>
+        <ul>
+          <li>
+            Clinical trial design for COVID-19 vaccine designers to reduce the
+            risk of trial failure and shorten the expected time to trial
+            completion, contact us below or
+            <a
+              href="https://drive.google.com/file/d/1gAJx7qI4-7l3Md8PVsN_xHlfuo1tuC4q/view?usp=sharing"
+              >see linked document for further information</a
+            >
+          </li>
+          <li>
+            Paid consulting for government, intergovernmental, and nonprofit
+            organizations, contact us below or
+            <a href="https://github.com/epidemics/covid/issues/485"
+              >see linked document for further information</a
+            >
+          </li>
+        </ul>
         <p>
-          Our team of Oxford researchers and volunteer data scientists can provide you with pro bono custom forecasting and modelling to help inform your decision making.
-        </p>
-        <p>
-          We use <a href="/">a global epidemic model</a>, where we can analyse
-          scenarios like demand for ICUs and hospital beds, as well as how
-          different mitigation strategies implemented in other countries/cities
-          can affect your region. 
-        </p>
-        <p>
-          In the future, we also hope to provide estimates on effectiveness of
-          various containment and mitigation measures, as tracked in our
-          <a href="/containment">public database</a>.
+          Additionally, our team of Oxford researchers and volunteer data
+          scientists is excited to provide decision makers in government, health
+          care, or at international organizations with pro bono custom
+          forecasting and modeling to help inform decision making. Due to
+          current demand, our turnaround time for this may be significantly
+          longer in most cases than is QURI's for paid work.
         </p>
         <p>To request a consultation, please fill in the form below.</p>
       </div>
@@ -33,11 +47,7 @@ block additional_js_pre -%} {%- endblock -%} {%- block content -%}
     ,
     method="POST"
   >
-    <input 
-      type="hidden" 
-      name="_next" 
-      value="/request-calculation-submitted"
-    />
+    <input type="hidden" name="_next" value="/request-calculation-submitted" />
     <div class="form-group">
       <div class="row">
         <div class="col-lg-6">

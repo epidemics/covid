@@ -1,17 +1,16 @@
+import * as chroma from "chroma-js";
+import * as d3 from "d3";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import * as chroma from "chroma-js";
-
+import { Alerts } from "../components/alerts";
 import {
-  measures,
-  range,
   Measure,
   MeasureGroup,
+  measures,
+  range,
   serialInterval,
 } from "./measures";
-import * as d3 from "d3";
-import { Alerts } from "../components/alerts";
 
 //let scale = chroma.scale("PuBu");
 // let scale = chroma
@@ -114,7 +113,7 @@ namespace FancySlider {
     sd: number;
     disabled?: boolean;
     initial?: number;
-    row: number;
+    row?: number;
     step: number;
     min: number;
     max: number;
@@ -143,7 +142,7 @@ function FancySlider({
     propFormat == "percentage"
       ? (x: number) => d3.format("+.0%")(x - 1)
       : (x: number) => x.toFixed(1);
-  let initial = propInitial ?? mean;
+  const [initial] = React.useState(propInitial ?? mean);
   let disabled = propDisabled ?? false;
   let min = Math.floor(propMin / step) * step;
   let max = Math.ceil(propMax / step) * step;
@@ -156,7 +155,7 @@ function FancySlider({
       propMin,
       propMax,
       onChange !== undefined ? "var(--thumb-width)" : "3px",
-      scale ?? chroma.scale("YlGnBu")
+      scale ?? chroma.scale(["rgb(255, 255, 217)", "rgb(102, 102, 66)"])
     );
   }, [onChange, mean, sd, min, max]);
 
@@ -330,7 +329,7 @@ function SingleMeasure(
         min={min}
         max={max}
         format="percentage"
-        mean={mean}
+        mean={value}
         step={0.01}
         sd={sd}
         initial={measure.mean}
@@ -510,7 +509,7 @@ export function Page(props: Props) {
   );
 
   let multiplier = 1;
-  let row = 3;
+  let row = 5;
 
   let elems = measures.map((measureOrGroup, i) => {
     let { checked, value } = state[i];
@@ -574,7 +573,7 @@ export function Page(props: Props) {
     <>
       <Alerts />
 
-      <h1>Mitigation calculator</h1>
+      <h1>Mitigation calculator for policymakers</h1>
 
       <hr />
       <p>
@@ -592,6 +591,24 @@ export function Page(props: Props) {
       <hr />
       <div className="measure-calculator">
         <div style={{ gridColumn: "1 / span 2" }}>
+          <b>Baseline</b>
+        </div>
+        <div style={{ gridColumn: "1 / span 2", maxWidth: 300 }}>
+          R without any measures
+        </div>
+
+        <FancySlider
+          min={0}
+          // format={(num) => `R = ${d3.format(".1f")(num)}`}
+          value={baselineR}
+          step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
+          onChange={setR}
+          mean={baselineR}
+          scale={chroma.scale("YlOrRd")}
+          sd={defaultRsd}
+          max={defaultR + 3 * defaultRsd}
+        ></FancySlider>
+        <div style={{ gridColumn: "1 / span 2" }}>
           <b>Measures</b>
         </div>
         <div style={{ gridColumn: "3 / span 2" }}>
@@ -601,22 +618,6 @@ export function Page(props: Props) {
         <div style={{ gridColumn: "1 / span 2", gridRow: row++ }}>
           <b>Outcome</b>
         </div>
-        <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
-          R without any measures
-        </div>
-
-        <FancySlider
-          min={0}
-          row={row++}
-          // format={(num) => `R = ${d3.format(".1f")(num)}`}
-          value={baselineR}
-          step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
-          onChange={setR}
-          mean={defaultR}
-          scale={chroma.scale("YlOrRd")}
-          sd={defaultRsd}
-          max={defaultR + 3 * defaultRsd}
-        ></FancySlider>
 
         <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
           R with the above measures
@@ -627,16 +628,21 @@ export function Page(props: Props) {
           row={row++}
           value={baselineR * multiplier}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 3)}
-          mean={defaultR * multiplier}
+          mean={baselineR * multiplier}
           scale={chroma.scale("YlOrRd")}
           sd={defaultRsd}
           max={defaultR + 3 * defaultRsd}
         ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
-          <p>The measures result in a reduction in R of </p>
+          <p className="mitigation-calculator-result-label">
+            The measures result in a reduction in R of{" "}
+          </p>
         </div>
-        <div style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}>
+        <div
+          style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}
+          className="mitigation-calculator-result-label"
+        >
           <b>{d3.format(".1%")(multiplier - 1)}</b>
         </div>
       </div>

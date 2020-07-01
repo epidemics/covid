@@ -1,5 +1,5 @@
-{% extends "base.html" %} {% set title = 'Containment Measures Database' %} {%-
-block additional_js_pre -%}
+{% extends "base.html" %} {% set title = 'Mitigation Calculator' %} {%- block
+additional_js_pre -%}
 <link href="{{ASSET_ROOT}}/css/measure-slider.css" rel="stylesheet" />
 <style type="text/css">
   label {
@@ -14,6 +14,6 @@ block additional_js_pre -%}
 </style>
 {% endblock %} {% block content %}
 <div class="container main">
-    <div id="react-mitigation-calculator"></div>
+  <div id="react-mitigation-calculator"></div>
 </div>
 {% endblock %} {% block additional_js %} {% endblock %}

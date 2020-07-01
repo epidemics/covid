@@ -1,18 +1,16 @@
-import { env } from "process";
-import * as path from "path";
-
-import express from "express";
 import compression from "compression";
-import nunjucks from "nunjucks";
+import express from "express";
 import morgan from "morgan";
-import constants from "../common/constants";
-import { Alert } from "../common/alert";
-
+import nunjucks from "nunjucks";
+import * as path from "path";
+import { env } from "process";
 import webpack from "webpack";
 import webpackDev from "webpack-dev-middleware";
 
+import { Alert } from "../common/alert";
+import constants from "../common/constants";
 import webpackConfig from "../webpack.config";
-import { router, navigation_bar } from "./routes";
+import { navigation_bar, router } from "./routes";
 
 const PORT = process.env.PORT || 8000;
 
@@ -56,8 +54,7 @@ let proBonoAlert: Alert = {
   id: "consultingAlert",
   dismissalDuration: { days: 1 },
   revision: "0",
-  content: `Are you a decision maker? We're offering pro bono custom forecasting and
-  modelling. Please reach out <a href="http://epidemicforecasting.org/request-calculation" 
+  content: `We offer custom forecasting and modeling for decision makers and clinical trial design. Please reach out <a href="http://epidemicforecasting.org/request-calculation" 
   class="alert-link">here</a>.`,
 };
 
