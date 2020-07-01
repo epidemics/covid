@@ -23,18 +23,18 @@ export const serialInterval = 6.5;
 // the measures
 export const measures: Array<Measure | MeasureGroup> = [
   {
-    name: "Over 60% of the population wears masks",
-    median: median(npi_model["Over 60% of the population wears masks"]),
+    name: "Mask Wearing Mandatory in (Some) Public Spaces",
+    median: median(npi_model["Mask Wearing Mandatory in (Some) Public Spaces"]),
     p90: quantileSeq(
-      npi_model["Over 60% of the population wears masks"],
+      npi_model["Mask Wearing Mandatory in (Some) Public Spaces"],
       0.9
     ) as number,
   },
-  {
-    name: "Symptomatic testing",
-    median: median(npi_model["Symptomatic testing"]),
-    p90: quantileSeq(npi_model["Symptomatic testing"], 0.9) as number,
-  },
+  // {
+  //   name: "Symptomatic testing",
+  //   median: median(npi_model["Symptomatic testing"]),
+  //   p90: quantileSeq(npi_model["Symptomatic testing"], 0.9) as number,
+  // },
   {
     name: "Gatherings limited to...",
     items: [
@@ -84,17 +84,17 @@ export const measures: Array<Measure | MeasureGroup> = [
     ],
   },
   {
-    name: "Schools and universities closed",
-    median: median(npi_model["Schools and universities closed"]),
-    p90: quantileSeq(
-      npi_model["Schools and universities closed"],
-      0.9
-    ) as number,
+    name: "School and University Closure",
+    median: median(npi_model["School and University Closure"]),
+    p90: quantileSeq(npi_model["School and University Closure"], 0.9) as number,
   },
   {
-    name: "Stay-at-home order",
-    median: median(npi_model["Stay-at-home order"]),
-    p90: quantileSeq(npi_model["Stay-at-home order"], 0.9) as number,
+    name: "Stay Home Order (with exemptions)",
+    median: median(npi_model["Stay Home Order (with exemptions)"]),
+    p90: quantileSeq(
+      npi_model["Stay Home Order (with exemptions)"],
+      0.9
+    ) as number,
     implies: [{ key: 2, value: 3 }, { key: 3, value: 2 }, { key: 4 }],
   },
 ];
