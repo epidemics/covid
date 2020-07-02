@@ -1,6 +1,6 @@
-import { RequestHandler, Router } from "express";
+import { RequestHandler, Router } from 'express';
 
-import { Alert } from "../common/alert";
+import { Alert } from '../common/alert';
 
 // identifiers for the pages
 const COUNTRY_RT_ESTIMATES = "country-rt-estimates";
@@ -30,16 +30,20 @@ type NavBarEntry = { path: string; id: string; caption: string };
 let pages: { [key: string]: NavBarEntry } = {};
 function add(
   id: string,
-  opts: { path: string; caption: string },
+  opts: { path: string; caption: string; pathAlias?: string },
   handler_: RequestHandler
 ): RequestHandler {
-  let { path, caption } = opts;
+  let { path, caption, pathAlias } = opts;
   pages[id] = { path, id, caption };
 
   let handler: RequestHandler = (req, res, next) => {
     res.locals.active_page = id;
     handler_(req, res, next);
   };
+
+  if (pathAlias) {
+    router.get(pathAlias, handler);
+  }
 
   router.get(path, handler);
   return handler;
@@ -56,7 +60,11 @@ let updatingModels: Alert = {
 
 add(
   COUNTRY_RT_ESTIMATES,
-  { path: "/country-rt-estimates", caption: "Country Rt Estimates" },
+  {
+    path: "/country-rt-estimates",
+    pathAlias: "/models",
+    caption: "Country Rt Estimates",
+  },
   (req, res) => {
     res.render("country-rt-estimates.html", { channel: res.locals.CHANNEL });
   }
@@ -68,7 +76,11 @@ add(CASE_MAP, { path: "/case-map", caption: "Case map" }, (req, res) =>
 
 add(
   GLOBAL_RT_MAP,
-  { path: "/global-rt-map", caption: "Global Rt Map" },
+  {
+    path: "/global-rt-map",
+    pathAlias: "/mitigation-map",
+    caption: "Global Rt Map",
+  },
   (req, res) => res.render("global-rt-map.html")
 );
 
@@ -78,13 +90,21 @@ add(MEASURES, { path: "/measures", caption: "Measures" }, (req, res) =>
 
 add(
   COUNTRY_SCENARIOS,
-  { path: "/country-scenarios", caption: "Country Scenarios" },
+  {
+    path: "/country-scenarios",
+    pathAlias: "/mitigation-scenarios",
+    caption: "Country Scenarios",
+  },
   (req, res) => res.render("country-scenarios.html")
 );
 
 let handleMitigation = add(
   MITIGATION_CALCULATOR,
-  { path: "/containment-calculator", caption: "Mitigation Calculator" },
+  {
+    path: "/containment-calculator",
+    pathAlias: "/containment",
+    caption: "Mitigation Calculator",
+  },
   (req, res) => {
     res.render("containment.html");
   }

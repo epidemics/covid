@@ -1,11 +1,11 @@
-import * as Plotly from "plotly.js";
-import * as React from "react";
-import Plot from "react-plotly.js";
+import * as Plotly from 'plotly.js';
+import * as React from 'react';
+import Plot from 'react-plotly.js';
 
-import { makeConfig, makeLayout } from "../components/graph-common";
-import { isTouchDevice } from "../helpers";
-import { Region } from "../models";
-import { createActiveCasesBars, createTrace } from "./REstimateSeriesUtils";
+import { makeConfig, makeLayout } from '../components/graph-common';
+import { isTouchDevice } from '../helpers';
+import { Region } from '../models';
+import { createActiveCasesBars, createTrace } from './REstimateSeriesUtils';
 
 type ModelViewProps = {
   region: Region | null;
@@ -61,6 +61,7 @@ export function REstimateSeriesView(props: ModelViewProps) {
     tickfont: { color: "#fff" },
     overlaying: "y",
     side: "right",
+    rangemode: "nonnegative",
   };
 
   if (isTouchDevice()) {
@@ -83,11 +84,18 @@ export function REstimateSeriesView(props: ModelViewProps) {
     ];
   }
 
+  const currentRValue =
+    region && region.rEstimates
+      ? region.rEstimates.meanR[region.rEstimates.meanR.length - 1]
+      : undefined;
+
   return (
     <>
       <h5 className="mitigation-heading">
-        Effective reproduction number estimate:
+        Current effective reproduction number estimate:{" "}
+        {currentRValue && currentRValue.toFixed(2)}
       </h5>
+
       <div>
         <div id="r_estimate_dataviz">
           <Plot
