@@ -1,10 +1,16 @@
-import * as chroma from 'chroma-js';
-import * as d3 from 'd3';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as chroma from "chroma-js";
+import * as d3 from "d3";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
-import { Alerts } from '../components/alerts';
-import { Measure, MeasureGroup, measures, range, serialInterval } from './measures';
+import { Alerts } from "../components/alerts";
+import {
+  Measure,
+  MeasureGroup,
+  measures,
+  range,
+  serialInterval,
+} from "./measures";
 
 //let scale = chroma.scale("PuBu");
 // let scale = chroma

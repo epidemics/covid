@@ -1,6 +1,6 @@
-import { RequestHandler, Router } from 'express';
+import { RequestHandler, Router } from "express";
 
-import { Alert } from '../common/alert';
+import { Alert } from "../common/alert";
 
 // identifiers for the pages
 const COUNTRY_RT_ESTIMATES = "country-rt-estimates";

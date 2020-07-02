@@ -1,8 +1,8 @@
-import * as Plotly from 'plotly.js';
+import * as Plotly from "plotly.js";
 
-import { makeDataStore } from '../ds';
-import { isTouchDevice } from '../helpers';
-import { Regions } from '../models';
+import { makeDataStore } from "../ds";
+import { isTouchDevice } from "../helpers";
+import { Regions } from "../models";
 
 const MAP_ID = "mitigation_mapid";
 const ISO_KEY = "iso_a3";
