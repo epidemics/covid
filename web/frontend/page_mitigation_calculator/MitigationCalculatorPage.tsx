@@ -604,7 +604,6 @@ export function Page(props: Props) {
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
           onChange={setR}
           mean={baselineR}
-          scale={chroma.scale("YlOrRd")}
           sd={defaultRsd}
           max={defaultR + 3 * defaultRsd}
         ></FancySlider>
@@ -629,7 +628,6 @@ export function Page(props: Props) {
           value={baselineR * multiplier}
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 3)}
           mean={baselineR * multiplier}
-          scale={chroma.scale("YlOrRd")}
           sd={defaultRsd}
           max={defaultR + 3 * defaultRsd}
         ></FancySlider>
