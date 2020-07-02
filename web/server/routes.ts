@@ -6,6 +6,7 @@ import { Alert } from "../common/alert";
 const MODELS = "models";
 const CASE_MAP = "case-map";
 const MITIGATION = "mitigation";
+const MITIGATION_PAPER = "mitigation-paper";
 const MITIGATION_SCENARIOS = "mitigation-scenarios";
 const MITIGATION_MAP = "mitigation-map";
 const REQUEST_MODEL = "request-model";
@@ -84,6 +85,8 @@ let handleMitigation = add(
     res.render("containment.html");
   }
 );
+
+router.get("/calc", (req, res) => res.render("containment-calc.html"));
 
 router.get("/request-calculation-submitted", (req, res) =>
   res.render("request-calculation-submitted.html", {
