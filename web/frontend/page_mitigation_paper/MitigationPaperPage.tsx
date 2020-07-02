@@ -1,6 +1,6 @@
 import * as chroma from "chroma-js";
 import * as d3 from "d3";
-import { mean, std } from "mathjs";
+import { mean, std, quantileSeq } from "mathjs";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
@@ -577,9 +577,9 @@ export function Page(props: Props) {
 
   const [baselineR, setR] = React.useState(defaultR);
 
-  const stdR = multiplied ? std(multiplied.map((val) => val * baselineR)) : 0;
-  const ciRPossitive = multiplied ? baselineR * multiplier + 1.96 * stdR : 0;
-  const ciRNegative = multiplied ? baselineR * multiplier - 1.96 * stdR : 0;
+  const stdR = multiplied ? std(multiplied) : 0;
+  const ciRPossitive = multiplied ? baselineR * (quantileSeq(multiplied, 0.975) as number) : 0;
+  const ciRNegative = multiplied ? baselineR * (quantileSeq(multiplied, 0.025) as number) : 0;
 
   return (
     <>
@@ -636,7 +636,7 @@ export function Page(props: Props) {
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 3)}
           mean={baselineR * multiplier}
           scale={chroma.scale("YlOrRd")}
-          sd={stdR}
+          sd={stdR * baselineR}
           max={8}
         ></FancySlider>
 
