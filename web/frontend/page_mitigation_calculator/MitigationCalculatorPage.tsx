@@ -121,6 +121,7 @@ namespace FancySlider {
     scale?: chroma.Scale;
     onChange?: (value: number) => void;
     format?: "percentage" | "absolute";
+    colorRangeFunction?: (value: number) => string;
   }
 }
 
@@ -137,6 +138,7 @@ function FancySlider({
   value: propValue,
   format: propFormat,
   scale,
+  colorRangeFunction,
 }: FancySlider.Props) {
   let format =
     propFormat == "percentage"
@@ -204,7 +206,10 @@ function FancySlider({
       </div>
     );
   } else {
-    input = <b>{value.toFixed(-Math.floor(Math.log10(step)))}</b>;
+    const color = colorRangeFunction && colorRangeFunction(value);
+    input = (
+      <b style={{ color }}>{value.toFixed(-Math.floor(Math.log10(step)))}</b>
+    );
   }
 
   return (
@@ -630,6 +635,17 @@ export function Page(props: Props) {
           mean={baselineR * multiplier}
           sd={defaultRsd}
           max={defaultR + 3 * defaultRsd}
+          colorRangeFunction={(value) => {
+            if (value < 0.7) {
+              return "green";
+            }
+
+            if (value >= 0.7 && value < 1) {
+              return "yellow";
+            }
+
+            return "red";
+          }}
         ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
