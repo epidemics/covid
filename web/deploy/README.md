@@ -18,6 +18,7 @@ on:
 ```
 
 Next create a k8 namespace for the custom site. The name can be the branch name.
+You can execute this script locally or in Google Cloud Shell (no need of local installation):
 ```
 gcloud container clusters get-credentials --region us-west1-c epidemics
 
