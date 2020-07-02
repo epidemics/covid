@@ -1,6 +1,6 @@
 import * as chroma from "chroma-js";
 import * as d3 from "d3";
-import { median, std } from "mathjs";
+import { mean, std } from "mathjs";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
@@ -308,8 +308,8 @@ function SingleMeasure(
 
   const { min, max } = range;
 
-  let { median, p90 } = measure;
-  let sd = (p90 - median) / 1.65;
+  let { mean, p90 } = measure;
+  let sd = (p90 - mean) / 1.65;
 
   return (
     <>
@@ -334,10 +334,10 @@ function SingleMeasure(
         min={min}
         max={max}
         format="percentage"
-        mean={median}
+        mean={mean}
         step={0.01}
         sd={sd}
-        initial={measure.median}
+        initial={measure.mean}
         value={value}
         disabled={true}
         onChange={(_) => {
@@ -499,12 +499,12 @@ export function Page(props: Props) {
       return measures.map((measureOrGroup) => {
         if ("items" in measureOrGroup) {
           return {
-            value: measureOrGroup.items.map((measure) => measure.median),
+            value: measureOrGroup.items.map((measure) => measure.mean),
             checked: measureOrGroup.items.length,
           };
         } else {
           return {
-            value: measureOrGroup.median,
+            value: measureOrGroup.mean,
             checked: 1,
           };
         }
@@ -573,7 +573,7 @@ export function Page(props: Props) {
   const defaultR = 3.8; //growthToR(props.defaultOriginalGrowthRate.mean);
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
   const multiplied = calculateMultiplied(checkedMeasures);
-  const multiplier = multiplied ? median(multiplied) : 1;
+  const multiplier = multiplied ? mean(multiplied) : 1;
 
   const [baselineR, setR] = React.useState(defaultR);
 
