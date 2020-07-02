@@ -1,8 +1,8 @@
-import * as Plotly from "plotly.js";
+import * as Plotly from 'plotly.js';
 
-import { makeDataStore } from "../ds";
-import { isTouchDevice } from "../helpers";
-import { Regions } from "../models";
+import { makeDataStore } from '../ds';
+import { isTouchDevice } from '../helpers';
+import { Regions } from '../models';
 
 const MAP_ID = "mitigation_mapid";
 const ISO_KEY = "iso_a3";
@@ -191,7 +191,7 @@ function makeMitigationMap(
         let pt = (d.points || [])[0] as any;
         let target = pt.customdata;
         if (target && last === target) {
-          window.open("/models?region=" + target);
+          window.open("/country-rt-estimates?region=" + target);
         }
         last = target;
       });
@@ -200,7 +200,7 @@ function makeMitigationMap(
         let pt = (d.points || [])[0] as any;
         let target = pt.customdata;
         if (target) {
-          window.open("/models?region=" + target);
+          window.open("/country-rt-estimates?region=" + target);
         }
       });
     }
