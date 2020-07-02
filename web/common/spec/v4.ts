@@ -26,6 +26,8 @@ export namespace v4 {
       JohnsHopkins?: JohnsHopkins;
       Foretold?: Foretold;
       REstimates?: REstimates;
+      NPIModel?: NPIModel;
+      Interventions?: Intervention[];
       Timezones: string[];
       AgeDist?: { [bracket: string]: number };
       TracesV3?: string;
@@ -63,6 +65,30 @@ export namespace v4 {
     Date: string[];
     MeanR: number[];
     StdR: number[];
+  }
+
+  export interface NPIModel {
+    DailyInfectedCases_lower: number[];
+    DailyInfectedCases_mean: number[];
+    DailyInfectedCases_upper: number[];
+    DailyInfectedDeaths_lower: number[];
+    DailyInfectedDeaths_mean: number[];
+    DailyInfectedDeaths_upper: number[];
+    Date: string[];
+    PredictedDeaths_lower: number[];
+    PredictedDeaths_mean: number[];
+    PredictedDeaths_upper: number[];
+    PredictedNewCases_lower: number[];
+    PredictedNewCases_mean: number[];
+    PredictedNewCases_upper: number[];
+    RecordedDeaths: (number | null)[];
+    RecordedNewCases: (number | null)[];
+  }
+
+  export interface Intervention {
+    type: string[];
+    dateStart: string;
+    dateEnd: string;
   }
 
   type NumberLike = string | number;

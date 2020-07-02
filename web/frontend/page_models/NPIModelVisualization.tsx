@@ -5,13 +5,22 @@ import Plot from "react-plotly.js";
 import { makeConfig, makeLayout } from "../components/graph-common";
 import { isTouchDevice } from "../helpers";
 import { Region } from "../models";
-import { createActiveCasesBars, createTrace } from "./REstimateSeriesUtils";
+import {
+  createActiveCasesMarkers,
+  createDailyInfectedCasesTrace,
+  createDailyInfectedDeathsTrace,
+  createDeathsCasesMarkers,
+  createInterventionIcons,
+  createInterventionLines,
+  createPredictedDeathsTrace,
+  createPredictedNewCasesTrace,
+} from "./NPIModelVisualizationUtils";
 
 type ModelViewProps = {
   region: Region | null;
 };
 
-export function REstimateSeriesView(props: ModelViewProps) {
+export function NPIModelVisualization(props: ModelViewProps) {
   let { region } = props;
 
   // create a plotly config for the plot
@@ -38,15 +47,14 @@ export function REstimateSeriesView(props: ModelViewProps) {
   // create a layout and customize
   let layout = makeLayout();
   layout.autosize = true;
-  layout.margin!.r = 50;
-  layout.margin!.l = 50;
+  layout.margin!.r = 20;
   layout.xaxis!.type = "date";
-  layout.yaxis!.title = "R estimation";
+  layout.yaxis!.title = "Number of people";
   layout.yaxis!.type = "linear";
   layout.showlegend = true;
   layout.legend = {
-    x: 1,
-    xanchor: "right",
+    x: 0,
+    xanchor: "left",
     y: 1,
     yanchor: "top",
     bgcolor: "#22202888",
@@ -55,54 +63,37 @@ export function REstimateSeriesView(props: ModelViewProps) {
     },
   };
 
-  layout.yaxis2 = {
-    title: "Daily new cases",
-    titlefont: { color: "#fff" },
-    tickfont: { color: "#fff" },
-    overlaying: "y",
-    side: "right",
-    rangemode: "nonnegative",
-  };
-
   if (isTouchDevice()) {
     config.scrollZoom = true;
     layout.dragmode = "pan";
   }
 
   let data: Array<Plotly.Data> = [];
-  if (region && region.rEstimates && region.reported) {
-    if (region.rEstimates.date.length > 0) {
-      layout.xaxis!.range = [
-        region.rEstimates.date[0],
-        region.rEstimates.date[region.rEstimates.date.length - 1],
-      ];
-    }
+  if (region && region.NPIModel && region.reported && region.interventions) {
+    layout.shapes = createInterventionLines(region.interventions);
+    layout.xaxis!.range = [
+      region.NPIModel.date[0],
+      region.NPIModel.date[region.NPIModel.date.length - 1],
+    ];
+
+    layout.yaxis!.rangemode = "nonnegative";
 
     data = [
-      ...createTrace(region.rEstimates),
-      createActiveCasesBars(region.reported),
+      ...createDailyInfectedCasesTrace(region.NPIModel),
+      ...createDailyInfectedDeathsTrace(region.NPIModel),
+      ...createPredictedNewCasesTrace(region.NPIModel),
+      ...createPredictedDeathsTrace(region.NPIModel),
+      createInterventionIcons(region.NPIModel, region.interventions),
+      createActiveCasesMarkers(region.reported),
+      createDeathsCasesMarkers(region.reported),
     ];
   }
 
-  const currentRValue =
-    region && region.rEstimates
-      ? region.rEstimates.meanR[region.rEstimates.meanR.length - 1]
-      : undefined;
-
   return (
     <>
-      <h5 className="mitigation-heading">
-        Effective reproduction number estimate:
-      </h5>
-
-      {currentRValue && (
-        <h6 className="mitigation-subheading">
-          Current R estimate: {currentRValue.toFixed(2)}
-        </h6>
-      )}
-
+      <h5 className="mitigation-heading">Short term forecast:</h5>
       <div>
-        <div id="r_estimate_dataviz">
+        <div id="short_term_forecast_dataviz">
           <Plot
             style={{ width: "100%", height: "100%" }}
             data={data}

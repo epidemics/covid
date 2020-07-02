@@ -1,10 +1,11 @@
-import { Rates } from "./rates";
-import { Estimation } from "./estimation";
-import { Reported } from "./reported";
 import { v4 } from "../../common/spec";
 import { Thunk } from "./datastore";
-import { Scenarios } from "./scenario";
+import { Estimation } from "./estimation";
+import { NPIModel } from "./NPIModel";
+import { Rates } from "./rates";
+import { Reported } from "./reported";
 import { REstimates } from "./rEstimates";
+import { Scenarios } from "./scenario";
 
 type Current = {
   infected?: number;
@@ -42,6 +43,8 @@ export class Region {
   public estimates?: Estimation;
   public reported?: Reported;
   public rEstimates?: REstimates;
+  public NPIModel?: NPIModel;
+  public interventions?: v4.Intervention[];
 
   public constructor(data_root: string, public code: string, obj: v4.Region) {
     let data = obj.data;
@@ -64,6 +67,10 @@ export class Region {
     if (data.JohnsHopkins) this.reported = new Reported(data.JohnsHopkins);
 
     if (data.REstimates) this.rEstimates = new REstimates(data.REstimates);
+
+    if (data.NPIModel) this.NPIModel = new NPIModel(data.NPIModel);
+
+    if (data.Interventions) this.interventions = data.Interventions;
 
     this.scenariosDaily = this.externalData.map(
       `scenarios ${this.code}, ${this.name}`,

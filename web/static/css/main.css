@@ -2,6 +2,11 @@
  * Globals
  */
 
+@font-face {
+  font-family: emoji_font;
+  src: url("../fonts/emoji_font.otf") format("opentype");
+}
+
 /* Links */
 a,
 a:focus,
@@ -292,6 +297,10 @@ span.infections-confirmed {
 
 .mitigation-heading {
   font-size: 24px;
+}
+
+.mitigation-subheading {
+  font-size: 20px;
 }
 
 .graph-column {
