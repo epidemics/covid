@@ -578,8 +578,12 @@ export function Page(props: Props) {
   const [baselineR, setR] = React.useState(defaultR);
 
   const stdR = multiplied ? std(multiplied) : 0;
-  const ciRPossitive = multiplied ? baselineR * (quantileSeq(multiplied, 0.975) as number) : 0;
-  const ciRNegative = multiplied ? baselineR * (quantileSeq(multiplied, 0.025) as number) : 0;
+  const ciRPossitive = multiplied
+    ? baselineR * (quantileSeq(multiplied, 0.975) as number)
+    : 0;
+  const ciRNegative = multiplied
+    ? baselineR * (quantileSeq(multiplied, 0.025) as number)
+    : 0;
 
   return (
     <>
