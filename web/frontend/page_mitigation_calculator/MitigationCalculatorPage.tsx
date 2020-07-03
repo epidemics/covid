@@ -43,6 +43,7 @@ function calculateBackground(
     stops.push(`${getColor(z)} ${(offset * 100).toFixed(2)}%`);
   };
 
+  //TODO: fix std interval positioning
   addStop(mean - sd, -4);
   addStop(mean - sd, 0);
   addStop(mean + sd, 0);
@@ -172,7 +173,7 @@ function FancySlider({
       propMin,
       propMax,
       onChange !== undefined ? "var(--thumb-width)" : "3px",
-      scale ?? chroma.scale(["rgb(255, 255, 217)", "rgb(102, 102, 66)"]),
+      scale ?? chroma.scale(["rgb(212, 212, 157)", "rgb(102, 102, 66)"]),
       initial,
       showInitial
     );
@@ -225,7 +226,10 @@ function FancySlider({
   } else {
     const color = colorRangeFunction && colorRangeFunction(value);
     input = (
-      <b className="mitigation-calculator-result-label" style={{ color }}>
+      <b
+        className="mitigation-calculator-result-label"
+        style={{ color, fontSize: "1.8rem" }}
+      >
         {value.toFixed(-Math.floor(Math.log10(step)))}
       </b>
     );
@@ -656,14 +660,14 @@ export function Page(props: Props) {
           max={defaultR + 3 * defaultRsd}
           colorRangeFunction={(value) => {
             if (value < 0.7) {
-              return "green";
+              return "#208f0a";
             }
 
             if (value >= 0.7 && value < 1) {
-              return "yellow";
+              return "#d1c51f";
             }
 
-            return "red";
+            return "#bf2011";
           }}
           showInitial={false}
         ></FancySlider>
@@ -674,7 +678,11 @@ export function Page(props: Props) {
           </p>
         </div>
         <div
-          style={{ gridColumn: "4", gridRow: row++, justifySelf: "end" }}
+          style={{
+            gridColumn: "4",
+            gridRow: row++,
+            justifySelf: "end",
+          }}
           className="mitigation-calculator-result-label"
         >
           <b>{d3.format(".1%")(multiplier - 1)}</b>
