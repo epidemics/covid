@@ -1,16 +1,10 @@
-import * as chroma from "chroma-js";
-import * as d3 from "d3";
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as chroma from 'chroma-js';
+import * as d3 from 'd3';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-import { Alerts } from "../components/alerts";
-import {
-  Measure,
-  MeasureGroup,
-  measures,
-  range,
-  serialInterval,
-} from "./measures";
+import { Alerts } from '../components/alerts';
+import { Measure, MeasureGroup, measures, range, serialInterval } from './measures';
 
 //let scale = chroma.scale("PuBu");
 // let scale = chroma
@@ -27,32 +21,31 @@ function calculateBackground(
   min: number,
   max: number,
   thumbWidth: string,
-  scale: chroma.Scale
+  scale: chroma.Scale,
+  initialMean: number,
+  showInitial: boolean
 ): string {
   function getColor(z: number) {
     return scale(Math.exp((z * z) / -2)).css();
   }
 
   let backgrounds = [];
-  const f = (loc: number) => getColor((loc - mean) / sd);
-  backgrounds.push(`linear-gradient(
-    to right, ${f(min)} 49%, ${f(max)} 51%)`);
 
   let stops: Array<string> = [];
   let addStop = (loc: number, z: number) => {
-    let offset = (loc - min) / (max - min);
+    let offset = (loc - min + sd / 6) / (max - min + sd / 3);
     stops.push(`${getColor(z)} ${(offset * 100).toFixed(2)}%`);
   };
 
-  for (let z = -4; z < 4; z += 0.25) {
-    addStop(mean + z * sd, z);
-  }
+  addStop(mean - sd, -4);
+  addStop(mean - sd, 0);
+  addStop(mean + sd, 0);
+  addStop(mean + sd, 4);
 
   let rulerGradient = `linear-gradient(to right, ${stops.join(",")})`;
   backgrounds.push(
     `no-repeat ${rulerGradient} 
-      calc(${thumbWidth}/2) 0 
-    / calc(100% - ${thumbWidth}) auto`
+    0 0`
   );
 
   function addTicks(
@@ -60,9 +53,11 @@ function calculateBackground(
     height: number,
     color: string,
     color2: string,
-    pos?: number
+    pos?: number,
+    width: number = 1,
+    width2: number = 1
   ) {
-    let w = 1;
+    let w = width;
     let firstTick = pos ?? Math.ceil(min / interval) * interval;
     let offset = p((firstTick - min) / (max - min));
 
@@ -75,10 +70,10 @@ function calculateBackground(
       pos === undefined ? "repeating-linear-gradient" : "linear-gradient"
     }(to right, 
       transparent calc(${offset}), ${color} calc(${offset}),
-      ${color} calc(${offset} + ${w}px), ${color2} calc(${offset} + ${w}px), 
-      ${color2} calc(${offset} + ${2 * w}px), transparent calc(${offset} + ${
-      2 * w
-    }px)
+      ${color} calc(${offset} + ${w}px), ${color2} calc(${offset} + ${width2}px), 
+      ${color2} calc(${offset} + ${
+      2 * width2
+    }px), transparent calc(${offset} + ${2 * width2}px)
       ${
         pos !== undefined ? "" : `, transparent calc(${offset} + ${tickSpace})`
       } 
@@ -104,6 +99,18 @@ function calculateBackground(
   }
   addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1);
 
+  if (showInitial) {
+    addTicks(
+      1,
+      1,
+      scale(0.4).desaturate().css(),
+      scale(0.4).desaturate().css(),
+      initialMean,
+      7,
+      0
+    );
+  }
+
   return backgrounds.reverse().join(", ");
 }
 
@@ -122,6 +129,7 @@ namespace FancySlider {
     onChange?: (value: number) => void;
     format?: "percentage" | "absolute";
     colorRangeFunction?: (value: number) => string;
+    showInitial?: boolean;
   }
 }
 
@@ -139,6 +147,7 @@ function FancySlider({
   format: propFormat,
   scale,
   colorRangeFunction,
+  showInitial = true,
 }: FancySlider.Props) {
   let format =
     propFormat == "percentage"
@@ -157,7 +166,9 @@ function FancySlider({
       propMin,
       propMax,
       onChange !== undefined ? "var(--thumb-width)" : "3px",
-      scale ?? chroma.scale(["rgb(255, 255, 217)", "rgb(102, 102, 66)"])
+      scale ?? chroma.scale(["rgb(255, 255, 217)", "rgb(102, 102, 66)"]),
+      initial,
+      showInitial
     );
   }, [onChange, mean, sd, min, max]);
 
@@ -611,7 +622,7 @@ export function Page(props: Props) {
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 2)}
           onChange={setR}
           mean={baselineR}
-          sd={defaultRsd}
+          sd={0}
           max={defaultR + 3 * defaultRsd}
         ></FancySlider>
         <div style={{ gridColumn: "1 / span 2" }}>
@@ -648,6 +659,7 @@ export function Page(props: Props) {
 
             return "red";
           }}
+          showInitial={false}
         ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
