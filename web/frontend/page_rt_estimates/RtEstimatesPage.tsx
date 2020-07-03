@@ -1,13 +1,23 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
-import { Alerts } from '../components/alerts';
-import { LocationContext, makeFragmentLocationContext } from '../components/LocationContext';
-import { RegionSelector } from '../components/RegionSelector';
-import { makeDataStore } from '../ds';
-import { getTimezone, getUrlParam } from '../helpers';
-import { Datastore, MainInfo, Region, Regions, Scenario, useThunk } from '../models';
-import { REstimateSeriesView } from './REstimateSeriesView';
+import { Alerts } from "../components/alerts";
+import {
+  LocationContext,
+  makeFragmentLocationContext,
+} from "../components/LocationContext";
+import { RegionSelector } from "../components/RegionSelector";
+import { makeDataStore } from "../ds";
+import { getTimezone, getUrlParam } from "../helpers";
+import {
+  Datastore,
+  MainInfo,
+  Region,
+  Regions,
+  Scenario,
+  useThunk,
+} from "../models";
+import { REstimateSeriesView } from "./REstimateSeriesView";
 
 const REGION_FALLBACK = "united kingdom";
 

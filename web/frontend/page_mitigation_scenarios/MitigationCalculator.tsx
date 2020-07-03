@@ -1,7 +1,7 @@
-import * as d3 from 'd3';
-import * as React from 'react';
+import * as d3 from "d3";
+import * as React from "react";
 
-import FancySlider from '../components/FancySlider';
+import FancySlider from "../components/FancySlider";
 import {
   calculateHighCompliance,
   calculateLowCompliance,
@@ -9,7 +9,7 @@ import {
   Measure,
   MeasureGroup,
   range,
-} from './measures';
+} from "./measures";
 
 //let scale = chroma.scale("PuBu");
 // let scale = chroma

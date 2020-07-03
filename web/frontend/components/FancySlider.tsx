@@ -1,6 +1,6 @@
-import * as chroma from 'chroma-js';
-import * as d3 from 'd3';
-import * as React from 'react';
+import * as chroma from "chroma-js";
+import * as d3 from "d3";
+import * as React from "react";
 
 function p(v: number): string {
   return `${(100 * v).toFixed(5)}%`;
