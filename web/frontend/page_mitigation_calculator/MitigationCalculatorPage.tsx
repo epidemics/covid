@@ -410,7 +410,7 @@ export function Page(props: Props) {
           showInitial={false}
         ></FancySlider>
 
-        <div style={{ gridColumn: "3", gridRow: row }}>
+        <div style={{ gridColumn: "1 / span 3", gridRow: row }}>
           <p className="mitigation-calculator-result-label">
             The measures result in a reduction in R of{" "}
           </p>

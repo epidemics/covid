@@ -223,7 +223,7 @@ function FancySlider({
   return (
     <>
       <div
-        className="slider"
+        className="slider d-none d-md-flex"
         style={{
           gridColumn: 3,
           gridRow: row,
@@ -252,10 +252,9 @@ function FancySlider({
         className="value"
         style={{
           // @ts-ignore
-          gridColumn: 4,
           gridRow: row,
           filter: disabled ? "brightness(50%)" : "none",
-          justifySelf: "end",
+          justifySelf: onChange ? "initial" : "end",
         }}
       >
         {input}

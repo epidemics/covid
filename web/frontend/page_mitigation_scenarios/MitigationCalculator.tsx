@@ -468,7 +468,7 @@ const MitigationCalculator = (props: Props) => {
           <p className="mitigation-calculator-result-label">Outcome</p>
         </div>
 
-        <div style={{ gridColumn: "3", gridRow: row }}>
+        <div style={{ gridColumn: "2 / span 2", gridRow: row }}>
           <p className="mitigation-calculator-result-label">
             The measures result in a reduction in R of{" "}
           </p>
