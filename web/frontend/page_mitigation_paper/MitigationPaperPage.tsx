@@ -1,6 +1,6 @@
 import * as chroma from "chroma-js";
 import * as d3 from "d3";
-import { median, std } from "mathjs";
+import { mean, std, quantileSeq } from "mathjs";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
@@ -308,8 +308,8 @@ function SingleMeasure(
 
   const { min, max } = range;
 
-  let { median, p90 } = measure;
-  let sd = (p90 - median) / 1.65;
+  let { mean, p90 } = measure;
+  let sd = (p90 - mean) / 1.65;
 
   return (
     <>
@@ -334,10 +334,10 @@ function SingleMeasure(
         min={min}
         max={max}
         format="percentage"
-        mean={median}
+        mean={mean}
         step={0.01}
         sd={sd}
-        initial={measure.median}
+        initial={measure.mean}
         value={value}
         disabled={true}
         onChange={(_) => {
@@ -499,12 +499,12 @@ export function Page(props: Props) {
       return measures.map((measureOrGroup) => {
         if ("items" in measureOrGroup) {
           return {
-            value: measureOrGroup.items.map((measure) => measure.median),
+            value: measureOrGroup.items.map((measure) => measure.mean),
             checked: measureOrGroup.items.length,
           };
         } else {
           return {
-            value: measureOrGroup.median,
+            value: measureOrGroup.mean,
             checked: 1,
           };
         }
@@ -573,13 +573,17 @@ export function Page(props: Props) {
   const defaultR = 3.8; //growthToR(props.defaultOriginalGrowthRate.mean);
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
   const multiplied = calculateMultiplied(checkedMeasures);
-  const multiplier = multiplied ? median(multiplied) : 1;
+  const multiplier = multiplied ? mean(multiplied) : 1;
 
   const [baselineR, setR] = React.useState(defaultR);
 
-  const stdR = multiplied ? std(multiplied.map((val) => val * baselineR)) : 0;
-  const ciRPossitive = multiplied ? baselineR * multiplier + 1.96 * stdR : 0;
-  const ciRNegative = multiplied ? baselineR * multiplier - 1.96 * stdR : 0;
+  const stdR = multiplied ? std(multiplied) : 0;
+  const ciRPossitive = multiplied
+    ? baselineR * (quantileSeq(multiplied, 0.975) as number)
+    : 0;
+  const ciRNegative = multiplied
+    ? baselineR * (quantileSeq(multiplied, 0.025) as number)
+    : 0;
 
   return (
     <>
@@ -636,7 +640,7 @@ export function Page(props: Props) {
           step={Math.pow(10, Math.ceil(Math.log10(serialInterval / 4)) - 3)}
           mean={baselineR * multiplier}
           scale={chroma.scale("YlOrRd")}
-          sd={stdR}
+          sd={stdR * baselineR}
           max={8}
         ></FancySlider>
 

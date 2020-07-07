@@ -13,5 +13,10 @@
     "values": "./web/deploy/chart/values.balochistan.yaml",
     "static": "gs://static-covid/static/balochistan/",
     "namespace": "balochistan"
+  },
+  "paper": {
+    "values": "./web/deploy/chart/values.paper.yaml",
+    "static": "gs://static-covid/static/paper/",
+    "namespace": "paper"
   }
 }
