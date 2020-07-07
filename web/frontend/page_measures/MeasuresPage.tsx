@@ -1,14 +1,15 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Regions, Region, useThunk, Datastore, MainInfo } from "../models";
-import { getTimezone, getUrlParam } from "../helpers";
-import { RegionSelector } from "../components/RegionSelector";
-import { makeDataStore } from "../ds";
+
 import { DismissableAlert } from "../components/DismissableAlert";
 import {
   LocationContext,
   makeFragmentLocationContext,
 } from "../components/LocationContext";
+import { RegionSelector } from "../components/RegionSelector";
+import { makeDataStore } from "../ds";
+import { getTimezone, getUrlParam } from "../helpers";
+import { Datastore, MainInfo, Region, Regions, useThunk } from "../models";
 import { CurrentChart } from "./current-chart";
 
 const REGION_FALLBACK = "united kingdom";
@@ -98,8 +99,8 @@ export function MeasuresPage({ data }: { data: Datastore }) {
         revision="0"
       >
         <p>
-          Are you a decision maker? We're offering pro bono custom forecasting
-          and modelling. Please reach out{" "}
+          We offer custom forecasting and modeling for decision makers and
+          clinical trial design. Please reach out{" "}
           <a
             href="http://epidemicforecasting.org/request-calculation"
             className="alert-link"

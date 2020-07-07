@@ -191,7 +191,7 @@ function makeMitigationMap(
         let pt = (d.points || [])[0] as any;
         let target = pt.customdata;
         if (target && last === target) {
-          window.open("/models?region=" + target);
+          window.open("/country-rt-estimates?region=" + target);
         }
         last = target;
       });
@@ -200,7 +200,7 @@ function makeMitigationMap(
         let pt = (d.points || [])[0] as any;
         let target = pt.customdata;
         if (target) {
-          window.open("/models?region=" + target);
+          window.open("/country-rt-estimates?region=" + target);
         }
       });
     }

@@ -880,7 +880,7 @@ table td {
   outline: none;
   width: 100%;
   transform: translate(-50%, 0);
-  max-width: 1000px;
+  max-width: 1100px;
   left: 50%;
 }
 
@@ -915,6 +915,6 @@ table td {
 }
 
 .mitigation-calculator-result-label {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   margin-top: 8px;
 }

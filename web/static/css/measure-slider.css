@@ -46,6 +46,14 @@
 .measure-calculator .value {
   align-items: center;
   align-self: center;
+  grid-column: 3 / span 2;
+}
+
+@media only screen and (min-width: 768px) {
+  .measure-calculator .value {
+    grid-column: 4;
+    justify-self: end;
+  }
 }
 
 .measure-calculator .value button {

@@ -17,7 +17,6 @@ import {
   Scenario,
   useThunk,
 } from "../models";
-import { NPIModelVisualization } from "./NPIModelVisualization";
 import { REstimateSeriesView } from "./REstimateSeriesView";
 
 const REGION_FALLBACK = "united kingdom";
@@ -131,12 +130,12 @@ export function Page({ data }: { data: Datastore }) {
           <hr />
         </>
       )}
-      {region && region.NPIModel && (
+      {/* {region && region.NPIModel && (
         <>
           <NPIModelVisualization region={region} />
           <hr />
         </>
-      )}
+      )} */}
     </LocationContext.Provider>
   );
 }

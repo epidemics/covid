@@ -92,14 +92,9 @@ export function REstimateSeriesView(props: ModelViewProps) {
   return (
     <>
       <h5 className="mitigation-heading">
-        Effective reproduction number estimate:
+        Current effective reproduction number estimate:{" "}
+        {currentRValue && currentRValue.toFixed(2)}
       </h5>
-
-      {currentRValue && (
-        <h6 className="mitigation-subheading">
-          Current R estimate: {currentRValue.toFixed(2)}
-        </h6>
-      )}
 
       <div>
         <div id="r_estimate_dataviz">

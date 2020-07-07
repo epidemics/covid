@@ -3,24 +3,24 @@ import { RequestHandler, Router } from "express";
 import { Alert } from "../common/alert";
 
 // identifiers for the pages
-const MODELS = "models";
+const COUNTRY_RT_ESTIMATES = "country-rt-estimates";
 const CASE_MAP = "case-map";
-const MITIGATION = "mitigation";
+const MITIGATION_CALCULATOR = "mitigation-calculator";
 const MITIGATION_PAPER = "mitigation-paper";
-const MITIGATION_SCENARIOS = "mitigation-scenarios";
-const MITIGATION_MAP = "mitigation-map";
-const REQUEST_MODEL = "request-model";
+const COUNTRY_SCENARIOS = "country-scenarios";
+const GLOBAL_RT_MAP = "global-rt-map";
+const SUBMIT_REQUEST = "submit-request";
 const ABOUT = "about";
 const MEASURES = "measures";
 const DATASETS = "datasets";
 
 // order of the pages as diplayed in the navigation bar
 let navigation = [
-  MODELS,
-  MITIGATION_MAP,
-  MITIGATION,
-  MITIGATION_SCENARIOS,
-  REQUEST_MODEL,
+  MITIGATION_CALCULATOR,
+  COUNTRY_RT_ESTIMATES,
+  GLOBAL_RT_MAP,
+  COUNTRY_SCENARIOS,
+  SUBMIT_REQUEST,
   DATASETS,
   ABOUT,
 ];
@@ -30,16 +30,20 @@ type NavBarEntry = { path: string; id: string; caption: string };
 let pages: { [key: string]: NavBarEntry } = {};
 function add(
   id: string,
-  opts: { path: string; caption: string },
+  opts: { path: string; caption: string; pathAlias?: string },
   handler_: RequestHandler
 ): RequestHandler {
-  let { path, caption } = opts;
+  let { path, caption, pathAlias } = opts;
   pages[id] = { path, id, caption };
 
   let handler: RequestHandler = (req, res, next) => {
     res.locals.active_page = id;
     handler_(req, res, next);
   };
+
+  if (pathAlias) {
+    router.get(pathAlias, handler);
+  }
 
   router.get(path, handler);
   return handler;
@@ -54,18 +58,30 @@ let updatingModels: Alert = {
   content: `Please note that the forecasts below are currently outdated and do not reflect the most recent data. We are updating our models and will post new predictions by Wednesday May 20.`,
 };
 
-add(MODELS, { path: "/models", caption: "Models" }, (req, res) => {
-  res.render("model.html", { channel: res.locals.CHANNEL });
-});
+add(
+  COUNTRY_RT_ESTIMATES,
+  {
+    path: "/country-rt-estimates",
+    pathAlias: "/models",
+    caption: "Country Rt Estimates",
+  },
+  (req, res) => {
+    res.render("country-rt-estimates.html", { channel: res.locals.CHANNEL });
+  }
+);
 
 add(CASE_MAP, { path: "/case-map", caption: "Case map" }, (req, res) =>
   res.render("case-map.html")
 );
 
 add(
-  MITIGATION_MAP,
-  { path: "/mitigation-map", caption: "Mitigation map" },
-  (req, res) => res.render("mitigation-map.html")
+  GLOBAL_RT_MAP,
+  {
+    path: "/global-rt-map",
+    pathAlias: "/mitigation-map",
+    caption: "Global Rt Map",
+  },
+  (req, res) => res.render("global-rt-map.html")
 );
 
 add(MEASURES, { path: "/measures", caption: "Measures" }, (req, res) =>
@@ -73,14 +89,22 @@ add(MEASURES, { path: "/measures", caption: "Measures" }, (req, res) =>
 );
 
 add(
-  MITIGATION_SCENARIOS,
-  { path: "/mitigation-scenarios", caption: "Mitigation scenarios" },
-  (req, res) => res.render("mitigation-scenarios.html")
+  COUNTRY_SCENARIOS,
+  {
+    path: "/country-scenarios",
+    pathAlias: "/mitigation-scenarios",
+    caption: "Country Scenarios",
+  },
+  (req, res) => res.render("country-scenarios.html")
 );
 
 let handleMitigation = add(
-  MITIGATION,
-  { path: "/containment", caption: "Mitigation" },
+  MITIGATION_CALCULATOR,
+  {
+    path: "/containment-calculator",
+    pathAlias: "/containment",
+    caption: "Mitigation Calculator",
+  },
   (req, res) => {
     res.render("containment.html");
   }
@@ -95,8 +119,8 @@ router.get("/request-calculation-submitted", (req, res) =>
 );
 
 add(
-  REQUEST_MODEL,
-  { path: "/request-calculation", caption: "Request a model" },
+  SUBMIT_REQUEST,
+  { path: "/submit-request", caption: "Submit a request" },
   (req, res) =>
     res.render("request-calculation.html", {
       message: "Please provide data",

@@ -1,20 +1,21 @@
-import * as React from "react";
-import { Scenario, Region, Scenarios, Stat, MainInfo } from "../models";
-import {
-  formatStatisticsLine,
-  classNames,
-  isTouchDevice,
-  formatDate,
-  formatSIInteger,
-  formatAbsoluteInteger,
-} from "../helpers";
-import { PageActions } from "./ModelsPage";
-import { makeConfig, makeLayout, Bounds } from "../components/graph-common";
 import * as Plotly from "plotly.js";
+import * as React from "react";
 import Plot from "react-plotly.js";
+
+import { Bounds, makeConfig, makeLayout } from "../components/graph-common";
 import { LocationContext } from "../components/LocationContext";
 import { QuestionTooltip } from "../components/QuestionTooltip";
+import {
+  classNames,
+  formatAbsoluteInteger,
+  formatDate,
+  formatSIInteger,
+  formatStatisticsLine,
+  isTouchDevice,
+} from "../helpers";
+import { MainInfo, Region, Scenario, Scenarios, Stat } from "../models";
 import { addEstimatedCases } from "../page_measures/current-chart";
+import { PageActions } from "./RtEstimatesPage";
 
 const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;
