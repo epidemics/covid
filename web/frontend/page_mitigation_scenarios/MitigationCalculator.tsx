@@ -403,8 +403,8 @@ const MitigationCalculator = (props: Props) => {
         </div>
         <div style={{ gridColumn: "3 / span 2" }}>
           <b>Impact on R, the reproductive number</b>
-          <div className="py-2" style={{ display: "flex" }}>
-            <span className="pr-3">Compliance</span>
+          <div className="py-2 d-md-flex">
+            <p className="pr-3 mb-0">Compliance</p>
             <div className="form-check form-check-inline">
               <input
                 className="form-check-input"
@@ -465,11 +465,14 @@ const MitigationCalculator = (props: Props) => {
         </div>
         {elems}
         <div style={{ gridColumn: "1 / span 2", gridRow: row }}>
-          <p className="mitigation-calculator-result-label">Outcome</p>
+          <p className="mitigation-calculator-result-label mb-0">Outcome</p>
+          <p className="d-sm-block d-md-none">
+            <small>The measures result in a reduction in R of </small>
+          </p>
         </div>
 
         <div style={{ gridColumn: "2 / span 2", gridRow: row }}>
-          <p className="mitigation-calculator-result-label">
+          <p className="mitigation-calculator-result-label d-none d-md-block">
             The measures result in a reduction in R of{" "}
           </p>
         </div>
