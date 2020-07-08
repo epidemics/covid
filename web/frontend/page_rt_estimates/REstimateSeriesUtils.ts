@@ -16,6 +16,7 @@ export const createTrace = (rEstimates: REstimates) => {
     y: rEstimates.meanR.map((mean, index) => mean + 2 * rEstimates.stdR[index]),
     showlegend: false,
     name: "Upper bound",
+    hoverinfo: "none",
   } as Plotly.Data;
 
   const belowStdTrace = {
@@ -33,6 +34,7 @@ export const createTrace = (rEstimates: REstimates) => {
     ),
     showlegend: false,
     name: "Lower bound",
+    hoverinfo: "none",
   } as Plotly.Data;
 
   const meanTrace = {
@@ -45,6 +47,8 @@ export const createTrace = (rEstimates: REstimates) => {
     x: rEstimates.date,
     y: rEstimates.meanR,
     name: "Estimated R",
+    hoverinfo: "y+text",
+    hovertext: "Estimated R",
   } as Plotly.Data;
 
   return [aboveStdTrace, belowStdTrace, meanTrace];
@@ -65,7 +69,15 @@ export const createActiveCasesBars = (reported: Reported) => {
     }),
     type: "bar",
     yaxis: "y2",
-    marker: { color: "rgba(239,108,0,0.1)" },
+    marker: { color: "rgba(239,108,0,0.2)" },
     name: "Daily new cases",
+    hoverlabel: {
+      namelength: 30,
+      font: {
+        color: "#fff",
+      },
+    },
+    hoverinfo: "x+y+text",
+    hovertext: "Daily new cases",
   } as Plotly.Data;
 };

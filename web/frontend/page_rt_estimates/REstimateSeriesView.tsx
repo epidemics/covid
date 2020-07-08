@@ -38,9 +38,10 @@ export function REstimateSeriesView(props: ModelViewProps) {
   // create a layout and customize
   let layout = makeLayout();
   layout.autosize = true;
-  layout.margin!.r = 50;
-  layout.margin!.l = 50;
+  layout.margin!.r = 60;
+  layout.margin!.l = 60;
   layout.xaxis!.type = "date";
+  layout.xaxis!.tickformat = "%B %d";
   layout.yaxis!.title = "R estimation";
   layout.yaxis!.type = "linear";
   layout.showlegend = true;
@@ -62,6 +63,7 @@ export function REstimateSeriesView(props: ModelViewProps) {
     overlaying: "y",
     side: "right",
     rangemode: "nonnegative",
+    tickformat: "n",
   };
 
   if (isTouchDevice()) {
