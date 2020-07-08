@@ -17,7 +17,13 @@ import {
   Scenario,
   useThunk,
 } from "../models";
+import { NPIModelVisualization } from "./NPIModelVisualization";
 import { REstimateSeriesView } from "./REstimateSeriesView";
+
+const CHANNEL_PARAM = "channel";
+
+let url = new URL(window.location.href);
+let channel = url.searchParams.get(CHANNEL_PARAM) ?? DEFAULT_EPIFOR_CHANNEL;
 
 const REGION_FALLBACK = "united kingdom";
 
@@ -130,12 +136,12 @@ export function Page({ data }: { data: Datastore }) {
           <hr />
         </>
       )}
-      {/* {region && region.NPIModel && (
+      {region && region.NPIModel && channel === "model" && (
         <>
           <NPIModelVisualization region={region} />
           <hr />
         </>
-      )} */}
+      )}
     </LocationContext.Provider>
   );
 }
