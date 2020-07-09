@@ -21,6 +21,9 @@ function calculateBackground(
   }
 
   let backgrounds = [];
+  const f = (loc: number) => getColor((loc - mean) / sd);
+  backgrounds.push(`linear-gradient(
+    to right, ${f(min)} 49%, ${f(max)} 51%)`);
 
   let stops: Array<string> = [];
   let addStop = (loc: number, z: number) => {
@@ -28,16 +31,15 @@ function calculateBackground(
     stops.push(`${getColor(z)} ${(offset * 100).toFixed(2)}%`);
   };
 
-  //TODO: fix std interval positioning
-  addStop(mean - sd, -4);
-  addStop(mean - sd, 0);
-  addStop(mean + sd, 0);
-  addStop(mean + sd, 4);
+  for (let z = -4; z < 4; z += 0.25) {
+    addStop(mean + z * sd, z);
+  }
 
   let rulerGradient = `linear-gradient(to right, ${stops.join(",")})`;
   backgrounds.push(
     `no-repeat ${rulerGradient} 
-    0 0`
+      calc(${thumbWidth}/2) 0 
+    / calc(100% - ${thumbWidth}) auto`
   );
 
   function addTicks(
@@ -158,7 +160,7 @@ function FancySlider({
       propMin,
       propMax,
       onChange !== undefined ? "var(--thumb-width)" : "3px",
-      scale ?? chroma.scale(["rgb(212, 212, 157)", "rgb(102, 102, 66)"]),
+      scale ?? chroma.scale(["rgb(186, 206, 232)", "rgb(31, 74, 130)"]),
       initial,
       showInitial
     );
