@@ -572,7 +572,7 @@ class WebExport(luigi.Task):
             pretty_print=self.pretty_print,
             overwrite=self.overwrite,
             write_country_exports=not self.automatic,
-            r_estimates=Path(r_estimates)
+            r_estimates=Path(r_estimates),
         )
 
 

@@ -89,7 +89,7 @@ class WebExport:
         pretty_print=False,
         overwrite=False,
         write_country_exports=True,
-        r_estimates: Optional[Path]=None,
+        r_estimates: Optional[Path] = None,
     ):
         indent = None
         if pretty_print:
@@ -133,7 +133,7 @@ class WebExport:
         if r_estimates:
             r_estimates_export = export_directory / r_estimates.name
             shutil.copy(r_estimates, r_estimates_export)
-            log.info(f'Copied the R estimates from {r_estimates} to {export_directory}')
+            log.info(f"Copied the R estimates from {r_estimates} to {export_directory}")
 
         if latest is not None:
             latestdir = Path(os.path.dirname(export_directory)) / latest
