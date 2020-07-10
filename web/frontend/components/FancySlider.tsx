@@ -160,7 +160,7 @@ function FancySlider({
       propMin,
       propMax,
       onChange !== undefined ? "var(--thumb-width)" : "3px",
-      scale ?? chroma.scale(["rgb(186, 206, 232)", "rgb(31, 74, 130)"]),
+      scale ?? chroma.scale("YlGnBu"),
       initial,
       showInitial
     );
