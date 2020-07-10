@@ -553,6 +553,7 @@ class WebExport(luigi.Task):
         config_yaml = ConfigYaml.load(self.input()["config_yaml"].path)
         regions_dataset = RegionsDatasetSubroutine.load_rds(self)
         estimates = self.input()["country_estimates"].path
+        r_estimates = self.input()["r_estimates"].path
 
         ex = process_export(
             self.input(),
@@ -571,6 +572,7 @@ class WebExport(luigi.Task):
             pretty_print=self.pretty_print,
             overwrite=self.overwrite,
             write_country_exports=not self.automatic,
+            r_estimates=Path(r_estimates),
         )
 
 
