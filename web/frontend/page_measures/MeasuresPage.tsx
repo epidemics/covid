@@ -102,7 +102,7 @@ export function MeasuresPage({ data }: { data: Datastore }) {
           We offer custom forecasting and modeling for decision makers and
           clinical trial design. Please reach out{" "}
           <a
-            href="http://epidemicforecasting.org/request-calculation"
+            href="http://epidemicforecasting.org/submit-request"
             className="alert-link"
           >
             here
