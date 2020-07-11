@@ -54,7 +54,7 @@ let proBonoAlert: Alert = {
   id: "consultingAlert",
   dismissalDuration: { days: 1 },
   revision: "0",
-  content: `We offer custom forecasting and modeling for decision makers and clinical trial design. Please reach out <a href="http://epidemicforecasting.org/request-calculation" 
+  content: `We offer custom forecasting and modeling for decision makers and clinical trial design. Please reach out <a href="http://epidemicforecasting.org/submit-request" 
   class="alert-link">here</a>.`,
 };
 
