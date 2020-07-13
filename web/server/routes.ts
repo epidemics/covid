@@ -120,7 +120,11 @@ router.get("/request-calculation-submitted", (req, res) =>
 
 add(
   SUBMIT_REQUEST,
-  { path: "/submit-request", caption: "Submit a request" },
+  {
+    path: "/submit-request",
+    pathAlias: "/request-calculation",
+    caption: "Submit a request",
+  },
   (req, res) =>
     res.render("request-calculation.html", {
       message: "Please provide data",
