@@ -9,6 +9,8 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.6.8"
+pip = ">=20.1.1"
+setuptools = ">=49.2"
 numpy = "^1.18.2"
 pandas = "^1.1.0"
 scipy = "^1.4.1"
