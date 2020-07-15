@@ -649,12 +649,12 @@ class ModelData(luigi.ExternalTask):
             logger.info(
                 f"Extending the countermeasures data for {self.extension_period} days"
             )
-            extended_data = imports.extend_countermeasure_data(
+            expanded_data = imports.expand_countermeasure_data(
                 self.data_file,
                 self.input()["johns_hopkins"].path,
                 self.extension_period,
             )
-            extended_data.to_csv(self.path)
+            expanded_data.to_csv(self.path)
         else:
             shutil.copy(self.data_file, self.path)
 

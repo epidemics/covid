@@ -1,18 +1,27 @@
 import pandas as pd
+from .common import INTERVENTION_TYPES
 
 
-def extend_countermeasure_data(
+def expand_countermeasure_data(
     countermeasures_path: str, johns_hopkins_path: str, extension_period: int,
 ) -> pd.DataFrame:
     df = pd.read_csv(countermeasures_path)
     jh_df = pd.read_csv(johns_hopkins_path)
     jh_groups = jh_df.groupby("Code")
 
-    return df.groupby("Country Code").apply(
+    extended_df = df.groupby("Country Code").apply(
         lambda ctm_df: extend_country_countermeasures(
             ctm_df, jh_groups.get_group(ctm_df.name), extension_period
         )
     )
+    extended_df.reset_index(inplace=True, drop=True)
+
+    for intervention_type in INTERVENTION_TYPES:
+        extended_df[f"CANCELED {intervention_type}"] = extended_df.groupby(
+            "Country Code"
+        )[intervention_type].transform(add_canceled_interventions)
+
+    return extended_df
 
 
 def extend_country_countermeasures(
@@ -44,3 +53,14 @@ def extend_country_countermeasures(
     df.fillna(method="ffill", inplace=True)
 
     return df
+
+
+def add_canceled_interventions(country_intervention):
+    on_idx = country_intervention[(country_intervention == 1.0)]
+    first_time_on = (
+        on_idx.idxmax() if on_idx.count() > 0 else country_intervention.index.max()
+    )
+    cancled = (~country_intervention.astype(bool)).astype(float)
+    cancled[cancled.index <= first_time_on] = 0.0
+
+    return cancled
