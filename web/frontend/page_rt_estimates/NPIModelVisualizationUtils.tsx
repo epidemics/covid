@@ -1,8 +1,8 @@
-import * as Plotly from "plotly.js";
+import * as Plotly from 'plotly.js';
 
-import { v4 } from "../../common/spec";
-import { Reported } from "../models";
-import { NPIModel } from "../models/NPIModel";
+import { v4 } from '../../common/spec';
+import { Reported } from '../models';
+import { NPIModel } from '../models/NPIModel';
 
 const line = {
   shape: "spline",
@@ -186,8 +186,15 @@ export const createInterventionIcons = (
       "Some Businesses Suspended": '<span style="color: orange">\uf07a</span>',
       "Most Businesses Suspended": '<span style="color: red">\uf07a</span>',
       "School Closure": '<span style="color: black">\uf19d</span>',
-      "Stay Home Order": '<span style=color: black">\uf965</span>',
-      X: '<span style=color: lightgrey">X</span>',
+      "Stay Home Order": '<span style="color: black">\uf965</span>',
+      "Travel Screen/Quarantine": '<span style="color: orange">plane</span>',
+      "Travel Bans": '<span style="color: red">plane</span>',
+      "Public Transport Limited": '<span style="color: lightgrey">bus</span>',
+      "Internal Movement Limited":
+        '<span style="color: lightgrey">child</span>',
+      "Public Information Campaigns":
+        '<span style="color: lightgrey">newspaper</span>',
+      X: '<span style="color: lightgrey">X</span>',
     } as {
       [key: string]: string;
     };
@@ -208,6 +215,11 @@ export const createInterventionIcons = (
       "School Closure": 9,
       "Stay Home Order": 10,
       X: 11,
+      "Travel Screen/Quarantine": 12,
+      "Travel Bans": 13,
+      "Public Transport Limited": 14,
+      "Internal Movement Limited": 15,
+      "Public Information Campaigns": 16,
     } as {
       [key: string]: number;
     };
@@ -217,7 +229,7 @@ export const createInterventionIcons = (
 
   return {
     x: interventions.map((intervention) => new Date(intervention.dateStart)),
-    y: interventions.map((intervention) => maxValue / 1.3),
+    y: interventions.map((intervention) => maxValue / 1.4),
     text: interventions.map((intervention) =>
       intervention.type.length > 0
         ? intervention.type
