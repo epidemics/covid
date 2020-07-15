@@ -629,12 +629,37 @@ class ModelData(luigi.ExternalTask):
     TODO: have a task that merges JH with countermeasures from another data source
     """
 
+    path: str = luigi.Parameter(
+        description="Path to the csv with extended countermeasures data"
+    )
+
     data_file: str = luigi.Parameter(
         description="Path to the input file relative to the configuration input directory",
     )
 
+    extension_period: int = luigi.IntParameter(
+        description="Number of days the model should be extended for"
+    )
+
+    def requires(self):
+        return {"johns_hopkins": JohnsHopkins()}
+
+    def run(self):
+        if self.extension_period > 0:
+            logger.info(
+                f"Extending the countermeasures data for {self.extension_period} days"
+            )
+            extended_data = imports.extend_countermeasure_data(
+                self.data_file,
+                self.input()["johns_hopkins"].path,
+                self.extension_period,
+            )
+            extended_data.to_csv(self.path)
+        else:
+            shutil.copy(self.data_file, self.path)
+
     def output(self):
-        return luigi.LocalTarget(self.data_file)
+        return luigi.LocalTarget(self.path)
 
 
 class Interventions(luigi.ExternalTask):

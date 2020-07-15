@@ -6,7 +6,7 @@ from epimodel.pymc3_models.cm_effect import CMCombinedModel
 
 
 def run_model(data_file: str, output_file: str):
-    dp = DataPreprocessor(drop_HS=True)
+    dp = DataPreprocessor()
     data = dp.preprocess_data(data_file)
 
     with CMCombinedModel(data) as model:
