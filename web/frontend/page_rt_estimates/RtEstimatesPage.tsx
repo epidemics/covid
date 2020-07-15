@@ -136,13 +136,12 @@ export function Page({ data }: { data: Datastore }) {
           <hr />
         </>
       )}
-      {(region && region.NPIModel && channel === "model") ||
-        (channel === "pavel" && (
-          <>
-            <NPIModelVisualization region={region} />
-            <hr />
-          </>
-        ))}
+      {region && region.NPIModel && channel === "model" && (
+        <>
+          <NPIModelVisualization region={region} />
+          <hr />
+        </>
+      )}
     </LocationContext.Provider>
   );
 }
