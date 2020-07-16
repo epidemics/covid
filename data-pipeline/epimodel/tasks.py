@@ -690,6 +690,10 @@ class NPIModel(luigi.Task):
         description="Path to the csv file with the model predictions",
     )
 
+    extrapolation_period: int = luigi.IntParameter(
+        description="Number of days the model extrapolates",
+    )
+
     def requires(self):
         return {"model_data": ModelData()}
 
@@ -697,4 +701,4 @@ class NPIModel(luigi.Task):
         return luigi.LocalTarget(self.output_file)
 
     def run(self):
-        run_model(self.input()["model_data"].path, self.output_file)
+        run_model(self.input()["model_data"].path, self.output_file, self.extrapolation_period)

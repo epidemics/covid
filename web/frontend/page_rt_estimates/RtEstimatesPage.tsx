@@ -136,7 +136,7 @@ export function Page({ data }: { data: Datastore }) {
           <hr />
         </>
       )}
-      {region && region.NPIModel && channel === "model" && (
+      {region && region.NPIModel && (channel === "pavel" || channel === "model") && (
         <>
           <NPIModelVisualization region={region} />
           <hr />

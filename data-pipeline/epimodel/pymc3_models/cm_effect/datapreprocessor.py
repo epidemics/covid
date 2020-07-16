@@ -1,6 +1,7 @@
 import copy
 from typing import List
 from pandas import Timestamp
+from datetime import timedelta
 
 import pandas as pd
 import numpy as np
@@ -35,12 +36,13 @@ class DataPreprocessor:
             "confirmed_mask": self.min_num_active_mask,
         }
 
-    def preprocess_data(self, data_path):
+    def preprocess_data(self, data_path, extrapolation_period=31):
         # load data
         df = pd.read_csv(
             data_path, parse_dates=["Date"], infer_datetime_format=True
         ).set_index(["Country Code", "Date"])
         Ds = list(df.index.levels[1])
+        Ds += [max(Ds) + timedelta(days=days+1) for days in range(extrapolation_period)]
         nDs = len(Ds)
 
         all_rs = list([r for r, _ in df.index])
@@ -67,13 +69,13 @@ class DataPreprocessor:
 
         for r_i, r in enumerate(sorted_regions):
             region_names[r_i] = df.loc[(r, Ds[0])]["Region Name"]
-            for d_i, d in enumerate(Ds):
+            for d_i, d in enumerate(Ds[:-extrapolation_period]):
                 confirmed[r_i, d_i] = df.loc[(r, d)]["Confirmed"]
                 deaths[r_i, d_i] = df.loc[(r, d)]["Deaths"]
                 active[r_i, d_i] = df.loc[(r, d)]["Active"]
 
-                active_countermeasures[r_i, :, :] = (
-                    df.loc[r].loc[Ds][countermeasures].values.T
+                active_countermeasures[r_i,:, :-extrapolation_period] = (
+                    df.loc[r].loc[Ds[:-extrapolation_period]][countermeasures].values.T
                 )
 
         # preprocess data
