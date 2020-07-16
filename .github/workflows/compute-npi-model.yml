@@ -10,7 +10,7 @@ on:
 
 
 jobs:
-  linting:
+  NPI model computation:
     runs-on: ubuntu-latest
 
     steps:

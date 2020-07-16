@@ -514,7 +514,7 @@ class CMCombinedModel(BaseCMModel):
                 )[self.all_observed_deaths],
             )
 
-    def region_forward_pass(self, region):
+    def region_forward_pass(self, region, extrapolation_period=0):
         country_idx = self.data.Rs.index(region)
         if country_idx == -1:
             raise ValueError(f"Could not find region {region}")
