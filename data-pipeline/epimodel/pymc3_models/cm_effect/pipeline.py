@@ -19,7 +19,6 @@ def run_model(data_file: str, output_file: str, extrapolation_period: int):
     with open('model.pckl', 'wb') as f:
         pickle.dump(model, f)
 
-
     # with open('model.pckl', 'rb') as f:
     #     model = pickle.load(f)
 
