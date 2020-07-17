@@ -57,7 +57,7 @@ class DataPreprocessor:
             logger.info("Dropping Healthcare Infection Control")
             df = df.drop("Healthcare Infection Control", axis=1)
 
-        countermeasures = list(df.columns[4:])
+        countermeasures = list(df.columns[5:])
         num_countermeasures = len(countermeasures)
 
         active_countermeasures = np.zeros((nRs, num_countermeasures, nDs))
@@ -77,6 +77,11 @@ class DataPreprocessor:
                 active_countermeasures[r_i,:, :-extrapolation_period] = (
                     df.loc[r].loc[Ds[:-extrapolation_period]][countermeasures].values.T
                 )
+
+        confirmed[:, -extrapolation_period:] = np.nan
+        deaths[:, -extrapolation_period:] = np.nan
+        active[:, -extrapolation_period:] = np.nan
+        active_countermeasures[:, :, -extrapolation_period:] = np.nan
 
         # preprocess data
         confirmed[confirmed < self.min_confirmed] = np.nan
