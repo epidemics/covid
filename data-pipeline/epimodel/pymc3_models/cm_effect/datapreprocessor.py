@@ -36,13 +36,15 @@ class DataPreprocessor:
             "confirmed_mask": self.min_num_active_mask,
         }
 
-    def preprocess_data(self, data_path, extrapolation_period=31):
+    def preprocess_data(self, data_path, extrapolation_period: int = 0):
         # load data
         df = pd.read_csv(
             data_path, parse_dates=["Date"], infer_datetime_format=True
         ).set_index(["Country Code", "Date"])
-        Ds = list(df.index.levels[1])
-        Ds += [max(Ds) + timedelta(days=days+1) for days in range(extrapolation_period)]
+
+        dates = df.index.levels[1]
+        dates = dates.union(pd.date_range(dates[-1], periods=extrapolation_period+1, freq='D'))
+        Ds = list(dates)
         nDs = len(Ds)
 
         all_rs = list([r for r, _ in df.index])
@@ -61,27 +63,29 @@ class DataPreprocessor:
         num_countermeasures = len(countermeasures)
 
         active_countermeasures = np.zeros((nRs, num_countermeasures, nDs))
+
+        new_deaths = np.zeros((nRs, nDs))
+        new_cases = np.zeros((nRs, nDs))
         confirmed = np.zeros((nRs, nDs))
         deaths = np.zeros((nRs, nDs))
         active = np.zeros((nRs, nDs))
-        new_deaths = np.zeros((nRs, nDs))
-        new_cases = np.zeros((nRs, nDs))
 
         for r_i, r in enumerate(sorted_regions):
             region_names[r_i] = df.loc[(r, Ds[0])]["Region Name"]
-            for d_i, d in enumerate(Ds[:-extrapolation_period]):
-                confirmed[r_i, d_i] = df.loc[(r, d)]["Confirmed"]
-                deaths[r_i, d_i] = df.loc[(r, d)]["Deaths"]
-                active[r_i, d_i] = df.loc[(r, d)]["Active"]
 
-                active_countermeasures[r_i,:, :-extrapolation_period] = (
-                    df.loc[r].loc[Ds[:-extrapolation_period]][countermeasures].values.T
-                )
+            confirmed[r_i, :-extrapolation_period] = df.loc[r]["Confirmed"]
+            deaths[r_i, :-extrapolation_period] = df.loc[r]["Deaths"]
+            active[r_i, :-extrapolation_period] = df.loc[r]["Active"]
+
+            active_countermeasures[r_i,:, :-extrapolation_period] = (
+                df.loc[r].loc[Ds[:-extrapolation_period]][countermeasures].values.T
+            )
 
         confirmed[:, -extrapolation_period:] = np.nan
         deaths[:, -extrapolation_period:] = np.nan
         active[:, -extrapolation_period:] = np.nan
-        active_countermeasures[:, :, -extrapolation_period:] = np.nan
+        # copying the last known countermeasures value to the extrapolated period
+        active_countermeasures[:, :, -extrapolation_period:] = active_countermeasures[:, :,  -(extrapolation_period+1), None]
 
         # preprocess data
         confirmed[confirmed < self.min_confirmed] = np.nan
