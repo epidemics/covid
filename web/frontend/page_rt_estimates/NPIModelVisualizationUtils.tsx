@@ -1,10 +1,10 @@
-import * as Plotly from 'plotly.js';
+import * as Plotly from "plotly.js";
 
-import { v4 } from '../../common/spec';
-import { makeLayout } from '../components/graph-common';
-import { isTouchDevice } from '../helpers';
-import { Region, Reported } from '../models';
-import { NPIModel } from '../models/NPIModel';
+import { v4 } from "../../common/spec";
+import { makeLayout } from "../components/graph-common";
+import { isTouchDevice } from "../helpers";
+import { Region, Reported } from "../models";
+import { NPIModel } from "../models/NPIModel";
 
 const line = {
   shape: "spline",
@@ -20,7 +20,9 @@ const commonDeviationLineProps = {
 };
 
 const lowerBound = (data: number[]) => {
-  return data.map((value) => (Math.max(value, 1) === 1 ? 0 : value));
+  return data.map((value) =>
+    Math.max(value, 1) === 1 ? Math.round(value) : value
+  );
 };
 
 export const createDailyInfectedCasesTrace = (NPIModel: NPIModel) => {
@@ -173,15 +175,9 @@ export const createInterventionLines = (interventions: v4.Intervention[]) => {
 export const createInterventionIcons = (
   NPIModel: NPIModel,
   interventions: v4.Intervention[],
-  scaleMode: "log" | "linear"
+  scaleMode: "log" | "linear",
+  maxValue: number
 ) => {
-  const maxValue = [
-    ...NPIModel.predictedDeathsUpper,
-    ...NPIModel.predictedNewCasesUpper,
-    ...NPIModel.dailyInfectedDeathsUpper,
-    ...NPIModel.dailyInfectedCasesUpper,
-  ].reduce((acc, cur) => Math.max(acc, cur), 0);
-
   const mapTypeToIcon = (type: string) => {
     const icons = {
       "Healthcare Infection Control": '<span style="color: red">\uf7f2</span>',
@@ -235,7 +231,9 @@ export const createInterventionIcons = (
   };
 
   const yPosition =
-    scaleMode === "log" ? Math.log(maxValue) / Math.log(1.4) : maxValue / 1.4;
+    scaleMode === "log"
+      ? Math.pow(10, Math.log10(maxValue) / 1.3)
+      : maxValue / 1.3;
 
   return {
     x: interventions.map((intervention) => new Date(intervention.dateStart)),
@@ -262,6 +260,7 @@ export const createInterventionIcons = (
     textfont: {
       color: "#fff",
       family: "emoji_font",
+      size: 9,
     },
     hoverlabel: {
       font: {
@@ -275,18 +274,16 @@ export const createInterventionIcons = (
 export const createActiveCasesMarkers = (reported: Reported) => {
   return {
     x: reported.points.map((singleReported) => new Date(singleReported.date)),
-    y: lowerBound(
-      reported.points.map((singleReported, index) => {
-        if (index >= 1) {
-          return (
-            reported.points[index].confirmed -
-            reported.points[index - 1].confirmed
-          );
-        }
+    y: reported.points.map((singleReported, index) => {
+      if (index >= 1) {
+        return (
+          reported.points[index].confirmed -
+          reported.points[index - 1].confirmed
+        );
+      }
 
-        return reported.points[index].confirmed;
-      })
-    ),
+      return reported.points[index].confirmed;
+    }),
     mode: "markers",
     name: "Daily current cases",
     hovertext: "Daily current cases",
@@ -297,17 +294,15 @@ export const createActiveCasesMarkers = (reported: Reported) => {
 export const createDeathsCasesMarkers = (reported: Reported) => {
   return {
     x: reported.points.map((singleReported) => new Date(singleReported.date)),
-    y: lowerBound(
-      reported.points.map((singleReported, index) => {
-        if (index >= 1) {
-          return (
-            reported.points[index].deaths - reported.points[index - 1].deaths
-          );
-        }
+    y: reported.points.map((singleReported, index) => {
+      if (index >= 1) {
+        return (
+          reported.points[index].deaths - reported.points[index - 1].deaths
+        );
+      }
 
-        return reported.points[index].deaths;
-      })
-    ),
+      return reported.points[index].deaths;
+    }),
     mode: "markers",
     marker: {
       color: "#c9d918",
@@ -321,7 +316,8 @@ export const createDeathsCasesMarkers = (reported: Reported) => {
 export const initializeVisualization = (
   scaleMode: "linear" | "log",
   config: Partial<Plotly.Config>,
-  region: Region | null
+  region: Region | null,
+  maxValue: number
 ) => {
   // create a layout and customize
   let layout = makeLayout();
@@ -355,14 +351,19 @@ export const initializeVisualization = (
       region.NPIModel.date[region.NPIModel.date.length - 1],
     ];
 
-    layout.yaxis!.rangemode = "normal";
+    layout.yaxis!.rangemode = "nonnegative";
 
     data = [
       ...createDailyInfectedCasesTrace(region.NPIModel),
       ...createDailyInfectedDeathsTrace(region.NPIModel),
       ...createPredictedNewCasesTrace(region.NPIModel),
       ...createPredictedDeathsTrace(region.NPIModel),
-      createInterventionIcons(region.NPIModel, region.interventions, scaleMode),
+      createInterventionIcons(
+        region.NPIModel,
+        region.interventions,
+        scaleMode,
+        maxValue
+      ),
       createActiveCasesMarkers(region.reported),
       createDeathsCasesMarkers(region.reported),
     ];
