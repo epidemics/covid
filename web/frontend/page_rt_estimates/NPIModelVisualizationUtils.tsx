@@ -1,8 +1,10 @@
-import * as Plotly from "plotly.js";
+import * as Plotly from 'plotly.js';
 
-import { v4 } from "../../common/spec";
-import { Reported } from "../models";
-import { NPIModel } from "../models/NPIModel";
+import { v4 } from '../../common/spec';
+import { makeLayout } from '../components/graph-common';
+import { isTouchDevice } from '../helpers';
+import { Region, Reported } from '../models';
+import { NPIModel } from '../models/NPIModel';
 
 const line = {
   shape: "spline",
@@ -17,12 +19,16 @@ const commonDeviationLineProps = {
   hoverinfo: "none",
 };
 
+const lowerBound = (data: number[]) => {
+  return data.map((value) => (Math.max(value, 1) === 1 ? 0 : value));
+};
+
 export const createDailyInfectedCasesTrace = (NPIModel: NPIModel) => {
   const aboveStdTrace = {
     ...commonDeviationLineProps,
     fillcolor: "rgba(65, 180, 209,0.3)",
     x: NPIModel.date,
-    y: NPIModel.dailyInfectedCasesUpper,
+    y: lowerBound(NPIModel.dailyInfectedCasesUpper),
   } as Plotly.Data;
 
   const belowStdTrace = {
@@ -30,12 +36,12 @@ export const createDailyInfectedCasesTrace = (NPIModel: NPIModel) => {
     fill: "tonexty",
     fillcolor: "rgba(65, 180, 209,0.3)",
     x: NPIModel.date,
-    y: NPIModel.dailyInfectedCasesLower,
+    y: lowerBound(NPIModel.dailyInfectedCasesLower),
   } as Plotly.Data;
 
   const meanTrace = {
     x: NPIModel.date,
-    y: NPIModel.dailyInfectedCasesMean,
+    y: lowerBound(NPIModel.dailyInfectedCasesMean),
     line: {
       shape: "spline",
       smoothing: 0,
@@ -54,7 +60,7 @@ export const createDailyInfectedDeathsTrace = (NPIModel: NPIModel) => {
     ...commonDeviationLineProps,
     fillcolor: "rgba(157, 24, 214,0.3)",
     x: NPIModel.date,
-    y: NPIModel.dailyInfectedDeathsUpper,
+    y: lowerBound(NPIModel.dailyInfectedDeathsUpper),
   } as Plotly.Data;
 
   const belowStdTrace = {
@@ -62,7 +68,7 @@ export const createDailyInfectedDeathsTrace = (NPIModel: NPIModel) => {
     fill: "tonexty",
     fillcolor: "rgba(157, 24, 214,0.3)",
     x: NPIModel.date,
-    y: NPIModel.dailyInfectedDeathsLower,
+    y: lowerBound(NPIModel.dailyInfectedDeathsLower),
   } as Plotly.Data;
 
   const meanTrace = {
@@ -73,7 +79,7 @@ export const createDailyInfectedDeathsTrace = (NPIModel: NPIModel) => {
       color: "#9d18d6",
     },
     x: NPIModel.date,
-    y: NPIModel.dailyInfectedDeathsMean,
+    y: lowerBound(NPIModel.dailyInfectedDeathsMean),
     name: "Daily infected deaths",
     hovertext: "Daily infected deaths",
     hoverinfo: "y+text",
@@ -87,7 +93,7 @@ export const createPredictedNewCasesTrace = (NPIModel: NPIModel) => {
     ...commonDeviationLineProps,
     fillcolor: "rgba(201, 58, 58,0.3)",
     x: NPIModel.date,
-    y: NPIModel.predictedNewCasesUpper,
+    y: lowerBound(NPIModel.predictedNewCasesUpper),
   } as Plotly.Data;
 
   const belowStdTrace = {
@@ -95,7 +101,7 @@ export const createPredictedNewCasesTrace = (NPIModel: NPIModel) => {
     fill: "tonexty",
     fillcolor: "rgba(201, 58, 58,0.3)",
     x: NPIModel.date,
-    y: NPIModel.predictedNewCasesLower,
+    y: lowerBound(NPIModel.predictedNewCasesLower),
   } as Plotly.Data;
 
   const meanTrace = {
@@ -106,7 +112,7 @@ export const createPredictedNewCasesTrace = (NPIModel: NPIModel) => {
       color: "#c93a3a",
     },
     x: NPIModel.date,
-    y: NPIModel.predictedNewCasesMean,
+    y: lowerBound(NPIModel.predictedNewCasesMean),
     name: "Daily predicted new cases",
     hovertext: "Daily predicted new cases",
     hoverinfo: "y+text",
@@ -120,7 +126,7 @@ export const createPredictedDeathsTrace = (NPIModel: NPIModel) => {
     ...commonDeviationLineProps,
     fillcolor: "rgba(201, 217, 24,0.3)",
     x: NPIModel.date,
-    y: NPIModel.predictedDeathsUpper,
+    y: lowerBound(NPIModel.predictedDeathsUpper),
   } as Plotly.Data;
 
   const belowStdTrace = {
@@ -128,7 +134,7 @@ export const createPredictedDeathsTrace = (NPIModel: NPIModel) => {
     fill: "tonexty",
     fillcolor: "rgba(201, 217, 24,0.3)",
     x: NPIModel.date,
-    y: NPIModel.predictedDeathsLower,
+    y: lowerBound(NPIModel.predictedDeathsLower),
   } as Plotly.Data;
 
   const meanTrace = {
@@ -139,7 +145,7 @@ export const createPredictedDeathsTrace = (NPIModel: NPIModel) => {
       color: "#c9d918",
     },
     x: NPIModel.date,
-    y: NPIModel.predictedDeathsMean,
+    y: lowerBound(NPIModel.predictedDeathsMean),
     name: "Daily predicted deaths",
     hovertext: "Daily predicted deaths",
     hoverinfo: "y+text",
@@ -166,7 +172,8 @@ export const createInterventionLines = (interventions: v4.Intervention[]) => {
 
 export const createInterventionIcons = (
   NPIModel: NPIModel,
-  interventions: v4.Intervention[]
+  interventions: v4.Intervention[],
+  scaleMode: "log" | "linear"
 ) => {
   const maxValue = [
     ...NPIModel.predictedDeathsUpper,
@@ -227,9 +234,12 @@ export const createInterventionIcons = (
     return icons[type];
   };
 
+  const yPosition =
+    scaleMode === "log" ? Math.log(maxValue) / Math.log(1.4) : maxValue / 1.4;
+
   return {
     x: interventions.map((intervention) => new Date(intervention.dateStart)),
-    y: interventions.map((intervention) => maxValue / 1.4),
+    y: interventions.map((intervention) => yPosition),
     text: interventions.map((intervention) =>
       intervention.type.length > 0
         ? intervention.type
@@ -265,16 +275,18 @@ export const createInterventionIcons = (
 export const createActiveCasesMarkers = (reported: Reported) => {
   return {
     x: reported.points.map((singleReported) => new Date(singleReported.date)),
-    y: reported.points.map((singleReported, index) => {
-      if (index >= 1) {
-        return (
-          reported.points[index].confirmed -
-          reported.points[index - 1].confirmed
-        );
-      }
+    y: lowerBound(
+      reported.points.map((singleReported, index) => {
+        if (index >= 1) {
+          return (
+            reported.points[index].confirmed -
+            reported.points[index - 1].confirmed
+          );
+        }
 
-      return reported.points[index].confirmed;
-    }),
+        return reported.points[index].confirmed;
+      })
+    ),
     mode: "markers",
     name: "Daily current cases",
     hovertext: "Daily current cases",
@@ -285,15 +297,17 @@ export const createActiveCasesMarkers = (reported: Reported) => {
 export const createDeathsCasesMarkers = (reported: Reported) => {
   return {
     x: reported.points.map((singleReported) => new Date(singleReported.date)),
-    y: reported.points.map((singleReported, index) => {
-      if (index >= 1) {
-        return (
-          reported.points[index].deaths - reported.points[index - 1].deaths
-        );
-      }
+    y: lowerBound(
+      reported.points.map((singleReported, index) => {
+        if (index >= 1) {
+          return (
+            reported.points[index].deaths - reported.points[index - 1].deaths
+          );
+        }
 
-      return reported.points[index].deaths;
-    }),
+        return reported.points[index].deaths;
+      })
+    ),
     mode: "markers",
     marker: {
       color: "#c9d918",
@@ -302,4 +316,57 @@ export const createDeathsCasesMarkers = (reported: Reported) => {
     hovertext: "Daily current deaths",
     hoverinfo: "y+text",
   } as Plotly.Data;
+};
+
+export const initializeVisualization = (
+  scaleMode: "linear" | "log",
+  config: Partial<Plotly.Config>,
+  region: Region | null
+) => {
+  // create a layout and customize
+  let layout = makeLayout();
+  layout.autosize = true;
+  layout.margin!.r = 20;
+  layout.xaxis!.type = "date";
+  layout.yaxis!.title = "Number of people";
+  layout.yaxis!.type = scaleMode;
+  layout.showlegend = true;
+  layout.legend = {
+    x: 0,
+    xanchor: "left",
+    y: 1,
+    yanchor: "top",
+    bgcolor: "#22202888",
+    font: {
+      color: "#fff",
+    },
+  };
+
+  if (isTouchDevice()) {
+    config.scrollZoom = true;
+    layout.dragmode = "pan";
+  }
+
+  let data: Array<Plotly.Data> = [];
+  if (region && region.NPIModel && region.reported && region.interventions) {
+    layout.shapes = createInterventionLines(region.interventions);
+    layout.xaxis!.range = [
+      region.NPIModel.date[0],
+      region.NPIModel.date[region.NPIModel.date.length - 1],
+    ];
+
+    layout.yaxis!.rangemode = "normal";
+
+    data = [
+      ...createDailyInfectedCasesTrace(region.NPIModel),
+      ...createDailyInfectedDeathsTrace(region.NPIModel),
+      ...createPredictedNewCasesTrace(region.NPIModel),
+      ...createPredictedDeathsTrace(region.NPIModel),
+      createInterventionIcons(region.NPIModel, region.interventions, scaleMode),
+      createActiveCasesMarkers(region.reported),
+      createDeathsCasesMarkers(region.reported),
+    ];
+  }
+
+  return { data, layout };
 };
