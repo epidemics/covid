@@ -60,7 +60,7 @@ export function NPIModelVisualization(props: ModelViewProps) {
 
   const { data, layout } = React.useMemo(
     () => initializeVisualization(scaleMode, config, region, maxValue),
-    [scaleMode, config, region]
+    [scaleMode, config, region, maxValue]
   );
 
   return (
@@ -70,7 +70,7 @@ export function NPIModelVisualization(props: ModelViewProps) {
         <ToggleButton
           type="radio"
           variant="secondary"
-          name="radio"
+          name="yScale"
           checked={scaleMode === "linear"}
           value="1"
           onChange={() => setScaleMode("linear")}
@@ -80,7 +80,7 @@ export function NPIModelVisualization(props: ModelViewProps) {
         <ToggleButton
           type="radio"
           variant="secondary"
-          name="radio"
+          name="yScale"
           checked={scaleMode === "log"}
           value="1"
           onChange={() => setScaleMode("log")}
