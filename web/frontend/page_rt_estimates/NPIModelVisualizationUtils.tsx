@@ -154,7 +154,7 @@ export const extrapolationText = (
 ) => {
   const yPosition =
     scaleMode === "log"
-      ? Math.pow(10, Math.log10(maxValue) * 0.95)
+      ? Math.pow(10, Math.log10(maxValue) * 0.998)
       : maxValue * 0.95;
 
   const extraTrace = {

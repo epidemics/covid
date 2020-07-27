@@ -14,12 +14,26 @@ export function NPIModelVisualization(props: ModelViewProps) {
   let { region } = props;
 
   const maxValue = React.useMemo(() => {
-    if (region && region.NPIModel) {
+    if (region && region.NPIModel && region.reported) {
+      const currentCases = region.reported.points.map(
+        (singleReported, index) => {
+          if (index >= 1) {
+            return (
+              region!.reported!.points[index].confirmed -
+              region!.reported!.points[index - 1].confirmed
+            );
+          }
+
+          return region!.reported!.points[index].confirmed;
+        }
+      );
+
       return [
         ...region.NPIModel.predictedDeathsUpper,
         ...region.NPIModel.predictedNewCasesUpper,
         ...region.NPIModel.dailyInfectedDeathsUpper,
         ...region.NPIModel.dailyInfectedCasesUpper,
+        ...currentCases,
       ].reduce((acc, cur) => Math.max(acc, cur), 0);
     }
 
@@ -101,14 +115,14 @@ export function NPIModelVisualization(props: ModelViewProps) {
         <Form.Check
           type="checkbox"
           checked={showExtrapolated}
-          label="Show extrapolated"
+          label="Show projection"
           onChange={() => setShowExtrapolated((prev) => !prev)}
         />
       </div>
       <div>
         <div id="short_term_forecast_dataviz">
           <Plot
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: "100%", height: "600px" }}
             data={data}
             layout={layout}
             config={config as any}
