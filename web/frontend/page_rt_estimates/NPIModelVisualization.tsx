@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { ButtonGroup, Form, ToggleButton } from 'react-bootstrap';
-import Plot from 'react-plotly.js';
+import * as React from "react";
+import { ButtonGroup, Form, ToggleButton } from "react-bootstrap";
+import Plot from "react-plotly.js";
 
-import { makeConfig } from '../components/graph-common';
-import { Region } from '../models';
-import { initializeVisualization } from './NPIModelVisualizationUtils';
+import { makeConfig } from "../components/graph-common";
+import { Region } from "../models";
+import { initializeVisualization } from "./NPIModelVisualizationUtils";
 
 type ModelViewProps = {
   region: Region | null;
