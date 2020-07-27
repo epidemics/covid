@@ -155,7 +155,7 @@ export const extrapolationText = (
   const yPosition =
     scaleMode === "log"
       ? Math.pow(10, Math.log10(maxValue) * 0.998)
-      : maxValue * 0.95;
+      : maxValue * 0.998;
 
   const extraTrace = {
     x: [new Date("06.30.2020")],
