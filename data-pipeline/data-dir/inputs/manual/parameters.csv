@@ -1,20 +1,11 @@
 Region,Value,Parameter,Start date,End date,Type,Class
-,,run dates,2020-04-15,2021-01-01,,
+,,run dates,2020-07-07,2021-01-01,,
 ,2,number of runs,,,,
 ,1.0,seasonality,,,trace,
-,0.7,airline traffic,,,trace,HIGHER_WEAK
-,0.7,airline traffic,,,trace,EXPECTED_WEAK
-,0.7,airline traffic,,,trace,LOWER_WEAK
-,0.2,airline traffic,,,trace,HIGHER_STRONG
-,0.2,airline traffic,,,trace,EXPECTED_STRONG
-,0.2,airline traffic,,,trace,LOWER_STRONG
-,1.1,beta multiplier,,,trace,HIGHER_WEAK
-,1.0,beta multiplier,,,trace,EXPECTED_WEAK
-,0.9,beta multiplier,,,trace,LOWER_WEAK
-,1.1,beta multiplier,,,trace,HIGHER_STRONG
-,1.0,beta multiplier,,,trace,EXPECTED_STRONG
-,0.9,beta multiplier,,,trace,LOWER_STRONG
-,1.285,beta,,,group,Scenario 1
-,0.7,beta,,,group,Scenario 2
-,0.4,beta,,,group,Scenario 3
-,0.55,beta,,,group,Scenario 4
+,same,beta scenario,,,group,Scenario 1
+,same,beta scenario,,2020-07-21,group,Scenario 2
+,lifted,beta scenario,2020-07-21,2020-07-21,group,Scenario 2
+,0.5,airline traffic,,,group,Scenario 2
+,same,beta scenario,,2020-07-21,group,Scenario 3
+,tight,beta scenario,2020-07-21,2020-08-4,group,Scenario 3
+,0.35,beta,2020-08-04,,group,Scenario 3

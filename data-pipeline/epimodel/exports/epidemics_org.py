@@ -124,7 +124,7 @@ class WebExport:
                 self.to_json(),
                 f,
                 default=types_to_json,
-                allow_nan=False,
+                allow_nan=True,
                 separators=(",", ":"),
                 indent=indent,
             )

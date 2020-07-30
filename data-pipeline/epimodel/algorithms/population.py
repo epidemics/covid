@@ -66,3 +66,28 @@ def distribute_down_with_population(
 
     assert isinstance(s, pd.Series)
     rec(rds[root])
+
+
+def assign_down_with_population(
+        df: pd.DataFrame, rds: RegionDataset, root="W"
+):
+    """
+    Assignes the numbers in the dataframe down all the way to the leaves.
+    """
+
+    def rec(r):
+        if r.Code in df.index:
+            val = df.loc[r.Code]
+            empty_children = [
+                cr
+                for cr in r.children
+                if cr.Code not in df.index
+                   and np.isfinite(cr.Population)
+            ]
+
+            for cr in empty_children:
+                df.loc[cr.Code] = val
+        for cr in r.children:
+            rec(cr)
+
+    rec(rds[root])

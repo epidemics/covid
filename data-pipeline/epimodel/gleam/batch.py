@@ -86,6 +86,7 @@ class Batch:
         base_xml_path: Union[str, Path],
         parameters_path: Union[str, Path],
         estimates_path: Union[str, Path],
+        scenarios_path: Union[str, Path],
         rds: RegionDataset,
         progress_bar: bool = True,
     ):
@@ -93,12 +94,14 @@ class Batch:
 
         raw_parameters = pd.read_csv(parameters_path)
         raw_estimates = pd.read_csv(estimates_path)
+        raw_scenarios = pd.read_csv(scenarios_path)
 
         parser = InputParser(rds, progress_bar=progress_bar)
         parameters = parser.parse_parameters_df(raw_parameters)
         estimates = parser.parse_estimates_df(raw_estimates)
+        country_scenarios = parser.parse_country_scenarios_df(raw_scenarios)
 
-        simulations = SimulationSet(config, parameters, estimates, base_xml_path)
+        simulations = SimulationSet(config, parameters, estimates, country_scenarios, base_xml_path)
         self.set_simulations(simulations)
 
     def set_initial_compartments(self, initial_df):

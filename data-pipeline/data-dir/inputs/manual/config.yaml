@@ -14,36 +14,20 @@ scenarios:
   # charts.
   groups:
     - name: Scenario 1
-      description: Current mitigation measures are completely lifted in 2 weeks without replacement.
+      description: Current mitigation measures stay same and continue indefinetly
     - name: Scenario 2
-      description: Current mitigation measures stay in for 4 weeks and are replaced by milder measures afterwards.
+      description: Current mitigation measures stay in for 2 weeks and then a mayor mitigation measure is lifted
     - name: Scenario 3
-      description: Current mitigation measures stay in for 2 weeks and are replaced by strong mitigation afterwards.
-    - name: Scenario 4
-      description: Current mitigation measures stay in for 2 weeks and are replaced by moderate mitigation afterwards.
+      description: Current mitigation measures stay in for 2 weeks and are replaced by tight mitigation afterwards. Travel is reduced just by 0.5
 
   # These show up as individual lines on each chart.
   traces:
-    - name: HIGHER_WEAK
-      description: Faster spread (110%)<br>Less air travel
-    - name: EXPECTED_WEAK
-      description: Expected spread (100%)<br>Less air travel
-    - name: LOWER_WEAK
-      description: Slower spread (90%)<br>Less air travel
-    - name: HIGHER_STRONG
-      description: Faster spread (110%)<br>Much less air travel
-    - name: EXPECTED_STRONG
-      description: Expected spread (100%)<br>Much less air travel
-    - name: LOWER_STRONG
-      description: Slower spread (90%)<br>Much less air travel
-
-  # Input estimates are only for the infectious compartment. The
-  # following are multipied x infectious to get the total for each
-  # compartment in each region. Only the compartments listed here will
-  # be added to the simulations as seeds.
-  compartment_multipliers:
-    Infectious: 1.0
-    Exposed: 1.8
+    - name: R1
+      description: R1
+    - name: Rmin
+      description: Rmin
+    - name: Rmax
+      description: Rmax
 
   # Maximum fraction of population in any region that is in all of the
   # listed compartments combined. If estimating all compartments, this
