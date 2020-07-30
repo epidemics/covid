@@ -1,24 +1,15 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-import { Alerts } from "../components/alerts";
-import {
-  LocationContext,
-  makeFragmentLocationContext,
-} from "../components/LocationContext";
-import { RegionSelector } from "../components/RegionSelector";
-import { makeDataStore } from "../ds";
-import { getTimezone, getUrlParam } from "../helpers";
-import {
-  Datastore,
-  MainInfo,
-  Region,
-  Regions,
-  Scenario,
-  useThunk,
-} from "../models";
-import { NPIModelVisualization } from "./NPIModelVisualization";
-import { REstimateSeriesView } from "./REstimateSeriesView";
+import { Alerts } from '../components/alerts';
+import { LocationContext, makeFragmentLocationContext } from '../components/LocationContext';
+import { RegionSelector } from '../components/RegionSelector';
+import { makeDataStore } from '../ds';
+import { getTimezone, getUrlParam } from '../helpers';
+import { Datastore, MainInfo, Region, Regions, Scenario, Scenarios, useThunk } from '../models';
+import { ModelView } from './ModelView';
+import { NPIModelVisualization } from './NPIModelVisualization';
+import { REstimateSeriesView } from './REstimateSeriesView';
 
 const CHANNEL_PARAM = "channel";
 
@@ -63,7 +54,14 @@ export function Page({ data }: { data: Datastore }) {
 
   const mainInfo = useThunk<MainInfo>({}, data.mainInfo);
 
-  const [{ region }, dispatch] = React.useReducer(reducer, null, init);
+  const [{ region, scenarioID }, dispatch] = React.useReducer(
+    reducer,
+    null,
+    init
+  );
+
+  const scenarios = useThunk<Scenarios | null>(null, region?.scenariosDaily);
+  let scenario = scenarios?.get(scenarioID ?? 0) ?? null;
 
   React.useEffect(() => {
     jQuery(".selected-region").text(region?.name ?? "the selected region");
@@ -127,6 +125,15 @@ export function Page({ data }: { data: Datastore }) {
         onSelect={(region, url) =>
           dispatch({ action: "switch_region", region, url })
         }
+      />
+
+      <hr />
+
+      <ModelView
+        region={region}
+        scenario={scenario}
+        scenarios={scenarios}
+        dispatch={dispatch}
       />
 
       <hr />

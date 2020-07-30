@@ -1,21 +1,14 @@
-import * as Plotly from "plotly.js";
-import * as React from "react";
-import Plot from "react-plotly.js";
+import * as Plotly from 'plotly.js';
+import * as React from 'react';
+import Plot from 'react-plotly.js';
 
-import { Bounds, makeConfig, makeLayout } from "../components/graph-common";
-import { LocationContext } from "../components/LocationContext";
-import { QuestionTooltip } from "../components/QuestionTooltip";
-import {
-  classNames,
-  formatAbsoluteInteger,
-  formatDate,
-  formatSIInteger,
-  formatStatisticsLine,
-  isTouchDevice,
-} from "../helpers";
-import { MainInfo, Region, Scenario, Scenarios, Stat } from "../models";
-import { addEstimatedCases } from "../page_measures/current-chart";
-import { PageActions } from "./RtEstimatesPage";
+import { Bounds, makeConfig, makeLayout } from '../components/graph-common';
+import { LocationContext } from '../components/LocationContext';
+import { QuestionTooltip } from '../components/QuestionTooltip';
+import { classNames, formatAbsoluteInteger, formatSIInteger, formatStatisticsLine, isTouchDevice } from '../helpers';
+import { Region, Scenario, Scenarios, Stat } from '../models';
+import { addEstimatedCases } from '../page_measures/current-chart';
+import { PageActions } from './RtEstimatesPage';
 
 const MAX_CHART_WIDTH_RATIO = 2;
 const MAX_CHART_HEIGHT_RATIO = 1;
@@ -35,7 +28,6 @@ type ModelViewProps = {
   dispatch: React.Dispatch<PageActions>;
   showEstimates?: boolean;
   showHealthcareCapacity?: boolean;
-  mainInfo: MainInfo;
 };
 
 let initialBounds: Bounds = {
@@ -44,7 +36,7 @@ let initialBounds: Bounds = {
 };
 
 export function ModelView(props: ModelViewProps) {
-  let { scenario, region, scenarios, mainInfo } = props;
+  let { scenario, region, scenarios } = props;
   const showEstimates = props.showEstimates ?? false;
   const showHealthcareCapacity = props.showHealthcareCapacity ?? false;
 
@@ -248,14 +240,6 @@ export function ModelView(props: ModelViewProps) {
         <div className="active-infections-block">
           {region?.current ? (
             <>
-              <span className="number-subheader" id="infections-date">
-                <span style={{ color: "#aaa" }}>Model last updated on:</span>{" "}
-                {region?.current?.date ?? mainInfo.generated ? (
-                  formatDate(region?.current?.date ?? mainInfo.generated)
-                ) : (
-                  <>&mdash;</>
-                )}
-              </span>
               <div className="active-infections">
                 Active Infections:{" "}
                 <span
