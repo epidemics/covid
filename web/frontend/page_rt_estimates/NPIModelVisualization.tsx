@@ -1,20 +1,10 @@
-import * as Plotly from "plotly.js";
 import * as React from "react";
+import { ButtonGroup, Form, ToggleButton } from "react-bootstrap";
 import Plot from "react-plotly.js";
 
-import { makeConfig, makeLayout } from "../components/graph-common";
-import { isTouchDevice } from "../helpers";
+import { makeConfig } from "../components/graph-common";
 import { Region } from "../models";
-import {
-  createActiveCasesMarkers,
-  createDailyInfectedCasesTrace,
-  createDailyInfectedDeathsTrace,
-  createDeathsCasesMarkers,
-  createInterventionIcons,
-  createInterventionLines,
-  createPredictedDeathsTrace,
-  createPredictedNewCasesTrace,
-} from "./NPIModelVisualizationUtils";
+import { initializeVisualization } from "./NPIModelVisualizationUtils";
 
 type ModelViewProps = {
   region: Region | null;
@@ -22,6 +12,46 @@ type ModelViewProps = {
 
 export function NPIModelVisualization(props: ModelViewProps) {
   let { region } = props;
+
+  const maxValue = React.useMemo(() => {
+    if (region && region.NPIModel && region.reported) {
+      const currentCases = region.reported.points.map(
+        (singleReported, index) => {
+          if (index >= 1) {
+            return (
+              region!.reported!.points[index].confirmed -
+              region!.reported!.points[index - 1].confirmed
+            );
+          }
+
+          return region!.reported!.points[index].confirmed;
+        }
+      );
+
+      return [
+        ...region.NPIModel.predictedDeathsUpper,
+        ...region.NPIModel.predictedNewCasesUpper,
+        ...region.NPIModel.dailyInfectedDeathsUpper,
+        ...region.NPIModel.dailyInfectedCasesUpper,
+        ...currentCases,
+      ].reduce((acc, cur) => Math.max(acc, cur), 0);
+    }
+
+    return 0;
+  }, [region]);
+
+  const determineInitialScale = (maxValue: number) =>
+    maxValue > 10000 ? "log" : "linear";
+
+  const [scaleMode, setScaleMode] = React.useState<"linear" | "log">(
+    determineInitialScale(maxValue)
+  );
+
+  const [showExtrapolated, setShowExtrapolated] = React.useState<boolean>(true);
+
+  React.useEffect(() => {
+    setScaleMode(determineInitialScale(maxValue));
+  }, [maxValue]);
 
   // create a plotly config for the plot
   let { config } = React.useMemo(
@@ -44,58 +74,57 @@ export function NPIModelVisualization(props: ModelViewProps) {
     []
   );
 
-  // create a layout and customize
-  let layout = makeLayout();
-  layout.autosize = true;
-  layout.margin!.r = 20;
-  layout.xaxis!.type = "date";
-  layout.yaxis!.title = "Number of people";
-  layout.yaxis!.type = "linear";
-  layout.showlegend = true;
-  layout.legend = {
-    x: 0,
-    xanchor: "left",
-    y: 1,
-    yanchor: "top",
-    bgcolor: "#22202888",
-    font: {
-      color: "#fff",
-    },
-  };
-
-  if (isTouchDevice()) {
-    config.scrollZoom = true;
-    layout.dragmode = "pan";
-  }
-
-  let data: Array<Plotly.Data> = [];
-  if (region && region.NPIModel && region.reported && region.interventions) {
-    layout.shapes = createInterventionLines(region.interventions);
-    layout.xaxis!.range = [
-      region.NPIModel.date[0],
-      region.NPIModel.date[region.NPIModel.date.length - 1],
-    ];
-
-    layout.yaxis!.rangemode = "nonnegative";
-
-    data = [
-      ...createDailyInfectedCasesTrace(region.NPIModel),
-      ...createDailyInfectedDeathsTrace(region.NPIModel),
-      ...createPredictedNewCasesTrace(region.NPIModel),
-      ...createPredictedDeathsTrace(region.NPIModel),
-      createInterventionIcons(region.NPIModel, region.interventions),
-      createActiveCasesMarkers(region.reported),
-      createDeathsCasesMarkers(region.reported),
-    ];
-  }
+  const { data, layout } = React.useMemo(
+    () =>
+      initializeVisualization(
+        scaleMode,
+        config,
+        region,
+        maxValue,
+        showExtrapolated
+      ),
+    [scaleMode, config, region, maxValue, showExtrapolated]
+  );
 
   return (
     <>
       <h5 className="mitigation-heading">Short term forecast:</h5>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <ButtonGroup toggle className="mr-2">
+          <ToggleButton
+            size="sm"
+            type="radio"
+            variant="secondary"
+            name="yScale"
+            checked={scaleMode === "linear"}
+            value="1"
+            onChange={() => setScaleMode("linear")}
+          >
+            Linear
+          </ToggleButton>
+          <ToggleButton
+            size="sm"
+            type="radio"
+            variant="secondary"
+            name="yScale"
+            checked={scaleMode === "log"}
+            value="1"
+            onChange={() => setScaleMode("log")}
+          >
+            Log
+          </ToggleButton>
+        </ButtonGroup>
+        <Form.Check
+          type="checkbox"
+          checked={showExtrapolated}
+          label="Show projection"
+          onChange={() => setShowExtrapolated((prev) => !prev)}
+        />
+      </div>
       <div>
         <div id="short_term_forecast_dataviz">
           <Plot
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: "100%", height: "600px" }}
             data={data}
             layout={layout}
             config={config as any}
