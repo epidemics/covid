@@ -549,6 +549,7 @@ class WebExport(luigi.Task):
             "r_estimates": EstimateR(),
             "hospital_capacity": HospitalCapacity(),
             "interventions": Interventions(),
+            "model_data": ModelData(),
             "npi_model": NPIModel(),
             **RegionsDatasetSubroutine.requires(),
         }
@@ -714,4 +715,6 @@ class NPIModel(luigi.Task):
         return luigi.LocalTarget(self.output_file)
 
     def run(self):
-        run_model(self.input()["model_data"].path, self.output_file, self.extrapolation_period)
+        run_model(
+            self.input()["model_data"].path, self.output_file, self.extrapolation_period
+        )

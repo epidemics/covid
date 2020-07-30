@@ -60,6 +60,7 @@ class WebExport:
         hospital_capacity: Optional[pd.DataFrame],
         npi_model: Optional[pd.DataFrame],
         interventions: list,
+        extrapolation_date: Optional[pd.Timestamp],
     ):
         export_region = WebExportRegion(
             region,
@@ -77,6 +78,7 @@ class WebExport:
             hospital_capacity,
             npi_model,
             interventions,
+            extrapolation_date,
         )
         self.export_regions[region.Code] = export_region
         return export_region
@@ -161,6 +163,7 @@ class WebExportRegion:
         hospital_capacity: Optional[pd.DataFrame],
         npi_model: Optional[pd.DataFrame],
         interventions: list,
+        extrapolation_date: Optional[pd.Timestamp],
     ):
         log.debug(f"Prepare WebExport: {region.Code}, {region.Name}")
 
@@ -169,6 +172,7 @@ class WebExportRegion:
         self.current_estimate = current_estimate
         self.groups = groups
         self.traces = traces
+        self.extrapolation_date = extrapolation_date
 
         # Any per-region data. Large ones should go to data_ext.
         self.data = self.extract_smallish_data(
@@ -181,6 +185,7 @@ class WebExportRegion:
             hospital_capacity,
             npi_model,
             interventions,
+            extrapolation_date,
         )
         # Extended data to be written in a separate per-region file
         if not models.empty and not simulation_specs.empty:
@@ -201,6 +206,7 @@ class WebExportRegion:
         hospital_capacity: Optional[pd.Series],
         npi_model: Optional[pd.DataFrame],
         interventions: list,
+        extrapolation_date: Optional[pd.Timestamp],
     ) -> Dict[str, Dict[str, Any]]:
         data = {}
 
@@ -243,6 +249,7 @@ class WebExportRegion:
         if npi_model is not None:
             data["NPIModel"] = {
                 "Date": [x.isoformat() for x in npi_model.index],
+                "ExtrapolationDate": extrapolation_date.isoformat(),
                 **npi_model.replace({np.nan: None}).to_dict(orient="list"),
             }
 
@@ -533,6 +540,13 @@ def add_aggregate_traces(aggregate_regions, cummulative_active_df):
         return cummulative_active_df
 
 
+def get_extrapolation_date(countermeasures_df: Optional[pd.DataFrame]):
+    if countermeasures_df is not None:
+        return countermeasures_df.index.max() + datetime.timedelta(days=1)
+    else:
+        return None
+
+
 def process_export(
     inputs: dict,
     rds: RegionDataset,
@@ -553,6 +567,7 @@ def process_export(
     r_estimates = inputs["r_estimates"].path
     hospital_capacity = inputs["hospital_capacity"].path
     interventions = inputs["interventions"].path
+    countermeasures = inputs["model_data"].path
 
     export_regions = sorted(config["export_regions"])
 
@@ -590,6 +605,14 @@ def process_export(
     r_estimates_df: pd.DataFrame = pd.read_csv(
         r_estimates,
         index_col=["Code", "Date"],
+        parse_dates=["Date"],
+        keep_default_na=False,
+        na_values=[""],
+    )
+
+    countermeasures_df = pd.read_csv(
+        countermeasures,
+        index_col=["Country Code", "Date"],
         parse_dates=["Date"],
         keep_default_na=False,
         na_values=[""],
@@ -634,6 +657,10 @@ def process_export(
             ).sort_index(level="Date")
         else:
             country_cummulative_active_df = pd.DataFrame([])
+
+        extrapolation_date = get_extrapolation_date(
+            get_df_else_none(countermeasures_df, code)
+        )
         ex.new_region(
             reg,
             get_df_else_none(estimates_df, code),
@@ -648,5 +675,6 @@ def process_export(
             get_df_else_none(hospital_capacity_df, code),
             get_df_else_none(npi_model_results_df, code),
             interventions_dict.get(code, []),
+            extrapolation_date,
         )
     return ex
