@@ -150,7 +150,8 @@ const lowerBound = (data: number[]) => {
 
 export const extrapolationText = (
   scaleMode: "linear" | "log",
-  maxValue: number
+  maxValue: number,
+  extrapolationDate: Date
 ) => {
   const yPosition =
     scaleMode === "log"
@@ -158,7 +159,7 @@ export const extrapolationText = (
       : maxValue * 0.998;
 
   const extraTrace = {
-    x: [new Date("06.30.2020")],
+    x: [extrapolationDate],
     y: [yPosition],
     mode: "text",
     text: ["                projection >"],
@@ -532,10 +533,10 @@ export const initializeVisualization = (
     layout.dragmode = "pan";
   }
 
-  const targetDate = new Date("06.30.2020");
-
   let data: Array<Plotly.Data> = [];
   if (region && region.NPIModel && region.reported && region.interventions) {
+    const targetDate = region.NPIModel.extrapolationDate;
+
     const extrapolationIndex = region.NPIModel.date.findIndex((date) =>
       isSameDay(date, targetDate)
     );
@@ -599,7 +600,14 @@ export const initializeVisualization = (
       ),
     ];
 
-    showExtrapolated && data.push(extrapolationText(scaleMode, maxValue));
+    showExtrapolated &&
+      data.push(
+        extrapolationText(
+          scaleMode,
+          maxValue,
+          region.NPIModel.date[extrapolationIndex]
+        )
+      );
 
     data = data.map((dataItem) => ({
       ...dataItem,

@@ -16,6 +16,7 @@ export class NPIModel {
   public predictedNewCasesUpper: number[];
   public recordedDeaths: (number | null)[];
   public recordedNewCases: (number | null)[];
+  public extrapolationDate: Date;
 
   public constructor(obj: v4.NPIModel) {
     this.date = obj.Date.map((date: string) => new Date(date));
@@ -33,5 +34,6 @@ export class NPIModel {
     this.predictedNewCasesUpper = obj.PredictedNewCases_upper;
     this.recordedDeaths = obj.RecordedDeaths;
     this.recordedNewCases = obj.RecordedNewCases;
+    this.extrapolationDate = new Date(obj.ExtrapolationDate);
   }
 }
