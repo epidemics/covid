@@ -83,6 +83,7 @@ export namespace v4 {
     PredictedNewCases_upper: number[];
     RecordedDeaths: (number | null)[];
     RecordedNewCases: (number | null)[];
+    ExtrapolationDate: string;
   }
 
   export interface Intervention {
