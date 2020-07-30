@@ -21,7 +21,7 @@ def expand_countermeasure_data(
             "Country Code"
         )[intervention_type].transform(add_canceled_interventions)
 
-    return extended_df
+    return extended_df.set_index(["Country Code", "Date"])
 
 
 def extend_country_countermeasures(
