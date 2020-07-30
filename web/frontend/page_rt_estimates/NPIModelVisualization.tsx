@@ -92,6 +92,7 @@ export function NPIModelVisualization(props: ModelViewProps) {
       <div style={{ display: "flex", alignItems: "center" }}>
         <ButtonGroup toggle className="mr-2">
           <ToggleButton
+            size="sm"
             type="radio"
             variant="secondary"
             name="yScale"
@@ -102,6 +103,7 @@ export function NPIModelVisualization(props: ModelViewProps) {
             Linear
           </ToggleButton>
           <ToggleButton
+            size="sm"
             type="radio"
             variant="secondary"
             name="yScale"
