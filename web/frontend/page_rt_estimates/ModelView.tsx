@@ -4,7 +4,6 @@ import Plot from "react-plotly.js";
 
 import { Bounds, makeConfig, makeLayout } from "../components/graph-common";
 import { LocationContext } from "../components/LocationContext";
-import { QuestionTooltip } from "../components/QuestionTooltip";
 import {
   classNames,
   formatAbsoluteInteger,
@@ -232,15 +231,7 @@ export function ModelView(props: ModelViewProps) {
       >
         <h5 className="mitigation-heading">
           Explore global and national mitigation strength:
-          <a
-            href="#mitigation-measures-explanation"
-            aria-label="Explanation about mitigation strength"
-          >
-            <QuestionTooltip />
-          </a>
         </h5>
-
-        {plotKindPicker}
       </div>
       <div className="top-row">
         <div className="active-infections-block">
@@ -258,12 +249,6 @@ export function ModelView(props: ModelViewProps) {
                     <>&mdash;</>
                   )}
                 </span>
-                <a
-                  href="#case-count-explanation"
-                  aria-label="Explanation about the case count"
-                >
-                  <QuestionTooltip />
-                </a>
               </div>
             </>
           ) : (
@@ -277,15 +262,35 @@ export function ModelView(props: ModelViewProps) {
           </div>
         </div>
 
-        <div className="population-block">
+        <div className="info-block">
           <div className="number-subheader">Population</div>
-          <div className="infections-population">
+          <div className="info-value">
             <span id="infections-population">
               {formatAbsoluteInteger(region?.population)}
             </span>
           </div>
         </div>
+        <div className="info-block">
+          <span className="number-subheader">Total Infected by 2021</span>
+          <span className="info-value">
+            {showStatistics(
+              scenario?.statistics?.totalInfected,
+              region?.population
+            )}
+          </span>
+        </div>
+        <div className="info-block">
+          <span className="number-subheader">Peak Active Infections</span>
+          <span className="info-value">
+            {showStatistics(
+              scenario?.statistics?.maxActiveInfected,
+              region?.population
+            )}
+          </span>
+        </div>
       </div>
+
+      {plotKindPicker}
 
       <div className="mitigation-strength" id="mitigation">
         <div className="mitigation-strength-buttons">
@@ -322,28 +327,6 @@ export function ModelView(props: ModelViewProps) {
                 hook(gd);
               }}
             />
-          </div>
-          <div className="projections-row">
-            <div className="total-infected">
-              <span className="number-subheader">Total Infected by 2021</span>
-              <span className="total-infected-number">
-                {showStatistics(
-                  scenario?.statistics?.totalInfected,
-                  region?.population
-                )}
-              </span>
-            </div>
-            <div className="sim-infected">
-              <span className="number-subheader sim-infected-subheader">
-                Peak Active Infections
-              </span>
-              <span className="sim-infected-number">
-                {showStatistics(
-                  scenario?.statistics?.maxActiveInfected,
-                  region?.population
-                )}
-              </span>
-            </div>
           </div>
         </div>
       </div>

@@ -139,15 +139,6 @@ export function Page({ data }: { data: Datastore }) {
       />
 
       <hr />
-
-      <ModelView
-        region={region}
-        scenario={scenario}
-        scenarios={scenarios}
-        dispatch={dispatch}
-      />
-
-      <hr />
       {region && region.rEstimates && (
         <>
           <REstimateSeriesView region={region} />
@@ -160,6 +151,14 @@ export function Page({ data }: { data: Datastore }) {
           <hr />
         </>
       )}
+
+      <ModelView
+        region={region}
+        scenario={scenario}
+        scenarios={scenarios}
+        dispatch={dispatch}
+      />
+      <hr />
     </LocationContext.Provider>
   );
 }
