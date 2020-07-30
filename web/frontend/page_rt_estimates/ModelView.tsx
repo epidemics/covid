@@ -271,7 +271,7 @@ export function ModelView(props: ModelViewProps) {
         </div>
         <div className="info-block">
           <span className="number-subheader">Total Infected by 2021</span>
-          <span className="info-value">
+          <span className="total-infected-number">
             {showStatistics(
               scenario?.statistics?.totalInfected,
               region?.population
@@ -280,7 +280,7 @@ export function ModelView(props: ModelViewProps) {
         </div>
         <div className="info-block">
           <span className="number-subheader">Peak Active Infections</span>
-          <span className="info-value">
+          <span className="sim-infected-number">
             {showStatistics(
               scenario?.statistics?.maxActiveInfected,
               region?.population
