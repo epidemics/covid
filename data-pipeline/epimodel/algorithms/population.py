@@ -68,9 +68,7 @@ def distribute_down_with_population(
     rec(rds[root])
 
 
-def assign_down_with_population(
-        df: pd.DataFrame, rds: RegionDataset, root="W"
-):
+def assign_down_with_population(df: pd.DataFrame, rds: RegionDataset, root="W"):
     """
     Assignes the numbers in the dataframe down all the way to the leaves.
     """
@@ -81,8 +79,7 @@ def assign_down_with_population(
             empty_children = [
                 cr
                 for cr in r.children
-                if cr.Code not in df.index
-                   and np.isfinite(cr.Population)
+                if cr.Code not in df.index and np.isfinite(cr.Population)
             ]
 
             for cr in empty_children:

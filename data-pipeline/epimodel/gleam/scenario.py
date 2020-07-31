@@ -35,7 +35,7 @@ class InputParser:
     ESTIMATE_FIELDS = [
         "Region",
         "Infectious",
-        'Exposed',
+        "Exposed",
     ]
 
     def __init__(self, rds: RegionDataset, foretold_token=None, progress_bar=True):
@@ -54,12 +54,12 @@ class InputParser:
                 .apply(self._get_region)
                 .apply(lambda reg: reg.Code),
                 "Infectious": est["Infectious"].astype("float"),
-                "Exposed": est["Exposed"].astype("float")
+                "Exposed": est["Exposed"].astype("float"),
             }
         ).set_index("Region")
 
-        infectious_distributed = compartments_df['Infectious']
-        exposed_distributed = compartments_df['Exposed']
+        infectious_distributed = compartments_df["Infectious"]
+        exposed_distributed = compartments_df["Exposed"]
 
         # modifies series in-place, adding to the index
         algorithms.distribute_down_with_population(infectious_distributed, self.rds)
@@ -84,12 +84,10 @@ class InputParser:
         scenario_columns = [
             scenario_col
             for scenario_col in est.columns
-            if scenario_col.startswith('scenario')
+            if scenario_col.startswith("scenario")
         ]
         scenarios = {
-            "Region": est["Name"]
-                .apply(self._get_region)
-                .apply(lambda reg: reg.Code),
+            "Region": est["Name"].apply(self._get_region).apply(lambda reg: reg.Code),
         }
         scenarios.update(
             {
@@ -97,9 +95,7 @@ class InputParser:
                 for scenario_col in scenario_columns
             }
         )
-        df = pd.DataFrame(
-            scenarios
-        ).set_index("Region")
+        df = pd.DataFrame(scenarios).set_index("Region")
 
         algorithms.assign_down_with_population(df, self.rds)
 
@@ -121,11 +117,15 @@ class InputParser:
         df["End date"] = pd.to_datetime(df["End date"])
 
         # Setting the time range of parameters with nan dates to the time range of the run
-        df.loc[df["Start date"].isna(), "Start date"] = df.loc[df['Parameter'] == 'run dates', 'Start date'].item()
-        df.loc[df["End date"].isna(), "End date"] = df.loc[df['Parameter'] == 'run dates', 'End date'].item()
+        df.loc[df["Start date"].isna(), "Start date"] = df.loc[
+            df["Parameter"] == "run dates", "Start date"
+        ].item()
+        df.loc[df["End date"].isna(), "End date"] = df.loc[
+            df["Parameter"] == "run dates", "End date"
+        ].item()
 
         df["Region"] = df["Region"].apply(self._get_region)
-        #df["Value"] = self._values_to_float(df["Value"])
+        # df["Value"] = self._values_to_float(df["Value"])
         return df
 
     def _values_to_float(self, values: pd.Series):
@@ -358,7 +358,9 @@ class DefinitionBuilder:
         is_compartment = has_compartment_param & ~is_exception
         is_multiplier = df["Parameter"].str.contains(" multiplier")
         is_compartment_scenario = df["Parameter"].str.contains("scenario")
-        is_parameter = ~has_compartment_param & ~is_multiplier & ~is_compartment_scenario
+        is_parameter = (
+            ~has_compartment_param & ~is_multiplier & ~is_compartment_scenario
+        )
 
         multipliers = self._prepare_multipliers(df[is_multiplier])
         if multipliers:
@@ -371,7 +373,9 @@ class DefinitionBuilder:
         self.parameters = df[is_parameter]
         self.compartments = df[is_compartment][["Parameter", "Value"]]
         self.exceptions = self._prepare_exceptions(df[is_exception])
-        self.compartment_scenarios = self._prepare_scenarios(df[is_compartment_scenario])
+        self.compartment_scenarios = self._prepare_scenarios(
+            df[is_compartment_scenario]
+        )
 
     def _set_global_parameters(self):
         self._assert_no_duplicate_values(self.parameters)
@@ -427,38 +431,47 @@ class DefinitionBuilder:
         if r_scenarios.empty:
             return pd.DataFrame(columns=output_columns)
 
-        df = r_scenarios \
-            .groupby(['Parameter', "Value", "Start date", "End date"]) \
-            .apply(self._prepare_scenario) \
-            .reset_index() \
-            .groupby(["region", "start", "end"]) \
-            .first(numeric_only=True) \
-            .reset_index()\
-            .groupby(list(self.COMPARTMENT_VARIABLES) + ["start", "end"], dropna=False)\
-            .apply(lambda group: tuple(sorted(set(group['region']))))\
-            .reset_index()\
-            .rename(columns={0: "regions"})\
-
-        df['variables'] = df[list(self.COMPARTMENT_VARIABLES)].apply(lambda row: row.dropna().to_dict(), axis=1)
+        df = (
+            r_scenarios.groupby(["Parameter", "Value", "Start date", "End date"])
+            .apply(self._prepare_scenario)
+            .reset_index()
+            .groupby(["region", "start", "end"])
+            .first(numeric_only=True)
+            .reset_index()
+            .groupby(list(self.COMPARTMENT_VARIABLES) + ["start", "end"], dropna=False)
+            .apply(lambda group: tuple(sorted(set(group["region"]))))
+            .reset_index()
+            .rename(columns={0: "regions"})
+        )
+        df["variables"] = df[list(self.COMPARTMENT_VARIABLES)].apply(
+            lambda row: row.dropna().to_dict(), axis=1
+        )
 
         return df[output_columns]
 
     def _prepare_scenario(self, scenario: pd.DataFrame) -> pd.DataFrame:
-        variable = scenario['Parameter'].str.replace(" scenario", "").item()
-        value = scenario['Value'].item()
+        variable = scenario["Parameter"].str.replace(" scenario", "").item()
+        value = scenario["Value"].item()
 
         scenario_column = f"scenario-{variable}-{value}-{self.trace}"
-        country_scenario = self._country_scenarios[['Region', scenario_column]]
-        df = pd.DataFrame({
-            "region": country_scenario["Region"],
-            variable: country_scenario[scenario_column],
-            "start": scenario["Start date"].item(),
-            "end": scenario["End date"].item(),
-        })
+        country_scenario = self._country_scenarios[["Region", scenario_column]]
+        df = pd.DataFrame(
+            {
+                "region": country_scenario["Region"],
+                variable: country_scenario[scenario_column],
+                "start": scenario["Start date"].item(),
+                "end": scenario["End date"].item(),
+            }
+        )
 
-        other_variables = [compartment_var for compartment_var in self.COMPARTMENT_VARIABLES
-                           if compartment_var != variable]
-        df[other_variables] = pd.DataFrame([[np.nan] * len(other_variables)], index=df.index)
+        other_variables = [
+            compartment_var
+            for compartment_var in self.COMPARTMENT_VARIABLES
+            if compartment_var != variable
+        ]
+        df[other_variables] = pd.DataFrame(
+            [[np.nan] * len(other_variables)], index=df.index
+        )
 
         return df
 
