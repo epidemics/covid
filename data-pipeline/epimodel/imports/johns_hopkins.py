@@ -21,6 +21,8 @@ SUBDIVIDED_COUNTRIES = {"CA", "US", "CN", "AU"}
 
 SUBDIVIDED_DATASETS = ["US"]  # datasets with more granular data
 
+MERGE_SUBREGIONS = ["CA"]
+
 DROP_COLUMNS = {
     "US": [
         "UID",
@@ -113,7 +115,9 @@ def import_johns_hopkins(rds: RegionDataset, prefix=None):
                 codes[i] = c
             else:
                 # Add province
-                rs = rds.find_all_by_name(prov, levels=Level.subdivision)
+                rs = rds.find_all_by_name(
+                    prov, levels=(Level.subdivision, Level.subregion)
+                )
                 rs = [r for r in rs if r.CountryCode == c]
                 if len(rs) < 1:
                     not_found.add((country, prov))
@@ -139,8 +143,35 @@ def import_johns_hopkins(rds: RegionDataset, prefix=None):
         log.info(f"Multiple matches for {len(conflicts)} records: {conflicts!r}")
 
     df = pd.concat(ds, axis=1).sort_index()
+
+    for code in MERGE_SUBREGIONS:
+        df = merge_subregions(df, code)
+
     df["Active"] = df["Confirmed"] - df["Recovered"] - df["Deaths"]
     return df
+
+
+def merge_subregions(df: pd.DataFrame, country_code: str) -> pd.DataFrame:
+    subregion_codes = list(
+        df[df.index.get_level_values("Code").str.startswith(f"{country_code}-")]
+        .index.get_level_values("Code")
+        .unique()
+    )
+
+    log.info(f"Merging subregions {', '.join(subregion_codes)} into {country_code}")
+
+    provinces_agg = (
+        df.loc[df.index.get_level_values("Code").isin(subregion_codes), :]
+        .groupby("Date")
+        .sum()
+    )
+
+    df.loc[(country_code,), :] = (
+        df.loc[(country_code,), :]
+        .combine(provinces_agg, np.maximum, fill_value=-1)
+        .values
+    )
+    return df.drop(df[df.index.get_level_values("Code").isin(subregion_codes)].index)
 
 
 def aggregate_countries(
