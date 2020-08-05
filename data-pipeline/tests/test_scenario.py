@@ -88,7 +88,12 @@ class TestScenarioIntegration(PandasTestCase):
         scenario_path = self.datadir / "scenario/country-scenarios.csv"
 
         self.batch.generate_simulations(
-            config, base_xml_path, parameters_path, estimates_path, scenario_path, self.rds
+            config,
+            base_xml_path,
+            parameters_path,
+            estimates_path,
+            scenario_path,
+            self.rds,
         )
 
         # ensure that the batch was updated
@@ -114,7 +119,7 @@ class TestInputParser(PandasTestCase):
     def exception_params_input(self, **kwargs):
         params = self.params_input_from_rows(
             [None, None, "run dates", "2020-04-14", "2021-05-01", None, None,],
-            ["PK", "0.35", "beta", "2020-04-14", "2021-05-01", "group", "Strong",]
+            ["PK", "0.35", "beta", "2020-04-14", "2021-05-01", "group", "Strong",],
         )
         for k, v in kwargs.items():
             params.loc[1, k] = v
@@ -133,7 +138,9 @@ class TestInputParser(PandasTestCase):
         """
         Estimates should get spread down to regions at the gleam_basin level
         """
-        raw_estimates = self.estimates_input_from_rows(["BE", "100", "100"], ["MA", "100", "100"])
+        raw_estimates = self.estimates_input_from_rows(
+            ["BE", "100", "100"], ["MA", "100", "100"]
+        )
         parser = sc.InputParser(rds=self.rds)
         df = parser.parse_estimates_df(raw_estimates)
 
@@ -220,15 +227,7 @@ class TestSimulationSet(PandasTestCase):
         self.def_builder_patcher.stop()
 
     def _return_inputs(
-            self,
-            parameters,
-            estimates,
-            country_scenarios,
-            id,
-            name,
-            group,
-            trace,
-            xml_path
+        self, parameters, estimates, country_scenarios, id, name, group, trace, xml_path
     ):
         """
         return inputs instead of DefinitionBuilder instance for easy
@@ -285,7 +284,15 @@ class TestSimulationSet(PandasTestCase):
 
                 expected_params = params[params.present_in.str.contains("".join(pair))]
 
-                out_params, out_estimates, out_country_scenarios, id, name, group, trace = ss[pair]
+                (
+                    out_params,
+                    out_estimates,
+                    out_country_scenarios,
+                    id,
+                    name,
+                    group,
+                    trace,
+                ) = ss[pair]
                 self.assert_array_equal(out_params, expected_params)
                 self.assert_array_equal(out_estimates, estimates)
                 self.assert_array_equal(out_country_scenarios, country_scenarios)
@@ -312,7 +319,9 @@ class TestSimulationSet(PandasTestCase):
 
         params = self.get_params()
         params = params[params.present_in.str.contains("AC")]
-        estimates = self.get_infectious_estimates(*([region, 100] for region in regions))
+        estimates = self.get_infectious_estimates(
+            *([region, 100] for region in regions)
+        )
         country_scenarios = pd.DataFrame()
 
         ss = sc.SimulationSet(config, params, estimates, country_scenarios)
@@ -397,8 +406,16 @@ class TestDefinitionBuilder(PandasTestCase):
             )
         )
 
-    def init_def_builder(self, params=None, estimates=None, country_scenarios=None, id=None, name=None, trace=None,
-                         group=None):
+    def init_def_builder(
+        self,
+        params=None,
+        estimates=None,
+        country_scenarios=None,
+        id=None,
+        name=None,
+        trace=None,
+        group=None,
+    ):
         if params is None:
             params = pd.DataFrame(columns=sc.InputParser.PARAMETER_FIELDS)
         if estimates is None:

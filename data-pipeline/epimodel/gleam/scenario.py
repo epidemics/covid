@@ -344,7 +344,7 @@ class DefinitionBuilder:
     def save_to_dir(self, dir: Path):
         self.definition.save(dir / self.filename)
 
-    def _set_name(self, name: str, group:str, trace: str):
+    def _set_name(self, name: str, group: str, trace: str):
         self.definition.set_name(f"{name} ({group} + {trace})")
 
     def _parse_parameters(self, df: pd.DataFrame):
@@ -365,8 +365,9 @@ class DefinitionBuilder:
             for param, multiplier in multipliers.items():
                 if param not in self.COMPARTMENT_VARIABLES:
                     raise ValueError("Cannot apply multiplier to {param!r}")
-                df.loc[df["Parameter"] == param, "Value"] = \
-                    df.loc[df["Parameter"] == param, "Value"].astype(np.float) * float(multiplier)
+                df.loc[df["Parameter"] == param, "Value"] = df.loc[
+                    df["Parameter"] == param, "Value"
+                ].astype(np.float) * float(multiplier)
 
         self.parameters = df[is_parameter]
         self.compartments = df[is_compartment][["Parameter", "Value"]]
@@ -496,7 +497,9 @@ class DefinitionBuilder:
 
     def _assert_no_duplicate_values(self, df: pd.DataFrame):
         if "Start date" in df.columns:
-            counts = df.groupby(["Parameter", "Start date", "End date"], dropna=False)["Value"].count()
+            counts = df.groupby(["Parameter", "Start date", "End date"], dropna=False)[
+                "Value"
+            ].count()
         else:
             counts = df.groupby("Parameter")["Value"].count()
         duplicates = list(counts[counts > 1].index)
