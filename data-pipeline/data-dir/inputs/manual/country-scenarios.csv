@@ -1,4 +1,4 @@
-Name,scenario-beta-same-R1,scenario-beta-same-Rmax,scenario-beta-same-Rmin,scenario-beta-lifted-R1,scenario-beta-lifted-Rmax,scenario-beta-lifted-Rmin,scenario-beta-tight-R1,scenario-beta-tight-Rmax,scenario-beta-tight-Rmin
+Name,scenario-beta-same-Expected Spread,scenario-beta-same-Faster Spread,scenario-beta-same-Slower Spread,scenario-beta-lifted-Expected Spread,scenario-beta-lifted-Faster Spread,scenario-beta-lifted-Slower Spread,scenario-beta-tight-Expected Spread,scenario-beta-tight-Faster Spread,scenario-beta-tight-Slower Spread
 Afghanistan,0.3803,0.876037475249444,0.322494324935499,0.480256531280111,0.538018737624722,0.422494324935499,0.580256531280111,0.638018737624722,0.522494324935499
 Angola,0.5000,#N/A,#N/A,0.6,#N/A,#N/A,0.7,#N/A,#N/A
 Albania,0.5779,1.30820962453105,0.45,0.677904345680906,0.754104812265526,0.55,0.777904345680906,0.854104812265526,0.65

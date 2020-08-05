@@ -18,16 +18,16 @@ scenarios:
     - name: Scenario 2
       description: Current mitigation measures stay in for 2 weeks and then a mayor mitigation measure is lifted
     - name: Scenario 3
-      description: Current mitigation measures stay in for 2 weeks and are replaced by tight mitigation afterwards. Travel is reduced just by 0.5
+      description: Current mitigation measures stay in for 2 weeks and are replaced by tight mitigation afterwards
 
   # These show up as individual lines on each chart.
   traces:
-    - name: R1
-      description: R1
-    - name: Rmin
-      description: Rmin
-    - name: Rmax
-      description: Rmax
+    - name: Expected Spread
+      description: Expected Spread
+    - name: Slower Spread
+      description: Slower Spread
+    - name: Faster Spread
+      description: Faster Spread
 
   # Maximum fraction of population in any region that is in all of the
   # listed compartments combined. If estimating all compartments, this

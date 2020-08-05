@@ -73,10 +73,7 @@ class InputParser:
             lambda region: region.Level == Level.gleam_basin
         )
 
-        # drop regions where there is less then one of Infectious/Exposed
-        df[(df[self.ESTIMATE_FIELDS].select_dtypes(np.number) < 1).any(axis=1)] = np.nan
-
-        return df.loc[is_gleam_basin, self.ESTIMATE_FIELDS].dropna()
+        return df.loc[is_gleam_basin, :].dropna()
 
     def parse_country_scenarios_df(self, raw_estimates: pd.DataFrame):
         est = raw_estimates.replace({"": None, "#N/A": None}).dropna(subset=["Name"])
@@ -125,10 +122,10 @@ class InputParser:
         ].item()
 
         df["Region"] = df["Region"].apply(self._get_region)
-        # df["Value"] = self._values_to_float(df["Value"])
+        df["Value"] = self._foretold(df["Value"])
         return df
 
-    def _values_to_float(self, values: pd.Series):
+    def _foretold(self, values: pd.Series):
         values = values.copy()
         uuid_filter = values.apply(self._is_uuid)
         values[uuid_filter] = [
@@ -137,14 +134,14 @@ class InputParser:
                 values[uuid_filter], desc="fetching Foretold distributions"
             )
         ]
-        return values.astype("float")
+        return values
 
     @staticmethod
     def _is_uuid(value):
         try:
             UUID(value, version=4)
             return True
-        except (ValueError, AttributeError):
+        except (ValueError, AttributeError, TypeError):
             return False
 
     def _get_foretold_mean(self, uuid: str):
@@ -331,7 +328,7 @@ class DefinitionBuilder:
         self._country_scenarios = country_scenarios
 
         self.definition.set_id(id)
-        self._set_name(name, (group, name))
+        self._set_name(name, group, trace)
 
         self._parse_parameters(parameters)
         self._set_global_parameters()
@@ -347,8 +344,8 @@ class DefinitionBuilder:
     def save_to_dir(self, dir: Path):
         self.definition.save(dir / self.filename)
 
-    def _set_name(self, name: str, classes: Tuple[str, str]):
-        self.definition.set_name(f"{name} ({' + '.join(classes)})")
+    def _set_name(self, name: str, group:str, trace: str):
+        self.definition.set_name(f"{name} ({group} + {trace})")
 
     def _parse_parameters(self, df: pd.DataFrame):
         has_exception_fields = pd.notnull(df[["Region", "Start date", "End date"]])
@@ -368,7 +365,8 @@ class DefinitionBuilder:
             for param, multiplier in multipliers.items():
                 if param not in self.COMPARTMENT_VARIABLES:
                     raise ValueError("Cannot apply multiplier to {param!r}")
-                df.loc[df["Parameter"] == param, "Value"] *= multiplier
+                df.loc[df["Parameter"] == param, "Value"] = \
+                    df.loc[df["Parameter"] == param, "Value"].astype(np.float) * float(multiplier)
 
         self.parameters = df[is_parameter]
         self.compartments = df[is_compartment][["Parameter", "Value"]]
@@ -497,7 +495,10 @@ class DefinitionBuilder:
             getattr(self.definition, self.GLOBAL_PARAMETERS[param])(value)
 
     def _assert_no_duplicate_values(self, df: pd.DataFrame):
-        counts = df.groupby("Parameter")["Value"].count()
+        if "Start date" in df.columns:
+            counts = df.groupby(["Parameter", "Start date", "End date"], dropna=False)["Value"].count()
+        else:
+            counts = df.groupby("Parameter")["Value"].count()
         duplicates = list(counts[counts > 1].index)
         if duplicates:
             raise ValueError(

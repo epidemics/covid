@@ -4,8 +4,12 @@ Region,Value,Parameter,Start date,End date,Type,Class
 ,1.0,seasonality,,,trace,
 ,same,beta scenario,,,group,Scenario 1
 ,same,beta scenario,,2020-07-21,group,Scenario 2
-,lifted,beta scenario,2020-07-21,2020-07-21,group,Scenario 2
-,0.5,airline traffic,,,group,Scenario 2
+,lifted,beta scenario,2020-07-21,,group,Scenario 2
 ,same,beta scenario,,2020-07-21,group,Scenario 3
-,tight,beta scenario,2020-07-21,2020-08-4,group,Scenario 3
+,tight,beta scenario,2020-07-21,2020-08-04,group,Scenario 3
 ,0.35,beta,2020-08-04,,group,Scenario 3
+,0.5,airline traffic,,,group,Scenario 1
+,0.5,airline traffic,,2020-07-21,group,Scenario 2
+,0.8,airline traffic,2020-07-21,,group,Scenario 2
+,0.5,airline traffic,,2020-07-21,group,Scenario 3
+,0.2,airline traffic,2020-07-21,,group,Scenario 3

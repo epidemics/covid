@@ -41,12 +41,16 @@ class TestScenarioIntegration(PandasTestCase):
         estimates = parser.parse_estimates_df(
             pd.read_csv(self.datadir / "estimates.csv")
         )
+        scenarios = parser.parse_country_scenarios_df(
+            pd.read_csv(self.datadir / "scenario/country-scenarios.csv")
+        )
 
         # check created definitions
         simulations = sc.SimulationSet(
             config,
             params,
             estimates,
+            scenarios,
             base_xml_path=self.datadir / "default_gleam_definition.xml",
         )
         for classes, def_builder in simulations:
@@ -81,9 +85,10 @@ class TestScenarioIntegration(PandasTestCase):
         base_xml_path = self.datadir / "default_gleam_definition.xml"
         parameters_path = self.datadir / "scenario/parameters.csv"
         estimates_path = self.datadir / "estimates.csv"
+        scenario_path = self.datadir / "scenario/country-scenarios.csv"
 
         self.batch.generate_simulations(
-            config, base_xml_path, parameters_path, estimates_path, self.rds
+            config, base_xml_path, parameters_path, estimates_path, scenario_path, self.rds
         )
 
         # ensure that the batch was updated
@@ -94,9 +99,8 @@ class TestScenarioIntegration(PandasTestCase):
 class TestInputParser(PandasTestCase):
     @staticmethod
     def estimates_input_from_rows(*rows):
-        rows = [row + [None, None] for row in rows]
         estimates = pd.DataFrame.from_records(
-            rows, columns=["Name", "Infectious_mean", "Beta1", "Beta2"]
+            rows, columns=["Name", "Infectious", "Exposed"]
         )
         return estimates
 
@@ -109,10 +113,11 @@ class TestInputParser(PandasTestCase):
 
     def exception_params_input(self, **kwargs):
         params = self.params_input_from_rows(
+            [None, None, "run dates", "2020-04-14", "2021-05-01", None, None,],
             ["PK", "0.35", "beta", "2020-04-14", "2021-05-01", "group", "Strong",]
         )
         for k, v in kwargs.items():
-            params.loc[:, k] = v
+            params.loc[1, k] = v
         return params
 
     def test_estimates_output_format(self):
@@ -122,18 +127,20 @@ class TestInputParser(PandasTestCase):
         self.assert_dtype(df["Region"], "object")
         self.assertIsInstance(df["Region"].iloc[0], Region)
         self.assert_dtype(df["Infectious"], "float")
+        self.assert_dtype(df["Exposed"], "float")
 
     def test_estimates_distribute_down(self):
         """
         Estimates should get spread down to regions at the gleam_basin level
         """
-        raw_estimates = self.estimates_input_from_rows(["BE", "100"], ["MA", "100"])
+        raw_estimates = self.estimates_input_from_rows(["BE", "100", "100"], ["MA", "100", "100"])
         parser = sc.InputParser(rds=self.rds)
         df = parser.parse_estimates_df(raw_estimates)
 
         for region in df["Region"]:
             self.assertEqual(region.Level, Level.gleam_basin)
         self.assert_almost_equal(df.Infectious.sum(), 200)
+        self.assert_almost_equal(df.Exposed.sum(), 200)
 
     def test_params_output_format(self):
         parser = sc.InputParser(rds=self.rds)
@@ -166,12 +173,12 @@ class TestInputParser(PandasTestCase):
     def test_find_region_by_code(self):
         parser = sc.InputParser(rds=self.rds)
         df = parser.parse_parameters_df(self.exception_params_input(Region="FR"))
-        self.assertEqual(df["Region"].iloc[0], self.rds["FR"])
+        self.assertEqual(df["Region"].iloc[1], self.rds["FR"])
 
     def test_find_region_by_name(self):
         parser = sc.InputParser(rds=self.rds)
         df = parser.parse_parameters_df(self.exception_params_input(Region="France"))
-        self.assertEqual(df["Region"].iloc[0], self.rds["FR"])
+        self.assertEqual(df["Region"].iloc[1], self.rds["FR"])
 
     @patch("epimodel.gleam.scenario.ergo")
     def test_foretold_lookup(self, ergo):
@@ -196,7 +203,7 @@ class TestInputParser(PandasTestCase):
         foretold.get_question.assert_called_once_with(QUESTION_ID)
         question.quantile.assert_called()
 
-        self.assertEqual(df["Value"].iloc[0], 1)
+        self.assertEqual(df["Value"].iloc[1], 1)
 
 
 @pytest.mark.usefixtures("ut_rds")
@@ -212,12 +219,25 @@ class TestSimulationSet(PandasTestCase):
     def tearDown(self):
         self.def_builder_patcher.stop()
 
-    def _return_inputs(self, parameters, estimates, id, name, classes, xml_path):
+    def _return_inputs(
+            self,
+            parameters,
+            estimates,
+            country_scenarios,
+            id,
+            name,
+            group,
+            trace,
+            xml_path
+    ):
         """
         return inputs instead of DefinitionBuilder instance for easy
         inspection of test results
         """
-        return parameters, estimates, id, name, classes
+        return parameters, estimates, country_scenarios, id, name, group, trace
+
+    def get_infectious_estimates(self, *rows):
+        return pd.DataFrame.from_records(rows, columns=["Region", "Infectious",])
 
     def get_estimates(self, *rows):
         return pd.DataFrame.from_records(rows, columns=sc.InputParser.ESTIMATE_FIELDS)
@@ -248,9 +268,10 @@ class TestSimulationSet(PandasTestCase):
             "compartments_max_fraction": 1.0,
         }
         params = self.get_params()
-        estimates = self.get_estimates([self.rds["G-MXP"], 100])
+        estimates = self.get_infectious_estimates([self.rds["G-MXP"], 100])
+        country_scenarios = pd.DataFrame()
 
-        ss = sc.SimulationSet(config, params, estimates)
+        ss = sc.SimulationSet(config, params, estimates, country_scenarios)
 
         # None is assumed trace
         params["Type"].fillna("trace", inplace=True)
@@ -264,10 +285,11 @@ class TestSimulationSet(PandasTestCase):
 
                 expected_params = params[params.present_in.str.contains("".join(pair))]
 
-                out_params, out_estimates, id, name, classes = ss[pair]
+                out_params, out_estimates, out_country_scenarios, id, name, group, trace = ss[pair]
                 self.assert_array_equal(out_params, expected_params)
                 self.assert_array_equal(out_estimates, estimates)
-                self.assertEqual(classes, pair)
+                self.assert_array_equal(out_country_scenarios, country_scenarios)
+                self.assertEqual((group, trace), pair)
                 self.assertEqual(name, config["name"])
                 self.assertIsInstance(id, int)
                 ids.add(id)
@@ -278,7 +300,7 @@ class TestSimulationSet(PandasTestCase):
             "name": "Test Exposed",
             "groups": [{"name": "A"},],
             "traces": [{"name": "C"},],
-            "compartment_multipliers": {"Infectious": 1.0, "Exposed": 1.8,},
+            "compartment_multipliers": {"Infectious": 1.0, "Exposed": 1.8},
             "compartments_max_fraction": 1.0,
         }
 
@@ -290,9 +312,10 @@ class TestSimulationSet(PandasTestCase):
 
         params = self.get_params()
         params = params[params.present_in.str.contains("AC")]
-        estimates = self.get_estimates(*([region, 100] for region in regions))
+        estimates = self.get_infectious_estimates(*([region, 100] for region in regions))
+        country_scenarios = pd.DataFrame()
 
-        ss = sc.SimulationSet(config, params, estimates)
+        ss = sc.SimulationSet(config, params, estimates, country_scenarios)
 
         expected_estimates = estimates.copy()
         expected_estimates["Exposed"] = 180
@@ -312,14 +335,15 @@ class TestSimulationSet(PandasTestCase):
 
         params = self.get_params()
         params = params[params.present_in.str.contains("AC")]
-        estimates = self.get_estimates([region, 10])
+        estimates = self.get_infectious_estimates([region, 10])
+        country_scenarios = pd.DataFrame()
 
-        ss = sc.SimulationSet(config, params, estimates)
+        ss = sc.SimulationSet(config, params, estimates, country_scenarios)
 
         # total estimate == population
         # compartments_max_fraction == 0.5 * population
         # so output will be half of input
-        expected_estimates = self.get_estimates([region, 5])
+        expected_estimates = self.get_infectious_estimates([region, 5])
         expected_estimates["Exposed"] = 45
 
         out_estimates = ss[("A", "C")][1]
@@ -373,25 +397,30 @@ class TestDefinitionBuilder(PandasTestCase):
             )
         )
 
-    def init_def_builder(
-        self, params=None, estimates=None, id=None, name=None, classes=None
-    ):
+    def init_def_builder(self, params=None, estimates=None, country_scenarios=None, id=None, name=None, trace=None,
+                         group=None):
         if params is None:
             params = pd.DataFrame(columns=sc.InputParser.PARAMETER_FIELDS)
         if estimates is None:
             estimates = pd.DataFrame(columns=["Region"])
+        if country_scenarios is None:
+            country_scenarios = pd.DataFrame(columns=["Region"])
         if id is None:
             id = 123
         if name is None:
             name = "Testing"
-        if classes is None:
-            classes = ("A", "B")
+        if trace is None:
+            trace = "A"
+        if group is None:
+            group = "B"
         return sc.DefinitionBuilder(
             params,
             estimates,
+            country_scenarios,
             id,
             name,
-            classes,
+            trace,
+            group,
             self.datadir / "default_gleam_definition.xml",
         )
 
@@ -422,7 +451,7 @@ class TestDefinitionBuilder(PandasTestCase):
         self.assertEqual(def_builder.filename, "123.574.xml")
 
     def test_name(self):
-        self.init_def_builder(name="Test", classes=("A", "B"))
+        self.init_def_builder(name="Test", trace="A", group="B")
         self.output.set_name.assert_called_with("Test (A + B)")
 
     # run dates
@@ -502,25 +531,6 @@ class TestDefinitionBuilder(PandasTestCase):
         params = self.params_row({"Parameter": "imu", "Value": value,})
         self.init_def_builder(params)
         self.output.set_compartment_variable.assert_called_once_with("imu", value)
-        self.output.add_exception.assert_not_called()
-
-    def test_partial_exception_fails_region(self):
-        params = self.params_row({"Region": "FR", "Parameter": "imu", "Value": 0.3,})
-        self.assertRaises(ValueError, self.init_def_builder, params)
-        self.output.set_compartment_variable.assert_not_called()
-        self.output.add_exception.assert_not_called()
-
-    def test_partial_exception_fails_dates(self):
-        params = self.params_row(
-            {
-                "Parameter": "imu",
-                "Value": 0.3,
-                "Start date": "2020-05-01",
-                "End date": "2020-06-01",
-            }
-        )
-        self.assertRaises(ValueError, self.init_def_builder, params)
-        self.output.set_compartment_variable.assert_not_called()
         self.output.add_exception.assert_not_called()
 
     # exceptions
