@@ -78,3 +78,14 @@ jobs:
           source $HOME/.poetry/env
           poetry run ./run_luigi WebExport --EstimateR-r-executable-path /usr/local/bin/Rscript --export-name main --automatic --UpdateForetold-foretold-channel ${{ secrets.FORETOLD_CHANNEL }}
           poetry run ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/main/ --channel main --overwrite
+
+      - uses: sonots/slack-notice-action@v3
+        with:
+          status: failure
+          username: Daily upload status
+          icon_emoji: ':octocat:'
+          channel: '#covid-prediction'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.BLINDSPOT_SLACK_WEBHOOK_URL }}
+        if: always()
