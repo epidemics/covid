@@ -239,15 +239,16 @@ class GleamDefinition:
         assert pd.notnull(region.GleamID)
 
         for compartment, size in compartments.items():
-            ET.SubElement(
-                self.seeds_node,
-                "seed",
-                {
-                    "number": str(int(size)),
-                    "compartment": compartment,
-                    "city": str(region.GleamID),
-                },
-            )
+            if round(size) > 0:
+                ET.SubElement(
+                    self.seeds_node,
+                    "seed",
+                    {
+                        "number": str(round(size)),
+                        "compartment": compartment,
+                        "city": str(region.GleamID),
+                    },
+                )
 
         if format:
             self.format_seeds()

@@ -79,3 +79,1400 @@ PK-SD:
     G-KHI: 0.98
     G-WNS: 1
     G-HDD: 1
+AU-ACT:
+  AggregateFrom:
+  - G-CBR
+  Name: Australian Capital Territory
+  Population: 418000.0
+AU-NSW:
+  AggregateFrom:
+  - G-ABX
+  - G-ARM
+  - G-AVV
+  - G-BHQ
+  - G-BNK
+  - G-CAZ
+  - G-CFS
+  - G-DBO
+  - G-DGE
+  - G-GFF
+  - G-GFN
+  - G-LDH
+  - G-MIM
+  - G-MRZ
+  - G-MYA
+  - G-NAA
+  - G-NRA
+  - G-NTL
+  - G-OAG
+  - G-OOM
+  - G-PKE
+  - G-PQQ
+  - G-SYD
+  - G-TMW
+  - G-TRO
+  - G-WGA
+  Name: New South Wales
+  Population: 8090000.0
+AU-NT:
+  AggregateFrom:
+  - G-ASP
+  - G-AYQ
+  - G-DRW
+  - G-ELC
+  - G-GOV
+  - G-GTE
+  - G-GTS
+  - G-MCV
+  - G-MGT
+  - G-MNG
+  Name: Northern Territory
+  Population: 246000.0
+AU-QLD:
+  AggregateFrom:
+  - G-AAB
+  - G-AUU
+  - G-BCI
+  - G-BDB
+  - G-BEU
+  - G-BKQ
+  - G-BNE
+  - G-BQL
+  - G-BUC
+  - G-BVI
+  - G-CMA
+  - G-CNJ
+  - G-CNS
+  - G-CTL
+  - G-CUQ
+  - G-DKI
+  - G-DMD
+  - G-EDR
+  - G-EMD
+  - G-GLT
+  - G-HGD
+  - G-HID
+  - G-HLT
+  - G-HTI
+  - G-HVB
+  - G-IRG
+  - G-ISA
+  - G-JCK
+  - G-KWM
+  - G-LRE
+  - G-MCY
+  - G-MKY
+  - G-MOV
+  - G-NTN
+  - G-ONG
+  - G-OOL
+  - G-RMA
+  - G-ROK
+  - G-SCG
+  - G-SGO
+  - G-TSV
+  - G-TWB
+  - G-ULP
+  - G-WEI
+  - G-WIN
+  - G-WNR
+  - G-XTG
+  - G-ZBL
+  Name: Queensland
+  Population: 5095000.0
+AU-SA:
+  AggregateFrom:
+  - G-ADL
+  - G-CED
+  - G-CPD
+  - G-GSN
+  - G-KGC
+  - G-MGB
+  - G-NAC
+  - G-OLP
+  - G-PLO
+  - G-PUG
+  - G-SLJ
+  - G-WYA
+  Name: South Australia
+  Population: 1752000.0
+AU-TAS:
+  AggregateFrom:
+  - G-BWT
+  - G-DPO
+  - G-FLS
+  - G-HBA
+  - G-KNS
+  - G-LST
+  Name: Tasmania
+  Population: 534000.0
+AU-VIC:
+  AggregateFrom:
+  - G-MEL
+  - G-MHU
+  - G-MQL
+  - G-PTJ
+  - G-RCM
+  Name: Victoria
+  Population: 6595000.0
+AU-WA:
+  AggregateFrom:
+  - G-ALH
+  - G-BME
+  - G-BQB
+  - G-DCN
+  - G-EPR
+  - G-GET
+  - G-GYL
+  - G-KAX
+  - G-KGI
+  - G-KNX
+  - G-KTA
+  - G-LEA
+  - G-PBO
+  - G-PER
+  - G-PHE
+  - G-RVT
+  - G-ZNE
+  Name: Western Australia
+  Population: 2622000.0
+CA-AB:
+  AggregateFrom:
+  - G-YEG
+  - G-YLL
+  - G-YMM
+  - G-YOJ
+  - G-YOP
+  - G-YPY
+  - G-YQF
+  - G-YQL
+  - G-YQU
+  - G-YXH
+  - G-YYC
+  Name: Alberta
+  Population: 4370000.0
+CA-BC:
+  AggregateFrom:
+  - G-QBC
+  - G-YAA
+  - G-YCG
+  - G-YDQ
+  - G-YKA
+  - G-YKT
+  - G-YLW
+  - G-YPR
+  - G-YQQ
+  - G-YQZ
+  - G-YVR
+  - G-YWL
+  - G-YXC
+  - G-YXJ
+  - G-YXS
+  - G-YXT
+  - G-YXX
+  - G-YYD
+  - G-YYE
+  - G-YYF
+  - G-YZP
+  - G-YZT
+  - G-ZEL
+  - G-ZMT
+  Name: British Columbia
+  Population: 4648000.0
+CA-MB:
+  AggregateFrom:
+  - G-YBR
+  - G-YCL
+  - G-YFO
+  - G-YGX
+  - G-YQD
+  - G-YTH
+  - G-YWG
+  - G-YYL
+  - G-YYQ
+  Name: Manitoba
+  Population: 1369000.0
+CA-NB:
+  AggregateFrom:
+  - G-YFC
+  - G-YQM
+  - G-ZBF
+  Name: New Brunswick
+  Population: 776000.0
+CA-NL:
+  AggregateFrom:
+  - G-YAY
+  - G-YDF
+  - G-YDP
+  - G-YHO
+  - G-YJT
+  - G-YMN
+  - G-YNP
+  - G-YQX
+  - G-YRG
+  - G-YSJ
+  - G-YWK
+  - G-YYR
+  - G-YYT
+  - G-ZUM
+  Name: Newfoundland and Labrador
+  Population: 521000.0
+CA-NS:
+  AggregateFrom:
+  - G-YFX
+  - G-YHZ
+  - G-YQY
+  Name: Nova Scotia
+  Population: 971000.0
+CA-NT:
+  AggregateFrom:
+  - G-LAK
+  - G-YCK
+  - G-YEV
+  - G-YFJ
+  - G-YFS
+  - G-YGH
+  - G-YHI
+  - G-YHY
+  - G-YLE
+  - G-YPC
+  - G-YRA
+  - G-YSG
+  - G-YSM
+  - G-YSY
+  - G-YUB
+  - G-YVQ
+  - G-YWJ
+  - G-YZF
+  - G-ZFM
+  - G-ZFN
+  Name: Northwest Territories
+  Population: 44000.0
+CA-NU:
+  AggregateFrom:
+  - G-YAB
+  - G-YBB
+  - G-YBK
+  - G-YCB
+  - G-YCO
+  - G-YCS
+  - G-YCY
+  - G-YEK
+  - G-YFB
+  - G-YGT
+  - G-YGZ
+  - G-YHK
+  - G-YIO
+  - G-YLC
+  - G-YRB
+  - G-YRT
+  - G-YSK
+  - G-YTE
+  - G-YUT
+  - G-YUX
+  - G-YVM
+  - G-YXN
+  - G-YXP
+  - G-YYH
+  - G-YZS
+  Name: Nunavut
+  Population: 38000.0
+CA-ON:
+  AggregateFrom:
+  - G-MSA
+  - G-SUR
+  - G-WNN
+  - G-XBE
+  - G-XKS
+  - G-YAC
+  - G-YAG
+  - G-YAM
+  - G-YAT
+  - G-YER
+  - G-YFH
+  - G-YGK
+  - G-YGQ
+  - G-YHD
+  - G-YHM
+  - G-YLH
+  - G-YMO
+  - G-YNO
+  - G-YOG
+  - G-YOW
+  - G-YPL
+  - G-YPM
+  - G-YPO
+  - G-YQG
+  - G-YQK
+  - G-YQT
+  - G-YRL
+  - G-YSB
+  - G-YTL
+  - G-YTS
+  - G-YVZ
+  - G-YWP
+  - G-YXL
+  - G-YXU
+  - G-YYB
+  - G-YYU
+  - G-YYZ
+  - G-YZR
+  - G-ZKE
+  - G-ZPB
+  - G-ZRJ
+  - G-ZSJ
+  Name: Ontario
+  Population: 13448000.0
+CA-PE:
+  AggregateFrom:
+  - G-YYG
+  Name: Prince Edward Island
+  Population: 156000.0
+CA-QC:
+  AggregateFrom:
+  - G-AKV
+  - G-XGR
+  - G-YBC
+  - G-YBG
+  - G-YBX
+  - G-YGL
+  - G-YGP
+  - G-YGR
+  - G-YGV
+  - G-YGW
+  - G-YIF
+  - G-YIK
+  - G-YKG
+  - G-YKL
+  - G-YKQ
+  - G-YKU
+  - G-YMT
+  - G-YNC
+  - G-YNS
+  - G-YPH
+  - G-YPJ
+  - G-YPN
+  - G-YPX
+  - G-YQB
+  - G-YQC
+  - G-YTF
+  - G-YTM
+  - G-YTQ
+  - G-YUD
+  - G-YUL
+  - G-YUY
+  - G-YVB
+  - G-YVO
+  - G-YVP
+  - G-YWB
+  - G-YYY
+  - G-YZG
+  - G-YZV
+  - G-ZEM
+  - G-ZGS
+  Name: Quebec
+  Population: 8485000.0
+CA-SK:
+  AggregateFrom:
+  - G-YPA
+  - G-YQR
+  - G-YXE
+  Name: Saskatchewan
+  Population: 1174000.0
+CA-YT:
+  AggregateFrom:
+  - G-YDA
+  - G-YOC
+  - G-YXY
+  Name: Yukon Territory
+  Population: 35000.0
+CN-AH:
+  AggregateFrom:
+  - G-AQG
+  - G-HFE
+  - G-JUH
+  - G-TXN
+  Name: Anhui
+  Population: 62000000.0
+CN-BJ:
+  AggregateFrom:
+  - G-PEK
+  Name: Beijing
+  Population: 21540000.0
+CN-CQ:
+  AggregateFrom:
+  - G-CKG
+  - G-WXN
+  Name: Chongqing
+  Population: 30480000.0
+CN-FJ:
+  AggregateFrom:
+  - G-FOC
+  - G-JJN
+  - G-LCX
+  - G-WUS
+  - G-XMN
+  Name: Fujian
+  Population: 38565000.0
+CN-GD:
+  AggregateFrom:
+  - G-CAN
+  - G-MXZ
+  - G-SWA
+  - G-ZHA
+  Name: Guangdong
+  Population: 113460000.0
+CN-GS:
+  AggregateFrom:
+  - G-DNH
+  - G-GXH
+  - G-JGN
+  - G-JIC
+  - G-LHW
+  - G-THQ
+  - G-YZY
+  Name: Gansu
+  Population: 25575000.0
+CN-GX:
+  AggregateFrom:
+  - G-AEB
+  - G-BHY
+  - G-KWL
+  - G-LZH
+  - G-NNG
+  - G-UYN
+  - G-WUZ
+  Name: Guangxi
+  Population: 48380000.0
+CN-GZ:
+  AggregateFrom:
+  - G-ACX
+  - G-AVA
+  - G-BFJ
+  - G-HZH
+  - G-KWE
+  - G-LLB
+  - G-TEN
+  - G-ZYI
+  Name: Guizhou
+  Population: 34746000.0
+CN-HA:
+  AggregateFrom:
+  - G-CGO
+  - G-LYA
+  - G-NNY
+  Name: Henan
+  Population: 95324000.0
+CN-HB:
+  AggregateFrom:
+  - G-ENH
+  - G-JIQ
+  - G-WUH
+  - G-XFN
+  - G-YIH
+  Name: Hubei
+  Population: 58500000.0
+CN-HE:
+  AggregateFrom:
+  - G-HDG
+  - G-SHP
+  - G-SJW
+  - G-TVS
+  Name: Hebei
+  Population: 74700000.0
+CN-HI:
+  AggregateFrom:
+  - G-HAK
+  - G-SYX
+  Name: Hainan
+  Population: 9258000.0
+CN-HK:
+  AggregateFrom:
+  - G-HKG
+  Name: Hong Kong
+  Population: 7482000.0
+CN-HL:
+  AggregateFrom:
+  - G-DQA
+  - G-HEK
+  - G-HRB
+  - G-JGD
+  - G-JMU
+  - G-JXA
+  - G-LDS
+  - G-MDG
+  - G-NDG
+  - G-OHE
+  Name: Heilongjiang
+  Population: 38312000.0
+CN-HN:
+  AggregateFrom:
+  - G-CGD
+  - G-CSX
+  - G-DYG
+  - G-HJJ
+  - G-LLF
+  Name: Hunan
+  Population: 67370000.0
+CN-JL:
+  AggregateFrom:
+  - G-CGQ
+  - G-NBS
+  - G-YNJ
+  Name: Jilin
+  Population: 27462000.0
+CN-JS:
+  AggregateFrom:
+  - G-CZX
+  - G-HIA
+  - G-HYN
+  - G-LYG
+  - G-NKG
+  - G-NTG
+  - G-WUX
+  - G-XUZ
+  - G-YNZ
+  - G-YTY
+  Name: Jiangsu
+  Population: 80400000.0
+CN-JX:
+  AggregateFrom:
+  - G-JDZ
+  - G-JGS
+  - G-JIU
+  - G-KHN
+  - G-KOW
+  - G-YIC
+  Name: Jiangxi
+  Population: 45200000.0
+CN-LN:
+  AggregateFrom:
+  - G-AOG
+  - G-CHG
+  - G-DDG
+  - G-DLC
+  - G-JNZ
+  - G-SHE
+  Name: Liaoning
+  Population: 43900000.0
+CN-NM:
+  AggregateFrom:
+  - G-BAV
+  - G-CIF
+  - G-DSN
+  - G-ERL
+  - G-HET
+  - G-HLD
+  - G-HLH
+  - G-NZH
+  - G-RLK
+  - G-TGO
+  - G-WUA
+  - G-XIL
+  - G-YIE
+  Name: Inner Mongolia
+  Population: 24706000.0
+CN-NX:
+  AggregateFrom:
+  - G-GYU
+  - G-INC
+  - G-ZHY
+  Name: Ningxia
+  Population: 6301000.0
+CN-QH:
+  AggregateFrom:
+  - G-GOQ
+  - G-XNN
+  - G-YUS
+  Name: Qinghai
+  Population: 5627000.0
+CN-SC:
+  AggregateFrom:
+  - G-CTU
+  - G-DAX
+  - G-DCY
+  - G-GYS
+  - G-JZH
+  - G-KGT
+  - G-LZO
+  - G-MIG
+  - G-NAO
+  - G-PZI
+  - G-XIC
+  - G-YBP
+  Name: Sichuan
+  Population: 81100000.0
+CN-SD:
+  AggregateFrom:
+  - G-DOY
+  - G-JNG
+  - G-LYI
+  - G-TAO
+  - G-TNA
+  - G-WEF
+  - G-WEH
+  - G-YNT
+  Name: Shandong
+  Population: 100472000.0
+CN-SH:
+  AggregateFrom:
+  - G-PVG
+  Name: Shanghai
+  Population: 24240000.0
+CN-SN:
+  AggregateFrom:
+  - G-ENY
+  - G-XIY
+  Name: Shaanxi
+  Population: 37327000.0
+CN-SX:
+  AggregateFrom:
+  - G-CIH
+  - G-DAT
+  - G-TYN
+  - G-YCU
+  Name: Shanxi
+  Population: 36500000.0
+CN-TJ:
+  AggregateFrom:
+  - G-TSN
+  Name: Tianjin
+  Population: 15621000.0
+CN-XJ:
+  AggregateFrom:
+  - G-AAT
+  - G-AKU
+  - G-BPL
+  - G-HMI
+  - G-HTN
+  - G-KCA
+  - G-KHG
+  - G-KJI
+  - G-KRL
+  - G-KRY
+  - G-NLT
+  - G-TCG
+  - G-TLQ
+  - G-URC
+  - G-YIN
+  Name: Xinjiang
+  Population: 23600000.0
+CN-XZ:
+  AggregateFrom:
+  - G-BPX
+  - G-LXA
+  - G-LZY
+  - G-NGQ
+  - G-RKZ
+  Name: Tibet
+  Population: 3180000.0
+CN-YN:
+  AggregateFrom:
+  - G-BSD
+  - G-DIG
+  - G-DLU
+  - G-JHG
+  - G-KMG
+  - G-LJG
+  - G-LNJ
+  - G-LUM
+  - G-SYM
+  - G-TCZ
+  - G-WNH
+  - G-ZAT
+  Name: Yunnan
+  Population: 45966000.0
+CN-ZJ:
+  AggregateFrom:
+  - G-FUG
+  - G-HGH
+  - G-HSN
+  - G-JUZ
+  - G-NGB
+  - G-WNZ
+  - G-YIW
+  Name: Zhejiang
+  Population: 57370000.0
+US-AK:
+  AggregateFrom:
+  - G-ADK
+  - G-ADQ
+  - G-AET
+  - G-AIN
+  - G-AKB
+  - G-AKN
+  - G-AKP
+  - G-ANC
+  - G-ANI
+  - G-ARC
+  - G-ATK
+  - G-BKC
+  - G-BRW
+  - G-BTI
+  - G-BTT
+  - G-CDB
+  - G-CDV
+  - G-CIK
+  - G-CKX
+  - G-CXF
+  - G-DLG
+  - G-DRG
+  - G-DUT
+  - G-EGX
+  - G-ELI
+  - G-EMK
+  - G-ENA
+  - G-FAI
+  - G-FYU
+  - G-GAL
+  - G-GAM
+  - G-GNU
+  - G-GST
+  - G-HCR
+  - G-HKB
+  - G-HNS
+  - G-HOM
+  - G-HSL
+  - G-HUS
+  - G-IGG
+  - G-IKO
+  - G-ILI
+  - G-JNU
+  - G-KAL
+  - G-KFP
+  - G-KKA
+  - G-KOT
+  - G-KQA
+  - G-KSM
+  - G-KTN
+  - G-KTS
+  - G-KVL
+  - G-KWN
+  - G-LMA
+  - G-LUR
+  - G-MCG
+  - G-MLY
+  - G-MYU
+  - G-NIB
+  - G-NUI
+  - G-OME
+  - G-OTZ
+  - G-PIZ
+  - G-PML
+  - G-PTH
+  - G-RBY
+  - G-RMP
+  - G-SCC
+  - G-SDP
+  - G-SHH
+  - G-SHX
+  - G-SIT
+  - G-SKK
+  - G-SMK
+  - G-SNP
+  - G-STG
+  - G-SVA
+  - G-TAL
+  - G-TKJ
+  - G-TOG
+  - G-UNK
+  - G-VAK
+  - G-VDZ
+  - G-VEE
+  - G-WAA
+  - G-WBQ
+  - G-WLK
+  - G-WTK
+  - G-WTL
+  - G-WWT
+  - G-YAK
+  Name: Alaska
+  Population: 738000.0
+US-AL:
+  AggregateFrom:
+  - G-BHM
+  - G-DHN
+  - G-HSV
+  - G-MGM
+  - G-MOB
+  - G-MSL
+  Name: Alabama
+  Population: 4889000.0
+US-AR:
+  AggregateFrom:
+  - G-ELD
+  - G-FSM
+  - G-HOT
+  - G-JBR
+  - G-LIT
+  - G-XNA
+  Name: Arkansas
+  Population: 3020000.0
+US-AZ:
+  AggregateFrom:
+  - G-FLG
+  - G-GCN
+  - G-GCW
+  - G-IFP
+  - G-IGM
+  - G-MZJ
+  - G-PGA
+  - G-PHX
+  - G-PRC
+  - G-SOW
+  - G-TUS
+  - G-YUM
+  Name: Arizona
+  Population: 6392000.0
+US-CA:
+  AggregateFrom:
+  - G-ACV
+  - G-BFL
+  - G-CEC
+  - G-CIC
+  - G-CNM
+  - G-CVN
+  - G-FAT
+  - G-IPL
+  - G-IYK
+  - G-LAX
+  - G-MCE
+  - G-MMH
+  - G-MRY
+  - G-PSP
+  - G-RDD
+  - G-SAN
+  - G-SBA
+  - G-SBP
+  - G-SCK
+  - G-SFO
+  - G-SMF
+  - G-STS
+  - G-VIS
+  Name: California
+  Population: 39512000.0
+US-CO:
+  AggregateFrom:
+  - G-ALS
+  - G-ASE
+  - G-CEZ
+  - G-COS
+  - G-DEN
+  - G-DRO
+  - G-GJT
+  - G-GUC
+  - G-MNT
+  - G-MTJ
+  - G-PUB
+  - G-TEX
+  Name: Colorado
+  Population: 5684000.0
+US-CT:
+  AggregateFrom:
+  - G-BDL
+  - G-BET
+  - G-HVN
+  Name: Connecticut
+  Population: 3589000.0
+US-DE:
+  AggregateFrom:
+  - G-DOV
+  Name: Delaware
+  Population: 971000.0
+US-FL:
+  AggregateFrom:
+  - G-ECP
+  - G-EYW
+  - G-GNV
+  - G-JAX
+  - G-MCO
+  - G-MIA
+  - G-MLB
+  - G-PBI
+  - G-PNS
+  - G-RSW
+  - G-SRQ
+  - G-TLH
+  - G-TPA
+  - G-VPS
+  Name: Florida
+  Population: 21312000.0
+US-GA:
+  AggregateFrom:
+  - G-ABY
+  - G-AGS
+  - G-AHN
+  - G-ATL
+  - G-BQK
+  - G-CSG
+  - G-MCN
+  - G-ROW
+  - G-SAV
+  - G-VLD
+  Name: Georgia
+  Population: 10545000.0
+US-HI:
+  AggregateFrom:
+  - G-HNL
+  - G-ITO
+  - G-KOA
+  - G-LIH
+  - G-OGG
+  Name: Hawaii
+  Population: 1426000.0
+US-IA:
+  AggregateFrom:
+  - G-ALO
+  - G-BRL
+  - G-CID
+  - G-DBQ
+  - G-DSM
+  - G-FOD
+  - G-MCW
+  - G-SUX
+  Name: Iowa
+  Population: 3161000.0
+US-ID:
+  AggregateFrom:
+  - G-BOI
+  - G-EAA
+  - G-HDN
+  - G-IDA
+  - G-MEI
+  - G-PIH
+  - G-TWF
+  Name: Idaho
+  Population: 1754000.0
+US-IL:
+  AggregateFrom:
+  - G-BLV
+  - G-BMI
+  - G-CMI
+  - G-DEC
+  - G-MLI
+  - G-ORD
+  - G-PIA
+  - G-RFD
+  - G-SPI
+  Name: Illinois
+  Population: 12419000.0
+US-IN:
+  AggregateFrom:
+  - G-CKD
+  - G-EVV
+  - G-FWA
+  - G-IND
+  - G-SBN
+  - G-SER
+  Name: Indiana
+  Population: 6700000.0
+US-KS:
+  AggregateFrom:
+  - G-DDC
+  - G-GBD
+  - G-GCK
+  - G-HYS
+  - G-ICT
+  - G-KAE
+  - G-LBL
+  - G-SLN
+  Name: Kansas
+  Population: 2919000.0
+US-KY:
+  AggregateFrom:
+  - G-LEX
+  - G-PAH
+  - G-SDF
+  Name: Kentucky
+  Population: 4472000.0
+US-LA:
+  AggregateFrom:
+  - G-AEX
+  - G-BTR
+  - G-CEM
+  - G-LCH
+  - G-LFT
+  - G-MLU
+  - G-MSY
+  - G-SHV
+  Name: Louisiana
+  Population: 4683000.0
+US-MA:
+  AggregateFrom:
+  - G-BOS
+  - G-ORH
+  - G-RKD
+  - G-UIN
+  Name: Massachusetts
+  Population: 6896000.0
+US-MD:
+  AggregateFrom:
+  - G-BWI
+  - G-HGR
+  - G-SBY
+  Name: Maryland
+  Population: 6080000.0
+US-ME:
+  AggregateFrom:
+  - G-AUG
+  - G-BGR
+  - G-BHB
+  - G-LWS
+  - G-PQI
+  - G-PWM
+  Name: Maine
+  Population: 1342000.0
+US-MI:
+  AggregateFrom:
+  - G-APN
+  - G-AZO
+  - G-CIU
+  - G-CMX
+  - G-DTW
+  - G-ESC
+  - G-FNT
+  - G-GRR
+  - G-IMT
+  - G-IWD
+  - G-LAN
+  - G-MBL
+  - G-MBS
+  - G-MKG
+  - G-MQT
+  - G-PLN
+  - G-SVS
+  - G-TVC
+  Name: Michigan
+  Population: 9991000.0
+US-MN:
+  AggregateFrom:
+  - G-BJI
+  - G-BRD
+  - G-DLH
+  - G-GPZ
+  - G-HIB
+  - G-ILL
+  - G-INL
+  - G-MSP
+  - G-RST
+  - G-STC
+  - G-TVF
+  Name: Minnesota
+  Population: 5628000.0
+US-MO:
+  AggregateFrom:
+  - G-BKG
+  - G-CGI
+  - G-COU
+  - G-IRK
+  - G-JLN
+  - G-KCQ
+  - G-MCI
+  - G-SGF
+  - G-STL
+  - G-SZL
+  - G-TBN
+  Name: Missouri
+  Population: 6136000.0
+US-MS:
+  AggregateFrom:
+  - G-GLH
+  - G-GPT
+  - G-GTR
+  - G-JAN
+  - G-PIB
+  - G-TUP
+  Name: Mississippi
+  Population: 2983000.0
+US-MT:
+  AggregateFrom:
+  - G-BIL
+  - G-BTM
+  - G-BZN
+  - G-FCA
+  - G-GDV
+  - G-GGW
+  - G-GTF
+  - G-HLN
+  - G-HVR
+  - G-MLS
+  - G-MSO
+  - G-OLF
+  - G-WYS
+  Name: Montana
+  Population: 1062000.0
+US-NC:
+  AggregateFrom:
+  - G-AVL
+  - G-CLT
+  - G-EWN
+  - G-FAY
+  - G-GSO
+  - G-ILM
+  - G-OAJ
+  - G-PGV
+  - G-RDU
+  Name: North Carolina
+  Population: 10390000.0
+US-ND:
+  AggregateFrom:
+  - G-BIS
+  - G-DIK
+  - G-DVL
+  - G-FAR
+  - G-GFK
+  - G-ISN
+  - G-JMS
+  - G-MOT
+  Name: North Dakota
+  Population: 755000.0
+US-NE:
+  AggregateFrom:
+  - G-BFF
+  - G-CDR
+  - G-EAR
+  - G-GRI
+  - G-LBF
+  - G-LNK
+  - G-MCK
+  - G-OMA
+  - G-ONL
+  Name: Nebraska
+  Population: 1933000.0
+US-NH:
+  AggregateFrom:
+  - G-LEB
+  Name: New Hampshire
+  Population: 1351000.0
+US-NJ:
+  AggregateFrom:
+  - G-ACY
+  - G-TTN
+  Name: New Jersey
+  Population: 9033000.0
+US-NM:
+  AggregateFrom:
+  - G-ABQ
+  - G-FMN
+  - G-HOB
+  - G-SAF
+  - G-SVC
+  Name: New Mexico
+  Population: 2091000.0
+US-NV:
+  AggregateFrom:
+  - G-EKO
+  - G-ELY
+  - G-LAS
+  - G-RNO
+  - G-SUN
+  Name: Nevada
+  Population: 3057000.0
+US-NY:
+  AggregateFrom:
+  - G-ALB
+  - G-ART
+  - G-BGM
+  - G-BUF
+  - G-ELM
+  - G-HTS
+  - G-ISP
+  - G-ITH
+  - G-JFK
+  - G-JHW
+  - G-MHK
+  - G-MSS
+  - G-OGS
+  - G-ROC
+  - G-SLK
+  - G-SWF
+  - G-SYR
+  Name: New York
+  Population: 19540000.0
+US-OH:
+  AggregateFrom:
+  - G-AIA
+  - G-CAK
+  - G-CLE
+  - G-CMH
+  - G-CVG
+  - G-DAY
+  - G-MWA
+  - G-SDY
+  - G-TOL
+  - G-YNG
+  Name: Ohio
+  Population: 11695000.0
+US-OK:
+  AggregateFrom:
+  - G-LAW
+  - G-OKC
+  - G-TUL
+  Name: Oklahoma
+  Population: 3941000.0
+US-OR:
+  AggregateFrom:
+  - G-EUG
+  - G-LMT
+  - G-MFR
+  - G-OTH
+  - G-PDT
+  - G-PDX
+  Name: Oregon
+  Population: 4200000.0
+US-PA:
+  AggregateFrom:
+  - G-ABE
+  - G-ABL
+  - G-AVP
+  - G-BFD
+  - G-DUJ
+  - G-ERI
+  - G-IPT
+  - G-LBE
+  - G-LWT
+  - G-MDT
+  - G-PHL
+  - G-PIT
+  - G-SCE
+  Name: Pennsylvania
+  Population: 12824000.0
+US-RI:
+  AggregateFrom:
+  - G-BID
+  - G-PVD
+  Name: Rhode Island
+  Population: 1062000.0
+US-SC:
+  AggregateFrom:
+  - G-CAE
+  - G-CHS
+  - G-FLO
+  - G-GSP
+  - G-MYR
+  Name: South Carolina
+  Population: 5089000.0
+US-SD:
+  AggregateFrom:
+  - G-ABR
+  - G-ATY
+  - G-FSD
+  - G-HON
+  - G-PIR
+  - G-RAP
+  Name: South Dakota
+  Population: 878000.0
+US-TN:
+  AggregateFrom:
+  - G-BNA
+  - G-CHA
+  - G-FKL
+  - G-LWB
+  - G-MEM
+  - G-MKL
+  - G-TRI
+  - G-TYS
+  Name: Tennessee
+  Population: 6783000.0
+US-TX:
+  AggregateFrom:
+  - G-ABI
+  - G-ACT
+  - G-AMA
+  - G-AUS
+  - G-BPT
+  - G-CLL
+  - G-CRP
+  - G-DFW
+  - G-DRT
+  - G-ELP
+  - G-GGG
+  - G-GRK
+  - G-HRL
+  - G-IAH
+  - G-LBB
+  - G-LRD
+  - G-MAF
+  - G-MFE
+  - G-PHO
+  - G-SAT
+  - G-SJT
+  - G-SPS
+  - G-TXK
+  - G-TYR
+  - G-UGB
+  - G-VCT
+  Name: Texas
+  Population: 28704000.0
+US-UT:
+  AggregateFrom:
+  - G-CDC
+  - G-CNY
+  - G-PVU
+  - G-RIW
+  - G-SGU
+  - G-SLC
+  - G-VEL
+  Name: Utah
+  Population: 3159000.0
+US-VA:
+  AggregateFrom:
+  - G-CHO
+  - G-LYH
+  - G-ORF
+  - G-PSG
+  - G-RIC
+  - G-ROA
+  Name: Virginia
+  Population: 8526000.0
+US-VT:
+  AggregateFrom:
+  - G-BTV
+  - G-RUT
+  Name: Vermont
+  Population: 624000.0
+US-WA:
+  AggregateFrom:
+  - G-ALW
+  - G-BLI
+  - G-CLM
+  - G-EAT
+  - G-GEG
+  - G-PSC
+  - G-RDM
+  - G-SEA
+  - G-YKM
+  Name: Washington
+  Population: 7536000.0
+US-WI:
+  AggregateFrom:
+  - G-CWA
+  - G-EAU
+  - G-GRB
+  - G-LSE
+  - G-MKE
+  - G-MSN
+  - G-RHI
+  Name: Wisconsin
+  Population: 5818000.0
+US-WV:
+  AggregateFrom:
+  - G-BKW
+  - G-CRW
+  - G-MGW
+  - G-PKB
+  Name: West Virginia
+  Population: 1803000.0
+US-WY:
+  AggregateFrom:
+  - G-COD
+  - G-CPR
+  - G-CYS
+  - G-GCC
+  - G-JAC
+  - G-LAR
+  - G-RKS
+  - G-SHR
+  - G-WRL
+  Name: Wyoming
+  Population: 574000.0

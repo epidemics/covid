@@ -243,6 +243,17 @@ class CountryEstimates(luigi.ExternalTask):
         return luigi.LocalTarget(self.country_estimates)
 
 
+class CountryScenarios(luigi.ExternalTask):
+    """Scenarios created manually by forecasters"""
+
+    country_scenarios: str = luigi.Parameter(
+        description="Path to the input file relative to the configuration input directory",
+    )
+
+    def output(self):
+        return luigi.LocalTarget(self.country_scenarios)
+
+
 class ConfigYaml(luigi.ExternalTask):
     """Configuration yaml used mostly to customize the gleamviz pipeline and to generate
     the definitions for the simulations"""
@@ -290,6 +301,7 @@ class GenerateGleamBatch(luigi.Task):
             "base_def": self.clone(BaseDefinition),
             "gleam_parameters": self.clone(GleamParameters),
             "country_estimates": self.clone(CountryEstimates),
+            "country_scenarios": self.clone(CountryScenarios),
             "config_yaml": self.clone(ConfigYaml),
             **RegionsDatasetSubroutine.requires(),
         }
@@ -317,6 +329,7 @@ class GenerateGleamBatch(luigi.Task):
             self.input()["base_def"].path,
             self.input()["gleam_parameters"].path,
             self.input()["country_estimates"].path,
+            self.input()["country_scenarios"].path,
             rds,
         )
         logger.info(f"Generated batch scenarios {batch.path!r}:\n  {batch.stats()}")

@@ -10,7 +10,7 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.6.8"
 numpy = "^1.18.2"
-pandas = "^1.0.3"
+pandas = "^1.1.0"
 scipy = "^1.4.1"
 tables = ">=3.2"
 unidecode = "^1.1.1"

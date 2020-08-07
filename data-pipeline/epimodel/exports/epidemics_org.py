@@ -343,7 +343,9 @@ class WebExportRegion:
             d["Population"] = int(self.region["Population"])
 
         if self.current_estimate is not None:
-            d["CurrentEstimate"] = self.current_estimate.to_dict()
+            d["CurrentEstimate"] = self.current_estimate.replace(
+                {np.nan: None}
+            ).to_dict()
 
         return d
 

@@ -436,7 +436,8 @@ class RegionDataset:
         matches = self.find_all_by_name(code_or_name, levels=tuple(Level))
         if not matches:
             raise KeyError(f"No region found for {code_or_name!r}.")
-        return matches[0]
+        # Chose Country over Subregion
+        return min(matches, key=lambda x: x.Level.value)
 
     def write_csv(self, path, regions=None):
         """
