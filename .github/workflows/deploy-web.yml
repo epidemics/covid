@@ -104,3 +104,14 @@ jobs:
             --values ./web/secrets.yaml.dec
             --set imageName=gcr.io/${{ secrets.GKE_PROJECT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
             --debug
+
+      - uses: sonots/slack-notice-action@v3
+        with:
+          status: ${{ job.status }}
+          username: Web deploy status
+          icon_emoji: ':octocat:'
+          channel: '#covid-prediction'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.BLINDSPOT_SLACK_WEBHOOK_URL }}
+        if: always()
