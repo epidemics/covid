@@ -115,7 +115,9 @@ class InputParser:
 
         # Setting the time range of parameters with nan dates to the time range of the run
         # The first run date value will be used.
-        start_date, end_date = df.loc[df["Parameter"] == "run dates", ["Start date", "End date"]].iloc[0]
+        start_date, end_date = df.loc[
+            df["Parameter"] == "run dates", ["Start date", "End date"]
+        ].iloc[0]
 
         df.loc[df["Start date"].isna(), "Start date"] = start_date
         df.loc[df["End date"].isna(), "End date"] = end_date
