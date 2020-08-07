@@ -114,12 +114,11 @@ class InputParser:
         df["End date"] = pd.to_datetime(df["End date"])
 
         # Setting the time range of parameters with nan dates to the time range of the run
-        df.loc[df["Start date"].isna(), "Start date"] = df.loc[
-            df["Parameter"] == "run dates", "Start date"
-        ].item()
-        df.loc[df["End date"].isna(), "End date"] = df.loc[
-            df["Parameter"] == "run dates", "End date"
-        ].item()
+        # The first run date value will be used.
+        start_date, end_date = df.loc[df["Parameter"] == "run dates", ["Start date", "End date"]].iloc[0]
+
+        df.loc[df["Start date"].isna(), "Start date"] = start_date
+        df.loc[df["End date"].isna(), "End date"] = end_date
 
         df["Region"] = df["Region"].apply(self._get_region)
         df["Value"] = self._foretold(df["Value"])
