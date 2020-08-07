@@ -81,11 +81,11 @@ jobs:
 
       - uses: sonots/slack-notice-action@v3
         with:
-          status: failure
+          status: ${{ job.status }}
           username: Daily upload status
           icon_emoji: ':octocat:'
           channel: '#covid-prediction'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.BLINDSPOT_SLACK_WEBHOOK_URL }}
-        if: always()
+        if: failure()
