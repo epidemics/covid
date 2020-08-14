@@ -5,6 +5,7 @@ import shutil
 import tempfile
 from datetime import datetime
 from pathlib import Path
+from typing import List
 
 import luigi
 import yaml
@@ -549,7 +550,7 @@ class WebExport(luigi.Task):
             "r_estimates": EstimateR(),
             "hospital_capacity": HospitalCapacity(),
             "interventions": Interventions(),
-            "model_data": ModelData(),
+            "model_data": PaperCountermeasuresData(),
             "npi_model": NPIModel(),
             **RegionsDatasetSubroutine.requires(),
         }
@@ -637,43 +638,81 @@ class WebUpload(luigi.Task):
     # if rewritten, then this task could be a regular luigi.Task
 
 
-class ModelData(luigi.ExternalTask):
-    """
-    The model data - merged JH with countermeasures
-    TODO: have a task that merges JH with countermeasures from another data source
-    """
+class OxfordGovermentResponseData(luigi.Task):
+    """Downloads data from OxCGRT github and exports them as CSV"""
 
-    path: str = luigi.Parameter(
-        description="Path to the csv with extended countermeasures data"
+    oxcgrt_output: str = luigi.Parameter(
+        description="Output filename of the exported data relative to config output dir.",
     )
+
+    def requires(self):
+        return {"regions_file": RegionsFile()}
+
+    def output(self):
+        return luigi.LocalTarget(self.oxcgrt_output)
+
+    def run(self):
+        regions = self.input()["regions_file"].path
+        oxcgrt = imports.import_oxford_government_response_tracker(regions)
+        oxcgrt.to_csv(self.oxcgrt_output)
+        logger.info(
+            f"Saved OxCGRT to {self.oxcgrt_output}, last day is {oxcgrt.index.get_level_values('Date').max()}"
+        )
+
+
+class PaperCountermeasuresData(luigi.ExternalTask):
+    """
+    The original countermeasures data used in the paper - merged JH with countermeasures
+    """
 
     data_file: str = luigi.Parameter(
         description="Path to the input file relative to the configuration input directory",
     )
 
-    extension_period: int = luigi.IntParameter(
-        description="Number of days the model should be extended for"
+    def output(self):
+        return luigi.LocalTarget(self.data_file)
+
+
+class MergeNPIData(luigi.Task):
+    """Merge NPI model data into one file"""
+
+    merged_npi_output: str = luigi.Parameter(
+        description="Output filename of the exported data relative to config output dir.",
+    )
+
+    add_canceled_npi_features: bool = luigi.BoolParameter(
+        description="Whether to create additional interventions which are turned on"
+        " when a real intervention is turned off "
+    )
+
+    drop_features: List[str] = luigi.ListParameter(
+        default=[],
+        description="List of features which should be dropped from the merged data",
     )
 
     def requires(self):
-        return {"johns_hopkins": JohnsHopkins()}
-
-    def run(self):
-        if self.extension_period > 0:
-            logger.info(
-                f"Extending the countermeasures data for {self.extension_period} days"
-            )
-            expanded_data = imports.expand_countermeasure_data(
-                self.data_file,
-                self.input()["johns_hopkins"].path,
-                self.extension_period,
-            )
-            expanded_data.to_csv(self.path)
-        else:
-            shutil.copy(self.data_file, self.path)
+        return {
+            "countermeasures": PaperCountermeasuresData(),
+            "oxcgrt": OxfordGovermentResponseData(),
+            "johns_hopkins": JohnsHopkins(),
+        }
 
     def output(self):
-        return luigi.LocalTarget(self.path)
+        return luigi.LocalTarget(self.merged_npi_output)
+
+    def run(self):
+        countermeasures = self.input()["countermeasures"]
+        oxcgrt = self.input()["oxcgrt"]
+        johns_hopkins = self.input()["johns_hopkins"]
+        merged = imports.merge_npi_datasets(
+            countermeasures.path,
+            oxcgrt.path,
+            johns_hopkins.path,
+            self.add_canceled_npi_features,
+            self.drop_features,
+        )
+        merged.to_csv(self.merged_npi_output)
+        logger.info(f"Saved merged data to {self.merged_npi_output}")
 
 
 class Interventions(luigi.ExternalTask):
@@ -686,7 +725,7 @@ class Interventions(luigi.ExternalTask):
     )
 
     def requires(self):
-        return {"model_data": ModelData()}
+        return {"model_data": MergeNPIData()}
 
     def run(self):
         interventions = create_intervetions_dict(self.input()["model_data"].path)
@@ -709,7 +748,7 @@ class NPIModel(luigi.Task):
     )
 
     def requires(self):
-        return {"model_data": ModelData()}
+        return {"model_data": MergeNPIData()}
 
     def output(self):
         return luigi.LocalTarget(self.output_file)

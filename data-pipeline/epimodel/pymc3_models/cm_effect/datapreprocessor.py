@@ -18,6 +18,7 @@ class DataPreprocessor:
     def __init__(self, *args, **kwargs):
         self.min_confirmed = 100
         self.min_deaths = 10
+        self.min_active = 10
 
         self.mask_zero_deaths = False
         self.mask_zero_cases = False
@@ -43,7 +44,9 @@ class DataPreprocessor:
         ).set_index(["Country Code", "Date"])
 
         dates = df.index.levels[1]
-        dates = dates.union(pd.date_range(dates[-1], periods=extrapolation_period+1, freq='D'))
+        dates = dates.union(
+            pd.date_range(dates[-1], periods=extrapolation_period + 1, freq="D")
+        )
         Ds = list(dates)
         nDs = len(Ds)
 
@@ -62,34 +65,32 @@ class DataPreprocessor:
         countermeasures = list(df.columns[5:])
         num_countermeasures = len(countermeasures)
 
-        active_countermeasures = np.zeros((nRs, num_countermeasures, nDs))
+        df[countermeasures] = (
+            df[countermeasures].groupby(level=0).fillna(method="ffill")
+        )
+        df[countermeasures] = df[countermeasures].fillna(value=0)
 
-        new_deaths = np.zeros((nRs, nDs))
-        new_cases = np.zeros((nRs, nDs))
+        active_countermeasures = np.zeros((nRs, num_countermeasures, nDs))
         confirmed = np.zeros((nRs, nDs))
         deaths = np.zeros((nRs, nDs))
         active = np.zeros((nRs, nDs))
+        new_deaths = np.zeros((nRs, nDs))
+        new_cases = np.zeros((nRs, nDs))
 
         for r_i, r in enumerate(sorted_regions):
             region_names[r_i] = df.loc[(r, Ds[0])]["Region Name"]
-
             confirmed[r_i, :-extrapolation_period] = df.loc[r]["Confirmed"]
             deaths[r_i, :-extrapolation_period] = df.loc[r]["Deaths"]
             active[r_i, :-extrapolation_period] = df.loc[r]["Active"]
 
-            active_countermeasures[r_i,:, :-extrapolation_period] = (
+            active_countermeasures[r_i, :, :-extrapolation_period] = (
                 df.loc[r].loc[Ds[:-extrapolation_period]][countermeasures].values.T
             )
-
-        confirmed[:, -extrapolation_period:] = np.nan
-        deaths[:, -extrapolation_period:] = np.nan
-        active[:, -extrapolation_period:] = np.nan
-        # copying the last known countermeasures value to the extrapolated period
-        active_countermeasures[:, :, -extrapolation_period:] = active_countermeasures[:, :,  -(extrapolation_period+1), None]
 
         # preprocess data
         confirmed[confirmed < self.min_confirmed] = np.nan
         deaths[deaths < self.min_deaths] = np.nan
+        active[active < self.min_active] = np.nan
         new_cases[:, 1:] = confirmed[:, 1:] - confirmed[:, :-1]
         new_deaths[:, 1:] = deaths[:, 1:] - deaths[:, :-1]
         new_deaths[new_deaths < 0] = 0
