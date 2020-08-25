@@ -75,7 +75,7 @@ jobs:
         working-directory: data-pipeline
         run: |
           source $HOME/.poetry/env
-          poetry run ./run_luigi WebExport --EstimateR-r-executable-path /usr/local/bin/Rscript --export-name pavel --automatic
+          poetry run ./run_luigi WebExport --EstimateR-r-executable-path /usr/local/bin/Rscript --export-name pavel --automatic --UpdateForetold-foretold-channel ${{ secrets.FORETOLD_CHANNEL }}
           poetry run ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/pavel/ --channel pavel --overwrite
 
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
