@@ -1,7 +1,6 @@
 import copy
 from typing import List
 from pandas import Timestamp
-from datetime import timedelta
 
 import pandas as pd
 import numpy as np
@@ -18,7 +17,6 @@ class DataPreprocessor:
     def __init__(self, *args, **kwargs):
         self.min_confirmed = 100
         self.min_deaths = 10
-        self.min_active = 10
 
         self.mask_zero_deaths = False
         self.mask_zero_cases = False
@@ -90,7 +88,6 @@ class DataPreprocessor:
         # preprocess data
         confirmed[confirmed < self.min_confirmed] = np.nan
         deaths[deaths < self.min_deaths] = np.nan
-        active[active < self.min_active] = np.nan
         new_cases[:, 1:] = confirmed[:, 1:] - confirmed[:, :-1]
         new_deaths[:, 1:] = deaths[:, 1:] - deaths[:, :-1]
         new_deaths[new_deaths < 0] = 0

@@ -8,9 +8,4 @@ INTERVENTION_TYPES = [
     "Most Businesses Suspended",
     "School Closure",
     "Stay Home Order",
-    "Travel Screen/Quarantine",
-    "Travel Bans",
-    "Public Transport Limited",
-    "Internal Movement Limited",
-    "Public Information Campaigns",
 ]

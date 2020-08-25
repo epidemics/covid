@@ -14,6 +14,7 @@ setuptools = ">=49.2"
 numpy = "^1.18.2"
 pandas = "^1.1.0"
 scipy = "^1.4.1"
+mkl = "^2019.0"
 tables = ">=3.2"
 unidecode = "^1.1.1"
 pyyaml = "^5.3"
@@ -33,6 +34,7 @@ seaborn = { version = "^0.10.0", optional = true }
 graphviz = "^0.13.2"
 jupyterlab = "^2.1.1"
 nbdime = "^2.0.0"
+theano = "^1.0.5"
 
 [tool.poetry.extras]
 pymc3 = ["pymc3", "jupyter", "seaborn"]

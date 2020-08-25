@@ -523,7 +523,7 @@ class CMCombinedModel(BaseCMModel):
             self.trace.InfectedCases[:, country_idx, :]
         ).add_prefix("DailyInfectedCases_")
 
-        ec = self.trace.ExpectedCases[:, country_idx, :]
+        ec = np.clip(self.trace.ExpectedCases[:, country_idx, :], 0, 1e10)
         predicted_cases_result = self.produce_confidence_intervals(
             pm.NegativeBinomial.dist(
                 mu=ec,
@@ -531,7 +531,7 @@ class CMCombinedModel(BaseCMModel):
             ).random()
         ).add_prefix("PredictedNewCases_")
 
-        ed = self.trace.ExpectedDeaths[:, country_idx, :]
+        ed = np.clip(self.trace.ExpectedDeaths[:, country_idx, :], 0, 1e10)
         _, num_days = ed.shape
         dist = pm.NegativeBinomial.dist(
             mu=ed + 1e-3,

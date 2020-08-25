@@ -3,11 +3,13 @@ name: Compute npi-model and upload
 on:
   push:
     branches:
-      - 504-npi-model-data-expantion
+      - 518-npi-model-data-merge
     paths:
       - 'data-pipeline/**'
       - '.github/workflows/compute-npi-model.yml'
-
+env:
+  RUN_REGION: us-west1-c
+  IMAGE_NAME: npi-model
 
 jobs:
   NPI model computation:
@@ -76,10 +78,42 @@ jobs:
           service_account_email: ${{ secrets.SA_EMAIL }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
-      - name: NPI Model
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |
+          gcloud auth configure-docker
+
+      # decrypt secrets
+      - name: Decrypt secrets
+        working-directory: data-pipeline
+        env:
+          JSON_KEY: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: |
+          echo "${JSON_KEY}" > key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=key.json
+          gcloud auth activate-service-account --key-file key.json
+
+          wget -q -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
+          chmod +x sops
+          ./sops -d ./deploy/chart/secrets.yaml > secrets.yaml.dec
+
+      # Build the Docker image
+      - name: Build Docker
         working-directory: data-pipeline
         run: |
-          source $HOME/.poetry/env
-          poetry run ./run_luigi NPIModel
-          poetry run ./run_luigi WebExport --EstimateR-r-executable-path /usr/local/bin/Rscript --export-name pavel --automatic
-          poetry run ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/pavel/ --channel pavel --overwrite
+          docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA -f Dockerfile.conda .
+
+      # Push the Docker image to Google Container Registry
+      - name: Publish Docker
+        run: |
+          docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+
+      - name: Run model and upload results
+        env:
+          GCP_KEY: ${{ secrets.NPI_MODEL_SERVICE_ACCOUNT_KEY }}
+        run: |
+          gcloud gcloud compute instances create-with-container $IMAGE_NAME \
+            --container-image gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+            --container-env GCP_KEY=GCP_KEY
+            --container-command npi-model pavel2
+            --container-restart-policy never
+            --source-instance-template npi-model-instance-template

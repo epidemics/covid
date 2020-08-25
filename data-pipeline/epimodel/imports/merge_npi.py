@@ -124,11 +124,12 @@ def _get_index_country_codes(
     johns_hopkins_df: pd.DataFrame,
     oxcgrt_df: pd.DataFrame,
 ) -> List[str]:
-    oxcgrt_codes = set(oxcgrt_df["Country Code"].dropna())
-    jh_codes = set(johns_hopkins_df["Code"].dropna())
-    countermeasures_codes = set(countermeasures_df["Country Code"].dropna())
+    # oxcgrt_codes = set(oxcgrt_df["Country Code"].dropna())
+    # jh_codes = set(johns_hopkins_df["Code"].dropna())
+    # countermeasures_codes = set(countermeasures_df["Country Code"].dropna())
+    return ["CZ", "DE", "GB"]
 
-    return sorted(countermeasures_codes.union(oxcgrt_codes).intersection(jh_codes))
+    # return sorted(countermeasures_codes.union(oxcgrt_codes).intersection(jh_codes))
 
 
 def _get_index_date_range(

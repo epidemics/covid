@@ -3,7 +3,7 @@ import logging
 import os
 import shutil
 import tempfile
-from datetime import datetime
+from datetime import datetime, date
 from pathlib import Path
 from typing import List
 
@@ -13,8 +13,11 @@ from luigi.util import inherits
 
 from epimodel import Level, RegionDataset, algorithms, imports
 from epimodel.exports.epidemics_org import process_export, upload_export
-from epimodel.gleam import Batch
 from epimodel.imports.interventions import create_intervetions_dict
+from epimodel.exports.npi_model_export import (
+    process_model_export,
+)  # , upload_model_export
+from epimodel.gleam import Batch
 from epimodel.pymc3_models.cm_effect import run_model
 
 logger = logging.getLogger(__name__)
@@ -551,7 +554,6 @@ class WebExport(luigi.Task):
             "hospital_capacity": HospitalCapacity(),
             "interventions": Interventions(),
             "model_data": PaperCountermeasuresData(),
-            "npi_model": NPIModel(),
             **RegionsDatasetSubroutine.requires(),
         }
         if self.automatic:
@@ -756,4 +758,67 @@ class NPIModel(luigi.Task):
     def run(self):
         run_model(
             self.input()["model_data"].path, self.output_file, self.extrapolation_period
+        )
+
+
+class ExportNPIModelResults(luigi.Task):
+    """Generates export of the NPI model results used by the website."""
+
+    export_name: str = luigi.Parameter(
+        description="Directory name with exported files inside web_export_directory"
+    )
+    pretty_print: bool = luigi.BoolParameter(
+        description="If true, result JSONs are indented by 4 spaces"
+    )
+    web_export_directory: str = luigi.Parameter(
+        description="Root subdirectory for all exports.",
+    )
+    model_results_filename_suffix: str = luigi.Parameter(
+        description="The default suffix of the mode results JSON file. "
+        "The filename will be in format yyyy-mm-dd_<filename_suffix>",
+    )
+    export_latest: bool = luigi.Parameter(
+        description="If yes the JSON with results will also be copied into file "
+        "latest_<filename_suffix>"
+    )
+    comment: str = luigi.Parameter(description="Optional comment to the export",)
+    resample: str = luigi.Parameter(description="Pandas dataseries resample")
+    overwrite: bool = luigi.BoolParameter(
+        description="Whether to overwrite an already existing export"
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        filename = f"{date.today()}_{self.model_results_filename_suffix}"
+        self.export_dir = Path(self.web_export_directory, self.export_name)
+        self.full_export_path = self.export_dir / filename
+        self.latest_export_path = (
+            self.export_dir / f"latest_{self.model_results_filename_suffix}"
+            if self.export_latest
+            else None
+        )
+
+    def requires(self):
+        return {
+            "config_yaml": ConfigYaml(),
+            "model_data": PaperCountermeasuresData(),
+            "npi_model": NPIModel(),
+            **RegionsDatasetSubroutine.requires(),
+        }
+
+    def output(self):
+        return luigi.LocalTarget(self.full_export_path)
+
+    def run(self):
+        config_yaml = ConfigYaml.load(self.input()["config_yaml"].path)
+        regions_dataset = RegionsDatasetSubroutine.load_rds(self)
+
+        ex = process_model_export(
+            self.input(), regions_dataset, self.comment, config_yaml, self.resample,
+        )
+        ex.write(
+            self.full_export_path,
+            latest=self.latest_export_path,
+            overwrite=self.overwrite,
+            indent=4 if self.pretty_print else None,
         )
