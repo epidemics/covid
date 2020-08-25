@@ -12,7 +12,7 @@ env:
   IMAGE_NAME: npi-model
 
 jobs:
-  NPI model computation:
+  NPI-model-computation:
     runs-on: ubuntu-latest
 
     steps:
