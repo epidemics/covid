@@ -71,6 +71,13 @@ jobs:
           source $HOME/.poetry/env
           poetry install -E 'pymc3 pyro'
 
+      - name: Upload data
+        working-directory: data-pipeline
+        run: |
+          source $HOME/.poetry/env
+          poetry run ./run_luigi WebExport --EstimateR-r-executable-path /usr/local/bin/Rscript --export-name pavel --automatic
+          poetry run ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/pavel/ --channel pavel --overwrite
+
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         name: Setup Google Cloud Platform
         with:
@@ -81,20 +88,6 @@ jobs:
       # Configure docker to use the gcloud command-line tool as a credential helper
       - run: |
           gcloud auth configure-docker
-
-      # decrypt secrets
-      - name: Decrypt secrets
-        working-directory: data-pipeline
-        env:
-          JSON_KEY: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-        run: |
-          echo "${JSON_KEY}" > key.json
-          export GOOGLE_APPLICATION_CREDENTIALS=key.json
-          gcloud auth activate-service-account --key-file key.json
-
-          wget -q -O sops https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
-          chmod +x sops
-          ./sops -d ./deploy/chart/secrets.yaml > secrets.yaml.dec
 
       # Build the Docker image
       - name: Build Docker
