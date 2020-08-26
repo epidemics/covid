@@ -9,7 +9,7 @@ def run_model(data_file: str, output_file: str, extrapolation_period: int):
     dp = DataPreprocessor(mask_zero_deaths=True, mask_zero_cases=True)
     data = dp.preprocess_data(data_file, extrapolation_period=extrapolation_period)
 
-    with CMCombinedModel(data, extrapolation_period) as model:
+    with CMCombinedModel(data, extrapolation_period=extrapolation_period) as model:
         model.build_model()
 
     with model.model:
