@@ -29,8 +29,8 @@ jobs:
         name: Setup Google Cloud Platform
         with:
           version: '270.0.0'
-          service_account_email: ${{ secrets.SA_EMAIL }}
-          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          service_account_email: ${{ secrets.COMPUTE_SA_EMAIL }}
+          service_account_key: ${{ secrets.GOOGLE_COMPUTE_CREDENTIALS }}
 
       # Configure docker to use the gcloud command-line tool as a credential helper
       - run: |
