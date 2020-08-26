@@ -257,7 +257,9 @@ class CMCombinedModel(BaseCMModel):
         self.CMDelayCut = 30
         self.DailyGrowthNoise = 0.2
 
-        self.ObservedDaysIndex = np.arange(self.CMDelayCut, len(self.data.Ds) - self.extrapolation_period)
+        self.ObservedDaysIndex = np.arange(
+            self.CMDelayCut, len(self.data.Ds) - self.extrapolation_period
+        )
         self.ObservedRegion_indexes = np.arange(len(self.data.Rs))
         self.num_observed_regions = self.num_regions
         self.num_observed_days = len(self.ObservedDaysIndex)

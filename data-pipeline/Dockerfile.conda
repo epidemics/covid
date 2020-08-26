@@ -22,6 +22,6 @@ ENV PATH $PATH:/root/google-cloud-sdk/bin
 
 COPY epimodel epimodel
 COPY data-dir data-dir
-COPY run_luigi luigi.cfg logging.conf secrets.cfg scripts/run_model.sh  ./
+COPY run_luigi luigi.cfg logging.conf scripts/run_model.sh  ./
 
 ENTRYPOINT ["/bin/bash", "run_model.sh"]
