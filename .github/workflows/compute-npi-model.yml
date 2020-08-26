@@ -71,19 +71,19 @@ jobs:
           source $HOME/.poetry/env
           poetry install -E 'pymc3 pyro'
 
-      - name: Upload data
-        working-directory: data-pipeline
-        run: |
-          source $HOME/.poetry/env
-          poetry run ./run_luigi WebExport --EstimateR-r-executable-path /usr/local/bin/Rscript --export-name pavel --automatic --UpdateForetold-foretold-channel ${{ secrets.FORETOLD_CHANNEL }}
-          poetry run ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/pavel/ --channel pavel --overwrite
-
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         name: Setup Google Cloud Platform
         with:
           version: '270.0.0'
           service_account_email: ${{ secrets.SA_EMAIL }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - name: Upload data
+        working-directory: data-pipeline
+        run: |
+          source $HOME/.poetry/env
+          poetry run ./run_luigi WebExport --EstimateR-r-executable-path /usr/local/bin/Rscript --export-name pavel --automatic --UpdateForetold-foretold-channel ${{ secrets.FORETOLD_CHANNEL }}
+          poetry run ./run_luigi WebUpload --exported-data data-dir/outputs/web-exports/pavel/ --channel pavel --overwrite
 
       # Configure docker to use the gcloud command-line tool as a credential helper
       - run: |

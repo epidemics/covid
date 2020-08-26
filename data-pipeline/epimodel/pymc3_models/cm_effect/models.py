@@ -138,8 +138,9 @@ class CMCombinedModel(BaseCMModel):
     This model is the model used to produce results in TODO reference.
     """
 
-    def __init__(self, data, name="", model=None):
+    def __init__(self, data, name="", model=None, extrapolation_period: int = 0):
         super().__init__(data, name=name, model=model)
+        self.extrapolation_period = extrapolation_period
 
         # infection --> confirmed delay
         self.DelayProbCases = np.array(
@@ -256,7 +257,7 @@ class CMCombinedModel(BaseCMModel):
         self.CMDelayCut = 30
         self.DailyGrowthNoise = 0.2
 
-        self.ObservedDaysIndex = np.arange(self.CMDelayCut, len(self.data.Ds))
+        self.ObservedDaysIndex = np.arange(self.CMDelayCut, len(self.data.Ds) - self.extrapolation_period)
         self.ObservedRegion_indexes = np.arange(len(self.data.Rs))
         self.num_observed_regions = self.num_regions
         self.num_observed_days = len(self.ObservedDaysIndex)

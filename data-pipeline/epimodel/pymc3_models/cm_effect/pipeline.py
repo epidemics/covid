@@ -9,11 +9,11 @@ def run_model(data_file: str, output_file: str, extrapolation_period: int):
     dp = DataPreprocessor(mask_zero_deaths=True, mask_zero_cases=True)
     data = dp.preprocess_data(data_file, extrapolation_period=extrapolation_period)
 
-    with CMCombinedModel(data) as model:
+    with CMCombinedModel(data, extrapolation_period) as model:
         model.build_model()
 
     with model.model:
-        model.trace = pm.sample(1000, tune=1000, chains=2, cores=2, target_accept=0.95)
+        model.trace = pm.sample(500, tune=500, chains=2, cores=2, target_accept=0.95)
 
     results = []
     for region in model.data.Rs:
