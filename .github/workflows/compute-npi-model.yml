@@ -64,6 +64,6 @@ jobs:
             --scopes compute-rw \
             --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}" \
             --container-env-file .env \
-            --env FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}
+            --container-env FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}
             --container-arg pavel2 \
             --container-restart-policy never
