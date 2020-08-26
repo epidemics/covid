@@ -56,8 +56,8 @@ jobs:
           gcloud config set compute/zone $RUN_REGION
           gcloud compute instances create-with-container $IMAGE_NAME \
             --zone $RUN_REGION \
+            --source-instance-template npi-model-instance \
             --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}" \
             --container-env-file .env \
             --container-arg pavel2 \
-            --container-restart-policy never \
-            --source-instance-template npi-model-instance
+            --container-restart-policy never
