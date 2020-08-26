@@ -56,7 +56,12 @@ jobs:
           gcloud config set compute/zone $RUN_REGION
           gcloud compute instances create-with-container $IMAGE_NAME \
             --zone $RUN_REGION \
-            --source-instance-template npi-model-instance \
+            --image-project cos-cloud \
+            --image-family cos-stable \
+            --boot-disk-size 10GB \
+            --machine-type n2-custom-2-20480-ext \
+            --metadata startup-script=scripts/shutdown_after_docker_exits.sh \
+            --scopes compute-rw \
             --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}" \
             --container-env-file .env \
             --container-arg pavel2 \
