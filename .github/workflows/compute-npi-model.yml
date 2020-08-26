@@ -54,6 +54,7 @@ jobs:
           echo "FORETOLDF_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}" > .env
           echo -E "GCP_KEY=${GCP_KEY}" >> .env
           gcloud config set compute/zone $RUN_REGION
+          gcloud config set project ${{ secrets.GKE_PROJECT }}
           gcloud compute instances create-with-container $IMAGE_NAME \
             --zone $RUN_REGION \
             --image-project cos-cloud \
