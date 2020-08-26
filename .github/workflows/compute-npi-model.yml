@@ -51,11 +51,12 @@ jobs:
         env:
           GCP_KEY: ${{ secrets.NPI_MODEL_SERVICE_ACCOUNT_KEY }}
         run: |
+          echo "FORETOLDF_CHANNEL=${FORETOLD_CHANNEL}" > .env
+          echo -E "GCP_KEY=${GCP_KEY}" >> .env
           gcloud compute instances create-with-container $IMAGE_NAME \
             --zone $RUN_REGION \
-            --container-image gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA \
-            --container-env GCP_KEY=$GCP_KEY \
-            --container-env FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }} \
+            --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}" \
+            --container-env-file .env \
             --container-arg pavel2 \
             --container-restart-policy never \
-            --source-instance-template npi-model-instance-template \
+            --source-instance-template npi-model-instance
