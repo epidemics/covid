@@ -7,13 +7,13 @@ on:
     paths:
       - 'data-pipeline/**'
       - '.github/workflows/compute-npi-model.yml'
-env:
-  RUN_REGION: us-west1-c
-  IMAGE_NAME: npi-model
 
 jobs:
   NPI-model-computation:
     runs-on: ubuntu-latest
+    env:
+      RUN_REGION: us-west1-c
+      IMAGE_NAME: npi-model
 
     steps:
       - name: Checkout
@@ -52,9 +52,10 @@ jobs:
           GCP_KEY: ${{ secrets.NPI_MODEL_SERVICE_ACCOUNT_KEY }}
         run: |
           gcloud compute instances create-with-container $IMAGE_NAME \
-            --container-image gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
-            --container-env GCP_KEY=$GCP_KEY
-            --container-env FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}
-            --container-command npi-model pavel2
-            --container-restart-policy never
-            --source-instance-template npi-model-instance-template
+            --zone $RUN_REGION \
+            --container-image gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA \
+            --container-env GCP_KEY=$GCP_KEY \
+            --container-env FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }} \
+            --container-arg pavel2 \
+            --container-restart-policy never \
+            --source-instance-template npi-model-instance-template \
