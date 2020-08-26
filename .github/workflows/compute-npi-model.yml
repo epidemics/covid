@@ -28,7 +28,7 @@ jobs:
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         name: Setup Google Cloud Platform
         with:
-          version: '270.0.0'
+          version: '290.0.1'
           service_account_email: ${{ secrets.COMPUTE_SA_EMAIL }}
           service_account_key: ${{ secrets.GOOGLE_COMPUTE_CREDENTIALS }}
 
