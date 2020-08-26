@@ -52,6 +52,7 @@ jobs:
           GCP_KEY: ${{ secrets.NPI_MODEL_SERVICE_ACCOUNT_KEY }}
         run: |
           echo -E "GCP_KEY=${GCP_KEY}" >> .env
+          echo "" >> .env
           gcloud config set compute/zone $RUN_REGION
           gcloud config set project ${{ secrets.GKE_PROJECT }}
           gcloud compute instances create-with-container $IMAGE_NAME \
