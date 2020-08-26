@@ -51,7 +51,7 @@ jobs:
         env:
           GCP_KEY: ${{ secrets.NPI_MODEL_SERVICE_ACCOUNT_KEY }}
         run: |
-          echo "FORETOLDF_CHANNEL=${FORETOLD_CHANNEL}" > .env
+          echo "FORETOLDF_CHANNEL=${{ FORETOLD_CHANNEL }}" > .env
           echo -E "GCP_KEY=${GCP_KEY}" >> .env
           gcloud compute instances create-with-container $IMAGE_NAME \
             --zone $RUN_REGION \
