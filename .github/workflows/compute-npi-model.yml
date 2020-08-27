@@ -68,11 +68,11 @@ jobs:
             --custom-cpu 2 \
             --custom-extensions \
             --custom-vm-type n2 \
-            --metadata startup-script-url=https://raw.githubusercontent.com/epidemics/covid/${GITHUB_BRANCH}/data-pipeline/scripts/shutdown_after_docker_exits.sh \
             --scopes default \
             --scopes compute-rw \
             --scopes storage-full \
             --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}" \
             --container-env-file .env \
             --container-arg pavel2 \
-            --container-restart-policy never
+            --container-restart-policy never \
+            --metadata startup-script-url=https://raw.githubusercontent.com/epidemics/covid/${GITHUB_BRANCH}/data-pipeline/scripts/shutdown_after_docker_exits.sh
