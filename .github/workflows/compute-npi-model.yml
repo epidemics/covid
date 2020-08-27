@@ -61,10 +61,10 @@ jobs:
             --image-project cos-cloud \
             --image-family cos-stable \
             --boot-disk-size 10GB \
-            --machine-type n2-standard-2 \
             --custom-memory 20 \
             --custom-cpu 2 \
             --custom-extensions \
+            --custom-vm-type n2 \
             --metadata startup-script=scripts/shutdown_after_docker_exits.sh \
             --scopes compute-rw \
             --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${PREV_GITHUB_SHA}" \
