@@ -52,9 +52,8 @@ jobs:
           GCP_KEY: ${{ secrets.NPI_MODEL_SERVICE_ACCOUNT_KEY }}
           PREV_GITHUB_SHA: ca0f679ccb2914ac478417dd05404057843abb3f
         run: |
-          echo -E "GCP_KEY=${GCP_KEY}" >> .env
-          echo "" >> .env
-          cat .env
+          echo "GCP_KEY=${GCP_KEY}" > .env
+          echo "FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}" >> .env
           gcloud config set compute/zone $RUN_REGION
           gcloud config set project ${{ secrets.GKE_PROJECT }}
           gcloud compute instances create-with-container $IMAGE_NAME \
@@ -62,11 +61,12 @@ jobs:
             --image-project cos-cloud \
             --image-family cos-stable \
             --boot-disk-size 10GB \
-            --machine-type n2-custom-2-20480-ext \
+            --machine-type n2-standard-2 \
+            --custom-memory 20 \
+            --custom-extensions \
             --metadata startup-script=scripts/shutdown_after_docker_exits.sh \
             --scopes compute-rw \
             --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${PREV_GITHUB_SHA}" \
             --container-env-file .env \
-            --container-env FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}
             --container-arg pavel2 \
             --container-restart-policy never
