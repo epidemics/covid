@@ -36,21 +36,20 @@ jobs:
       - run: |
           gcloud auth configure-docker
 
-#      # Build the Docker image
-#      - name: Build Docker
-#        working-directory: data-pipeline
-#        run: |
-#          docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA -f Dockerfile.conda .
+      # Build the Docker image
+      - name: Build Docker
+        working-directory: data-pipeline
+        run: |
+          docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA -f Dockerfile.conda .
 
-#      # Push the Docker image to Google Container Registry
-#      - name: Publish Docker
-#        run: |
-#          docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+      # Push the Docker image to Google Container Registry
+      - name: Publish Docker
+        run: |
+          docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
 
       - name: Run model and upload results
         env:
           GCP_KEY: ${{ secrets.NPI_MODEL_SERVICE_ACCOUNT_KEY }}
-          PREV_GITHUB_SHA: ca0f679ccb2914ac478417dd05404057843abb3f
         run: |
           echo "GCP_KEY=${GCP_KEY}" > .env
           echo "FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}" >> .env
@@ -60,7 +59,7 @@ jobs:
             --zone $RUN_REGION \
             --image-project cos-cloud \
             --image-family cos-stable \
-            --boot-disk-size 10GB \
+            --boot-disk-size 15GB \
             --custom-memory 20 \
             --custom-cpu 2 \
             --custom-extensions \
@@ -69,7 +68,7 @@ jobs:
             --scopes default \
             --scopes compute-rw \
             --scopes storage-full \
-            --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${PREV_GITHUB_SHA}" \
+            --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}" \
             --container-env-file .env \
             --container-arg pavel2 \
             --container-restart-policy never

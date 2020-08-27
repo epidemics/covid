@@ -4,9 +4,11 @@
 sleep 600
 
 while true; do
-  if docker ps | grep -q npimodel; then
-    sleep 60
+  if docker ps | grep -q npi-model; then
+    echo "NPI model is still running "
+    sleep 1
   else
+    echo "No container running, deleting instance"
     gcloud compute instances stop $(hostname) --zone \
       $(curl -H Metadata-Flavor:Google http://metadata.google.internal/computeMetadata/v1/instance/zone -s | cut -d/ -f4) -q
   fi
