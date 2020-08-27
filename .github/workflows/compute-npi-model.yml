@@ -47,24 +47,28 @@ jobs:
         run: |
           docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
 
-      - name: Run model and upload results
+      - name: Google cloud run setup
         env:
           GCP_KEY: ${{ secrets.NPI_MODEL_SERVICE_ACCOUNT_KEY }}
+        - run: |
+            echo "GCP_KEY=${GCP_KEY}" > .env
+            echo "FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}" >> .env
+            gcloud config set compute/zone $RUN_REGION
+            gcloud config set project ${{ secrets.GKE_PROJECT }}
+            GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/})
+
+      - name: Run model and upload results
         run: |
-          echo "GCP_KEY=${GCP_KEY}" > .env
-          echo "FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}" >> .env
-          gcloud config set compute/zone $RUN_REGION
-          gcloud config set project ${{ secrets.GKE_PROJECT }}
           gcloud compute instances create-with-container $IMAGE_NAME \
             --zone $RUN_REGION \
             --image-project cos-cloud \
             --image-family cos-stable \
-            --boot-disk-size 15GB \
+            --boot-disk-size 10GB \
             --custom-memory 20 \
             --custom-cpu 2 \
             --custom-extensions \
             --custom-vm-type n2 \
-            --metadata startup-script-url=https://raw.githubusercontent.com/epidemics/covid/${GITHUB_REF}/data-pipeline/scripts/shutdown_after_docker_exits.sh \
+            --metadata startup-script-url=https://raw.githubusercontent.com/epidemics/covid/${GITHUB_BRANCH}/data-pipeline/scripts/shutdown_after_docker_exits.sh \
             --scopes default \
             --scopes compute-rw \
             --scopes storage-full \
