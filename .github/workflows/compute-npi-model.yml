@@ -63,6 +63,7 @@ jobs:
             --boot-disk-size 10GB \
             --machine-type n2-standard-2 \
             --custom-memory 20 \
+            --custom-cpu 2 \
             --custom-extensions \
             --metadata startup-script=scripts/shutdown_after_docker_exits.sh \
             --scopes compute-rw \
