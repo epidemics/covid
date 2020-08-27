@@ -50,12 +50,12 @@ jobs:
       - name: Google cloud run setup
         env:
           GCP_KEY: ${{ secrets.NPI_MODEL_SERVICE_ACCOUNT_KEY }}
-        - run: |
-            echo "GCP_KEY=${GCP_KEY}" > .env
-            echo "FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}" >> .env
-            gcloud config set compute/zone $RUN_REGION
-            gcloud config set project ${{ secrets.GKE_PROJECT }}
-            GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/})
+        run: |
+          echo "GCP_KEY=${GCP_KEY}" > .env
+          echo "FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}" >> .env
+          gcloud config set compute/zone $RUN_REGION
+          gcloud config set project ${{ secrets.GKE_PROJECT }}
+          GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/})
 
       - name: Run model and upload results
         run: |
