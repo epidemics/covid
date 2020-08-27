@@ -16,4 +16,6 @@ function check_docker_and_shutdown {
   done
 }
 
-check_docker_and_shutdown &
+nohup check_docker_and_shutdown &
+
+EOF

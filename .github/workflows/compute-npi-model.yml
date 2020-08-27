@@ -75,4 +75,4 @@ jobs:
             --container-env-file .env \
             --container-arg pavel2 \
             --container-restart-policy never \
-        # --metadata startup-script-url=https://raw.githubusercontent.com/epidemics/covid/${GITHUB_BRANCH}/data-pipeline/scripts/shutdown_after_docker_exits.sh
+            --metadata startup-script-url=https://raw.githubusercontent.com/epidemics/covid/${GITHUB_BRANCH}/data-pipeline/scripts/shutdown_after_docker_exits.sh
