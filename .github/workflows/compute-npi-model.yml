@@ -63,7 +63,7 @@ jobs:
             --zone $RUN_REGION \
             --image-project cos-cloud \
             --image-family cos-stable \
-            --boot-disk-size 10GB \
+            --boot-disk-size 15GB \
             --custom-memory 20 \
             --custom-cpu 2 \
             --custom-extensions \
