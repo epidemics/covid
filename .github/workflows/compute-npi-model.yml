@@ -55,10 +55,10 @@ jobs:
           echo "FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}" >> .env
           gcloud config set compute/zone $RUN_REGION
           gcloud config set project ${{ secrets.GKE_PROJECT }}
-          GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/})
 
       - name: Run model and upload results
         run: |
+          GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/})
           gcloud compute instances create-with-container $IMAGE_NAME \
             --zone $RUN_REGION \
             --image-project cos-cloud \
