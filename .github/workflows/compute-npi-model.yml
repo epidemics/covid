@@ -36,23 +36,25 @@ jobs:
       - run: |
           gcloud auth configure-docker
 
-      # Build the Docker image
-      - name: Build Docker
-        working-directory: data-pipeline
-        run: |
-          docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA -f Dockerfile.conda .
+#      # Build the Docker image
+#      - name: Build Docker
+#        working-directory: data-pipeline
+#        run: |
+#          docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA -f Dockerfile.conda .
 
-      # Push the Docker image to Google Container Registry
-      - name: Publish Docker
-        run: |
-          docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+#      # Push the Docker image to Google Container Registry
+#      - name: Publish Docker
+#        run: |
+#          docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
 
       - name: Run model and upload results
         env:
           GCP_KEY: ${{ secrets.NPI_MODEL_SERVICE_ACCOUNT_KEY }}
+          PREV_GITHUB_SHA: ca0f679ccb2914ac478417dd05404057843abb3f
         run: |
           echo -E "GCP_KEY=${GCP_KEY}" >> .env
           echo "" >> .env
+          cat .env
           gcloud config set compute/zone $RUN_REGION
           gcloud config set project ${{ secrets.GKE_PROJECT }}
           gcloud compute instances create-with-container $IMAGE_NAME \
@@ -63,7 +65,7 @@ jobs:
             --machine-type n2-custom-2-20480-ext \
             --metadata startup-script=scripts/shutdown_after_docker_exits.sh \
             --scopes compute-rw \
-            --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}" \
+            --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${PREV_GITHUB_SHA}" \
             --container-env-file .env \
             --container-env FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}
             --container-arg pavel2 \
