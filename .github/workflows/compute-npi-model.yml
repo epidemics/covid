@@ -64,7 +64,7 @@ jobs:
             --custom-cpu 2 \
             --custom-extensions \
             --custom-vm-type n2 \
-            --metadata startup-script=scripts/shutdown_after_docker_exits.sh \
+            --metadata startup-script-url=https://raw.githubusercontent.com/epidemics/covid/${GITHUB_REF}/data-pipeline/scripts/shutdown_after_docker_exits.sh \
             --scopes default \
             --scopes compute-rw \
             --scopes storage-full \

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # sleep first so that the docker container can start up
-sleep 600
+sleep 300
 
 while true; do
   if docker ps | grep -q npi-model; then
