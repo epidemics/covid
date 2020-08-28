@@ -47,6 +47,7 @@ def merge_npi_datasets(
     oxcgrt_df = pd.read_csv(oxcgrt_path, parse_dates=["Date"])
     johns_hopkins_df = pd.read_csv(johns_hopkins_path, parse_dates=["Date"])
 
+    oxcgrt_df = _filter_out_subregions(oxcgrt_df)
     oxcgrt_df = _oxcgrt_to_npi_features(oxcgrt_df)
 
     index = _get_index(countermeasures_df, johns_hopkins_df, oxcgrt_df)
@@ -106,6 +107,10 @@ def _oxcgrt_to_npi_features(df: pd.DataFrame) -> pd.DataFrame:
     oxcgrt_npis.loc[:, missing_cols] = np.nan
 
     return oxcgrt_npis
+
+
+def _filter_out_subregions(df: pd.DataFrame) -> pd.DataFrame:
+    return df[df["RegionCode"].isna()]
 
 
 def _get_index(
