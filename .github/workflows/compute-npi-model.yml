@@ -53,12 +53,12 @@ jobs:
         run: |
           echo "GCP_KEY=${GCP_KEY}" > .env
           echo "FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}" >> .env
+          echo "INSTANCE_NAME=$IMAGE_NAME" >> .env
           gcloud config set compute/zone $RUN_REGION
           gcloud config set project ${{ secrets.GKE_PROJECT }}
 
       - name: Run model and upload results
         run: |
-          GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/})
           gcloud compute instances create-with-container $IMAGE_NAME \
             --zone $RUN_REGION \
             --image-project cos-cloud \
@@ -75,4 +75,3 @@ jobs:
             --container-env-file .env \
             --container-arg pavel2 \
             --container-restart-policy never \
-            --metadata startup-script-url=https://raw.githubusercontent.com/epidemics/covid/${GITHUB_BRANCH}/data-pipeline/scripts/shutdown_after_docker_exits.sh
