@@ -86,7 +86,13 @@ def merge_npi_datasets(
 
 
 def _oxcgrt_to_npi_features(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.set_index(["Country Code", "Date", "Region Name",])
+    df = df.set_index(
+        [
+            "Country Code",
+            "Date",
+            "Region Name",
+        ]
+    )
 
     features = {}
     for npi_feature, oxcgrt_cols in OxCGRT_TRANSFORM_CONFIG.items():
@@ -141,7 +147,10 @@ def _get_index_date_range(
         johns_hopkins_df["Date"].min(),
         min(countermeasures_df["Date"].min(), oxcgrt_df["Date"].min()),
     )
-    max_date = min(johns_hopkins_df["Date"].max(), oxcgrt_df["Date"].max(),)
+    max_date = min(
+        johns_hopkins_df["Date"].max(),
+        oxcgrt_df["Date"].max(),
+    )
 
     return pd.date_range(min_date, max_date)
 

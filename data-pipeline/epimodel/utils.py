@@ -106,7 +106,16 @@ def read_csv_smart(
     na_values = kwargs.pop(
         "na_values",
         ["", "#N/A", "#N/A", "N/A", "#NA", "-NaN", "-nan"]
-        + ["1.#IND", "1.#QNAN", "<NA>", "N/A", "NULL", "NaN", "n/a", "nan",],
+        + [
+            "1.#IND",
+            "1.#QNAN",
+            "<NA>",
+            "N/A",
+            "NULL",
+            "NaN",
+            "n/a",
+            "nan",
+        ],
     )
 
     data = pd.read_csv(path, na_values=na_values, keep_default_na=False, **kwargs)

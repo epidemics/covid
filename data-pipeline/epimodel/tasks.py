@@ -526,7 +526,9 @@ class WebExport(luigi.Task):
     main_data_filename: str = luigi.Parameter(
         description="The default name of the main JSON data file",
     )
-    comment: str = luigi.Parameter(description="Optional comment to the export",)
+    comment: str = luigi.Parameter(
+        description="Optional comment to the export",
+    )
     resample: str = luigi.Parameter(description="Pandas dataseries resample")
     overwrite: bool = luigi.BoolParameter(
         description="Whether to overwrite an already existing export"
@@ -598,7 +600,9 @@ class WebExport(luigi.Task):
 class WebUpload(luigi.Task):
     """Uploads the exported files into GCS bucket"""
 
-    gs_prefix: str = luigi.Parameter(description="A GCS default path for the export",)
+    gs_prefix: str = luigi.Parameter(
+        description="A GCS default path for the export",
+    )
     channel: str = luigi.Parameter(
         description="channel to load the data to, basically a subdirectory in gcs_path",
     )
@@ -781,7 +785,9 @@ class ExportNPIModelResults(luigi.Task):
         description="If yes the JSON with results will also be copied into file "
         "latest_<filename_suffix>"
     )
-    comment: str = luigi.Parameter(description="Optional comment to the export",)
+    comment: str = luigi.Parameter(
+        description="Optional comment to the export",
+    )
     resample: str = luigi.Parameter(description="Pandas dataseries resample")
     overwrite: bool = luigi.BoolParameter(
         description="Whether to overwrite an already existing export"
@@ -814,7 +820,11 @@ class ExportNPIModelResults(luigi.Task):
         regions_dataset = RegionsDatasetSubroutine.load_rds(self)
 
         ex = process_model_export(
-            self.input(), regions_dataset, self.comment, config_yaml, self.resample,
+            self.input(),
+            regions_dataset,
+            self.comment,
+            config_yaml,
+            self.resample,
         )
         ex.write(
             self.full_export_path,
