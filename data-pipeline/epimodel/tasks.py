@@ -522,7 +522,9 @@ class WebExport(luigi.Task):
     main_data_filename: str = luigi.Parameter(
         description="The default name of the main JSON data file",
     )
-    comment: str = luigi.Parameter(description="Optional comment to the export",)
+    comment: str = luigi.Parameter(
+        description="Optional comment to the export",
+    )
     resample: str = luigi.Parameter(description="Pandas dataseries resample")
     overwrite: bool = luigi.BoolParameter(
         description="Whether to overwrite an already existing export"
@@ -594,7 +596,9 @@ class WebExport(luigi.Task):
 class WebUpload(luigi.Task):
     """Uploads the exported files into GCS bucket"""
 
-    gs_prefix: str = luigi.Parameter(description="A GCS default path for the export",)
+    gs_prefix: str = luigi.Parameter(
+        description="A GCS default path for the export",
+    )
     channel: str = luigi.Parameter(
         description="channel to load the data to, basically a subdirectory in gcs_path",
     )

@@ -390,8 +390,8 @@ class GleamDefinition:
         return self.get_start_date() + pd.DateOffset(self.get_duration())
 
     def set_end_date(self, date: Union[str, date, datetime]):
-        """ Note: this must be set *after* start_date
-            or it may change unexpectedly """
+        """Note: this must be set *after* start_date
+        or it may change unexpectedly"""
         self.set_duration(
             (utc_date(date) - self.get_start_date()) / pd.Timedelta(days=1)
         )
