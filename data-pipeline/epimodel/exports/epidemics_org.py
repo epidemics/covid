@@ -277,7 +277,9 @@ class WebExportRegion:
         return first
 
     def extract_external_data(
-        self, models: pd.DataFrame, simulation_specs: pd.DataFrame,
+        self,
+        models: pd.DataFrame,
+        simulation_specs: pd.DataFrame,
     ) -> Dict[str, Any]:
         d: Dict[str, Any] = {
             "date_index": [
@@ -363,7 +365,11 @@ def assert_valid_json(file, minify=False):
     if minify:
         with open(file, "wt") as f:
             json.dump(
-                data, f, default=types_to_json, allow_nan=False, separators=(",", ":"),
+                data,
+                f,
+                default=types_to_json,
+                allow_nan=False,
+                separators=(",", ":"),
             )
 
 
@@ -562,7 +568,10 @@ def process_export(
         rates, index_col="Code", keep_default_na=False, na_values=[""]
     )
     timezone_df: pd.DataFrame = pd.read_csv(
-        timezone, index_col="Code", keep_default_na=False, na_values=[""],
+        timezone,
+        index_col="Code",
+        keep_default_na=False,
+        na_values=[""],
     )
 
     un_age_dist_df: pd.DataFrame = pd.read_csv(un_age_dist, index_col="Code M49").drop(

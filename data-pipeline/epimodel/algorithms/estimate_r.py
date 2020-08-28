@@ -12,7 +12,9 @@ script_dir = os.path.join(project_dir, "scripts")
 
 
 def preprocess_hopkins(
-    hopkins_file: str, rds: RegionDataset, state_to_country: List[str],
+    hopkins_file: str,
+    rds: RegionDataset,
+    state_to_country: List[str],
 ) -> pd.DataFrame:
     preprocessed = pd.read_csv(
         hopkins_file,
