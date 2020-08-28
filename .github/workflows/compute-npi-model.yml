@@ -74,5 +74,5 @@ jobs:
             --scopes storage-full \
             --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}" \
             --container-env-file .env \
-            --container-arg pavel2 \
+            --container-arg model \
             --container-restart-policy never \

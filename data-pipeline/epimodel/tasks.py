@@ -807,7 +807,7 @@ class ExportNPIModelResults(luigi.Task):
     def requires(self):
         return {
             "config_yaml": ConfigYaml(),
-            "model_data": PaperCountermeasuresData(),
+            "model_data": MergeNPIData(),
             "npi_model": NPIModel(),
             **RegionsDatasetSubroutine.requires(),
         }
