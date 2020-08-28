@@ -1,5 +1,6 @@
-import { Regions } from "./regions";
 import * as React from "react";
+
+import { Regions } from "./regions";
 
 export type MainInfo = {
   generated?: Date;
@@ -68,8 +69,12 @@ export class Thunk<T> implements PromiseLike<T> {
     return this.poll().then(onfulfilled, onrejected);
   }
 
-  map<V>(name: string, f: (v: T) => V | PromiseLike<V>): Thunk<V> {
-    return new Thunk(() => this.poll().then(f), name);
+  map<V>(
+    name: string,
+    f: (v: T) => V | PromiseLike<V>,
+    c?: (reason: any) => any
+  ): Thunk<V> {
+    return new Thunk(() => this.poll().then(f).catch(c), name);
   }
 }
 
