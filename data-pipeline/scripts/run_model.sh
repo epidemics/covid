@@ -2,9 +2,10 @@
 
 EXPORT_NAME="$@"
 
-echo echo -E ${GCP_KEY:1:-1} > key.json
+echo -E ${GCP_KEY:1:-1} > key.json
 echo "gcloud login"
 gcloud auth activate-service-account --key-file key.json
+gcloud config set project ${PROJECT_NAME}
 
 echo "r_estimates download"
 latest_r_estimates_url=https://storage.googleapis.com/static-covid/static/v4/main/r_estimates.csv
