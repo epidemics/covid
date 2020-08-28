@@ -85,6 +85,9 @@ class DataPreprocessor:
                 df.loc[r].loc[Ds[:-extrapolation_period]][countermeasures].values.T
             )
 
+            last_countermeasures = df.loc[r].loc[Ds[-extrapolation_period-1]][countermeasures].values.reshape(-1, 1)
+            active_countermeasures[r_i, :, -extrapolation_period:] = last_countermeasures
+
         # preprocess data
         confirmed[confirmed < self.min_confirmed] = np.nan
         deaths[deaths < self.min_deaths] = np.nan
