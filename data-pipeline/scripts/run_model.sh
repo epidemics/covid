@@ -2,7 +2,7 @@
 
 EXPORT_NAME="$@"
 
-echo -E "$GCP_KEY" > key.json
+echo echo -E ${GCP_KEY:1:-1} > key.json
 echo "gcloud login"
 gcloud auth activate-service-account --key-file key.json
 
