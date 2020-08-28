@@ -9,7 +9,16 @@ export namespace v4 {
     regions: Regions;
   }
 
+  export interface NpiMain {
+    created: string;
+    created_by: string;
+    generated?: string;
+    comment: string | null;
+    regions: NpiRegions;
+  }
+
   export type Regions = { [code: string]: Region };
+  export type NpiRegions = { [code: string]: NpiRegion | undefined };
 
   export type CurrentEstimate =
     | number
@@ -20,13 +29,17 @@ export namespace v4 {
         Date?: string;
       };
 
+  export interface NpiRegion {
+    Name: string;
+    data: NPIModel;
+  }
+
   export interface Region {
     data: {
       Rates?: Rates;
       JohnsHopkins?: JohnsHopkins;
       Foretold?: Foretold;
       REstimates?: REstimates;
-      NPIModel?: NPIModel;
       Interventions?: Intervention[];
       Timezones: string[];
       AgeDist?: { [bracket: string]: number };

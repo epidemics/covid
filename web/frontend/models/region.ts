@@ -46,7 +46,12 @@ export class Region {
   public NPIModel?: NPIModel;
   public interventions?: v4.Intervention[];
 
-  public constructor(data_root: string, public code: string, obj: v4.Region) {
+  public constructor(
+    data_root: string,
+    public code: string,
+    obj: v4.Region,
+    npiRegion: v4.NpiRegion | undefined
+  ) {
     let data = obj.data;
 
     this.population = +obj.Population;
@@ -68,7 +73,7 @@ export class Region {
 
     if (data.REstimates) this.rEstimates = new REstimates(data.REstimates);
 
-    if (data.NPIModel) this.NPIModel = new NPIModel(data.NPIModel);
+    if (npiRegion) this.NPIModel = new NPIModel(npiRegion.data);
 
     if (data.Interventions) this.interventions = data.Interventions;
 

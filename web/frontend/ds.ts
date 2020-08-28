@@ -16,6 +16,9 @@ export function makeDataStore(
   let data_root = `${STATIC_ROOT}/v4/${channel}`;
 
   let mainv4 = Thunk.fetchJson<v4.Main>(`${data_root}/data-v4.json`);
+  const npi = Thunk.fetchJson<v4.NpiMain>(
+    `${data_root}/latest_npi-results.json`
+  );
 
   return {
     mainInfo: mainv4.map<MainInfo>(
@@ -30,9 +33,11 @@ export function makeDataStore(
         };
       }
     ),
-    regions: mainv4.map("parse_regions", ({ regions }) =>
-      Regions.from(regions, data_root)
-    ),
+    regions: mainv4.map("parse_regions", ({ regions }) => {
+      return npi.map("parse_npi_regions", (npiData) => {
+        return Regions.from(regions, npiData.regions, data_root);
+      });
+    }),
     geoData: Thunk.fetchJson(`${STATIC_ROOT}/casemap-geo.json`),
     containments: Thunk.fetchJson(
       `${STATIC_ROOT}/data-testing-containments.json`
