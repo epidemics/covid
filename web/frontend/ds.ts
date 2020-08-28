@@ -34,9 +34,15 @@ export function makeDataStore(
       }
     ),
     regions: mainv4.map("parse_regions", ({ regions }) => {
-      return npi.map("parse_npi_regions", (npiData) => {
-        return Regions.from(regions, npiData.regions, data_root);
-      });
+      return npi.map(
+        "parse_npi_regions",
+        (npiData) => {
+          return Regions.from(regions, npiData.regions, data_root);
+        },
+        () => {
+          return Regions.from(regions, {}, data_root);
+        }
+      );
     }),
     geoData: Thunk.fetchJson(`${STATIC_ROOT}/casemap-geo.json`),
     containments: Thunk.fetchJson(
