@@ -118,8 +118,24 @@ class TestInputParser(PandasTestCase):
 
     def exception_params_input(self, **kwargs):
         params = self.params_input_from_rows(
-            [None, None, "run dates", "2020-04-14", "2021-05-01", None, None,],
-            ["PK", "0.35", "beta", "2020-04-14", "2021-05-01", "group", "Strong",],
+            [
+                None,
+                None,
+                "run dates",
+                "2020-04-14",
+                "2021-05-01",
+                None,
+                None,
+            ],
+            [
+                "PK",
+                "0.35",
+                "beta",
+                "2020-04-14",
+                "2021-05-01",
+                "group",
+                "Strong",
+            ],
         )
         for k, v in kwargs.items():
             params.loc[1, k] = v
@@ -236,7 +252,13 @@ class TestSimulationSet(PandasTestCase):
         return parameters, estimates, country_scenarios, id, name, group, trace
 
     def get_infectious_estimates(self, *rows):
-        return pd.DataFrame.from_records(rows, columns=["Region", "Infectious",])
+        return pd.DataFrame.from_records(
+            rows,
+            columns=[
+                "Region",
+                "Infectious",
+            ],
+        )
 
     def get_estimates(self, *rows):
         return pd.DataFrame.from_records(rows, columns=sc.InputParser.ESTIMATE_FIELDS)
@@ -261,9 +283,17 @@ class TestSimulationSet(PandasTestCase):
     def test_params_output(self):
         config = {
             "name": "Test Params",
-            "groups": [{"name": "A"}, {"name": "B"},],
-            "traces": [{"name": "C"}, {"name": "D"},],
-            "compartment_multipliers": {"Infectious": 1.0,},
+            "groups": [
+                {"name": "A"},
+                {"name": "B"},
+            ],
+            "traces": [
+                {"name": "C"},
+                {"name": "D"},
+            ],
+            "compartment_multipliers": {
+                "Infectious": 1.0,
+            },
             "compartments_max_fraction": 1.0,
         }
         params = self.get_params()
@@ -305,8 +335,12 @@ class TestSimulationSet(PandasTestCase):
     def test_prepare_estimates(self):
         config = {
             "name": "Test Exposed",
-            "groups": [{"name": "A"},],
-            "traces": [{"name": "C"},],
+            "groups": [
+                {"name": "A"},
+            ],
+            "traces": [
+                {"name": "C"},
+            ],
             "compartment_multipliers": {"Infectious": 1.0, "Exposed": 1.8},
             "compartments_max_fraction": 1.0,
         }
@@ -334,9 +368,16 @@ class TestSimulationSet(PandasTestCase):
     def test_prepare_estimates_max_fraction(self):
         config = {
             "name": "Test Exposed",
-            "groups": [{"name": "A"},],
-            "traces": [{"name": "C"},],
-            "compartment_multipliers": {"Infectious": 1.0, "Exposed": 9.0,},
+            "groups": [
+                {"name": "A"},
+            ],
+            "traces": [
+                {"name": "C"},
+            ],
+            "compartment_multipliers": {
+                "Infectious": 1.0,
+                "Exposed": 9.0,
+            },
             "compartments_max_fraction": 0.5,
         }
         region = Mock(autospec=self.rds["G-MLA"])
@@ -487,14 +528,22 @@ class TestDefinitionBuilder(PandasTestCase):
 
     def test_run_dates_only_start(self):
         params = self.params_row(
-            {"Parameter": "run dates", "Start date": "2020-04-14",}
+            {
+                "Parameter": "run dates",
+                "Start date": "2020-04-14",
+            }
         )
         self.init_def_builder(params)
         self.output.set_start_date.assert_called_once_with(params["Start date"][0])
         self.output.set_end_date.assert_not_called()
 
     def test_run_dates_only_end(self):
-        params = self.params_row({"Parameter": "run dates", "End date": "2021-05-01",})
+        params = self.params_row(
+            {
+                "Parameter": "run dates",
+                "End date": "2021-05-01",
+            }
+        )
         self.init_def_builder(params)
         self.output.set_start_date.assert_not_called()
         self.output.set_end_date.assert_called_once_with(params["End date"][0])
@@ -503,39 +552,74 @@ class TestDefinitionBuilder(PandasTestCase):
 
     def test_duration(self):
         value = 180.0  # days
-        params = self.params_row({"Parameter": "duration", "Value": value,})
+        params = self.params_row(
+            {
+                "Parameter": "duration",
+                "Value": value,
+            }
+        )
         self.init_def_builder(params)
         self.output.set_duration.assert_called_once_with(value)
 
     def test_number_of_runs(self):
         value = 5
-        params = self.params_row({"Parameter": "number of runs", "Value": value,})
+        params = self.params_row(
+            {
+                "Parameter": "number of runs",
+                "Value": value,
+            }
+        )
         self.init_def_builder(params)
         self.output.set_run_count.assert_called_once_with(value)
 
     def test_airline_traffic(self):
         value = 0.3
-        params = self.params_row({"Parameter": "airline traffic", "Value": value,})
+        params = self.params_row(
+            {
+                "Parameter": "airline traffic",
+                "Value": value,
+            }
+        )
         self.init_def_builder(params)
         self.output.set_airline_traffic.assert_called_once_with(value)
 
     def test_seasonality(self):
         value = 0.6
-        params = self.params_row({"Parameter": "seasonality", "Value": value,})
+        params = self.params_row(
+            {
+                "Parameter": "seasonality",
+                "Value": value,
+            }
+        )
         self.init_def_builder(params)
         self.output.set_seasonality.assert_called_once_with(value)
 
     def test_commuting_time(self):
         value = 7.5
-        params = self.params_row({"Parameter": "commuting time", "Value": value,})
+        params = self.params_row(
+            {
+                "Parameter": "commuting time",
+                "Value": value,
+            }
+        )
         self.init_def_builder(params)
         self.output.set_commuting_rate.assert_called_once_with(value)
 
     def test_duplicate_parameter_fails(self):
         params = pd.concat(
             [
-                self.params_row({"Parameter": "duration", "Value": 90,}),
-                self.params_row({"Parameter": "duration", "Value": 180,}),
+                self.params_row(
+                    {
+                        "Parameter": "duration",
+                        "Value": 90,
+                    }
+                ),
+                self.params_row(
+                    {
+                        "Parameter": "duration",
+                        "Value": 180,
+                    }
+                ),
             ]
         )
         self.assertRaises(ValueError, self.init_def_builder, params)
@@ -545,7 +629,12 @@ class TestDefinitionBuilder(PandasTestCase):
 
     def test_compartment_variable(self):
         value = 0.3
-        params = self.params_row({"Parameter": "imu", "Value": value,})
+        params = self.params_row(
+            {
+                "Parameter": "imu",
+                "Value": value,
+            }
+        )
         self.init_def_builder(params)
         self.output.set_compartment_variable.assert_called_once_with("imu", value)
         self.output.add_exception.assert_not_called()
