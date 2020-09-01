@@ -1,12 +1,12 @@
 name: Compute npi-model and upload
 
 on:
-  push:
-    branches:
-      - 518-npi-model-data-merge
-    paths:
-      - 'data-pipeline/**'
-      - '.github/workflows/compute-npi-model.yml'
+  workflow_dispatch:
+    inputs:
+      channel_name:
+        description: 'Name of the channel to which the results of the model will be uploaded'
+        required: true
+        default: 'model'
 
 jobs:
   NPI-model-computation:
@@ -65,14 +65,9 @@ jobs:
             --image-project cos-cloud \
             --image-family cos-stable \
             --boot-disk-size 15GB \
-            --custom-memory 20 \
-            --custom-cpu 2 \
-            --custom-extensions \
-            --custom-vm-type n2 \
+            --machine-type n2-custom-2-20480-ext \
             --scopes default \
-            --scopes compute-rw \
-            --scopes storage-full \
+            --container-restart-policy never \
             --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}" \
             --container-env-file .env \
-            --container-arg model \
-            --container-restart-policy never \
+            --container-arg ${{ github.event.inputs.channel_name }}

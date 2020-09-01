@@ -745,6 +745,7 @@ class Interventions(luigi.ExternalTask):
 
 
 class NPIModel(luigi.Task):
+    """Computes the NPI model"""
     output_file: str = luigi.Parameter(
         description="Path to the csv file with the model predictions",
     )

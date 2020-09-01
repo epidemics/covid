@@ -12,7 +12,8 @@ latest_r_estimates_url=https://storage.googleapis.com/static-covid/static/v4/mai
 mkdir data-dir/outputs
 curl $latest_r_estimates_url > data-dir/outputs/r_estimates.csv
 
-python run_luigi WebExport --export-name $EXPORT_NAME --automatic --UpdateForetold-foretold-channel ${FORETOLD_CHANNEL}
+export MKL_NUM_THREADS=1
+export OMP_NUM_THREADS=1
 
 python run_luigi ExportNPIModelResults --export-name $EXPORT_NAME
 
