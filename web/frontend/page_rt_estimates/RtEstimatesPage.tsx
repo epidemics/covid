@@ -152,13 +152,17 @@ export function Page({ data }: { data: Datastore }) {
         </>
       )}
 
-      <ModelView
-        region={region}
-        scenario={scenario}
-        scenarios={scenarios}
-        dispatch={dispatch}
-      />
-      <hr />
+      {channel === "model" && (
+        <>
+          <ModelView
+            region={region}
+            scenario={scenario}
+            scenarios={scenarios}
+            dispatch={dispatch}
+          />
+          <hr />
+        </>
+      )}
     </LocationContext.Provider>
   );
 }
