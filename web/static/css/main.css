@@ -183,6 +183,7 @@ header h1:before {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  margin: 32px 0;
 }
 
 .active-infections {
@@ -208,12 +209,12 @@ span.infections-confirmed {
   font-size: 14px;
 }
 
-.population-block {
+.info-block {
   margin-left: 32px;
   /* justify-self: end; */
 }
 
-.infections-population {
+.info-value {
   font-size: 24px;
 }
 
@@ -365,7 +366,7 @@ span.infections-confirmed {
     margin-top: 16px;
     margin-left: 0px;
   }
-  .population-block {
+  .info-block {
     margin-top: 16px;
     margin-left: 0px;
   }

@@ -4,7 +4,10 @@ import Plot from "react-plotly.js";
 
 import { makeConfig } from "../components/graph-common";
 import { Region } from "../models";
-import { initializeVisualization } from "./NPIModelVisualizationUtils";
+import {
+  initializeVisualization,
+  isSameDay,
+} from "./NPIModelVisualizationUtils";
 
 type ModelViewProps = {
   region: Region | null;
@@ -40,18 +43,54 @@ export function NPIModelVisualization(props: ModelViewProps) {
     return 0;
   }, [region]);
 
-  const determineInitialScale = (maxValue: number) =>
-    maxValue > 10000 ? "log" : "linear";
+  const maxValueNormal = React.useMemo(() => {
+    if (region && region.NPIModel && region.reported) {
+      const targetDate = region.NPIModel.extrapolationDate;
+
+      const extrapolationIndex = region.NPIModel.date.findIndex((date) =>
+        isSameDay(date, targetDate)
+      );
+
+      const currentCases = region.reported.points.map(
+        (singleReported, index) => {
+          if (index >= 1) {
+            return (
+              region!.reported!.points[index].confirmed -
+              region!.reported!.points[index - 1].confirmed
+            );
+          }
+
+          return region!.reported!.points[index].confirmed;
+        }
+      );
+
+      return [
+        ...region.NPIModel.predictedDeathsUpper.slice(0, extrapolationIndex),
+        ...region.NPIModel.predictedNewCasesUpper.slice(0, extrapolationIndex),
+        ...region.NPIModel.dailyInfectedDeathsUpper.slice(
+          0,
+          extrapolationIndex
+        ),
+        ...region.NPIModel.dailyInfectedCasesUpper.slice(0, extrapolationIndex),
+        ...currentCases,
+      ].reduce((acc, cur) => Math.max(acc, cur), 0);
+    }
+
+    return 0;
+  }, [region]);
+
+  const determineInitialScale = (maxValue: number, maxValueNormal: number) =>
+    maxValue * 0.2 > maxValueNormal || maxValue > 10000 ? "log" : "linear";
 
   const [scaleMode, setScaleMode] = React.useState<"linear" | "log">(
-    determineInitialScale(maxValue)
+    determineInitialScale(maxValue, maxValueNormal)
   );
 
   const [showExtrapolated, setShowExtrapolated] = React.useState<boolean>(true);
 
   React.useEffect(() => {
-    setScaleMode(determineInitialScale(maxValue));
-  }, [maxValue]);
+    setScaleMode(determineInitialScale(maxValue, maxValueNormal));
+  }, [maxValue, maxValueNormal]);
 
   // create a plotly config for the plot
   let { config } = React.useMemo(

@@ -15,8 +15,10 @@ import {
   Region,
   Regions,
   Scenario,
+  Scenarios,
   useThunk,
 } from "../models";
+import { ModelView } from "./ModelView";
 import { NPIModelVisualization } from "./NPIModelVisualization";
 import { REstimateSeriesView } from "./REstimateSeriesView";
 
@@ -63,7 +65,14 @@ export function Page({ data }: { data: Datastore }) {
 
   const mainInfo = useThunk<MainInfo>({}, data.mainInfo);
 
-  const [{ region }, dispatch] = React.useReducer(reducer, null, init);
+  const [{ region, scenarioID }, dispatch] = React.useReducer(
+    reducer,
+    null,
+    init
+  );
+
+  const scenarios = useThunk<Scenarios | null>(null, region?.scenariosDaily);
+  let scenario = scenarios?.get(scenarioID ?? 0) ?? null;
 
   React.useEffect(() => {
     jQuery(".selected-region").text(region?.name ?? "the selected region");
@@ -139,6 +148,18 @@ export function Page({ data }: { data: Datastore }) {
       {region && region.NPIModel && channel === "model" && (
         <>
           <NPIModelVisualization region={region} />
+          <hr />
+        </>
+      )}
+
+      {channel === "model" && (
+        <>
+          <ModelView
+            region={region}
+            scenario={scenario}
+            scenarios={scenarios}
+            dispatch={dispatch}
+          />
           <hr />
         </>
       )}
