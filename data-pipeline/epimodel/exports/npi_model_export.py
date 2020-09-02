@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from typing import Dict, Optional, List, Any
+from typing import Dict, Optional, Any
 
 from ..regions import Region, RegionDataset
 from . import types_to_json, get_df_else_none

@@ -141,7 +141,7 @@ def _get_index_country_codes(
 
     # return sorted(countermeasures_codes.union(oxcgrt_codes).intersection(jh_codes))
     # Use just the original 40 countries from the paper, we will use explicit list of countries in the future
-    return list(countermeasures_codes.intersection(jh_codes))
+    return list(countermeasures_codes.intersection(jh_codes).intersection(oxcgrt_codes))
 
 
 def _get_index_date_range(
