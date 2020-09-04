@@ -1,7 +1,7 @@
-import * as Plotly from 'plotly.js';
+import * as Plotly from "plotly.js";
 
-import { Reported } from '../models';
-import { REstimates } from '../models/rEstimates';
+import { Reported } from "../models";
+import { REstimates } from "../models/rEstimates";
 
 export const createTrace = (rEstimates: REstimates) => {
   const meanR = rEstimates.enoughData.map((value, index) => {
