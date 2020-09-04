@@ -7,9 +7,12 @@ export class REstimates {
 
   public stdR: number[];
 
+  public enoughData?: number[];
+
   public constructor(obj: v4.REstimates) {
     this.date = obj.Date.map((date) => new Date(date));
     this.meanR = obj.MeanR;
     this.stdR = obj.StdR;
+    this.enoughData = obj.EnoughData;
   }
 }

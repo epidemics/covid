@@ -4,37 +4,117 @@ import { Reported } from "../models";
 import { REstimates } from "../models/rEstimates";
 
 export const createTrace = (rEstimates: REstimates) => {
-  const aboveStdTrace = {
-    type: "scatter",
-    fillcolor: "rgba(239,108,0,0.3)",
-    line: {
-      shape: "spline",
-      smoothing: 0,
-      color: "transparent",
-    },
-    x: rEstimates.date,
-    y: rEstimates.meanR.map((mean, index) => mean + 2 * rEstimates.stdR[index]),
-    showlegend: false,
-    name: "Upper bound",
-    hoverinfo: "none",
-  } as Plotly.Data;
+  const enoughData =
+    rEstimates.enoughData === undefined
+      ? rEstimates.date.map(() => 1)
+      : rEstimates.enoughData;
 
-  const belowStdTrace = {
+  const meanR = enoughData.map((value, index) => {
+    if (value === 0) {
+      return undefined;
+    }
+
+    return rEstimates.meanR[index];
+  });
+
+  const predictedMeanR = enoughData.map((value, index) => {
+    if (value === 1 && index > 0 && enoughData[index - 1] === 0) {
+      return rEstimates.meanR[index];
+    }
+
+    if (
+      value === 1 &&
+      index + 1 < enoughData.length &&
+      enoughData[index + 1] === 0
+    ) {
+      return rEstimates.meanR[index];
+    }
+
+    if (value === 1) {
+      return undefined;
+    }
+
+    return rEstimates.meanR[index];
+  });
+
+  let rArrays: number[][] = [];
+  let dateArrays: any[][] = [];
+  let currentArray: number[] = [];
+  let currentDateArray: any[] = [];
+
+  enoughData.map((value, index) => {
+    if (value) {
+      currentArray.push(rEstimates.meanR[index]);
+      currentDateArray.push(rEstimates.date[index]);
+    } else {
+      if (currentArray.length > 0) {
+        rArrays.push([...currentArray]);
+        dateArrays.push([...currentDateArray]);
+        currentArray = [];
+        currentDateArray = [];
+      }
+    }
+  });
+
+  if (currentArray.length > 0) {
+    rArrays.push([...currentArray]);
+    dateArrays.push([...currentDateArray]);
+    currentArray = [];
+    currentDateArray = [];
+  }
+
+  const aboveStdTraces = rArrays.map(
+    (rArray, index) =>
+      ({
+        fillcolor: "rgba(239,108,0,0.3)",
+        line: {
+          shape: "spline",
+          smoothing: 0,
+          color: "transparent",
+        },
+        x: dateArrays[index],
+        y: rArray.map((mean, index) =>
+          mean ? mean + 2 * rEstimates.stdR[index] : undefined
+        ),
+        showlegend: false,
+        name: "Upper bound",
+        hoverinfo: "none",
+      } as Plotly.Data)
+  );
+
+  const belowStdTraces = rArrays.map(
+    (rArray, index) =>
+      ({
+        type: "scatter",
+        fill: "tonexty",
+        fillcolor: "rgba(239,108,0,0.3)",
+        line: {
+          shape: "spline",
+          smoothing: 0,
+          color: "transparent",
+        },
+        x: dateArrays[index],
+        y: rArray.map((mean, index) =>
+          mean ? Math.max(mean - 2 * rEstimates.stdR[index], 0) : undefined
+        ),
+        showlegend: false,
+        name: "Lower bound",
+        hoverinfo: "none",
+      } as Plotly.Data)
+  );
+
+  const predictedMeanTrace = {
     type: "scatter",
-    fill: "tonexty",
-    fillcolor: "rgba(239,108,0,0.3)",
     line: {
       shape: "spline",
       smoothing: 0,
-      color: "transparent",
+      color: "rgba(255, 255, 255, 0.5)",
     },
     x: rEstimates.date,
-    y: rEstimates.meanR.map((mean, index) =>
-      Math.max(mean - 2 * rEstimates.stdR[index], 0)
-    ),
-    showlegend: false,
-    name: "Lower bound",
-    hoverinfo: "none",
+    y: predictedMeanR,
+    name: "Insufficient data",
+    hoverinfo: "y+text",
+    hovertext: "Estimated R",
   } as Plotly.Data;
 
   const meanTrace = {
@@ -45,13 +125,20 @@ export const createTrace = (rEstimates: REstimates) => {
       color: "#fff",
     },
     x: rEstimates.date,
-    y: rEstimates.meanR,
+    y: meanR,
     name: "Estimated R",
     hoverinfo: "y+text",
     hovertext: "Estimated R",
   } as Plotly.Data;
 
-  return [aboveStdTrace, belowStdTrace, meanTrace];
+  let returnArray = [];
+
+  for (let i = 0; i < aboveStdTraces.length; i++) {
+    returnArray.push(aboveStdTraces[i]);
+    returnArray.push(belowStdTraces[i]);
+  }
+
+  return [...returnArray, meanTrace, predictedMeanTrace];
 };
 
 export const createActiveCasesBars = (reported: Reported) => {

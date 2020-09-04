@@ -60,3 +60,47 @@ def estimate_r(
         rc = process.returncode
         if rc != 0:
             raise RuntimeError("Could not estimate R")
+
+        masked_estimates = mask_not_enough_data(
+            pd.read_csv(output_file, parse_dates=["Date"]), hopkins_df, 10
+        )
+        columns = ["MeanR", "StdR", "EnoughData"]
+
+        masked_estimates[columns].to_csv(output_file)
+
+
+def mask_not_enough_data(
+    r_estimates: pd.DataFrame,
+    hopkins_df: pd.DataFrame,
+    min_daily_cases: int,
+) -> pd.DataFrame:
+    hopkins_grouped = hopkins_df.groupby("Code")
+    return r_estimates.groupby("Code").apply(
+        lambda group: mask_country_not_enough_data(
+            group, hopkins_grouped.get_group(group.name), min_daily_cases
+        )
+    )
+
+
+def mask_country_not_enough_data(
+    country_estimates: pd.DataFrame,
+    hopkins_df: pd.DataFrame,
+    min_daily_cases: int,
+) -> pd.DataFrame:
+
+    hopkins_df = hopkins_df.reset_index().set_index("Date")
+    country_estimates = country_estimates.set_index("Date").tz_localize("UTC")
+
+    enough_data = (
+        hopkins_df["Confirmed"]
+        .diff()
+        .rolling(7, min_periods=0)
+        .apply(lambda window: window.sum() / window.size > min_daily_cases)
+        .astype(bool)
+    )
+
+    country_estimates["EnoughData"] = 0
+
+    country_estimates.loc[enough_data[country_estimates.index].values, "EnoughData"] = 1
+
+    return country_estimates
