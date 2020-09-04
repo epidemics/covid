@@ -78,7 +78,7 @@ export namespace v4 {
     Date: string[];
     MeanR: number[];
     StdR: number[];
-    EnoughData: number[];
+    EnoughData?: number[];
   }
 
   export interface NPIModel {

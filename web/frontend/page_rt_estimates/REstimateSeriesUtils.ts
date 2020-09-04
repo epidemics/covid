@@ -4,7 +4,12 @@ import { Reported } from "../models";
 import { REstimates } from "../models/rEstimates";
 
 export const createTrace = (rEstimates: REstimates) => {
-  const meanR = rEstimates.enoughData.map((value, index) => {
+  const enoughData =
+    rEstimates.enoughData === undefined
+      ? rEstimates.date.map(() => 1)
+      : rEstimates.enoughData;
+
+  const meanR = enoughData.map((value, index) => {
     if (value === 0) {
       return undefined;
     }
@@ -12,15 +17,15 @@ export const createTrace = (rEstimates: REstimates) => {
     return rEstimates.meanR[index];
   });
 
-  const predictedMeanR = rEstimates.enoughData.map((value, index) => {
-    if (value === 1 && index > 0 && rEstimates.enoughData[index - 1] === 0) {
+  const predictedMeanR = enoughData.map((value, index) => {
+    if (value === 1 && index > 0 && enoughData[index - 1] === 0) {
       return rEstimates.meanR[index];
     }
 
     if (
       value === 1 &&
-      index + 1 < rEstimates.enoughData.length &&
-      rEstimates.enoughData[index + 1] === 0
+      index + 1 < enoughData.length &&
+      enoughData[index + 1] === 0
     ) {
       return rEstimates.meanR[index];
     }
@@ -37,7 +42,7 @@ export const createTrace = (rEstimates: REstimates) => {
   let currentArray: number[] = [];
   let currentDateArray: any[] = [];
 
-  rEstimates.enoughData.map((value, index) => {
+  enoughData.map((value, index) => {
     if (value) {
       currentArray.push(rEstimates.meanR[index]);
       currentDateArray.push(rEstimates.date[index]);
