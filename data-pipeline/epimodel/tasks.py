@@ -3,8 +3,9 @@ import logging
 import os
 import shutil
 import tempfile
-from datetime import datetime
+from datetime import datetime, date
 from pathlib import Path
+from typing import List
 
 import luigi
 import yaml
@@ -12,8 +13,11 @@ from luigi.util import inherits
 
 from epimodel import Level, RegionDataset, algorithms, imports
 from epimodel.exports.epidemics_org import process_export, upload_export
-from epimodel.gleam import Batch
 from epimodel.imports.interventions import create_intervetions_dict
+from epimodel.exports.npi_model_export import (
+    process_model_export,
+)  # , upload_model_export
+from epimodel.gleam import Batch
 from epimodel.pymc3_models.cm_effect import run_model
 
 logger = logging.getLogger(__name__)
@@ -551,7 +555,7 @@ class WebExport(luigi.Task):
             "r_estimates": EstimateR(),
             "hospital_capacity": HospitalCapacity(),
             "interventions": Interventions(),
-            "npi_model": NPIModel(),
+            "model_data": PaperCountermeasuresData(),
             **RegionsDatasetSubroutine.requires(),
         }
         if self.automatic:
@@ -640,10 +644,31 @@ class WebUpload(luigi.Task):
     # if rewritten, then this task could be a regular luigi.Task
 
 
-class ModelData(luigi.ExternalTask):
+class OxfordGovermentResponseData(luigi.Task):
+    """Downloads data from OxCGRT github and exports them as CSV"""
+
+    oxcgrt_output: str = luigi.Parameter(
+        description="Output filename of the exported data relative to config output dir.",
+    )
+
+    def requires(self):
+        return {"regions_file": RegionsFile()}
+
+    def output(self):
+        return luigi.LocalTarget(self.oxcgrt_output)
+
+    def run(self):
+        regions = self.input()["regions_file"].path
+        oxcgrt = imports.import_oxford_government_response_tracker(regions)
+        oxcgrt.to_csv(self.oxcgrt_output)
+        logger.info(
+            f"Saved OxCGRT to {self.oxcgrt_output}, last day is {oxcgrt.index.get_level_values('Date').max()}"
+        )
+
+
+class PaperCountermeasuresData(luigi.ExternalTask):
     """
-    The model data - merged JH with countermeasures
-    TODO: have a task that merges JH with countermeasures from another data source
+    The original countermeasures data used in the paper - merged JH with countermeasures
     """
 
     data_file: str = luigi.Parameter(
@@ -652,6 +677,48 @@ class ModelData(luigi.ExternalTask):
 
     def output(self):
         return luigi.LocalTarget(self.data_file)
+
+
+class MergeNPIData(luigi.Task):
+    """Merge NPI model data into one file"""
+
+    merged_npi_output: str = luigi.Parameter(
+        description="Output filename of the exported data relative to config output dir.",
+    )
+
+    add_canceled_npi_features: bool = luigi.BoolParameter(
+        description="Whether to create additional interventions which are turned on"
+        " when a real intervention is turned off "
+    )
+
+    drop_features: List[str] = luigi.ListParameter(
+        default=[],
+        description="List of features which should be dropped from the merged data",
+    )
+
+    def requires(self):
+        return {
+            "countermeasures": PaperCountermeasuresData(),
+            "oxcgrt": OxfordGovermentResponseData(),
+            "johns_hopkins": JohnsHopkins(),
+        }
+
+    def output(self):
+        return luigi.LocalTarget(self.merged_npi_output)
+
+    def run(self):
+        countermeasures = self.input()["countermeasures"]
+        oxcgrt = self.input()["oxcgrt"]
+        johns_hopkins = self.input()["johns_hopkins"]
+        merged = imports.merge_npi_datasets(
+            countermeasures.path,
+            oxcgrt.path,
+            johns_hopkins.path,
+            self.add_canceled_npi_features,
+            self.drop_features,
+        )
+        merged.to_csv(self.merged_npi_output)
+        logger.info(f"Saved merged data to {self.merged_npi_output}")
 
 
 class Interventions(luigi.ExternalTask):
@@ -664,7 +731,7 @@ class Interventions(luigi.ExternalTask):
     )
 
     def requires(self):
-        return {"model_data": ModelData()}
+        return {"model_data": MergeNPIData()}
 
     def run(self):
         interventions = create_intervetions_dict(self.input()["model_data"].path)
@@ -678,15 +745,92 @@ class Interventions(luigi.ExternalTask):
 
 
 class NPIModel(luigi.Task):
+    """Computes the NPI model"""
+
     output_file: str = luigi.Parameter(
         description="Path to the csv file with the model predictions",
     )
 
+    extrapolation_period: int = luigi.IntParameter(
+        description="Number of days the model extrapolates",
+    )
+
     def requires(self):
-        return {"model_data": ModelData()}
+        return {"model_data": MergeNPIData()}
 
     def output(self):
         return luigi.LocalTarget(self.output_file)
 
     def run(self):
-        run_model(self.input()["model_data"].path, self.output_file)
+        run_model(
+            self.input()["model_data"].path, self.output_file, self.extrapolation_period
+        )
+
+
+class ExportNPIModelResults(luigi.Task):
+    """Generates export of the NPI model results used by the website."""
+
+    export_name: str = luigi.Parameter(
+        description="Directory name with exported files inside web_export_directory"
+    )
+    pretty_print: bool = luigi.BoolParameter(
+        description="If true, result JSONs are indented by 4 spaces"
+    )
+    web_export_directory: str = luigi.Parameter(
+        description="Root subdirectory for all exports.",
+    )
+    model_results_filename_suffix: str = luigi.Parameter(
+        description="The default suffix of the mode results JSON file. "
+        "The filename will be in format yyyy-mm-dd_<filename_suffix>",
+    )
+    export_latest: bool = luigi.Parameter(
+        description="If yes the JSON with results will also be copied into file "
+        "latest_<filename_suffix>"
+    )
+    comment: str = luigi.Parameter(
+        description="Optional comment to the export",
+    )
+    resample: str = luigi.Parameter(description="Pandas dataseries resample")
+    overwrite: bool = luigi.BoolParameter(
+        description="Whether to overwrite an already existing export"
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        filename = f"{date.today()}_{self.model_results_filename_suffix}"
+        self.export_dir = Path(self.web_export_directory, self.export_name)
+        self.full_export_path = self.export_dir / filename
+        self.latest_export_path = (
+            self.export_dir / f"latest_{self.model_results_filename_suffix}"
+            if self.export_latest
+            else None
+        )
+
+    def requires(self):
+        return {
+            "config_yaml": ConfigYaml(),
+            "model_data": MergeNPIData(),
+            "npi_model": NPIModel(),
+            **RegionsDatasetSubroutine.requires(),
+        }
+
+    def output(self):
+        return luigi.LocalTarget(self.full_export_path)
+
+    def run(self):
+        config_yaml = ConfigYaml.load(self.input()["config_yaml"].path)
+        regions_dataset = RegionsDatasetSubroutine.load_rds(self)
+
+        ex = process_model_export(
+            self.input(),
+            regions_dataset,
+            self.comment,
+            config_yaml,
+            self.resample,
+        )
+        ex.write(
+            self.full_export_path,
+            latest=self.latest_export_path,
+            overwrite=self.overwrite,
+            indent=4 if self.pretty_print else None,
+        )

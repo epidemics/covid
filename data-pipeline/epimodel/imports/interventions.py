@@ -1,18 +1,5 @@
 import pandas as pd
-
-
-INTERVENTION_TYPES = [
-    "Healthcare Infection Control",
-    "Mask Wearing",
-    "Symptomatic Testing",
-    "Gatherings <1000",
-    "Gatherings <100",
-    "Gatherings <10",
-    "Some Businesses Suspended",
-    "Most Businesses Suspended",
-    "School Closure",
-    "Stay Home Order",
-]
+from .common import INTERVENTION_TYPES
 
 
 def create_intervetions_dict(json_path: str):

@@ -6,7 +6,6 @@ import logging
 import shutil
 import socket
 import subprocess
-from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Iterable
 
@@ -17,6 +16,7 @@ from tqdm import tqdm
 from epimodel.imports.johns_hopkins import aggregate_countries
 from ..gleam import Batch
 from ..regions import Region, RegionDataset
+from . import types_to_json, get_df_else_none
 import epimodel
 
 log = logging.getLogger(__name__)
@@ -58,7 +58,6 @@ class WebExport:
         un_age_dist: Optional[pd.DataFrame],
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.DataFrame],
-        npi_model: Optional[pd.DataFrame],
         interventions: list,
     ):
         export_region = WebExportRegion(
@@ -75,7 +74,6 @@ class WebExport:
             un_age_dist,
             r_estimates,
             hospital_capacity,
-            npi_model,
             interventions,
         )
         self.export_regions[region.Code] = export_region
@@ -159,7 +157,6 @@ class WebExportRegion:
         un_age_dist: Optional[pd.DataFrame],
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.DataFrame],
-        npi_model: Optional[pd.DataFrame],
         interventions: list,
     ):
         log.debug(f"Prepare WebExport: {region.Code}, {region.Name}")
@@ -179,7 +176,6 @@ class WebExportRegion:
             un_age_dist,
             r_estimates,
             hospital_capacity,
-            npi_model,
             interventions,
         )
         # Extended data to be written in a separate per-region file
@@ -199,7 +195,6 @@ class WebExportRegion:
         un_age_dist: Optional[pd.DataFrame],
         r_estimates: Optional[pd.DataFrame],
         hospital_capacity: Optional[pd.Series],
-        npi_model: Optional[pd.DataFrame],
         interventions: list,
     ) -> Dict[str, Dict[str, Any]]:
         data = {}
@@ -238,12 +233,6 @@ class WebExportRegion:
             data["REstimates"] = {
                 "Date": [x.isoformat() for x in r_estimates.index],
                 **r_estimates[["MeanR", "StdR", "EnoughData"]].to_dict(orient="list"),
-            }
-
-        if npi_model is not None:
-            data["NPIModel"] = {
-                "Date": [x.isoformat() for x in npi_model.index],
-                **npi_model.replace({np.nan: None}).to_dict(orient="list"),
             }
 
         if hospital_capacity is not None:
@@ -406,17 +395,6 @@ def upload_export(
         log.info(f"Custom web URL: http://epidemicforecasting.org/?channel={channel}")
 
 
-def types_to_json(obj):
-    if isinstance(obj, np.generic):
-        return obj.item()
-    if isinstance(obj, datetime.datetime):
-        return obj.isoformat()
-    if isinstance(obj, Enum):
-        return obj.name
-    else:
-        raise TypeError(f"Unserializable object {obj} of type {type(obj)}")
-
-
 def get_cmi(df: pd.DataFrame):
     return df.index.get_level_values("Code").unique()
 
@@ -483,13 +461,6 @@ def analyze_data_consistency(
         len(export_regions),
         df.loc[export_regions].sum().to_dict(),
     )
-
-
-def get_df_else_none(df: pd.DataFrame, code) -> Optional[pd.DataFrame]:
-    if code in df.index:
-        return df.loc[code].sort_index()
-    else:
-        return None
 
 
 def get_df_list(df: pd.DataFrame, code) -> pd.DataFrame:
@@ -625,15 +596,6 @@ def process_export(
             foretold_df,
         )
 
-    npi_model_results = inputs["npi_model"].path
-    npi_model_results_df: pd.DataFrame = pd.read_csv(
-        npi_model_results,
-        index_col=["Code", "Date"],
-        parse_dates=["Date"],
-        keep_default_na=False,
-        na_values=[""],
-    )
-
     for code in export_regions:
         reg: Region = rds[code]
         m49 = int(reg["M49Code"]) if pd.notnull(reg["M49Code"]) else -1
@@ -643,6 +605,7 @@ def process_export(
             ).sort_index(level="Date")
         else:
             country_cummulative_active_df = pd.DataFrame([])
+
         ex.new_region(
             reg,
             get_df_else_none(estimates_df, code),
@@ -655,7 +618,6 @@ def process_export(
             get_df_else_none(un_age_dist_df, m49),
             get_df_else_none(r_estimates_df, code),
             get_df_else_none(hospital_capacity_df, code),
-            get_df_else_none(npi_model_results_df, code),
             interventions_dict.get(code, []),
         )
     return ex

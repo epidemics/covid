@@ -1,0 +1,73 @@
+name: Compute npi-model and upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel_name:
+        description: 'Name of the channel to which the results of the model will be uploaded'
+        required: true
+        default: 'model'
+
+jobs:
+  NPI-model-computation:
+    runs-on: ubuntu-latest
+    env:
+      RUN_REGION: us-west1-c
+      IMAGE_NAME: npi-model
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Checkout data repo
+        uses: actions/checkout@v2
+        with:
+          repository: epidemics/epimodel-covid-data
+          path: data-pipeline/data
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        name: Setup Google Cloud Platform
+        with:
+          version: '290.0.1'
+          service_account_email: ${{ secrets.COMPUTE_SA_EMAIL }}
+          service_account_key: ${{ secrets.GOOGLE_COMPUTE_CREDENTIALS }}
+
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |
+          gcloud auth configure-docker
+
+      # Build the Docker image
+      - name: Build Docker
+        working-directory: data-pipeline
+        run: |
+          docker build -t gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA -f Dockerfile.conda .
+
+      # Push the Docker image to Google Container Registry
+      - name: Publish Docker
+        run: |
+          docker push gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
+
+      - name: Google cloud run setup
+        env:
+          GCP_KEY: ${{ secrets.NPI_MODEL_SERVICE_ACCOUNT_KEY }}
+        run: |
+          echo -E "GCP_KEY='${GCP_KEY}'" > .env
+          echo "FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}" >> .env
+          echo "INSTANCE_NAME=$IMAGE_NAME" >> .env
+          echo "PROJECT_NAME=${{ secrets.GKE_PROJECT }}" >> .env
+          gcloud config set compute/zone $RUN_REGION
+          gcloud config set project ${{ secrets.GKE_PROJECT }}
+
+      - name: Run model and upload results
+        run: |
+          gcloud compute instances create-with-container $IMAGE_NAME \
+            --zone $RUN_REGION \
+            --image-project cos-cloud \
+            --image-family cos-stable \
+            --boot-disk-size 15GB \
+            --machine-type n2-custom-2-20480-ext \
+            --scopes default \
+            --container-restart-policy never \
+            --container-image "gcr.io/${{ secrets.GKE_PROJECT }}/${IMAGE_NAME}:${GITHUB_SHA}" \
+            --container-env-file .env \
+            --container-arg ${{ github.event.inputs.channel_name }}

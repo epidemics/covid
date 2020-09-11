@@ -1,8 +1,19 @@
 version: "3"
 services:
-  luigi:
-    build: .
-    image: epimodel-runner
+  luigi-poetry:
+    build:
+      context: .
+      dockerfile:  Dockerfile.poetry
+    image: epimodel-poetry
     volumes:
       - .:/app
+    entrypoint: ["python", "run_luigi"]
+
+  luigi-conda:
+    build:
+      context: .
+      dockerfile: Dockerfile.conda
+    image: epimodel-conda
+    volumes:
+    - .:/app
     entrypoint: ["python", "run_luigi"]
