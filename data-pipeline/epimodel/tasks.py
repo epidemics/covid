@@ -19,6 +19,7 @@ from epimodel.exports.npi_model_export import (
 )  # , upload_model_export
 from epimodel.gleam import Batch
 from epimodel.pymc3_models.cm_effect import run_model
+from epimodel.algorithms.slack_webhook import LuigiSlackWebhook
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +30,8 @@ output_dir = default_config.get("output_directory")
 if output_dir:
     logger.debug("Creating the output directory %s", output_dir)
     os.makedirs(output_dir, exist_ok=True)
+
+handler = LuigiSlackWebhook()
 
 
 class RegionsFile(luigi.ExternalTask):
@@ -765,6 +768,9 @@ class NPIModel(luigi.Task):
         run_model(
             self.input()["model_data"].path, self.output_file, self.extrapolation_period
         )
+
+
+handler.set_handlers(NPIModel, events=[luigi.Event.SUCCESS, luigi.Event.FAILURE])
 
 
 class ExportNPIModelResults(luigi.Task):
