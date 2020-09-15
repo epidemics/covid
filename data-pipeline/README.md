@@ -194,3 +194,17 @@ so for example:
 docker-compose run luigi JohnsHopkins
 ```
 the image currently doesn't contain `gsutil` available, so the upload my be still necessary from the host
+
+## Running the NPI Model
+
+The NPI Model is specified as a separate Luigi task along with a Luigi task that exports the results into a 
+separate web export. Running the NPI Model locally is as simple as running the Luigi task: `run_luigi NPIModel` 
+and `run_luigi ExportNPIModelResults`. 
+
+The NPI model pipeline is accompanied by a github workflow that will prepare a NPI model run on the EpiFor Google Cloud 
+in a dedicated virtual instance. In order to run this workflow you can go to the 
+[GitHub Actions UI](https://github.com/epidemics/covid/actions?query=workflow%3A%22Compute+npi-model+and+upload%22)
+where you can select Run Workflow in the top right. Select the branch you want to run from (`master`) and the channel 
+you want to publish the results to, for example `staging` or `main` for the staging and published channels.
+The resulting model will then be visible at `http://epidemicforecasting.org/country-rt-estimates?channel=model` - 
+replace model by the channel you specified. **!! The model takes about 10 hours to compute via this pipeline so be patient !!**
