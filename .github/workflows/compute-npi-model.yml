@@ -58,6 +58,7 @@ jobs:
         run: |
           echo -E "GCP_KEY='${GCP_KEY}'" > .env
           echo "FORETOLD_CHANNEL=${{ secrets.FORETOLD_CHANNEL }}" >> .env
+          echo "SLACK_WEBHOOK_URL=${{ secrets.EPIFOR_SLACK_WEBHOOK_URL }}" >> .env
           echo "INSTANCE_NAME=$IMAGE_NAME" >> .env
           echo "PROJECT_NAME=${{ secrets.GKE_PROJECT }}" >> .env
           gcloud config set compute/zone $RUN_REGION
