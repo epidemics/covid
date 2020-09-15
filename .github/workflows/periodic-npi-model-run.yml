@@ -1,0 +1,22 @@
+name: Periodic npi-model run
+
+#schedule:
+#  - cron: '0 6 * * 2'
+on:
+  push:
+    branches:
+      - periodic-npi-model-run
+
+jobs:
+  Run-NPI-model:
+    runs-on: ubuntu-latest
+    env:
+      CHANNEL_NAME: test
+
+    steps:
+      - name: Invoke Compute npi-model workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Compute npi-model and upload
+          token: ${{ secrets.WORKFLOW_DISPATCH_TOKEN }}
+          inputs: '{ "channel_name": "${CHANNEL_NAME}" }'
