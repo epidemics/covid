@@ -765,6 +765,7 @@ class NPIModel(luigi.Task):
         return luigi.LocalTarget(self.output_file)
 
     def run(self):
+        raise ValueError("Testing webhook with a failure :)")
         run_model(
             self.input()["model_data"].path, self.output_file, self.extrapolation_period
         )
