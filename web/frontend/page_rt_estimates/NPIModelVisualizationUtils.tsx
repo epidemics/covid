@@ -1,11 +1,11 @@
-import * as moment from 'moment';
-import * as Plotly from 'plotly.js';
+import * as moment from "moment";
+import * as Plotly from "plotly.js";
 
-import { v4 } from '../../common/spec';
-import { makeLayout } from '../components/graph-common';
-import { isTouchDevice } from '../helpers';
-import { Region, Reported } from '../models';
-import { NPIModel } from '../models/NPIModel';
+import { v4 } from "../../common/spec";
+import { makeLayout } from "../components/graph-common";
+import { isTouchDevice } from "../helpers";
+import { Region, Reported } from "../models";
+import { NPIModel } from "../models/NPIModel";
 
 const line = {
   shape: "spline",

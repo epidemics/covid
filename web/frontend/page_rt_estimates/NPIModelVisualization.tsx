@@ -1,11 +1,14 @@
-import * as moment from 'moment';
-import * as React from 'react';
-import { ButtonGroup, Form, ToggleButton } from 'react-bootstrap';
-import Plot from 'react-plotly.js';
+import * as moment from "moment";
+import * as React from "react";
+import { ButtonGroup, Form, ToggleButton } from "react-bootstrap";
+import Plot from "react-plotly.js";
 
-import { makeConfig } from '../components/graph-common';
-import { Region } from '../models';
-import { initializeVisualization, isSameDay } from './NPIModelVisualizationUtils';
+import { makeConfig } from "../components/graph-common";
+import { Region } from "../models";
+import {
+  initializeVisualization,
+  isSameDay,
+} from "./NPIModelVisualizationUtils";
 
 type ModelViewProps = {
   region: Region | null;
