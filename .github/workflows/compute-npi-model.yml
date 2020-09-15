@@ -19,6 +19,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - uses: satackey/action-docker-layer-caching@v0.0.8
+          key: npi-docker-cache
+          continue-on-error: true
+
       - name: Checkout data repo
         uses: actions/checkout@v2
         with:
