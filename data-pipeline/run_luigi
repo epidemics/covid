@@ -5,5 +5,8 @@ from luigi.cmdline import luigi_run
 
 if __name__ == "__main__":
     add_config_path("secrets.cfg")
-    args = ["--module", "epimodel.tasks", "--local-scheduler"] + sys.argv[1:]
+    if "--scheduler-host" in sys.argv[1:]:
+        args = ["--module", "epimodel.tasks"] + sys.argv[1:]
+    else:
+        args = ["--module", "epimodel.tasks", "--local-scheduler"] + sys.argv[1:]
     luigi_run(args)

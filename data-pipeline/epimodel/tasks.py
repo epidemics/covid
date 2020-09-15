@@ -765,8 +765,17 @@ class NPIModel(luigi.Task):
         return luigi.LocalTarget(self.output_file)
 
     def run(self):
+        progress_state = {}
+
+        def update_progress(trace, draw, config):
+            progress_state[trace.chain] = len(trace)
+            max_draws = (config['draws'] + config['tune']) * config['chains']
+            total_draws = sum(progress_state.values())
+            if total_draws % max(1, (max_draws // 100)) == 0:
+                self.set_progress_percentage(total_draws / max_draws * 100)
+
         run_model(
-            self.input()["model_data"].path, self.output_file, self.extrapolation_period
+            self.input()["model_data"].path, self.output_file, self.extrapolation_period, callback=update_progress
         )
 
 
