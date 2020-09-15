@@ -570,7 +570,7 @@ export function Page(props: Props) {
   //   return Math.exp(serialInterval * (growth - 1));
   // }
 
-  const defaultR = 3.8; //growthToR(props.defaultOriginalGrowthRate.mean);
+  const defaultR = 3.3; //growthToR(props.defaultOriginalGrowthRate.mean);
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
   const multiplied = calculateMultiplied(checkedMeasures);
   const multiplier = multiplied ? mean(multiplied) : 1;
@@ -598,7 +598,12 @@ export function Page(props: Props) {
         transmission. On the left, intervention and intervention groups can be
         toggled on and off. On the right, the percentage reduction in R is
         displayed using coloured bands to indicate uncertainty. The NPI
-        effectiveness estimates are derived in <a href="https://www.medrxiv.org/content/10.1101/2020.05.28.20116129v3">[Brauner et al, The effectiveness of eight nonpharmaceutical interventions against COVID-19 in 41 countries]</a>.
+        effectiveness estimates are derived in{" "}
+        <a href="https://www.medrxiv.org/content/10.1101/2020.05.28.20116129v3">
+          [Brauner et al, The effectiveness of eight nonpharmaceutical
+          interventions against COVID-19 in 41 countries]
+        </a>
+        .
       </p>
 
       <hr />
