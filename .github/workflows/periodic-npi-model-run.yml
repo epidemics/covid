@@ -1,7 +1,8 @@
 name: Periodic npi-model run
 
-schedule:
-  - cron: '0 6 * * 2'
+on:
+  schedule:
+    - cron: '0 6 * * 2'
 
 jobs:
   Run-NPI-model:
