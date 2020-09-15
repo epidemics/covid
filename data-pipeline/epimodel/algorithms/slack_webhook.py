@@ -19,7 +19,7 @@ class SlackAPI:
 
     def post(self, **kwargs):
         data = json.dumps(kwargs).encode()
-        log.warning(f"Sending slack webhook with data {kwargs}")
+        log.debug("Sending slack webhook with data %s" % kwargs)
         req = Request(self.url, data=data, headers=self.headers, method=self.method)
         return urlopen(req).read().decode()
 
