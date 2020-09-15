@@ -1,10 +1,11 @@
-import * as Plotly from "plotly.js";
+import * as moment from 'moment';
+import * as Plotly from 'plotly.js';
 
-import { v4 } from "../../common/spec";
-import { makeLayout } from "../components/graph-common";
-import { isTouchDevice } from "../helpers";
-import { Region, Reported } from "../models";
-import { NPIModel } from "../models/NPIModel";
+import { v4 } from '../../common/spec';
+import { makeLayout } from '../components/graph-common';
+import { isTouchDevice } from '../helpers';
+import { Region, Reported } from '../models';
+import { NPIModel } from '../models/NPIModel';
 
 const line = {
   shape: "spline",
@@ -504,7 +505,9 @@ export const initializeVisualization = (
   config: Partial<Plotly.Config>,
   region: Region | null,
   maxValue: number,
-  showExtrapolated: boolean
+  showExtrapolated: boolean,
+  showDeaths: boolean,
+  channel: string
 ) => {
   // create a layout and customize
   let layout = makeLayout();
@@ -552,10 +555,19 @@ export const initializeVisualization = (
       );
     }
 
+    const monthAheadDate = moment(targetDate).add(1, "months").toDate();
+
+    const monthAheadIndex = region.NPIModel.date.findIndex((date) =>
+      isSameDay(date, monthAheadDate)
+    );
+
+    const lastItemIndex =
+      channel === "model" ? monthAheadIndex : region.NPIModel.date.length - 1;
+
     layout.xaxis!.range = [
       region.NPIModel.date[0],
       showExtrapolated
-        ? region.NPIModel.date[region.NPIModel.date.length - 1]
+        ? region.NPIModel.date[lastItemIndex]
         : region.NPIModel.date[extrapolationIndex - 1],
     ];
 
@@ -577,11 +589,6 @@ export const initializeVisualization = (
         extrapolationIndex,
         showExtrapolated
       ),
-      ...createPredictedDeathsTrace(
-        region.NPIModel,
-        extrapolationIndex,
-        showExtrapolated
-      ),
       createInterventionIcons(
         region.NPIModel,
         region.interventions,
@@ -599,6 +606,17 @@ export const initializeVisualization = (
         showExtrapolated
       ),
     ];
+
+    if (channel !== "model" || showDeaths) {
+      data = [
+        ...data,
+        ...createPredictedDeathsTrace(
+          region.NPIModel,
+          extrapolationIndex,
+          showExtrapolated
+        ),
+      ];
+    }
 
     showExtrapolated &&
       data.push(

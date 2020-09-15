@@ -1,26 +1,15 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-import { Alerts } from "../components/alerts";
-import {
-  LocationContext,
-  makeFragmentLocationContext,
-} from "../components/LocationContext";
-import { RegionSelector } from "../components/RegionSelector";
-import { makeDataStore } from "../ds";
-import { getTimezone, getUrlParam } from "../helpers";
-import {
-  Datastore,
-  MainInfo,
-  Region,
-  Regions,
-  Scenario,
-  Scenarios,
-  useThunk,
-} from "../models";
-import { ModelView } from "./ModelView";
-import { NPIModelVisualization } from "./NPIModelVisualization";
-import { REstimateSeriesView } from "./REstimateSeriesView";
+import { Alerts } from '../components/alerts';
+import { LocationContext, makeFragmentLocationContext } from '../components/LocationContext';
+import { RegionSelector } from '../components/RegionSelector';
+import { makeDataStore } from '../ds';
+import { getTimezone, getUrlParam } from '../helpers';
+import { Datastore, MainInfo, Region, Regions, Scenario, Scenarios, useThunk } from '../models';
+import { ModelView } from './ModelView';
+import { NPIModelVisualization } from './NPIModelVisualization';
+import { REstimateSeriesView } from './REstimateSeriesView';
 
 const CHANNEL_PARAM = "channel";
 
@@ -137,29 +126,24 @@ export function Page({ data }: { data: Datastore }) {
           dispatch({ action: "switch_region", region, url })
         }
       />
-
+      <h5>Lorem ipsom dolor sit amet</h5>
+      <hr />
+      {region && region.NPIModel && (
+        <>
+          <NPIModelVisualization region={region} channel={channel} />
+          <hr />
+        </>
+      )}
+      <ModelView
+        region={region}
+        scenario={scenario}
+        scenarios={scenarios}
+        dispatch={dispatch}
+      />
       <hr />
       {region && region.rEstimates && (
         <>
           <REstimateSeriesView region={region} />
-          <hr />
-        </>
-      )}
-      {region && region.NPIModel && channel === "model" && (
-        <>
-          <NPIModelVisualization region={region} />
-          <hr />
-        </>
-      )}
-
-      {channel === "model" && (
-        <>
-          <ModelView
-            region={region}
-            scenario={scenario}
-            scenarios={scenarios}
-            dispatch={dispatch}
-          />
           <hr />
         </>
       )}

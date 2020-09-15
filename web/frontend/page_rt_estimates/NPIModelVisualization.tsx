@@ -1,20 +1,35 @@
-import * as React from "react";
-import { ButtonGroup, Form, ToggleButton } from "react-bootstrap";
-import Plot from "react-plotly.js";
+import * as moment from 'moment';
+import * as React from 'react';
+import { ButtonGroup, Form, ToggleButton } from 'react-bootstrap';
+import Plot from 'react-plotly.js';
 
-import { makeConfig } from "../components/graph-common";
-import { Region } from "../models";
-import {
-  initializeVisualization,
-  isSameDay,
-} from "./NPIModelVisualizationUtils";
+import { makeConfig } from '../components/graph-common';
+import { Region } from '../models';
+import { initializeVisualization, isSameDay } from './NPIModelVisualizationUtils';
 
 type ModelViewProps = {
   region: Region | null;
+  channel: string;
 };
 
 export function NPIModelVisualization(props: ModelViewProps) {
-  let { region } = props;
+  let { region, channel } = props;
+
+  const deathsLastMonth = React.useMemo(() => {
+    if (region && region.NPIModel) {
+      const targetDate = moment().subtract(1, "months").toDate();
+
+      const lastMonthIndex = region.NPIModel.date.findIndex((date) =>
+        isSameDay(date, targetDate)
+      );
+
+      return region.NPIModel.predictedDeathsMean
+        .slice(lastMonthIndex)
+        .reduce((acc, cur) => Math.max(acc, cur), 0);
+    }
+
+    return 0;
+  }, [region]);
 
   const maxValue = React.useMemo(() => {
     if (region && region.NPIModel && region.reported) {
@@ -113,6 +128,8 @@ export function NPIModelVisualization(props: ModelViewProps) {
     []
   );
 
+  const showDeaths = deathsLastMonth >= 100;
+
   const { data, layout } = React.useMemo(
     () =>
       initializeVisualization(
@@ -120,7 +137,9 @@ export function NPIModelVisualization(props: ModelViewProps) {
         config,
         region,
         maxValue,
-        showExtrapolated
+        showExtrapolated,
+        showDeaths,
+        channel
       ),
     [scaleMode, config, region, maxValue, showExtrapolated]
   );
