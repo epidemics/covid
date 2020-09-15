@@ -47,16 +47,22 @@ class LuigiSlackWebhook:
         def failure_handler(callback_task, exception):
             if callback_task.__class__ != task_class:
                 return
-            self._safe_post(self.format_message(callback_task, luigi.Event.FAILURE, "#a64937", exception=exception))
+            self._safe_post(
+                self.format_message(
+                    callback_task, luigi.Event.FAILURE, "#a64937", exception=exception
+                )
+            )
 
         def success_handler(callback_task):
             if callback_task.__class__ != task_class:
                 return
-            self._safe_post(self.format_message(callback_task, luigi.Event.SUCCESS, "#36a64f"))
+            self._safe_post(
+                self.format_message(callback_task, luigi.Event.SUCCESS, "#36a64f")
+            )
 
         return {
             luigi.Event.FAILURE: failure_handler,
-            luigi.Event.SUCCESS: success_handler
+            luigi.Event.SUCCESS: success_handler,
         }
 
     def _safe_post(self, message):
@@ -67,11 +73,7 @@ class LuigiSlackWebhook:
     def format_message(task: luigi.Task, status: luigi.Event, color: str, **kwargs):
         task_name = task.__class__.__name__
         extra_fields = [
-            {
-                "title": str(key),
-                "value": str(value),
-                "short": False
-            }
+            {"title": str(key), "value": str(value), "short": False}
             for key, value in kwargs.items()
         ]
 
@@ -82,14 +84,10 @@ class LuigiSlackWebhook:
                     "color": color,
                     "pretext": f"Task {task_name} pipeline status",
                     "fields": [
-                        {
-                            "title": "status",
-                            "value": str(status),
-                            "short": False
-                        },
-                        *extra_fields
+                        {"title": "status", "value": str(status), "short": False},
+                        *extra_fields,
                     ],
-                    "ts": time.time()
+                    "ts": time.time(),
                 }
             ]
         }
