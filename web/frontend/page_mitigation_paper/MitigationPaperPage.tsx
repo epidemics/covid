@@ -570,7 +570,7 @@ export function Page(props: Props) {
   //   return Math.exp(serialInterval * (growth - 1));
   // }
 
-  const defaultR = 3.8; //growthToR(props.defaultOriginalGrowthRate.mean);
+  const defaultR = 3.3; //growthToR(props.defaultOriginalGrowthRate.mean);
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
   const multiplied = calculateMultiplied(checkedMeasures);
   const multiplier = multiplied ? mean(multiplied) : 1;
@@ -598,9 +598,27 @@ export function Page(props: Props) {
         transmission. On the left, intervention and intervention groups can be
         toggled on and off. On the right, the percentage reduction in R is
         displayed using coloured bands to indicate uncertainty. The NPI
-        effectiveness estimates are derived in [].
+        effectiveness estimates are derived in{" "}
+        <a href="https://www.medrxiv.org/content/10.1101/2020.05.28.20116129v3">
+          [Brauner et al, The effectiveness of eight nonpharmaceutical
+          interventions against COVID-19 in 41 countries]
+        </a>
+        .
       </p>
-
+      <p>
+        <i>
+          <b>Disclaimer:</b> Please refer to the manuscript for a full account
+          of the limitations of these effectiveness estimates. Briefly, the
+          results of this calculator are based on modelling assumptions and may
+          not be valid in some local contexts. The estimates present the impact
+          NPIs had between January and the end of May 2020, and NPI
+          effectiveness may have changed over time as circumstances have
+          changed. In particular, the estimates present the predicted reduction
+          in R due to the introduction of specific measures; the effect of
+          lifting these measures may not result in an increase in R of the same
+          proportion.
+        </i>
+      </p>
       <hr />
       <div className="measure-calculator">
         <div style={{ gridColumn: "1 / span 2" }}>
