@@ -605,7 +605,20 @@ export function Page(props: Props) {
         </a>
         .
       </p>
-
+      <p>
+        <i>
+          <b>Disclaimer:</b> Please refer to the manuscript for a full account
+          of the limitations of these effectiveness estimates. Briefly, the
+          results of this calculator are based on modelling assumptions and may
+          not be valid in some local contexts. The estimates present the impact
+          NPIs had between January and the end of May 2020, and NPI
+          effectiveness may have changed over time as circumstances have
+          changed. In particular, the estimates present the predicted reduction
+          in R due to the introduction of specific measures; the effect of
+          lifting these measures may not result in an increase in R of the same
+          proportion.
+        </i>
+      </p>
       <hr />
       <div className="measure-calculator">
         <div style={{ gridColumn: "1 / span 2" }}>
