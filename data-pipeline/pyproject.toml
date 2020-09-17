@@ -35,6 +35,7 @@ graphviz = "^0.13.2"
 jupyterlab = "^2.1.1"
 nbdime = "^2.0.0"
 theano = "^1.0.5"
+simplejson = "^3.17.2"
 
 [tool.poetry.extras]
 pymc3 = ["pymc3", "jupyter", "seaborn"]

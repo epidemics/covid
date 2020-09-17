@@ -255,6 +255,11 @@ class Batch:
 
     @staticmethod
     def generate_sim_stats(cdf: pd.DataFrame, sim_ids: List[str]) -> dict:
+        if np.sum(np.sum(cdf.isna())) > 0:
+            log.warning(
+                f"Creating simulations stats: Unknown daily growths (NaN) are replaced by 0.0"
+            )
+        cdf = cdf.fillna(method="ffill")
         # get the end date of the simulations
         end_date = cdf.index.get_level_values("Date").max()
         # get the infected in the end date for the latest date per simulation
