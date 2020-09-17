@@ -110,8 +110,9 @@ class NPITriggerConfig:
                     "Perform modifications when level change is detected"
                     nonlocal new_triggered, new_trigger_count
                     day = new_fraction.index.levels[2].values[day_no]
+                    beta = triggerrow[f"L{level}-beta"]
                     logger.info(
-                        f"  Triggered in {r}: L{old_level}->L{level} on day {day_no} ({day})"
+                        f"  Triggered in {r}: L{old_level}->L{level} on day {day_no} ({day}) (beta={beta})"
                     )
 
                     # Truncate model data at the trigger day (later days are invalid until recompute)
@@ -140,9 +141,14 @@ class NPITriggerConfig:
                     new_trigger_count += 1
 
                     # Add exception to new_sims XML
-                    # TODO
-                    beta = triggerrow[f"L{level}-beta"]
-                    definition.add_exception([rds[r]], {"beta": beta}, start=day)
+                    regs = set([rds[r]])
+                    # Hack: add 2 levels of children to get over all overrides
+                    for nr in rds[r].children:
+                        regs.add(nr)
+                        for nr2 in nr.children:
+                            regs.add(nr2)
+
+                    definition.add_exception(list(regs), {"beta": beta}, start=day)
 
                 for i in range(last_day + 1, len(window_sums)):
                     if window_sums[i] > up_fraction:
@@ -185,6 +191,6 @@ class NPITriggerConfig:
                 complevel=4,
             )
         logger.info(
-            f'All triggers: {new_triggered.sort_values(["Group", "Trace", "RegionCode", "DayNumber"])}'
+            f'All triggers:\n{new_triggered.sort_values(["Group", "Trace", "RegionCode", "DayNumber"])}'
         )
         logger.info(f">>> Added {new_trigger_count} new triggers")
