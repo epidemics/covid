@@ -1,25 +1,27 @@
 import json
 import logging
 import os
+import re
 import shutil
 import tempfile
-from datetime import datetime, date
+from datetime import date, datetime
 from pathlib import Path
 from typing import List
 
-import luigi
 import yaml
-from luigi.util import inherits
 
+import luigi
 from epimodel import Level, RegionDataset, algorithms, imports
+from epimodel.algorithms.slack_webhook import LuigiSlackWebhook
 from epimodel.exports.epidemics_org import process_export, upload_export
-from epimodel.imports.interventions import create_intervetions_dict
 from epimodel.exports.npi_model_export import (
     process_model_export,
 )  # , upload_model_export
 from epimodel.gleam import Batch
+from epimodel.gleam.npi_triggers import NPITriggerConfig
+from epimodel.imports.interventions import create_intervetions_dict
 from epimodel.pymc3_models.cm_effect import run_model
-from epimodel.algorithms.slack_webhook import LuigiSlackWebhook
+from luigi.util import inherits
 
 logger = logging.getLogger(__name__)
 
@@ -487,6 +489,65 @@ class ExtractSimulationsResults(luigi.Task):
         shutil.copy(tmp_batch_file, self.models_file)
 
 
+class NPITriggers(luigi.ExternalTask):
+    """NPI trigger configuration CSV."""
+
+    triggers: str = luigi.Parameter("CSV with NPI triggers configuration.")
+
+    def output(self):
+        return luigi.LocalTarget(self.triggers)
+
+    @staticmethod
+    def load_text(path):
+        with open(path, "rt") as f:
+            return f.readall()
+
+
+class UpdateNPITriggers(luigi.Task):
+    """Add next trigger activations to a batch file."""
+
+    input_batch: str = luigi.Parameter(
+        "Input gleam batch file (HDF5), with new data from Gleam."
+    )
+
+    overwrite: bool = luigi.BoolParameter("Overwrite output batch.")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.input_batch = Path(self.input_batch).expanduser()
+        if not self.input_batch.exists():
+            raise Exception(f"Input batch file {self.input_batch} not found.")
+
+        num = re.match(r"^(.*)-([0-9]+)$", self.input_batch.stem)
+        if num:
+            name = f"{num.groups()[0]}-{int(num.groups()[1]) + 1}.hdf5"
+        else:
+            name = f"{self.input_batch.stem}-1.hdf5"
+        self.output_batch = Path(self.input_batch.parent, name)
+
+        if self.output_batch.exists() and not self.overwrite:
+            raise Exception(
+                f"Output batch file {self.input_batch} exists; use --overwrite"
+            )
+        if self.output_batch.exists():
+            assert not self.output_batch.samefile(self.input_batch)
+
+    def requires(self):
+        return {"triggers": NPITriggers()}
+
+    def output(self):
+        return luigi.LocalTarget(self.output_batch)
+
+    def run(self):
+        ntc = NPITriggerConfig(filename=self.input()["triggers"].path)
+        in_batch = Batch.open(self.input_batch)
+        out_batch = Batch.new(path=self.output_batch, overwrite=self.overwrite)
+        ntc.create_updated_batch(in_batch, out_batch, truncated_simulations=True)
+        logger.info(f"Created updated batch file {out_batch}")
+        in_batch.close()
+        out_batch.close()
+
+
 class Rates(luigi.ExternalTask):
     """Rates for number of critical beds and hospital capacity"""
 
@@ -529,9 +590,7 @@ class WebExport(luigi.Task):
     main_data_filename: str = luigi.Parameter(
         description="The default name of the main JSON data file",
     )
-    comment: str = luigi.Parameter(
-        description="Optional comment to the export",
-    )
+    comment: str = luigi.Parameter(description="Optional comment to the export",)
     resample: str = luigi.Parameter(description="Pandas dataseries resample")
     overwrite: bool = luigi.BoolParameter(
         description="Whether to overwrite an already existing export"
@@ -603,9 +662,7 @@ class WebExport(luigi.Task):
 class WebUpload(luigi.Task):
     """Uploads the exported files into GCS bucket"""
 
-    gs_prefix: str = luigi.Parameter(
-        description="A GCS default path for the export",
-    )
+    gs_prefix: str = luigi.Parameter(description="A GCS default path for the export",)
     channel: str = luigi.Parameter(
         description="channel to load the data to, basically a subdirectory in gcs_path",
     )
@@ -793,9 +850,7 @@ class ExportNPIModelResults(luigi.Task):
         description="If yes the JSON with results will also be copied into file "
         "latest_<filename_suffix>"
     )
-    comment: str = luigi.Parameter(
-        description="Optional comment to the export",
-    )
+    comment: str = luigi.Parameter(description="Optional comment to the export",)
     resample: str = luigi.Parameter(description="Pandas dataseries resample")
     overwrite: bool = luigi.BoolParameter(
         description="Whether to overwrite an already existing export"
@@ -828,11 +883,7 @@ class ExportNPIModelResults(luigi.Task):
         regions_dataset = RegionsDatasetSubroutine.load_rds(self)
 
         ex = process_model_export(
-            self.input(),
-            regions_dataset,
-            self.comment,
-            config_yaml,
-            self.resample,
+            self.input(), regions_dataset, self.comment, config_yaml, self.resample,
         )
         ex.write(
             self.full_export_path,

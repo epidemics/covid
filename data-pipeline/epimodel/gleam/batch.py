@@ -36,7 +36,7 @@ class Batch:
     """
 
     def __init__(self, hdf_file, path, *, _direct=True):
-        assert not _direct, "Use .new or .load"
+        assert not _direct, "Use .new or .open"
         self.hdf = hdf_file
         self.path = path
 
@@ -70,13 +70,14 @@ class Batch:
         return cls(hdf, path, _direct=False)
 
     @classmethod
-    def new(cls, *, path=None):
+    def new(cls, *, path=None, overwrite=False):
         """
         Create new batch HDF5 file.
         """
         path = Path(path)
 
-        assert not path.exists()
+        if not overwrite:
+            assert not path.exists()
         hdf = pd.HDFStore(path, "w")
         return cls(hdf, path, _direct=False)
 
