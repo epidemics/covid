@@ -533,19 +533,29 @@ class UpdateNPITriggers(luigi.Task):
             assert not self.output_batch.samefile(self.input_batch)
 
     def requires(self):
-        return {"triggers": NPITriggers()}
+        return {"triggers": NPITriggers(), **RegionsDatasetSubroutine.requires()}
 
     def output(self):
         return luigi.LocalTarget(self.output_batch)
 
     def run(self):
         ntc = NPITriggerConfig(filename=self.input()["triggers"].path)
+        rds = RegionsDatasetSubroutine.load_rds(self)
         in_batch = Batch.open(self.input_batch)
         out_batch = Batch.new(path=self.output_batch, overwrite=self.overwrite)
-        ntc.create_updated_batch(in_batch, out_batch, truncated_simulations=True)
-        logger.info(f"Created updated batch file {out_batch}")
-        in_batch.close()
-        out_batch.close()
+        try:
+            ntc.create_updated_batch(
+                in_batch, out_batch, rds=rds, truncated_simulations=True
+            )
+            out_batch.close()
+            logger.info(f"Created updated batch file {out_batch}")
+        except:
+            logger.info(f"Removing unfinished updated batch file {out_batch}")
+            out_batch.close()
+            self.output_batch.unlink()
+            raise
+        finally:
+            in_batch.close()
 
 
 class Rates(luigi.ExternalTask):
