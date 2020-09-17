@@ -510,6 +510,10 @@ class UpdateNPITriggers(luigi.Task):
         "Input gleam batch file (HDF5), with new data from Gleam."
     )
 
+    output_batch: str = luigi.Parameter(
+        "Output gleam batch file (HDF5) with new triggers (and data truncated to valid only). Rerun in GLEAM."
+    )
+
     overwrite: bool = luigi.BoolParameter("Overwrite output batch.")
 
     def __init__(self, *args, **kwargs):
@@ -518,16 +522,10 @@ class UpdateNPITriggers(luigi.Task):
         if not self.input_batch.exists():
             raise Exception(f"Input batch file {self.input_batch} not found.")
 
-        num = re.match(r"^(.*)-([0-9]+)$", self.input_batch.stem)
-        if num:
-            name = f"{num.groups()[0]}-{int(num.groups()[1]) + 1}.hdf5"
-        else:
-            name = f"{self.input_batch.stem}-1.hdf5"
-        self.output_batch = Path(self.input_batch.parent, name)
-
+        self.output_batch = Path(self.output_batch).expanduser()
         if self.output_batch.exists() and not self.overwrite:
             raise Exception(
-                f"Output batch file {self.input_batch} exists; use --overwrite"
+                f"Output batch file {self.output_batch} exists; use --overwrite"
             )
         if self.output_batch.exists():
             assert not self.output_batch.samefile(self.input_batch)

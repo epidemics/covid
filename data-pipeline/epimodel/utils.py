@@ -1,13 +1,14 @@
 import datetime
 import logging
 import re
-from typing import Union, Set, Optional
+from typing import Optional, Set, Union
 
 import dateutil
-import pandas as pd
-import unidecode
+import numpy as np
 
 import epimodel
+import pandas as pd
+import unidecode
 
 log = logging.getLogger(__name__)
 
@@ -106,16 +107,7 @@ def read_csv_smart(
     na_values = kwargs.pop(
         "na_values",
         ["", "#N/A", "#N/A", "N/A", "#NA", "-NaN", "-nan"]
-        + [
-            "1.#IND",
-            "1.#QNAN",
-            "<NA>",
-            "N/A",
-            "NULL",
-            "NaN",
-            "n/a",
-            "nan",
-        ],
+        + ["1.#IND", "1.#QNAN", "<NA>", "N/A", "NULL", "NaN", "n/a", "nan",],
     )
 
     data = pd.read_csv(path, na_values=na_values, keep_default_na=False, **kwargs)
@@ -204,6 +196,10 @@ def utc_date(d: Union[str, datetime.date, datetime.datetime]) -> datetime.dateti
     Discards any old time and timezone info!
     Note that dates as UTC 00:00:00 is used as the day identifier throughout epimodel.
     """
+    if isinstance(d, np.datetime64):
+        d = pd.Timestamp(d, tz="utc")
+    if isinstance(d, pd.Timestamp):
+        d = d.to_pydatetime()
     if isinstance(d, str):
         d = dateutil.parser.parse(d)
     if isinstance(d, datetime.date):
