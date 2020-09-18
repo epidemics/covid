@@ -1,18 +1,16 @@
-From 010d62f001cf59e21d72e3d1aef503a5011bf376 Mon Sep 17 00:00:00 2001
+From 90844d5cc8dd0c8d7aa0b790013ea77ae9bf0fe3 Mon Sep 17 00:00:00 2001
 From: Tomas Witzany <tomas.witzany@blindspot.ai>
-Date: Wed, 20 May 2020 09:05:24 +0200
+Date: Fri, 18 Sep 2020 15:06:02 +0200
 Subject: [PATCH] scenario generation script
 
 ---
- package.json          |  1 +
- scripts/generate.ts   | 32 ++++++++++++++++++++++++++++++++
- scripts/tsconfig.json |  7 +++++++
- 3 files changed, 40 insertions(+)
- create mode 100644 scripts/generate.ts
- create mode 100644 scripts/tsconfig.json
+ package.json               |  1 +
+ tools/generateScenarios.ts | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 tools/generateScenarios.ts
 
 diff --git a/package.json b/package.json
-index 570c4e2a..f1f23b95 100644
+index cb0b8973..736f81dc 100644
 --- a/package.json
 +++ b/package.json
 @@ -5,6 +5,7 @@
@@ -20,19 +18,19 @@ index 570c4e2a..f1f23b95 100644
    "license": "MIT",
    "scripts": {
 +    "generate": "yarn install && yarn schema:totypes && ts-node --project scripts/tsconfig.json scripts/generate.ts",
-     "clear": "node lib/clear.js",
+     "clear": "node ./lib/clear.js",
      "schema:mkdir": "mkdirp 'src/.generated/latest' 'data/generated'",
      "schema:clean": "rimraf 'src/.generated/latest/{*,.*}' 'data/generated/{*,.*}'",
-diff --git a/scripts/generate.ts b/scripts/generate.ts
+diff --git a/tools/generateScenarios.ts b/tools/generateScenarios.ts
 new file mode 100644
-index 00000000..a26d0b8a
+index 00000000..8be33cf3
 --- /dev/null
-+++ b/scripts/generate.ts
-@@ -0,0 +1,32 @@
-+import {scenarioNames, getScenario} from "../src/components/Main/state/getScenario"
-+import {ageDistributionNames, getAgeDistribution} from "../src/components/Main/state/getAgeDistribution"
-+import {scenarioNames as severityNames, getSeverityDistribution} from "../src/components/Main/state/getSeverityDistribution"
-+import {serialize} from "../src/components/Main/state/serialization/serialize"
++++ b/tools/generateScenarios.ts
+@@ -0,0 +1,29 @@
++import {scenarioNames, getScenarioData} from "../src/io/defaults/getScenarioData"
++import {ageDistributionNames, getAgeDistributionData} from "../src/io/defaults/getAgeDistributionData"
++import {scenarioNames as severityNames, getSeverityDistributionData} from "../src/io/defaults/getSeverityDistributionData"
++import {serialize} from "../src/io/serialization/serialize"
 +import fs from 'fs';
 +
 +let ageDistributionNamesSet: Set<string> = new Set(ageDistributionNames);
@@ -43,15 +41,12 @@ index 00000000..a26d0b8a
 +
 +commonNames.forEach((countryName) => {
 +    let countryData = {
-+      scenario: getScenario(countryName),
-+      scenarioName: countryName,
-+      ageDistribution: getAgeDistribution(countryName),
-+      ageDistributionName: countryName,
-+      severity: getSeverityDistribution(severityDefault),
-+      severityName: severityDefault,
++      scenarioData: getScenarioData(countryName),
++      ageDistributionData: getAgeDistributionData(countryName),
++      severityDistributionData: getSeverityDistributionData(severityDefault),
 +    };
 +    //delete all interventions
-+    countryData.scenario.mitigation.mitigationIntervals = [];
++    countryData.scenarioData.data.mitigation.mitigationIntervals = [];
 +    const serialized = serialize(countryData);
 +    supportedPresets[countryName] = JSON.parse(serialized);
 +  }
@@ -61,19 +56,6 @@ index 00000000..a26d0b8a
 +  if (err) return console.log(err);
 +  console.log('Scenario configs written to scenarios.json');
 +});
-diff --git a/scripts/tsconfig.json b/scripts/tsconfig.json
-new file mode 100644
-index 00000000..70f6bf26
---- /dev/null
-+++ b/scripts/tsconfig.json
-@@ -0,0 +1,7 @@
-+{
-+  "extends": "../tsconfig.json",
-+  "compilerOptions": {
-+    "baseUrl": "../",
-+    "module": "commonjs"
-+  }
-+}
 -- 
-2.21.0.windows.1
+2.17.1
 
