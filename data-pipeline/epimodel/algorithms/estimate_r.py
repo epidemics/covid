@@ -12,9 +12,7 @@ script_dir = os.path.join(project_dir, "scripts")
 
 
 def preprocess_hopkins(
-    hopkins_file: str,
-    rds: RegionDataset,
-    state_to_country: List[str],
+    hopkins_file: str, rds: RegionDataset, state_to_country: List[str],
 ) -> pd.DataFrame:
     preprocessed = pd.read_csv(
         hopkins_file,
@@ -70,9 +68,7 @@ def estimate_r(
 
 
 def mask_not_enough_data(
-    r_estimates: pd.DataFrame,
-    hopkins_df: pd.DataFrame,
-    min_daily_cases: int,
+    r_estimates: pd.DataFrame, hopkins_df: pd.DataFrame, min_daily_cases: int,
 ) -> pd.DataFrame:
     hopkins_grouped = hopkins_df.groupby("Code")
     return r_estimates.groupby("Code").apply(
@@ -83,9 +79,7 @@ def mask_not_enough_data(
 
 
 def mask_country_not_enough_data(
-    country_estimates: pd.DataFrame,
-    hopkins_df: pd.DataFrame,
-    min_daily_cases: int,
+    country_estimates: pd.DataFrame, hopkins_df: pd.DataFrame, min_daily_cases: int,
 ) -> pd.DataFrame:
 
     hopkins_df = hopkins_df.reset_index().set_index("Date")

@@ -349,10 +349,7 @@ class CMCombinedModel(BaseCMModel):
             )
 
             self.HyperRMean = pm.StudentT(
-                "HyperRMean",
-                nu=10,
-                sigma=0.2,
-                mu=np.log(r_hyperprior_mean),
+                "HyperRMean", nu=10, sigma=0.2, mu=np.log(r_hyperprior_mean),
             )
 
             self.HyperRVar = pm.HalfStudentT("HyperRVar", nu=10, sigma=0.2)

@@ -1,23 +1,25 @@
 import datetime
 import getpass
 import json
-import os
 import logging
+import os
 import shutil
 import socket
 import subprocess
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Iterable
+from typing import Any, Dict, Iterable, List, Optional
 
 import numpy as np
-import pandas as pd
+import simplejson
 from tqdm import tqdm
 
+import epimodel
+import pandas as pd
 from epimodel.imports.johns_hopkins import aggregate_countries
+
 from ..gleam import Batch
 from ..regions import Region, RegionDataset
-from . import types_to_json, get_df_else_none
-import epimodel
+from . import get_df_else_none, types_to_json
 
 log = logging.getLogger(__name__)
 
@@ -109,20 +111,20 @@ class WebExport:
             export_region.data_url = f"{fname}"
             if write_country_exports:
                 with open(export_directory / fname, "wt") as f:
-                    json.dump(
+                    simplejson.dump(
                         export_region.data_ext,
                         f,
                         default=types_to_json,
-                        allow_nan=False,
+                        ignore_nan=True,
                         separators=(",", ":"),
                         indent=indent,
                     )
         with open(export_directory / main_data_filename, "wt") as f:
-            json.dump(
+            simplejson.dump(
                 self.to_json(),
                 f,
                 default=types_to_json,
-                allow_nan=False,
+                ignore_nan=True,
                 separators=(",", ":"),
                 indent=indent,
             )
@@ -266,9 +268,7 @@ class WebExportRegion:
         return first
 
     def extract_external_data(
-        self,
-        models: pd.DataFrame,
-        simulation_specs: pd.DataFrame,
+        self, models: pd.DataFrame, simulation_specs: pd.DataFrame,
     ) -> Dict[str, Any]:
         d: Dict[str, Any] = {
             "date_index": [
@@ -353,12 +353,8 @@ def assert_valid_json(file, minify=False):
         )
     if minify:
         with open(file, "wt") as f:
-            json.dump(
-                data,
-                f,
-                default=types_to_json,
-                allow_nan=False,
-                separators=(",", ":"),
+            simplejson.dump(
+                data, f, default=types_to_json, ignore_nan=True, separators=(",", ":"),
             )
 
 
@@ -539,10 +535,7 @@ def process_export(
         rates, index_col="Code", keep_default_na=False, na_values=[""]
     )
     timezone_df: pd.DataFrame = pd.read_csv(
-        timezone,
-        index_col="Code",
-        keep_default_na=False,
-        na_values=[""],
+        timezone, index_col="Code", keep_default_na=False, na_values=[""],
     )
 
     un_age_dist_df: pd.DataFrame = pd.read_csv(un_age_dist, index_col="Code M49").drop(

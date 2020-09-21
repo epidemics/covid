@@ -422,11 +422,7 @@ class DefinitionBuilder:
             .apply(lambda group: dict(zip(group["Parameter"], group["Value"])))
             .reset_index()
             .rename(
-                columns={
-                    0: "variables",
-                    "Start date": "start",
-                    "End date": "end",
-                }
+                columns={0: "variables", "Start date": "start", "End date": "end",}
             )[output_columns]
         )
 

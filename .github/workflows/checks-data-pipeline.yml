@@ -19,7 +19,7 @@ jobs:
           python-version: 3.7
       - name: Install dependencies
         working-directory: data-pipeline
-        run: python -m pip install --upgrade black
+        run: python -m pip install --upgrade black==19.10b0
       - name: Check with Black
         working-directory: data-pipeline
         run: black . --check --exclude get-poetry.py

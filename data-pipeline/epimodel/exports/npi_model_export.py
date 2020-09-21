@@ -159,9 +159,7 @@ def process_model_export(
         reg: Region = rds[code]
 
         ex.new_region(
-            reg,
-            get_df_else_none(npi_model_results_df, code),
-            extrapolation_date,
+            reg, get_df_else_none(npi_model_results_df, code), extrapolation_date,
         )
 
     return ex
