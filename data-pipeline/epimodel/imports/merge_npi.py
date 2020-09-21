@@ -94,6 +94,9 @@ def _oxcgrt_to_npi_features(df: pd.DataFrame) -> pd.DataFrame:
             "Region Name",
         ]
     )
+    if df.index.duplicated().any():
+        log.warning("Aggregating duplicate indices in the OXCGRT dataset")
+        df = df.groupby(["Country Code", "Date", "Region Name"]).max()
 
     features = {}
     for npi_feature, oxcgrt_cols in OxCGRT_TRANSFORM_CONFIG.items():
