@@ -14,11 +14,6 @@ import {
 } from "./measures";
 import { calculateMultiplied } from "./multiplier";
 
-//let scale = chroma.scale("PuBu");
-// let scale = chroma
-//   .scale(["black", "red", "yellow", "white"])
-//   .correctLightness();
-
 function p(v: number): string {
   return `${(100 * v).toFixed(5)}%`;
 }
@@ -29,7 +24,8 @@ function calculateBackground(
   min: number,
   max: number,
   thumbWidth: string,
-  scale: chroma.Scale
+  scale: chroma.Scale,
+  ticks: boolean
 ): string {
   function getColor(z: number) {
     return scale(Math.exp((z * z) / -2)).css();
@@ -95,18 +91,20 @@ function calculateBackground(
   let dark = scale(1).desaturate().css();
   let light = scale(0.5).desaturate().css();
 
-  if (max < 2) {
-    addTicks(0.05, 0.2, dark, light);
-    addTicks(0.1, 0.5, dark, light);
-  } else if (max - min < 4) {
-    addTicks(0.1, 0.2, dark, light);
-    addTicks(1, 0.5, dark, light);
-  } else {
-    addTicks(0.5, 0.2, dark, light);
-    addTicks(1, 0.5, dark, light);
-  }
+  if (ticks) {
+    if (max < 2) {
+      addTicks(0.05, 0.2, dark, light);
+      addTicks(0.1, 0.5, dark, light);
+    } else if (max - min < 4) {
+      addTicks(0.1, 0.2, dark, light);
+      addTicks(1, 0.5, dark, light);
+    } else {
+      addTicks(0.5, 0.2, dark, light);
+      addTicks(1, 0.5, dark, light);
+    }
 
-  addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1, 2);
+    addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1, 2);
+  }
 
   return backgrounds.reverse().join(", ");
 }
@@ -125,6 +123,8 @@ namespace FancySlider {
     scale?: chroma.Scale;
     onChange?: (value: number) => void;
     format?: "percentage" | "absolute";
+    direction?: "rtl" | "ltr";
+    ticks?: boolean;
   }
 }
 
@@ -141,6 +141,8 @@ function FancySlider({
   value: propValue,
   format: propFormat,
   scale,
+  direction,
+  ticks,
 }: FancySlider.Props) {
   let format =
     propFormat == "percentage"
@@ -159,7 +161,8 @@ function FancySlider({
       propMin,
       propMax,
       onChange !== undefined ? "var(--thumb-width)" : "3px",
-      scale ?? chroma.scale("YlGnBu")
+      scale ?? chroma.scale("YlGnBu"),
+      ticks ?? false
     );
   }, [onChange, mean, sd, min, max]);
 
@@ -221,7 +224,9 @@ function FancySlider({
           filter: disabled ? "brightness(50%)" : "none",
         }}
       >
-        <span className="ruler-label">{format(max)}</span>
+        <span className="ruler-label">
+          {direction == "rtl" ? format(max) : format(min)}
+        </span>
         <input
           className="ruler measure-slider"
           type="range"
@@ -234,10 +239,12 @@ function FancySlider({
           style={{
             // @ts-ignore
             "--ruler-background": background,
-            direction: "rtl",
+            direction: direction ?? "ltr",
           }}
         ></input>
-        <span className="ruler-label">{format(min)}</span>
+        <span className="ruler-label">
+          {direction == "rtl" ? format(min) : format(max)}
+        </span>
       </div>
       <div
         key={`value-${row}`}
@@ -342,6 +349,7 @@ function SingleMeasure(
         initial={measure.mean}
         value={value}
         disabled={!checked}
+        direction="rtl"
         onChange={(value) => {
           if (disabled) return;
           dispatch({ value });
@@ -654,6 +662,8 @@ export function Page(props: Props) {
           mean={baselineR}
           sd={0}
           max={8}
+          direction="ltr"
+          ticks={true}
         ></FancySlider>
 
         <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
@@ -669,6 +679,8 @@ export function Page(props: Props) {
           scale={chroma.scale("YlOrRd")}
           sd={stdR * baselineR}
           max={8}
+          direction="ltr"
+          ticks={true}
         ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
