@@ -1,4 +1,4 @@
-import { dotMultiply } from "mathjs";
+import { dotMultiply, add } from "mathjs";
 
 import npi_model_raw from "./npi_model.json";
 
@@ -13,11 +13,14 @@ function multiplyArrays(npis: Array<Array<number>>): Array<number> {
   return result;
 }
 
+//the values in the array are [name of measure, number of % above mean (or below if negative)
 export function calculateMultiplied(
-  measureNames: Array<string>
+  measureActivations: Array<[string, number]>
 ): number[] | undefined {
-  if (measureNames.length === 0) return undefined;
-  let npis: Array<Array<number>> = measureNames.map((name) => npi_model[name]);
+  if (measureActivations.length === 0) return undefined;
+  let npis: Array<Array<number>> = measureActivations.map(
+    ([name, deviation]) => add(npi_model[name], deviation) as number[]
+  );
   let multiplied = multiplyArrays(npis);
   return multiplied;
 }

@@ -16,20 +16,12 @@ export interface MeasureGroup {
 }
 
 // the range of all the sliders
-export const range = { min: 0.25, max: 1.25 };
+export const range = { min: -0.2, max: 0.2 };
 
 export const serialInterval = 6.5;
 
 // the measures
 export const measures: Array<Measure | MeasureGroup> = [
-  {
-    name: "Mask Wearing Mandatory in (Some) Public Spaces",
-    mean: mean(npi_model["Mask Wearing Mandatory in (Some) Public Spaces"]),
-    p90: quantileSeq(
-      npi_model["Mask Wearing Mandatory in (Some) Public Spaces"],
-      0.9
-    ) as number,
-  },
   {
     name: "Gatherings limited to...",
     items: [
@@ -86,6 +78,6 @@ export const measures: Array<Measure | MeasureGroup> = [
       npi_model["Stay Home Order (with exemptions)"],
       0.9
     ) as number,
-    implies: [{ key: 2, value: 3 }, { key: 3, value: 2 }, { key: 4 }],
+    implies: [{ key: 1, value: 3 }, { key: 2, value: 2 }, { key: 3 }],
   },
 ];

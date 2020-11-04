@@ -221,7 +221,7 @@ function FancySlider({
           filter: disabled ? "brightness(50%)" : "none",
         }}
       >
-        <span className="ruler-label">{format(min)}</span>
+        <span className="ruler-label">{format(max)}</span>
         <input
           className="ruler measure-slider"
           type="range"
@@ -234,9 +234,10 @@ function FancySlider({
           style={{
             // @ts-ignore
             "--ruler-background": background,
+            direction: "rtl",
           }}
         ></input>
-        <span className="ruler-label">{format(max)}</span>
+        <span className="ruler-label">{format(min)}</span>
       </div>
       <div
         key={`value-${row}`}
@@ -306,10 +307,11 @@ function SingleMeasure(
 
   const subMeasure = props.subMeasure ?? false;
 
-  const { min, max } = range;
-
   let { mean, p90 } = measure;
   let sd = (p90 - mean) / 1.65;
+
+  const min = mean + range.min;
+  const max = mean + range.max;
 
   return (
     <>
@@ -339,9 +341,10 @@ function SingleMeasure(
         sd={sd}
         initial={measure.mean}
         value={value}
-        disabled={true}
-        onChange={(_) => {
-          return;
+        disabled={!checked}
+        onChange={(value) => {
+          if (disabled) return;
+          dispatch({ value });
         }}
       />
     </>
@@ -512,7 +515,7 @@ export function Page(props: Props) {
     }
   );
 
-  let checkedMeasures: Array<string> = [];
+  let checkedMeasures: Array<[string, number]> = [];
   let row = 3;
 
   let elems = measures.map((measureOrGroup, i) => {
@@ -522,10 +525,16 @@ export function Page(props: Props) {
       checkedMeasures = checkedMeasures.concat(
         (measureOrGroup as MeasureGroup).items
           .slice(0, checked)
-          .map((item) => `${measureOrGroup.name}:${item.name}`)
+          .map((item, index) => [
+            `${measureOrGroup.name}:${item.name}`,
+            (value as Array<number>)[index] - item.mean,
+          ])
       );
     } else if (checked > 0) {
-      checkedMeasures.push(measureOrGroup.name);
+      checkedMeasures.push([
+        measureOrGroup.name,
+        value - (measureOrGroup as Measure).mean,
+      ]);
     }
 
     if ("items" in measureOrGroup) {
