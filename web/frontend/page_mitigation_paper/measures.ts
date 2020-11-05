@@ -16,7 +16,8 @@ export interface MeasureGroup {
 }
 
 // the range of all the sliders
-export const range = { min: -0.2, max: 0.2 };
+export const range = { min: 0.25, max: 1.25 };
+export const changeLimit = { min: -0.2, max: 0.2 };
 
 export const serialInterval = 6.5;
 

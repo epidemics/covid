@@ -10,14 +10,10 @@ import {
   MeasureGroup,
   measures,
   range,
+  changeLimit,
   serialInterval,
 } from "./measures";
 import { calculateMultiplied } from "./multiplier";
-
-//let scale = chroma.scale("PuBu");
-// let scale = chroma
-//   .scale(["black", "red", "yellow", "white"])
-//   .correctLightness();
 
 function p(v: number): string {
   return `${(100 * v).toFixed(5)}%`;
@@ -29,16 +25,19 @@ function calculateBackground(
   min: number,
   max: number,
   thumbWidth: string,
-  scale: chroma.Scale
+  scale: chroma.Scale,
+  ticks: boolean,
+  leftToRight: boolean
 ): string {
   function getColor(z: number) {
     return scale(Math.exp((z * z) / -2)).css();
   }
 
   let backgrounds = [];
+  let gradientDirection = leftToRight ? "right" : "left";
   const f = (loc: number) => getColor((loc - mean) / sd);
   backgrounds.push(`linear-gradient(
-    to right, ${f(min)} 49%, ${f(max)} 51%)`);
+    to ${gradientDirection}, ${f(min)} 49%, ${f(max)} 51%)`);
 
   let stops: Array<string> = [];
   let addStop = (loc: number, z: number) => {
@@ -50,7 +49,9 @@ function calculateBackground(
     addStop(mean + z * sd, z);
   }
 
-  let rulerGradient = `linear-gradient(to right, ${stops.join(",")})`;
+  let rulerGradient = `linear-gradient(to ${gradientDirection}, ${stops.join(
+    ","
+  )})`;
   backgrounds.push(
     `no-repeat ${rulerGradient} 
       calc(${thumbWidth}/2) 0 
@@ -76,7 +77,7 @@ function calculateBackground(
     // )`;
     let tickGradient = `${
       pos === undefined ? "repeating-linear-gradient" : "linear-gradient"
-    }(to right, 
+    }(to ${gradientDirection}, 
       transparent calc(${offset}), ${color} calc(${offset}),
       ${color} calc(${offset} + ${w}px), ${color2} calc(${offset} + ${w}px), 
       ${color2} calc(${offset} + ${2 * w}px), transparent calc(${offset} + ${
@@ -95,18 +96,20 @@ function calculateBackground(
   let dark = scale(1).desaturate().css();
   let light = scale(0.5).desaturate().css();
 
-  if (max < 2) {
-    addTicks(0.05, 0.2, dark, light);
-    addTicks(0.1, 0.5, dark, light);
-  } else if (max - min < 4) {
-    addTicks(0.1, 0.2, dark, light);
-    addTicks(1, 0.5, dark, light);
-  } else {
-    addTicks(0.5, 0.2, dark, light);
-    addTicks(1, 0.5, dark, light);
-  }
+  if (ticks) {
+    if (max < 2) {
+      addTicks(0.05, 0.2, dark, light);
+      addTicks(0.1, 0.5, dark, light);
+    } else if (max - min < 4) {
+      addTicks(0.1, 0.2, dark, light);
+      addTicks(1, 0.5, dark, light);
+    } else {
+      addTicks(0.5, 0.2, dark, light);
+      addTicks(1, 0.5, dark, light);
+    }
 
-  addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1, 2);
+    addTicks(1, 1, dark, scale(0.4).desaturate().css(), 1, 2);
+  }
 
   return backgrounds.reverse().join(", ");
 }
@@ -125,6 +128,8 @@ namespace FancySlider {
     scale?: chroma.Scale;
     onChange?: (value: number) => void;
     format?: "percentage" | "absolute";
+    direction?: "rtl" | "ltr";
+    ticks?: boolean;
   }
 }
 
@@ -141,6 +146,8 @@ function FancySlider({
   value: propValue,
   format: propFormat,
   scale,
+  direction,
+  ticks,
 }: FancySlider.Props) {
   let format =
     propFormat == "percentage"
@@ -159,7 +166,9 @@ function FancySlider({
       propMin,
       propMax,
       onChange !== undefined ? "var(--thumb-width)" : "3px",
-      scale ?? chroma.scale("YlGnBu")
+      scale ?? chroma.scale("YlGnBu"),
+      ticks ?? false,
+      (direction ?? "ltr") == "ltr"
     );
   }, [onChange, mean, sd, min, max]);
 
@@ -221,7 +230,9 @@ function FancySlider({
           filter: disabled ? "brightness(50%)" : "none",
         }}
       >
-        <span className="ruler-label">{format(max)}</span>
+        <span className="ruler-label">
+          {direction == "rtl" ? format(max) : format(min)}
+        </span>
         <input
           className="ruler measure-slider"
           type="range"
@@ -234,10 +245,12 @@ function FancySlider({
           style={{
             // @ts-ignore
             "--ruler-background": background,
-            direction: "rtl",
+            direction: direction ?? "ltr",
           }}
         ></input>
-        <span className="ruler-label">{format(min)}</span>
+        <span className="ruler-label">
+          {direction == "rtl" ? format(min) : format(max)}
+        </span>
       </div>
       <div
         key={`value-${row}`}
@@ -310,8 +323,10 @@ function SingleMeasure(
   let { mean, p90 } = measure;
   let sd = (p90 - mean) / 1.65;
 
-  const min = mean + range.min;
-  const max = mean + range.max;
+  const { min, max } = range;
+
+  const limitMin = mean + changeLimit.min;
+  const limitMax = mean + changeLimit.max;
 
   return (
     <>
@@ -342,8 +357,13 @@ function SingleMeasure(
         initial={measure.mean}
         value={value}
         disabled={!checked}
+        direction="rtl"
+        ticks={true}
         onChange={(value) => {
           if (disabled) return;
+          console.log("slider changes: %s %s %s", value, limitMin, limitMax);
+          if (value < limitMin) return;
+          if (value > limitMax) return;
           dispatch({ value });
         }}
       />
@@ -612,7 +632,8 @@ export function Page(props: Props) {
           [Brauner et al, The effectiveness of eight nonpharmaceutical
           interventions against COVID-19 in 41 countries]
         </a>
-        .
+        . If desired, the effectiveness of each NPI can be manually adjusted to
+        account for specific local circumstances in a country.
       </p>
       <p>
         <i>
@@ -654,6 +675,8 @@ export function Page(props: Props) {
           mean={baselineR}
           sd={0}
           max={8}
+          direction="ltr"
+          ticks={true}
         ></FancySlider>
 
         <div style={{ gridColumn: "1 / span 2", gridRow: row, maxWidth: 300 }}>
@@ -669,6 +692,8 @@ export function Page(props: Props) {
           scale={chroma.scale("YlOrRd")}
           sd={stdR * baselineR}
           max={8}
+          direction="ltr"
+          ticks={true}
         ></FancySlider>
 
         <div style={{ gridColumn: "3", gridRow: row }}>
