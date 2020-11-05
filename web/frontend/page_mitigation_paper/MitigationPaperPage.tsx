@@ -10,6 +10,7 @@ import {
   MeasureGroup,
   measures,
   range,
+  changeLimit,
   serialInterval,
 } from "./measures";
 import { calculateMultiplied } from "./multiplier";
@@ -25,16 +26,18 @@ function calculateBackground(
   max: number,
   thumbWidth: string,
   scale: chroma.Scale,
-  ticks: boolean
+  ticks: boolean,
+  leftToRight: boolean
 ): string {
   function getColor(z: number) {
     return scale(Math.exp((z * z) / -2)).css();
   }
 
   let backgrounds = [];
+  let gradientDirection = leftToRight ? "right" : "left";
   const f = (loc: number) => getColor((loc - mean) / sd);
   backgrounds.push(`linear-gradient(
-    to right, ${f(min)} 49%, ${f(max)} 51%)`);
+    to ${gradientDirection}, ${f(min)} 49%, ${f(max)} 51%)`);
 
   let stops: Array<string> = [];
   let addStop = (loc: number, z: number) => {
@@ -46,7 +49,9 @@ function calculateBackground(
     addStop(mean + z * sd, z);
   }
 
-  let rulerGradient = `linear-gradient(to right, ${stops.join(",")})`;
+  let rulerGradient = `linear-gradient(to ${gradientDirection}, ${stops.join(
+    ","
+  )})`;
   backgrounds.push(
     `no-repeat ${rulerGradient} 
       calc(${thumbWidth}/2) 0 
@@ -72,7 +77,7 @@ function calculateBackground(
     // )`;
     let tickGradient = `${
       pos === undefined ? "repeating-linear-gradient" : "linear-gradient"
-    }(to right, 
+    }(to ${gradientDirection}, 
       transparent calc(${offset}), ${color} calc(${offset}),
       ${color} calc(${offset} + ${w}px), ${color2} calc(${offset} + ${w}px), 
       ${color2} calc(${offset} + ${2 * w}px), transparent calc(${offset} + ${
@@ -162,7 +167,8 @@ function FancySlider({
       propMax,
       onChange !== undefined ? "var(--thumb-width)" : "3px",
       scale ?? chroma.scale("YlGnBu"),
-      ticks ?? false
+      ticks ?? false,
+      (direction ?? "ltr") == "ltr"
     );
   }, [onChange, mean, sd, min, max]);
 
@@ -317,8 +323,10 @@ function SingleMeasure(
   let { mean, p90 } = measure;
   let sd = (p90 - mean) / 1.65;
 
-  const min = mean + range.min;
-  const max = mean + range.max;
+  const { min, max } = range;
+
+  const limitMin = mean + changeLimit.min;
+  const limitMax = mean + changeLimit.max;
 
   return (
     <>
@@ -350,8 +358,12 @@ function SingleMeasure(
         value={value}
         disabled={!checked}
         direction="rtl"
+        ticks={true}
         onChange={(value) => {
           if (disabled) return;
+          console.log("slider changes: %s %s %s", value, limitMin, limitMax);
+          if (value < limitMin) return;
+          if (value > limitMax) return;
           dispatch({ value });
         }}
       />
@@ -620,7 +632,8 @@ export function Page(props: Props) {
           [Brauner et al, The effectiveness of eight nonpharmaceutical
           interventions against COVID-19 in 41 countries]
         </a>
-        .
+        . If desired, the effectiveness of each NPI can be manually adjusted to
+        account for specific local circumstances in a country.
       </p>
       <p>
         <i>
