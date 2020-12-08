@@ -1,6 +1,6 @@
 import * as chroma from "chroma-js";
 import * as d3 from "d3";
-import { mean, std, quantileSeq } from "mathjs";
+import { median, std, quantileSeq } from "mathjs";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
@@ -602,7 +602,7 @@ export function Page(props: Props) {
   const defaultR = 3.3; //growthToR(props.defaultOriginalGrowthRate.mean);
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
   const multiplied = calculateMultiplied(checkedMeasures);
-  const multiplier = multiplied ? mean(multiplied) : 1;
+  const multiplier = multiplied ? median(multiplied) : 1;
 
   const [baselineR, setR] = React.useState(defaultR);
 
