@@ -1,5 +1,5 @@
 import npi_model_raw from "./npi_model.json";
-import {median, quantileSeq } from "mathjs";
+import { median, quantileSeq } from "mathjs";
 
 const npi_model = (npi_model_raw as unknown) as Record<string, Array<number>>;
 
@@ -70,7 +70,10 @@ export const measures: Array<Measure | MeasureGroup> = [
   {
     name: "Schools and universities closed in conjuction",
     mean: median(npi_model["Schools and universities closed in conjuction"]),
-    p90: quantileSeq(npi_model["Schools and universities closed in conjuction"], 0.9) as number,
+    p90: quantileSeq(
+      npi_model["Schools and universities closed in conjuction"],
+      0.9
+    ) as number,
   },
   {
     name: "Stay-at-home order (additional benefit)",
@@ -79,6 +82,10 @@ export const measures: Array<Measure | MeasureGroup> = [
       npi_model["Stay-at-home order (additional benefit)"],
       0.9
     ) as number,
-    implies: [{ key: 0, value: 3 }, { key: 1, value: 2 }, { key: 2, value: 1 }],
+    implies: [
+      { key: 0, value: 3 },
+      { key: 1, value: 2 },
+      { key: 2, value: 1 },
+    ],
   },
 ];

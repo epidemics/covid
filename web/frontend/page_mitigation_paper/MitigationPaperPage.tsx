@@ -626,7 +626,8 @@ export function Page(props: Props) {
         displayed using coloured bands to indicate uncertainty. The NPI
         effectiveness estimates are derived in{" "}
         <a href="https://science.sciencemag.org/lookup/doi/10.1126/science.abd9338">
-          [Brauner et al, Inferring the effectiveness of government interventions against COVID-19.]
+          [Brauner et al, Inferring the effectiveness of government
+          interventions against COVID-19.]
         </a>
         . If desired, the effectiveness of each NPI can be manually adjusted to
         account for specific local circumstances in a country.
