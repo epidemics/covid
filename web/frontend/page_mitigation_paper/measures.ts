@@ -1,5 +1,5 @@
 import npi_model_raw from "./npi_model.json";
-import { mean, quantileSeq } from "mathjs";
+import { median, quantileSeq } from "mathjs";
 
 const npi_model = (npi_model_raw as unknown) as Record<string, Array<number>>;
 
@@ -28,7 +28,7 @@ export const measures: Array<Measure | MeasureGroup> = [
     items: [
       {
         name: "1000 people or less",
-        mean: mean(npi_model["Gatherings limited to...:1000 people or less"]),
+        mean: median(npi_model["Gatherings limited to...:1000 people or less"]),
         p90: quantileSeq(
           npi_model["Gatherings limited to...:1000 people or less"],
           0.9
@@ -36,7 +36,7 @@ export const measures: Array<Measure | MeasureGroup> = [
       },
       {
         name: "100 people or less",
-        mean: mean(npi_model["Gatherings limited to...:100 people or less"]),
+        mean: median(npi_model["Gatherings limited to...:100 people or less"]),
         p90: quantileSeq(
           npi_model["Gatherings limited to...:100 people or less"],
           0.9
@@ -44,7 +44,7 @@ export const measures: Array<Measure | MeasureGroup> = [
       },
       {
         name: "10 people or less",
-        mean: mean(npi_model["Gatherings limited to...:10 people or less"]),
+        mean: median(npi_model["Gatherings limited to...:10 people or less"]),
         p90: quantileSeq(
           npi_model["Gatherings limited to...:10 people or less"],
           0.9
@@ -53,32 +53,39 @@ export const measures: Array<Measure | MeasureGroup> = [
     ],
   },
   {
-    name: "Business suspended",
+    name: "Business closed",
     items: [
       {
         name: "Some",
-        mean: mean(npi_model["Business suspended:Some"]),
-        p90: quantileSeq(npi_model["Business suspended:Some"], 0.9) as number,
+        mean: median(npi_model["Business closed:Some"]),
+        p90: quantileSeq(npi_model["Business closed:Some"], 0.9) as number,
       },
       {
-        name: "Many",
-        mean: mean(npi_model["Business suspended:Many"]),
-        p90: quantileSeq(npi_model["Business suspended:Many"], 0.9) as number,
+        name: "Most",
+        mean: median(npi_model["Business closed:Most"]),
+        p90: quantileSeq(npi_model["Business closed:Most"], 0.9) as number,
       },
     ],
   },
   {
-    name: "School and University Closure",
-    mean: mean(npi_model["School and University Closure"]),
-    p90: quantileSeq(npi_model["School and University Closure"], 0.9) as number,
-  },
-  {
-    name: "Stay Home Order (with exemptions)",
-    mean: mean(npi_model["Stay Home Order (with exemptions)"]),
+    name: "Schools and universities closed in conjuction",
+    mean: median(npi_model["Schools and universities closed in conjuction"]),
     p90: quantileSeq(
-      npi_model["Stay Home Order (with exemptions)"],
+      npi_model["Schools and universities closed in conjuction"],
       0.9
     ) as number,
-    implies: [{ key: 1, value: 3 }, { key: 2, value: 2 }, { key: 3 }],
+  },
+  {
+    name: "Stay-at-home order (additional benefit)",
+    mean: median(npi_model["Stay-at-home order (additional benefit)"]),
+    p90: quantileSeq(
+      npi_model["Stay-at-home order (additional benefit)"],
+      0.9
+    ) as number,
+    implies: [
+      { key: 0, value: 3 },
+      { key: 1, value: 2 },
+      { key: 2, value: 1 },
+    ],
   },
 ];
