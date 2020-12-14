@@ -68,10 +68,10 @@ export const measures: Array<Measure | MeasureGroup> = [
     ],
   },
   {
-    name: "Schools and universities closed in conjuction",
-    mean: median(npi_model["Schools and universities closed in conjuction"]),
+    name: "Schools and universities closed in conjunction",
+    mean: median(npi_model["Schools and universities closed in conjunction"]),
     p90: quantileSeq(
-      npi_model["Schools and universities closed in conjuction"],
+      npi_model["Schools and universities closed in conjunction"],
       0.9
     ) as number,
   },
