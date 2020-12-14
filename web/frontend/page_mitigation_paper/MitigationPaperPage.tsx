@@ -1,10 +1,9 @@
 import * as chroma from "chroma-js";
 import * as d3 from "d3";
-import { mean, std, quantileSeq } from "mathjs";
+import { median, std, quantileSeq } from "mathjs";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Alerts } from "../components/alerts";
 import {
   Measure,
   MeasureGroup,
@@ -602,7 +601,7 @@ export function Page(props: Props) {
   const defaultR = 3.3; //growthToR(props.defaultOriginalGrowthRate.mean);
   //let defaultRp95 = growthToR(props.defaultOriginalGrowthRate.ci[1]);
   const multiplied = calculateMultiplied(checkedMeasures);
-  const multiplier = multiplied ? mean(multiplied) : 1;
+  const multiplier = multiplied ? median(multiplied) : 1;
 
   const [baselineR, setR] = React.useState(defaultR);
 
@@ -616,8 +615,6 @@ export function Page(props: Props) {
 
   return (
     <>
-      <Alerts />
-
       <h1>Mitigation calculator</h1>
 
       <hr />
@@ -628,9 +625,9 @@ export function Page(props: Props) {
         toggled on and off. On the right, the percentage reduction in R is
         displayed using coloured bands to indicate uncertainty. The NPI
         effectiveness estimates are derived in{" "}
-        <a href="https://www.medrxiv.org/content/10.1101/2020.05.28.20116129v3">
-          [Brauner et al, The effectiveness of eight nonpharmaceutical
-          interventions against COVID-19 in 41 countries]
+        <a href="https://science.sciencemag.org/lookup/doi/10.1126/science.abd9338">
+          [Brauner et al, Inferring the effectiveness of government
+          interventions against COVID-19.]
         </a>
         . If desired, the effectiveness of each NPI can be manually adjusted to
         account for specific local circumstances in a country.
@@ -655,7 +652,7 @@ export function Page(props: Props) {
           <b>Nonpharmaceutical interventions</b>
         </div>
         <div style={{ gridColumn: "3 / span 2" }}>
-          <b>Percentage reduction in R, the reproductive number</b>
+          <b>Percentage reduction in R, the reproduction number</b>
         </div>
         {elems}
         <div style={{ gridColumn: "1 / span 2", gridRow: row++ }}>
@@ -698,7 +695,7 @@ export function Page(props: Props) {
 
         <div style={{ gridColumn: "3", gridRow: row }}>
           <p>The NPIs result in an average change in R of </p>
-          <p>95% uncertainty interval for R</p>
+          <p>95% credible interval for R</p>
         </div>
         <div
           style={{
