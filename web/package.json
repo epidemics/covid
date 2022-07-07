@@ -68,7 +68,7 @@
     "formik": "^2.1.4",
     "jsurl": "^0.1.5",
     "mathjs": "^7.0.1",
-    "moment": "^2.26.0",
+    "moment": "^2.29.4",
     "morgan": "^1.10.0",
     "nunjucks": "^3.2.1",
     "query-string": "^6.12.1",
