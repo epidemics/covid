@@ -1,19 +1,13 @@
-import { STATIC_ROOT } from "../common/constants";
 import { v4 } from "../common/spec";
 import { Regions } from "./models";
 import { Datastore, MainInfo, Thunk } from "./models/datastore";
 
-const CHANNEL_PARAM = "channel";
 
-let url = new URL(window.location.href);
-let paramChannel = url.searchParams.get(CHANNEL_PARAM);
 
 export function makeDataStore(
-  channel: string = paramChannel ?? DEFAULT_EPIFOR_CHANNEL
 ): Datastore {
-  console.info(`Using channel ${channel}`);
 
-  let data_root = `${STATIC_ROOT}/v4/${channel}`;
+  let data_root = `country-data`;
 
   let mainv4 = Thunk.fetchJson<v4.Main>(`${data_root}/data-v4.json`);
   const npi = Thunk.fetchJson<v4.NpiMain>(
@@ -44,9 +38,9 @@ export function makeDataStore(
         }
       );
     }),
-    geoData: Thunk.fetchJson(`${STATIC_ROOT}/casemap-geo.json`),
+    geoData: Thunk.fetchJson(`${data_root}/casemap-geo.json`),
     containments: Thunk.fetchJson(
-      `${STATIC_ROOT}/data-testing-containments.json`
+      `/this-doesnt-exist/data-testing-containments.json`
     ),
   };
 }

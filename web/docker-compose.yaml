@@ -2,10 +2,15 @@ version: "3"
 
 services:
   server:
-    image: node:13-slim
-    volumes: 
-      - ./:/usr/app/
-    working_dir: /usr/app
-    ports:
-      - 8000:8000
-    entrypoint: bash -c "yarn install && yarn run dev"
+    build: .
+    networks:
+      - caddy
+    labels:
+      caddy: "epidemics.danielhnyk.cz epidemicforecasting.org"
+      caddy.reverse_proxy: "{{upstreams 8000}}"
+    #volumes:
+    #- ./server/server.ts:/usr/app/server/server.ts
+    #- ./server/templates:/usr/app/server/templates
+networks:
+  caddy:
+    external: true
