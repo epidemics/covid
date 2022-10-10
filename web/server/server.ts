@@ -8,7 +8,6 @@ import webpack from "webpack";
 import webpackDev from "webpack-dev-middleware";
 
 import { Alert } from "../common/alert";
-import constants from "../common/constants";
 import webpackConfig from "../webpack.config";
 import { navigation_bar, router } from "./routes";
 
@@ -28,46 +27,31 @@ nunjucks.configure(path.join(__dirname, "templates"), {
   express: app,
 });
 
-app.locals.DEFAULT_EPIFOR_CHANNEL =
-  process.env.DEFAULT_EPIFOR_CHANNEL ?? "testing";
-
 let REACT_BUILD: "production" | "development" =
   app.get("env") === "production" ? "production" : "development";
 app.locals.REACT_BUILD = REACT_BUILD;
 
-// set up the static file server, but only if we get no STATIC_URL
-if (!process.env.STATIC_URL) {
-  let mount = "/static";
+// host static files directly from the container
+let mount = "/static";
+app.locals.ASSET_ROOT = mount;
+app.use(mount, express.static(path.join(__dirname, "../dist")));
 
-  app.locals.ASSET_ROOT = mount;
-  app.use(mount, express.static(path.join(__dirname, "../static")));
-} else {
-  app.locals.ASSET_ROOT = process.env.STATIC_URL;
-}
+// add manually the country-data
+app.use("/country-data", express.static(path.join(__dirname, "../country-data")));
 
-// add local constants
-for (let key in constants) {
-  app.locals[key] = constants[key];
-}
+// add manually datasets
+app.use("/datasets", express.static(path.join(__dirname, "../datasets")));
 
 let proBonoAlert: Alert = {
   id: "consultingAlert",
-  dismissalDuration: { days: 1 },
+  dismissalDuration: { hours: 1 },
   revision: "0",
-  content: `We offer custom forecasting and modeling for decision makers and clinical trial design. Please reach out <a href="http://epidemicforecasting.org/submit-request" 
-  class="alert-link">here</a>.`,
+  content: `<b>WARNING</b>: All the data on this page are outdated! This website is only for example purposes only!`,
 };
 
 app.use(function (req, res, next) {
-  let channel = req.query.channel ?? constants["DEFAULT_EPIFOR_CHANNEL"];
-  res.locals.CHANNEL = channel;
   res.locals.ALERTS = [proBonoAlert];
-
-  if (channel == "balochistan") {
-    res.redirect("http://balochistan.epidemicforecasting.org/");
-  } else {
-    next();
-  }
+  next();
 });
 
 if (app.get("env") === "development") {
@@ -95,7 +79,6 @@ app.get("/status", (_req, res) =>
     app: APP_NAME,
     nodeEnv: app.get("env"),
     version: process.env.APP_VERSION,
-    epiforChannel: process.env.DEFAULT_EPIFOR_CHANNEL,
   })
 );
 

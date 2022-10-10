@@ -1,5 +1,14 @@
 # COVID-19 visualizer
 
+## WARNING: This repository is now in an inconsistent state
+As the site is no longer maintained, we decided to host it on much cheaper server (instead of GCP). For that reasons, we downloaded only the latest version of the relevant data files and serve them locally. 
+
+The app is no longer hosted at GCP. The "channel" functionality doesn't work at all now. The readme below is outdated (see the commit history).
+
+Contact Daniel Hnyk (@hnykda) or Tomáš Gavenčiak for more information.
+
+---
+
 Frontend for http://epidemicforecasting.org/
 
 ![Screenshot of local app](./covid_local_app.png)
