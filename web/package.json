@@ -64,7 +64,7 @@
     "bootstrap": "^4.4.1",
     "compression": "^1.7.4",
     "css-loader": "^3.5.3",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "formik": "^2.1.4",
     "jsurl": "^0.1.5",
     "mathjs": "^7.0.1",
